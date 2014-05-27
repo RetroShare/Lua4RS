@@ -12,12 +12,15 @@ LuaCore::LuaCore()
 {
     L = luaL_newstate();
 
+    /*
     luaopen_base(L);
     luaopen_io(L);
     luaopen_table(L);
     luaopen_string(L);
     luaopen_math(L);
     luaopen_os(L);
+    */
+    luaL_openlibs(L);
 
     lua_register(L, "rs_print", rs_print);
     lua_register(L, "rs_clear", rs_clear);
