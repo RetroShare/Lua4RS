@@ -7,15 +7,17 @@ LIBS += -llua
 HEADERS += \
     Lua4RSPlugin.h \
     Lua4RSMainWidget.h \
-    LuaCore.h \
-    LuaToRS.h
+    Lua/LuaCore.h \
+    Lua/LuaToRS.h \
+    Lua/LuaCode.h
 
 SOURCES += \
     Lua4RSPlugin.cpp \
     Lua4RSMainWidget.cpp \
-    LuaCore.cpp \
-    LuaToRS.cpp \
-    LuaToRSPeers.cpp
+    Lua/LuaCore.cpp \
+    Lua/LuaToRS.cpp \
+    Lua/LuaToRSPeers.cpp \
+    Lua/LuaCode.cpp
 
 FORMS += \
     Lua4RSMainWidget.ui

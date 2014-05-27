@@ -1,7 +1,7 @@
 #include "Lua4RSMainWidget.h"
 #include "ui_Lua4RSMainWidget.h"
 
-#include "LuaCore.h"
+#include "Lua/LuaCore.h"
 
 Lua4RSMainWidget::Lua4RSMainWidget(QWidget *parent) :
     MainPage(parent),

@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <string.h>
+#include <map>
 
 #include <retroshare/rsplugin.h>
+
+#include "LuaCode.h"
 
 extern "C" {
 #include "lua.h"
@@ -33,6 +36,8 @@ private:
     static LuaCore* _instance;
     Lua4RSMainWidget* _ui;
     lua_State* L;
+
+    std::map<std::string, LuaCode> _codeMap;
 
     RsPeers* _peers;
 };

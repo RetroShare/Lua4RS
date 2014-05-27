@@ -3,7 +3,7 @@
 
 #include "Lua4RSPlugin.h"
 #include "Lua4RSMainWidget.h"
-#include "LuaCore.h"
+#include "Lua/LuaCore.h"
 
 #define LUA_ICON_LINK ":/images/lua_logo.png"
 
