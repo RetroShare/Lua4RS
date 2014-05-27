@@ -33,6 +33,8 @@ public:
     void setPeers(RsPeers *peers);
 
 private:
+    void reportLuaErrors(lua_State *L, int status);
+
     static LuaCore* _instance;
     Lua4RSMainWidget* _ui;
     lua_State* L;

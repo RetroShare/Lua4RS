@@ -65,7 +65,21 @@ void LuaCore::runLua(const std::string& code)
     std::cout << "[LUA] executing lua ...";
     int ret = luaL_dostring(L, code.c_str());
     std::cout << "done" << std::endl;
-    report_errors(L, ret);
+    reportLuaErrors(L, ret);
+}
+
+void LuaCore::reportLuaErrors(lua_State *L, int status)
+{
+    std::string s;
+    if ( status!=0 ) {
+        s = lua_tostring(L, -1);
+        std::cerr << "-- " << s << std::endl;
+
+        s = "Lua error: " + s;
+        _ui->appendOutput(s);
+
+        lua_pop(L, 1); // remove error message
+    }
 }
 
 RsPeers *LuaCore::peers() const
