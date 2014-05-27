@@ -1,9 +1,9 @@
 #include "LuaCore.h"
-#include "Lua4RSMainWidget.h"
+#include "LuaToRS.h"
 
 extern "C" {
     // helper
-    int inline getArgCount(lua_State* L)
+    int getArgCount(lua_State* L)
     {
         return lua_gettop(L);
     }

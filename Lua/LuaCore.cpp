@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "LuaCore.h"
-#include "Lua4RSMainWidget.h"
+#include "../Lua4RSMainWidget.h"
 
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"

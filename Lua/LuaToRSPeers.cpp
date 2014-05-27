@@ -1,5 +1,4 @@
 #include "LuaCore.h"
-#include "Lua4RSMainWidget.h"
 #include "LuaToRS.h"
 
 extern "C" {
