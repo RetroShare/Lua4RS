@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>Lua4RSWidget</class>
+ <widget class="QWidget" name="Lua4RSWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,9 +11,9 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Lua4RS</string>
+   <string>Form</string>
   </property>
-  <widget class="QListView" name="listViewAllScripts">
+  <widget class="QListView" name="lv_allscripts">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -26,7 +26,7 @@
     <string/>
    </property>
    <property name="frameShape">
-    <enum>QFrame::WinPanel</enum>
+    <enum>QFrame::StyledPanel</enum>
    </property>
    <property name="frameShadow">
     <enum>QFrame::Sunken</enum>
@@ -59,7 +59,7 @@
     <enum>Qt::ElideLeft</enum>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonNewScript">
+  <widget class="QPushButton" name="pb_newscript">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -81,7 +81,7 @@
     <string>New</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonEditScript">
+  <widget class="QPushButton" name="pb_editscript">
    <property name="geometry">
     <rect>
      <x>84</x>
@@ -97,16 +97,16 @@
     </font>
    </property>
    <property name="toolTip">
-    <string>Edit the selected script</string>
+    <string>Edit the selected script in the Lua Code Editor</string>
    </property>
    <property name="text">
     <string>Edit</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButtonDeleteScript">
+  <widget class="QPushButton" name="pb_deletescript">
    <property name="geometry">
     <rect>
-     <x>709</x>
+     <x>710</x>
      <y>142</y>
      <width>75</width>
      <height>23</height>
@@ -125,7 +125,7 @@
     <string>Delete</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="l_allmyscripts">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -144,7 +144,7 @@
     <string>All My Scripts</string>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="gb_scriptdetailsarea">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -154,12 +154,15 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QGroupBox { border:1px solid grey }</string>
+    <string notr="true">QGroupBox { border:1px solid grey;background:#eee }</string>
    </property>
    <property name="title">
     <string/>
    </property>
-   <widget class="Q3TextEdit" name="textEditLuaEditor">
+   <property name="flat">
+    <bool>false</bool>
+   </property>
+   <widget class="Q3TextEdit" name="te_luacode">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -175,7 +178,7 @@
      </font>
     </property>
     <property name="frameShape">
-     <enum>QFrame::WinPanel</enum>
+     <enum>QFrame::StyledPanel</enum>
     </property>
     <property name="lineWidth">
      <number>0</number>
@@ -213,7 +216,7 @@ end;</string>
      <set>Q3TextEdit::AutoNone</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="l_props">
     <property name="geometry">
      <rect>
       <x>560</x>
@@ -233,7 +236,7 @@ end;</string>
      <enum>Qt::LeftToRight</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">border:0px;</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>RetroShare Properties</string>
@@ -242,13 +245,13 @@ end;</string>
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QTabWidget" name="tabcontrol_scriptdetails">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>290</y>
+      <y>291</y>
       <width>771</width>
-      <height>191</height>
+      <height>190</height>
      </rect>
     </property>
     <property name="font">
@@ -267,32 +270,19 @@ end;</string>
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
-    <widget class="QWidget" name="tab_RunByTimer">
+    <widget class="QWidget" name="tabpage_bytimer">
      <attribute name="title">
-      <string>Run by Timer</string>
+      <string>By Timer</string>
      </attribute>
      <attribute name="toolTip">
-      <string>Script execution is controlled by a timer</string>
+      <string>Control script execution by timer</string>
      </attribute>
-     <widget class="QLabel" name="label_4">
+     <widget class="QSpinBox" name="spb_everycount">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>61</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Every</string>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="spinBoxTimeUnitsCount">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
+        <x>120</x>
         <y>10</y>
         <width>61</width>
         <height>21</height>
@@ -313,10 +303,10 @@ end;</string>
        <number>10</number>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBoxTimeUnits">
+     <widget class="QComboBox" name="dd_everyunits">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>190</x>
         <y>10</y>
         <width>141</width>
         <height>21</height>
@@ -367,23 +357,10 @@ end;</string>
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QDateTimeEdit" name="dte_runonce">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>50</y>
-        <width>61</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Once</string>
-      </property>
-     </widget>
-     <widget class="QDateTimeEdit" name="dateTimeEditRunOnce">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
+        <x>120</x>
         <y>50</y>
         <width>211</width>
         <height>21</height>
@@ -405,42 +382,42 @@ end;</string>
        </date>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="rb_every">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
-        <width>21</width>
-        <height>16</height>
+        <y>0</y>
+        <width>751</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="toolTip">
        <string>Run the current script on an interval basis</string>
       </property>
       <property name="text">
-       <string/>
+       <string>Run every</string>
       </property>
       <property name="checked">
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_2">
+     <widget class="QRadioButton" name="rb_once">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>50</y>
-        <width>21</width>
-        <height>16</height>
+        <y>40</y>
+        <width>751</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="toolTip">
        <string>Run the current script once at the specified time</string>
       </property>
       <property name="text">
-       <string/>
+       <string>Run once at</string>
       </property>
      </widget>
-     <widget class="Line" name="line">
+     <widget class="Line" name="hr_1">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -453,7 +430,7 @@ end;</string>
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="Line" name="line_2">
+     <widget class="Line" name="hr_2">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -466,36 +443,23 @@ end;</string>
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioButton_3">
+     <widget class="QRadioButton" name="rb_startup">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>90</y>
-        <width>21</width>
-        <height>16</height>
+        <y>80</y>
+        <width>751</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="toolTip">
        <string>Run the current script only once when RS starts</string>
       </property>
       <property name="text">
-       <string/>
+       <string>Run at Startup</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_7">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>90</y>
-        <width>131</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>At RestroShare startup</string>
-      </property>
-     </widget>
-     <widget class="Line" name="line_4">
+     <widget class="Line" name="hr_3">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -508,26 +472,67 @@ end;</string>
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_RunByEvent">
-     <attribute name="title">
-      <string>Run by Event</string>
-     </attribute>
-     <attribute name="toolTip">
-      <string>Script execution is controlled by RetroShare events</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Log</string>
-     </attribute>
-     <widget class="QTextBrowser" name="textBrowserLog">
+     <widget class="QRadioButton" name="rb_other">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
-        <width>747</width>
-        <height>142</height>
+        <y>120</y>
+        <width>751</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Some other</string>
+      </property>
+     </widget>
+     <zorder>rb_every</zorder>
+     <zorder>rb_once</zorder>
+     <zorder>spb_everycount</zorder>
+     <zorder>dd_everyunits</zorder>
+     <zorder>dte_runonce</zorder>
+     <zorder>hr_1</zorder>
+     <zorder>hr_2</zorder>
+     <zorder>rb_startup</zorder>
+     <zorder>hr_3</zorder>
+     <zorder>rb_other</zorder>
+    </widget>
+    <widget class="QWidget" name="tabpage_byevent">
+     <attribute name="title">
+      <string>By Event</string>
+     </attribute>
+     <attribute name="toolTip">
+      <string>Control script execution by events</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="tabpage_output">
+     <attribute name="title">
+      <string>Output</string>
+     </attribute>
+     <widget class="Q3TextBrowser" name="tbr_output">
+      <property name="geometry">
+       <rect>
+        <x>7</x>
+        <y>8</y>
+        <width>753</width>
+        <height>145</height>
+       </rect>
+      </property>
+      <property name="autoFormatting">
+       <set>Q3TextEdit::AutoNone</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabpage_log">
+     <attribute name="title">
+      <string>Log</string>
+     </attribute>
+     <widget class="QTextBrowser" name="tbr_runlog">
+      <property name="geometry">
+       <rect>
+        <x>7</x>
+        <y>8</y>
+        <width>753</width>
+        <height>145</height>
        </rect>
       </property>
       <property name="font">
@@ -537,7 +542,7 @@ end;</string>
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::WinPanel</enum>
+       <enum>QFrame::StyledPanel</enum>
       </property>
       <property name="html">
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -555,13 +560,13 @@ p, li { white-space: pre-wrap; }
      </widget>
     </widget>
    </widget>
-   <widget class="QCheckBox" name="checkBoxEnableScript">
+   <widget class="QCheckBox" name="cbx_enable">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>491</y>
-      <width>111</width>
-      <height>20</height>
+      <y>490</y>
+      <width>110</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -571,7 +576,7 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check/Uncheck to enable/disable execution of current script (&amp;quot;00:00:00 - 00:00:00&amp;quot; means always enabled).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>Check/Uncheck to enable/disable the execution of the current script</string>
     </property>
     <property name="text">
      <string>Enable Script</string>
@@ -580,13 +585,13 @@ p, li { white-space: pre-wrap; }
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QTimeEdit" name="timeEditEnableScriptFrom">
+   <widget class="QTimeEdit" name="tied_timefrom">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>236</x>
+      <x>240</x>
       <y>490</y>
       <width>101</width>
       <height>21</height>
@@ -614,22 +619,22 @@ p, li { white-space: pre-wrap; }
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="l_and">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>333</x>
+      <x>339</x>
       <y>491</y>
-      <width>41</width>
-      <height>20</height>
+      <width>40</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
-      <bold>false</bold>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
@@ -639,13 +644,13 @@ p, li { white-space: pre-wrap; }
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QTimeEdit" name="timeEditEnableScriptTo">
+   <widget class="QTimeEdit" name="tied_timeto">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>377</x>
       <y>490</y>
       <width>101</width>
       <height>21</height>
@@ -670,7 +675,7 @@ p, li { white-space: pre-wrap; }
      </time>
     </property>
    </widget>
-   <widget class="QTreeView" name="treeViewRSProperties">
+   <widget class="QTreeView" name="tv_hints">
     <property name="geometry">
      <rect>
       <x>560</x>
@@ -680,16 +685,16 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <property name="toolTip">
-     <string/>
+     <string>Doubleclick on item to paste it into the Lua Code Editor</string>
     </property>
     <property name="frameShape">
-     <enum>QFrame::WinPanel</enum>
+     <enum>QFrame::StyledPanel</enum>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOn</enum>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEditScriptName">
+   <widget class="QLineEdit" name="le_scriptname">
     <property name="geometry">
      <rect>
       <x>86</x>
@@ -714,7 +719,7 @@ p, li { white-space: pre-wrap; }
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="l_scriptname">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -733,45 +738,45 @@ p, li { white-space: pre-wrap; }
      <string>Scriptname</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="l_hours">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>478</x>
+      <x>485</x>
       <y>491</y>
-      <width>41</width>
-      <height>20</height>
+      <width>40</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
-      <bold>false</bold>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
      <string>hours</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonUndock">
+   <widget class="QPushButton" name="pb_undock">
     <property name="geometry">
      <rect>
-      <x>159</x>
+      <x>448</x>
       <y>251</y>
-      <width>75</width>
+      <width>91</width>
       <height>23</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>Undock the editor</string>
+     <string>Undock the editor to a separate resizable window</string>
     </property>
     <property name="text">
-     <string>Undock</string>
+     <string>Undock Editor</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonLoadScript">
+   <widget class="QPushButton" name="pb_load">
     <property name="geometry">
      <rect>
       <x>9</x>
@@ -780,24 +785,14 @@ p, li { white-space: pre-wrap; }
       <height>23</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Load a Lua script from disk into the Lua Code Editor</string>
+    </property>
     <property name="text">
      <string>Load</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButtonClearEditor">
-    <property name="geometry">
-     <rect>
-      <x>462</x>
-      <y>251</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Clear</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonSaveScript">
+   <widget class="QPushButton" name="pb_save">
     <property name="geometry">
      <rect>
       <x>84</x>
@@ -806,11 +801,14 @@ p, li { white-space: pre-wrap; }
       <height>23</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Save current Lua script</string>
+    </property>
     <property name="text">
      <string>Save</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="l_code">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -829,35 +827,38 @@ p, li { white-space: pre-wrap; }
      <string>LUA Code Editor</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QCheckBox" name="cbx_timeconstraint">
     <property name="geometry">
      <rect>
-      <x>151</x>
-      <y>491</y>
-      <width>81</width>
-      <height>20</height>
+      <x>147</x>
+      <y>490</y>
+      <width>91</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <weight>50</weight>
-      <bold>false</bold>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>Check/Uncheck to constrain script execution to certain hours of the day</string>
     </property>
     <property name="text">
      <string>...between</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="l_authors">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>558</x>
-      <y>301</y>
-      <width>221</width>
-      <height>16</height>
+      <x>597</x>
+      <y>299</y>
+      <width>181</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="font">
@@ -869,19 +870,35 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>Lua4RS V0.0.10 by sehraf &amp; far*call</string>
+     <string>Lua4RS 0.1, 2014 by sehraf &amp; far*call</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QPushButton" name="pb_run">
+    <property name="geometry">
+     <rect>
+      <x>159</x>
+      <y>251</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Run current Lua script. View script output in the Output Tab</string>
+    </property>
+    <property name="text">
+     <string>Run</string>
+    </property>
+   </widget>
   </widget>
-  <zorder>groupBox</zorder>
-  <zorder>listViewAllScripts</zorder>
-  <zorder>pushButtonNewScript</zorder>
-  <zorder>pushButtonEditScript</zorder>
-  <zorder>pushButtonDeleteScript</zorder>
-  <zorder>label_2</zorder>
+  <zorder>gb_scriptdetailsarea</zorder>
+  <zorder>lv_allscripts</zorder>
+  <zorder>pb_newscript</zorder>
+  <zorder>pb_editscript</zorder>
+  <zorder>pb_deletescript</zorder>
+  <zorder>l_allmyscripts</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -894,6 +911,11 @@ p, li { white-space: pre-wrap; }
    <class>Q3TextEdit</class>
    <extends>Q3Frame</extends>
    <header>q3textedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Q3TextBrowser</class>
+   <extends>Q3TextEdit</extends>
+   <header>Qt3Support/Q3TextBrowser</header>
   </customwidget>
  </customwidgets>
  <resources/>

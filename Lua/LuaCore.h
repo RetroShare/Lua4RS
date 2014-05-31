@@ -10,12 +10,12 @@
 #include "LuaCode.h"
 
 extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include "lua5.2/lua.h"
+#include "lua5.2/lualib.h"
+#include "lua5.2/lauxlib.h"
 }
 
-class Lua4RSMainWidget;
+class Lua4RSWidget;
 
 class LuaCore
 {
@@ -27,8 +27,8 @@ public:
     void runLua(const std::string& code);
 
     // getter & setter
-    Lua4RSMainWidget* getUI();
-    void setUi(Lua4RSMainWidget* ui);
+    Lua4RSWidget* getUI();
+    void setUi(Lua4RSWidget* ui);
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
 
@@ -36,7 +36,7 @@ private:
     void reportLuaErrors(lua_State *L, int status);
 
     static LuaCore* _instance;
-    Lua4RSMainWidget* _ui;
+    Lua4RSWidget* _ui;
     lua_State* L;
 
     std::map<std::string, LuaCode> _codeMap;

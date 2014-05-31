@@ -1,14 +1,10 @@
-/********************************************************************************
-** Form generated from reading UI file 'Lua4RSWidget.ui'
-**
-** Created: Wed May 28 12:58:58 2014
-**      by: Qt User Interface Compiler version 4.8.1
-**
-** WARNING! All changes made in this file will be lost when recompiling UI file!
-********************************************************************************/
-
 #ifndef LUA4RSWIDGET_H
 #define LUA4RSWIDGET_H
+
+#include <retroshare-gui/mainpage.h>
+
+#include <QWidget>
+
 
 #include <Qt3Support/Q3Frame>
 #include <Qt3Support/Q3TextEdit>
@@ -425,9 +421,31 @@ public:
 };
 
 namespace Ui {
-    class Form: public Ui_Form {};
-} // namespace Ui
+    class Lua4RSWidget;
+}
 
-QT_END_NAMESPACE
+class LuaCore;
+
+class Lua4RSWidget : public MainPage
+{
+    Q_OBJECT
+
+  public:
+    explicit Lua4RSWidget(QWidget *parent = 0);
+    ~Lua4RSWidget();
+
+//    void clearOutput();
+//    void appendOutput(const std::string &s);
+//    void appendOutput(const QString &s);
+
+  private:
+    Ui::Lua4RSWidget *ui;
+    LuaCore* _lua;
+
+  private slots:
+//    void runLua();
+};
+
+
 
 #endif // LUA4RSWIDGET_H

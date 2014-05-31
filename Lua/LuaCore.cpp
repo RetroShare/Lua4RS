@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "LuaCore.h"
-#include "../Lua4RSMainWidget.h"
+#include "../Lua4RSWidget.h"
 
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"
@@ -26,12 +26,14 @@ LuaCore::LuaCore()
     lua_register(L, "rs_clear", rs_clear);
 
     // peers
+/*
     lua_register(L, "getOwnId", rs_peers_getOwnId);
     lua_register(L, "getOnlineList", rs_peers_getOnlineList);
     lua_register(L, "getFriendList", rs_peers_getFriendList);
     lua_register(L, "getPeerCount", rs_peers_getPeerCount);
     lua_register(L, "getPeerName", rs_peers_getPeerName);
     lua_register(L, "getPeerDetails", rs_peers_getPeerDetails);
+*/
 }
 
 LuaCore::~LuaCore()
@@ -47,12 +49,12 @@ LuaCore* LuaCore::getInstance()
     return _instance;
 }
 
-void LuaCore::setUi(Lua4RSMainWidget *ui)
+void LuaCore::setUi(Lua4RSWidget *ui)
 {
     _ui = ui;
 }
 
-Lua4RSMainWidget* LuaCore::getUI()
+Lua4RSWidget* LuaCore::getUI()
 {
     ///TODO better fix
     assert(_ui);
@@ -79,7 +81,7 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
         std::cerr << "-- " << s << std::endl;
 
         s = "Lua error: " + s;
-        _ui->appendOutput(s);
+//        _ui->appendOutput(s);
 
         lua_pop(L, 1); // remove error message
     }
