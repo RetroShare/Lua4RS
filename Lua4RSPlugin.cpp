@@ -45,10 +45,14 @@ void Lua4RSPlugin::getPluginVersion(int& major, int& minor, int& svn_rev) const
 
 void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
+    // get stuff
     _peers = interfaces.mPeers;
     _notify = interfaces.mNotify;
 
-    LuaCore::getInstance()->setPeers(_peers);
+    // setup other stuff
+    LuaCore* lc = LuaCore::getInstance();
+    lc->setPeers(_peers);
+    _notify->registerNotifyClient(lc->notify());
 }
 
 MainPage* Lua4RSPlugin::qt_page() const

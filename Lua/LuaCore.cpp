@@ -10,6 +10,10 @@ LuaCore* LuaCore::_instance;
 
 LuaCore::LuaCore()
 {
+    _codeMap.clear();
+    _notify = new Lua4RSNotify();
+    _peers = NULL; // gets set later
+
     L = luaL_newstate();
 
     /*
@@ -83,6 +87,11 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
 
         lua_pop(L, 1); // remove error message
     }
+}
+
+Lua4RSNotify *LuaCore::notify() const
+{
+    return _notify;
 }
 
 RsPeers *LuaCore::peers() const

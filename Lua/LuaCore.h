@@ -8,6 +8,7 @@
 #include <retroshare/rsplugin.h>
 
 #include "LuaCode.h"
+#include "../Lua4RSNotify.h"
 
 extern "C" {
 #include "lua.h"
@@ -31,17 +32,21 @@ public:
     void setUi(Lua4RSMainWidget* ui);
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
+    Lua4RSNotify *notify() const;
+    // void setNotify(Lua4RSNotify *notify); no need for a setter
 
 private:
     void reportLuaErrors(lua_State *L, int status);
 
     static LuaCore* _instance;
-    Lua4RSMainWidget* _ui;
     lua_State* L;
 
-    std::map<std::string, LuaCode> _codeMap;
+    Lua4RSMainWidget* _ui;
+    Lua4RSNotify* _notify;
 
     RsPeers* _peers;
+
+    std::map<std::string, LuaCode> _codeMap;
 };
 
 #endif // LUACORE_H
