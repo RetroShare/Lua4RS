@@ -10,7 +10,8 @@ HEADERS += \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
-    Lua4RSNotify.h
+    Lua4RSNotify.h \
+    p3Lua4RS.h
 
 SOURCES += \
     Lua4RSPlugin.cpp \
@@ -19,7 +20,8 @@ SOURCES += \
     Lua/LuaToRS.cpp \
     Lua/LuaToRSPeers.cpp \
     Lua/LuaCode.cpp \
-    Lua4RSNotify.cpp
+    Lua4RSNotify.cpp \
+    p3Lua4RS.cpp
 
 FORMS += \
     Lua4RSMainWidget.ui

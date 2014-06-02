@@ -64,12 +64,42 @@ Lua4RSMainWidget* LuaCore::getUI()
     return _ui;
 }
 
-void LuaCore::runLua(const std::string& code)
+// invoke lua
+void LuaCore::runLuaByString(const std::string& code)
 {
     ///TODO better fix
     assert(_ui);
 
-    std::cout << "[LUA] executing lua ...";
+    std::cout << "[LUA] executing lua code by string ...";
+    int ret = luaL_dostring(L, code.c_str());
+    std::cout << "done" << std::endl;
+    reportLuaErrors(L, ret);
+}
+
+void LuaCore::runLuaByName(const std::string& name)
+{
+    parameterMap m;
+    runLuaByNameWithParams(name, m);
+}
+
+void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap paramMap)
+{
+    ///TODO better fix
+    assert(_ui);
+
+    std::string code = "";
+
+    // set parameters
+    for(std::map<std::string, std::string>::iterator it = paramMap.begin(); it != paramMap.end(); ++it)
+        code += it->first + " = " + it->second + '\n';
+
+    // get code
+    codeMap::iterator it = _codeMap.find(name);
+    if(it == _codeMap.end())
+        return;
+    code += it->second.code();
+
+    std::cout << "[LUA] executing lua code by name ...";
     int ret = luaL_dostring(L, code.c_str());
     std::cout << "done" << std::endl;
     reportLuaErrors(L, ret);
@@ -87,6 +117,11 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
 
         lua_pop(L, 1); // remove error message
     }
+}
+
+p3Lua4RS *LuaCore::service() const
+{
+    return _service;
 }
 
 Lua4RSNotify *LuaCore::notify() const

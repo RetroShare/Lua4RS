@@ -9,12 +9,16 @@
 
 #include "LuaCode.h"
 #include "../Lua4RSNotify.h"
+#include "../p3Lua4RS.h"
 
 extern "C" {
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
 }
+
+typedef std::map<std::string, std::string>  parameterMap;
+typedef std::map<std::string, LuaCode>      codeMap;
 
 class Lua4RSMainWidget;
 
@@ -25,7 +29,11 @@ public:
     ~LuaCore();
 
     static LuaCore* getInstance();
-    void runLua(const std::string& code);
+
+    // invoke lua
+    void runLuaByString(const std::string& code);
+    void runLuaByName(const std::string& name);
+    void runLuaByNameWithParams(const std::string& name, parameterMap paramMap);
 
     // getter & setter
     Lua4RSMainWidget* getUI();
@@ -33,7 +41,7 @@ public:
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
-    // void setNotify(Lua4RSNotify *notify); no need for a setter
+    p3Lua4RS *service() const;
 
 private:
     void reportLuaErrors(lua_State *L, int status);
@@ -44,9 +52,11 @@ private:
     Lua4RSMainWidget* _ui;
     Lua4RSNotify* _notify;
 
+    p3Lua4RS* _service;
+
     RsPeers* _peers;
 
-    std::map<std::string, LuaCode> _codeMap;
+    codeMap _codeMap;
 };
 
 #endif // LUACORE_H

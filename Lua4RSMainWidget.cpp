@@ -23,7 +23,7 @@ Lua4RSMainWidget::~Lua4RSMainWidget()
 void Lua4RSMainWidget::runLua()
 {
     std::string luaCode = ui->pte_code->toPlainText().toStdString();
-    _lua->runLua(luaCode);
+    _lua->runLuaByString(luaCode);
 }
 
 void Lua4RSMainWidget::clearOutput()
