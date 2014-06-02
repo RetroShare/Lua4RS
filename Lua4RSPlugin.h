@@ -15,7 +15,7 @@ public:
     virtual QIcon       *qt_icon() const;
     virtual void        getPluginVersion(int& major,int& minor,int& svn_rev) const;
     virtual void        setPlugInHandler(RsPluginHandler *pgHandler);
-    virtual RsPQIService * rs_pqi_service() const;
+    // virtual RsPQIService* rs_pqi_service() const;
 
     virtual std::string configurationFileName() const { return std::string() ; }
 

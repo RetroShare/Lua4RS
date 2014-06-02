@@ -74,6 +74,7 @@ QIcon* Lua4RSPlugin::qt_icon() const
     return _icon ;
 }
 
+/*
 #include "p3Lua4RS.h"
 
 RsPQIService* Lua4RSPlugin::rs_pqi_service() const
@@ -83,6 +84,7 @@ RsPQIService* Lua4RSPlugin::rs_pqi_service() const
 
     return _x;
 }
+*/
 
 void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 {
