@@ -29,6 +29,7 @@ public:
     ~LuaCore();
 
     static LuaCore* getInstance();
+    static void shutDown();
 
     // invoke lua
     void runLuaByString(const std::string& code);

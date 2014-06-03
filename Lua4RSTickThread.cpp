@@ -18,7 +18,7 @@ void Lua4RSTickThread::run()
         if(_lastRun + tickIntervalInSeconds <= time(0))
         {
             ///TODO tick something
-            std::cout << "[Lua] tick \o/" << std::endl;
+            std::cout << "[Lua] tick" << std::endl;
             _lastRun = time(0);
         }
 

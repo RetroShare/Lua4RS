@@ -60,6 +60,12 @@ LuaCore* LuaCore::getInstance()
     return _instance;
 }
 
+void LuaCore::shutDown()
+{
+    delete _instance;
+    _instance = NULL;
+}
+
 void LuaCore::setUi(Lua4RSMainWidget *ui)
 {
     _ui = ui;

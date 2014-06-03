@@ -33,6 +33,19 @@ Lua4RSPlugin::Lua4RSPlugin()
 {
     _icon = NULL;
     _mainpage = NULL;
+    _notify = NULL;
+    _peers = NULL;
+    _pluginHandler = NULL;
+}
+
+Lua4RSPlugin::~Lua4RSPlugin()
+{
+    LuaCore::shutDown();
+
+    _icon = NULL;
+    _mainpage = NULL;
+    _notify = NULL;
+    _peers = NULL;
     _pluginHandler = NULL;
 }
 
