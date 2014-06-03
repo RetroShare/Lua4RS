@@ -9,7 +9,7 @@
 
 #include "LuaCode.h"
 #include "../Lua4RSNotify.h"
-#include "../p3Lua4RS.h"
+#include "../Lua4RSTickThread.h"
 
 extern "C" {
 #include "lua.h"
@@ -41,7 +41,6 @@ public:
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
-    p3Lua4RS *service() const;
 
 private:
     void reportLuaErrors(lua_State *L, int status);
@@ -52,7 +51,7 @@ private:
     Lua4RSMainWidget* _ui;
     Lua4RSNotify* _notify;
 
-    p3Lua4RS* _service;
+    Lua4RSTickThread* _thread;
 
     RsPeers* _peers;
 

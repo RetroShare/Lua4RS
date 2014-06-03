@@ -13,6 +13,7 @@ LuaCore::LuaCore()
     _codeMap.clear();
     _notify = new Lua4RSNotify();
     _peers = NULL; // gets set later
+    _thread = new Lua4RSTickThread();
 
     L = luaL_newstate();
 
@@ -36,17 +37,25 @@ LuaCore::LuaCore()
     lua_register(L, "getPeerCount", rs_peers_getPeerCount);
     lua_register(L, "getPeerName", rs_peers_getPeerName);
     lua_register(L, "getPeerDetails", rs_peers_getPeerDetails);
+
+    // start tick thread (after everything els is setup)
+    _thread->start();
 }
 
 LuaCore::~LuaCore()
 {
+    // stop thread and wait for shutdown
+    _thread->join();
+    _thread->stop();
+
+    // close lua (after threads is stopped)
     lua_close(L);
 }
 
 LuaCore* LuaCore::getInstance()
 {
     if (_instance == NULL)
-        _instance = new LuaCore;
+        _instance = new LuaCore();
 
     return _instance;
 }
@@ -117,11 +126,6 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
 
         lua_pop(L, 1); // remove error message
     }
-}
-
-p3Lua4RS *LuaCore::service() const
-{
-    return _service;
 }
 
 Lua4RSNotify *LuaCore::notify() const
