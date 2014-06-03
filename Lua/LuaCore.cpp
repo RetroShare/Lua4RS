@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <iostream>
 
 #include "LuaCore.h"
 #include "../Lua4RSMainWidget.h"
@@ -82,10 +83,13 @@ Lua4RSMainWidget* LuaCore::getUI()
 // invoke lua
 void LuaCore::runLuaByString(const std::string& code)
 {
-    ///TODO better fix
-    assert(_ui);
+    if(_ui == NULL)
+    {
+        std::cerr << "[Lua] runLuaByString: ERROR: _ui is NULL -> aborting Lua execution" << std::endl;
+        return;
+    }
 
-    std::cout << "[LUA] executing lua code by string ...";
+    std::cout << "[LUA] executing lua ... ";
     int ret = luaL_dostring(L, code.c_str());
     std::cout << "done" << std::endl;
     reportLuaErrors(L, ret);
@@ -99,9 +103,6 @@ void LuaCore::runLuaByName(const std::string& name)
 
 void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap paramMap)
 {
-    ///TODO better fix
-    assert(_ui);
-
     std::string code = "";
 
     // set parameters
@@ -114,10 +115,7 @@ void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap param
         return;
     code += it->second.code();
 
-    std::cout << "[LUA] executing lua code by name ...";
-    int ret = luaL_dostring(L, code.c_str());
-    std::cout << "done" << std::endl;
-    reportLuaErrors(L, ret);
+    runLuaByString(code);
 }
 
 void LuaCore::reportLuaErrors(lua_State *L, int status)
