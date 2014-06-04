@@ -1,21 +1,21 @@
-!include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
+!include("../Common/retroshare_plugin.pri")::error( "Could not include file ../Common/retroshare_plugin.pri" )
 
-CONFIG += qt uic qrc resources
+CONFIG += qt resources uic qrc
 
-LIBS += -llua
+LIBS += -llua5.2
 
-HEADERS += \
+HEADERS +=  \
     Lua4RSPlugin.h \
-    Lua4RSMainWidget.h \
+    Lua4RSWidget.h \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
     Lua4RSNotify.h \
     Lua4RSTickThread.h
 
-SOURCES += \
+SOURCES +=  \
     Lua4RSPlugin.cpp \
-    Lua4RSMainWidget.cpp \
+    Lua4RSWidget.cpp \
     Lua/LuaCore.cpp \
     Lua/LuaToRS.cpp \
     Lua/LuaToRSPeers.cpp \
@@ -24,9 +24,11 @@ SOURCES += \
     Lua4RSTickThread.cpp
 
 FORMS += \
-    Lua4RSMainWidget.ui
+    Lua4RSWidget.ui
 
 TARGET = Lua4RS
 
-RESOURCES += \
+RESOURCES +=  \
     Lua4RS_images.qrc
+
+XUP.QT_VERSION = Qt System (4.8.1)

@@ -12,15 +12,15 @@
 #include "../Lua4RSTickThread.h"
 
 extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include "lua5.2/lua.h"
+#include "lua5.2/lualib.h"
+#include "lua5.2/lauxlib.h"
 }
 
 typedef std::map<std::string, std::string>  parameterMap;
 typedef std::map<std::string, LuaCode>      codeMap;
 
-class Lua4RSMainWidget;
+class Lua4RSWidget;
 
 class LuaCore
 {
@@ -37,8 +37,8 @@ public:
     void runLuaByNameWithParams(const std::string& name, parameterMap paramMap);
 
     // getter & setter
-    Lua4RSMainWidget* getUI();
-    void setUi(Lua4RSMainWidget* ui);
+    Lua4RSWidget* getUI();
+    void setUi(Lua4RSWidget* ui);
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
@@ -47,6 +47,10 @@ private:
     void reportLuaErrors(lua_State *L, int status);
 
     static LuaCore* _instance;
+<<<<<<< HEAD
+=======
+    Lua4RSWidget* _ui;
+>>>>>>> FETCH_HEAD
     lua_State* L;
 
     Lua4RSMainWidget* _ui;

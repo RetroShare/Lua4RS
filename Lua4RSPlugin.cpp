@@ -2,7 +2,7 @@
 #include <util/rsversion.h>
 
 #include "Lua4RSPlugin.h"
-#include "Lua4RSMainWidget.h"
+#include "Lua4RSWidget.h"
 #include "Lua/LuaCore.h"
 
 #define LUA_ICON_LINK ":/images/lua_logo.png"
@@ -70,10 +70,11 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
 MainPage* Lua4RSPlugin::qt_page() const
 {
-    if(_mainpage == NULL)
-        _mainpage = new Lua4RSMainWidget();
-
-    return _mainpage ;
+   if(_mainpage == NULL)
+   {
+     _mainpage = new Lua4RSWidget();
+   }
+   return _mainpage ;
 }
 
 QIcon* Lua4RSPlugin::qt_icon() const
