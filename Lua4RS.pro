@@ -19,7 +19,7 @@ SOURCES +=  \
     Lua/LuaToRSPeers.cpp \
     Lua/LuaCode.cpp
 
-FORMS +=  \
+FORMS += \
     Lua4RSWidget.ui
 
 TARGET = Lua4RS

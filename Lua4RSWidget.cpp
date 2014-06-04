@@ -3,9 +3,9 @@
 
 #include "Lua/LuaCore.h"
 
-Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
-  MainPage(parent),
-  ui(new Ui::Lua4RSWidget)
+Lua4RSWidget::Lua4RSWidget(QWidget *parent) : 
+    MainPage(parent), 
+    ui(new Ui::Lua4RSWidget)
 {
     ui->setupUi(this);
 
@@ -44,3 +44,10 @@ void Lua4RSWidget::appendOutput(const QString& s)
 }
 
 */
+
+
+void Lua4RSWidget::on_pb_run_clicked()
+{
+    std::string luaCode = ui->pte_luacode->toPlainText().toStdString();
+    _lua->runLua(luaCode);
+}
