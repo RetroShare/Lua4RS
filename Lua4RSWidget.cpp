@@ -21,16 +21,16 @@ Lua4RSWidget::~Lua4RSWidget()
 }
 
 /*
-
 void Lua4RSWidget::runLua()
 {
     std::string luaCode = ui->pte_code->toPlainText().toStdString();
     _lua->runLua(luaCode);
 }
+*/
 
 void Lua4RSWidget::clearOutput()
 {
-    ui->pte_output->clear();
+    ui->tb_output->clear();
 }
 
 void Lua4RSWidget::appendOutput(const std::string& s)
@@ -40,14 +40,23 @@ void Lua4RSWidget::appendOutput(const std::string& s)
 
 void Lua4RSWidget::appendOutput(const QString& s)
 {
-    ui->pte_output->appendPlainText(s);
+    ui->tb_output->append(s);
 }
 
-*/
+void Lua4RSWidget::appendLog(const std::string& s)
+{
+    appendLog(QString::fromStdString(s));
+}
 
+void Lua4RSWidget::appendLog(const QString& s)
+{
+    ui->tb_log->append(s);
+}
 
 void Lua4RSWidget::on_pb_run_clicked()
 {
+    appendLog(QString("running Lua script: ") + ui->le_scriptname->text());
+
     std::string luaCode = ui->pte_luacode->toPlainText().toStdString();
     _lua->runLuaByString(luaCode);
 }

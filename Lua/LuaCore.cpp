@@ -91,9 +91,9 @@ void LuaCore::runLuaByString(const std::string& code)
         return;
     }
 
-    std::cout << "[LUA] executing lua ... ";
+    // std::cout << "[LUA] executing lua ... ";
     int ret = luaL_dostring(L, code.c_str());
-    std::cout << "done" << std::endl;
+    // std::cout << "done" << std::endl;
     reportLuaErrors(L, ret);
 }
 
@@ -128,7 +128,7 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
         std::cerr << "-- " << s << std::endl;
 
         s = "Lua error: " + s;
-//        _ui->appendOutput(s);
+        _ui->appendLog(s);
 
         lua_pop(L, 1); // remove error message
     }

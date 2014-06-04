@@ -19,9 +19,12 @@ class Lua4RSWidget : public MainPage
     explicit Lua4RSWidget(QWidget *parent = 0);
     ~Lua4RSWidget();
 
-// void clearOutput();
-// void appendOutput(const std::string &s);
-// void appendOutput(const QString &s);
+    void clearOutput();
+    void appendOutput(const std::string &s);
+    void appendOutput(const QString &s);
+
+    void appendLog(const std::string &s);
+    void appendLog(const QString &s);
 
   private:
     Ui::Lua4RSWidget *ui;
