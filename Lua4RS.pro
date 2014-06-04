@@ -2,7 +2,7 @@
 
 CONFIG += qt resources uic qrc
 
-LIBS += -llua5.2
+LIBS += -llua
 
 HEADERS +=  \
     Lua4RSPlugin.h \

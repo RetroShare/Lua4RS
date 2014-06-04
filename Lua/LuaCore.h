@@ -12,9 +12,9 @@
 #include "../Lua4RSTickThread.h"
 
 extern "C" {
-#include "lua5.2/lua.h"
-#include "lua5.2/lualib.h"
-#include "lua5.2/lauxlib.h"
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 }
 
 typedef std::map<std::string, std::string>  parameterMap;
@@ -47,13 +47,10 @@ private:
     void reportLuaErrors(lua_State *L, int status);
 
     static LuaCore* _instance;
-<<<<<<< HEAD
-=======
-    Lua4RSWidget* _ui;
->>>>>>> FETCH_HEAD
+
     lua_State* L;
 
-    Lua4RSMainWidget* _ui;
+    Lua4RSWidget* _ui;
     Lua4RSNotify* _notify;
 
     Lua4RSTickThread* _thread;

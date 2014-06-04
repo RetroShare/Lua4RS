@@ -49,5 +49,5 @@ void Lua4RSWidget::appendOutput(const QString& s)
 void Lua4RSWidget::on_pb_run_clicked()
 {
     std::string luaCode = ui->pte_luacode->toPlainText().toStdString();
-    _lua->runLua(luaCode);
+    _lua->runLuaByString(luaCode);
 }
