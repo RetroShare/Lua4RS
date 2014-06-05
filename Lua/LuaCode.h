@@ -3,6 +3,12 @@
 
 #include <string>
 
+///TODO better fix of this include mess ..
+class LuaCode;
+typedef std::map<std::string, LuaCode>      codeMap;
+
+#include "LuaCore.h"
+
 class LuaCode
 {
 public:
@@ -10,8 +16,13 @@ public:
     LuaCode(std::string name, std::string desc);
     LuaCode(std::string name, std::string desc, std::string code);
 
-    bool load();
+    static bool load(const std::string name, LuaCode& code);
+    static bool loadAll(codeMap& map);
+    static bool save(LuaCode& code);
+    static bool saveAll(codeMap& map);
     bool save();
+
+    static void setOwnID(const std::string& id);
 
     // getter/setter
     std::string code() const;
@@ -24,6 +35,9 @@ public:
     void setName(const std::string &name);
 
 private:
+    static const std::string _folderName;
+    static const std::string _extension;
+    static std::string _path;
     std::string _code;
     std::string _desc;
     std::string _name;

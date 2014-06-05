@@ -18,7 +18,6 @@ extern "C" {
 }
 
 typedef std::map<std::string, std::string>  parameterMap;
-typedef std::map<std::string, LuaCode>      codeMap;
 
 class Lua4RSWidget;
 
