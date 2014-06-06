@@ -38,7 +38,7 @@ void Lua4RSWidget::appendOutput(const std::string& s)
 
 void Lua4RSWidget::appendOutput(const QString& s)
 {
-    ui->tb_output->append(s);
+    ui->tb_output->appendPlainText(s);
 }
 
 void Lua4RSWidget::appendLog(const std::string& s)
@@ -48,7 +48,7 @@ void Lua4RSWidget::appendLog(const std::string& s)
 
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    ui->tb_log->append(s);
+    ui->tb_log->appendPlainText(s);
 }
 
 
