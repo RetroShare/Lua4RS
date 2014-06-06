@@ -31,7 +31,18 @@ class Lua4RSWidget : public MainPage
     LuaCore* _lua;
 
   private slots:
-    void on_pb_run_clicked(); // void runLua();
+    void on_pb_run_clicked();
+    void on_pb_newscript_clicked();
+    void on_pb_editscript_clicked();
+    void on_pb_deletescript_clicked();
+    void on_pb_load_clicked();
+    void on_pb_save_clicked();
+    void on_pb_undock_clicked();
+    void on_pb_pastehint_clicked();
+    void on_cbx_enable_toggled(bool checked);
+    void on_cbx_timeconstraint_toggled(bool checked);
+    void on_tied_timefrom_editingFinished();
+    void on_tied_timeto_editingFinished();
 };
 
 #endif // LUA4RSMAINWIDGET_H

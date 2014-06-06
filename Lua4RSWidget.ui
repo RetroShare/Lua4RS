@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QListView" name="lv_allscripts">
+  <widget class="QListWidget" name="lw_allscripts">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -38,7 +38,7 @@
     <number>0</number>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarAlwaysOn</enum>
+    <enum>Qt::ScrollBarAsNeeded</enum>
    </property>
    <property name="editTriggers">
     <set>QAbstractItemView::DoubleClicked</set>
@@ -216,7 +216,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabpage_output">
      <attribute name="title">
@@ -230,6 +230,9 @@
         <width>767</width>
         <height>161</height>
        </rect>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
      </widget>
     </widget>
@@ -251,7 +254,7 @@
       </property>
       <property name="font">
        <font>
-        <family>DejaVu Sans Mono</family>
+        <family>DejaVu Sans</family>
        </font>
       </property>
       <property name="layoutDirection">
@@ -329,7 +332,7 @@
       </property>
       <property name="font">
        <font>
-        <family>DejaVu Sans Mono</family>
+        <family>DejaVu Sans</family>
        </font>
       </property>
       <property name="alignment">
@@ -337,10 +340,16 @@
       </property>
       <property name="date">
        <date>
-        <year>2000</year>
-        <month>10</month>
-        <day>30</day>
+        <year>2006</year>
+        <month>9</month>
+        <day>26</day>
        </date>
+      </property>
+      <property name="displayFormat">
+       <string>d MMM yyyy, HH:mm:ss t</string>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
       </property>
      </widget>
      <widget class="QRadioButton" name="rb_every">
@@ -520,7 +529,7 @@
     </property>
     <property name="font">
      <font>
-      <family>DejaVu Sans Mono</family>
+      <family>DejaVu Sans</family>
      </font>
     </property>
     <property name="toolTip">
@@ -579,7 +588,7 @@
     </property>
     <property name="font">
      <font>
-      <family>DejaVu Sans Mono</family>
+      <family>DejaVu Sans</family>
      </font>
     </property>
     <property name="toolTip">
@@ -612,7 +621,7 @@
      <enum>QFrame::StyledPanel</enum>
     </property>
     <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOn</enum>
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="editTriggers">
      <set>QAbstractItemView::NoEditTriggers</set>
@@ -701,9 +710,9 @@
    <widget class="QPushButton" name="pb_undock">
     <property name="geometry">
      <rect>
-      <x>457</x>
+      <x>477</x>
       <y>252</y>
-      <width>95</width>
+      <width>75</width>
       <height>23</height>
      </rect>
     </property>
@@ -711,7 +720,7 @@
      <string>Undock the editor to a separate resizable window</string>
     </property>
     <property name="text">
-     <string>Undock Editor</string>
+     <string>Undock</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_load">
@@ -846,7 +855,7 @@
      </font>
     </property>
     <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOn</enum>
+     <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
     <property name="plainText">
      <string>for i=1,5,1 do
@@ -854,20 +863,20 @@
 end;</string>
     </property>
     <property name="tabStopWidth">
-     <number>3</number>
+     <number>20</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="pb_paste_hint">
+   <widget class="QPushButton" name="pb_pastehint">
     <property name="geometry">
      <rect>
       <x>559</x>
       <y>252</y>
-      <width>95</width>
+      <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Paste into Lua</string>
+     <string>Paste</string>
     </property>
    </widget>
   </widget>
@@ -937,7 +946,7 @@ end;</string>
    </widget>
   </widget>
   <zorder>gb_scriptdetailsarea</zorder>
-  <zorder>lv_allscripts</zorder>
+  <zorder>lw_allscripts</zorder>
   <zorder>pb_newscript</zorder>
   <zorder>pb_editscript</zorder>
   <zorder>pb_deletescript</zorder>
