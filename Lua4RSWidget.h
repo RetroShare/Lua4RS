@@ -27,7 +27,7 @@ class Lua4RSWidget : public MainPage
     void appendLog(const QString &s);
 
   private:
-    void setLuaCodes(const codeMap &map);
+    void setLuaCodes(LuaList* list);
 
     Ui::Lua4RSWidget *ui;
     LuaCore* _lua;

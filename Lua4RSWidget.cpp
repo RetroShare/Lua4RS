@@ -10,7 +10,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4R
     _lua = LuaCore::getInstance();
     _lua->setUi(this);
 
-    setLuaCodes(_lua->codeMap());
+    setLuaCodes(_lua->codeList());
 
 //    connect(ui->pb_run, SIGNAL(clicked()), this, SLOT(runLua()));
 }
@@ -20,11 +20,25 @@ Lua4RSWidget::~Lua4RSWidget()
     delete ui;
 }
 
-
-void Lua4RSWidget::setLuaCodes(const ::codeMap& map)
+#include <assert.h>
+void Lua4RSWidget::setLuaCodes(LuaList* list)
 {
-    for(::codeMap::const_iterator it = map.begin(); it != map.end(); ++it)
-        ui->lw_allscripts->addItem(QString::fromStdString(it->first));
+    list->dump();
+
+    LuaContainer* lc = NULL;
+    for(size_t i = 0; i < list->size(); i++)
+    {
+        if(list->itemAt(i, lc))
+        {
+            if(lc == NULL)
+                std::cout << "[Lua] NULL!! i=" << i << std::endl;
+            else
+                std::cout << "[Lua] nicht NULL " << lc->getLuaCode()->name() << std::endl;
+            ui->lw_allscripts->addItem(QString::fromStdString(lc->getLuaCode()->name()));
+        }
+        else
+            break;
+    }
 }
 
 

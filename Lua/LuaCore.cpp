@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <iostream>
 
+#include <retroshare/rsinit.h>
+
 #include "LuaCore.h"
 #include "../Lua4RSWidget.h"
 
@@ -9,9 +11,10 @@
 
 LuaCore* LuaCore::_instance;
 
-LuaCore::LuaCore()
+LuaCore::LuaCore() :
+    _folderName("Lua4RS")
 {
-    _codeMap.clear();
+    _luaList = new LuaList();
     _notify = new Lua4RSNotify();
     _peers = NULL; // gets set later
     _thread = new Lua4RSTickThread();
@@ -51,16 +54,30 @@ LuaCore::~LuaCore()
 {
     // stop thread and wait for shutdown
     _thread->join();
-    //_thread->stop();
 
     // save lua scripts
-    if(LuaCode::saveAll(_codeMap))
-        std::cout << "[Lua] saved " << _codeMap.size() << " Lua script(s)" << std::endl;
+    if(_luaList->saveAll(_path))
+        std::cout << "[Lua] saved " << _luaList->size() << " Lua script(s)" << std::endl;
     else
         std::cout << "[Lua] error occured while saving Lua scripts" << std::endl;
 
     // close lua (after threads is stopped)
     lua_close(L);
+
+    delete _notify;
+    delete _luaList;
+}
+
+void LuaCore::setPeers(RsPeers* peers)
+{
+    _peers = peers;
+    _path = RsInit::RsConfigDirectory() + "/" + _peers->getOwnId() + "/" + _folderName + "/";
+
+    // load codes
+    if(_luaList->loadAll(_path))
+        std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
+    else
+        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
 }
 
 LuaCore* LuaCore::getInstance()
@@ -107,10 +124,13 @@ void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap param
         code += it->first + " = " + it->second + '\n';
 
     // get code
-    codeMap::iterator it = _codeMap.find(name);
-    if(it == _codeMap.end())
+    LuaContainer* lc = NULL;
+    if(!_luaList->itemByName(name, lc))
+    {
+        std::cerr << "[Lua] can't find script " << name << std::endl;
         return;
-    code += it->second.code();
+    }
+    code += lc->getLuaCode()->code();
 
     runLuaByString(code);
 }
@@ -135,26 +155,14 @@ Lua4RSNotify* LuaCore::notify() const
     return _notify;
 }
 
-::codeMap LuaCore::codeMap() const
+LuaList* LuaCore::codeList() const
 {
-    return _codeMap;
+    return _luaList;
 }
 
 RsPeers* LuaCore::peers() const
 {
     return _peers;
-}
-
-void LuaCore::setPeers(RsPeers* peers)
-{
-    _peers = peers;
-    LuaCode::setOwnID(_peers->getOwnId());
-
-    // load codes
-    if(LuaCode::loadAll(_codeMap))
-        std::cout << "[Lua] loaded " << _codeMap.size() << " Lua script(s)" << std::endl;
-    else
-        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
 }
 
 void LuaCore::setUi(Lua4RSWidget *ui)

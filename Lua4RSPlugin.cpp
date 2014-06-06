@@ -42,11 +42,18 @@ void Lua4RSPlugin::stop()
 {
     LuaCore::shutDown();
 
+    // this code causes Segmentation fault on shutdown ....
+    /*
+    delete _icon;
     _icon = NULL;
+    delete _mainpage;
     _mainpage = NULL;
+
+    // from RS
     _notify = NULL;
     _peers = NULL;
     _pluginHandler = NULL;
+    */
 }
 
 void Lua4RSPlugin::getPluginVersion(int& major, int& minor, int& svn_rev) const

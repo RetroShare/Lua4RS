@@ -1,6 +1,6 @@
 !include("../Common/retroshare_plugin.pri")::error( "Could not include file ../Common/retroshare_plugin.pri" )
 
-CONFIG += qt resources uic qrc
+CONFIG += qt resources uic qrc debug
 
 LIBS += -llua
 
@@ -11,7 +11,9 @@ HEADERS +=  \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
     Lua4RSNotify.h \
-    Lua4RSTickThread.h
+    Lua4RSTickThread.h \
+    Lua/LuaContainer.h \
+    Lua/LuaList.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
@@ -21,7 +23,9 @@ SOURCES +=  \
     Lua/LuaToRSPeers.cpp \
     Lua/LuaCode.cpp \
     Lua4RSNotify.cpp \
-    Lua4RSTickThread.cpp
+    Lua4RSTickThread.cpp \
+    Lua/LuaContainer.cpp \
+    Lua/LuaList.cpp
 
 FORMS += \
     Lua4RSWidget.ui

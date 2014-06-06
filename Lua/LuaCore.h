@@ -8,6 +8,7 @@
 #include <retroshare/rsplugin.h>
 
 #include "LuaCode.h"
+#include "LuaList.h"
 #include "../Lua4RSNotify.h"
 #include "../Lua4RSTickThread.h"
 
@@ -41,23 +42,24 @@ public:
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
-    ::codeMap codeMap() const;
+    LuaList* codeList() const;
 
 private:
     void reportLuaErrors(lua_State *L, int status);
 
     static LuaCore* _instance;
 
+    const std::string _folderName;
+    std::string _path;
+
     lua_State* L;
 
     Lua4RSWidget* _ui;
     Lua4RSNotify* _notify;
-
     Lua4RSTickThread* _thread;
+    LuaList* _luaList;
 
     RsPeers* _peers;
-
-    ::codeMap _codeMap;
 };
 
 #endif // LUACORE_H
