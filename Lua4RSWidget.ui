@@ -130,7 +130,7 @@
     <rect>
      <x>10</x>
      <y>55</y>
-     <width>81</width>
+     <width>101</width>
      <height>20</height>
     </rect>
    </property>
@@ -547,15 +547,15 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
     <property name="time">
      <time>
       <hour>8</hour>
       <minute>0</minute>
       <second>0</second>
      </time>
-    </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="l_and">
@@ -868,7 +868,7 @@
     </property>
     <property name="plainText">
      <string>for i=1,5,1 do
-  print(&quot;Hello RetroShare!&quot;)
+  rs_print(&quot;Hello RetroShare!&quot;)
 end;</string>
     </property>
     <property name="tabStopWidth">
@@ -889,7 +889,7 @@ end;</string>
     </property>
    </widget>
   </widget>
-  <widget class="QFrame" name="frame">
+  <widget class="QFrame" name="titleBarFrame">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -898,61 +898,95 @@ end;</string>
      <height>38</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Box</enum>
    </property>
    <property name="frameShadow">
     <enum>QFrame::Sunken</enum>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>33</x>
-      <y>3</y>
-      <width>56</width>
-      <height>32</height>
-     </rect>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="leftMargin">
+     <number>2</number>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>10</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
+    <property name="topMargin">
+     <number>2</number>
     </property>
-    <property name="text">
-     <string>Lua4RS</string>
+    <property name="rightMargin">
+     <number>2</number>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    <property name="bottomMargin">
+     <number>2</number>
     </property>
-   </widget>
-   <widget class="QToolButton" name="toolButton">
-    <property name="geometry">
-     <rect>
-      <x>758</x>
-      <y>3</y>
-      <width>30</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IMG</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>3</x>
-      <y>7</y>
-      <width>24</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IMG</string>
-    </property>
-   </widget>
+    <item>
+     <widget class="QLabel" name="titleBarPixmap">
+      <property name="maximumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap resource="Lua4RS_images.qrc">:/images/lua_logo.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="titleBarLabel">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Lua4RS</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>123</width>
+        <height>13</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QToolButton" name="helpButton">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="icon">
+       <iconset resource="../../retroshare-gui/src/gui/images.qrc">
+        <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <zorder>gb_scriptdetailsarea</zorder>
   <zorder>lw_allscripts</zorder>
@@ -960,8 +994,11 @@ end;</string>
   <zorder>pb_editscript</zorder>
   <zorder>pb_deletescript</zorder>
   <zorder>l_allmyscripts</zorder>
-  <zorder>frame</zorder>
+  <zorder>titleBarFrame</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="Lua4RS_images.qrc"/>
+  <include location="../../retroshare-gui/src/gui/images.qrc"/>
+ </resources>
  <connections/>
 </ui>
