@@ -16,6 +16,8 @@ LuaCore::LuaCore()
     _peers = NULL; // gets set later
     _thread = new Lua4RSTickThread();
 
+    // lua files get loaded when _peer is set
+
     L = luaL_newstate();
 
     /*
@@ -41,7 +43,7 @@ LuaCore::LuaCore()
     lua_register(L, "getPeerDetails", rs_peers_getPeerDetails);
 */
 
-    // start tick thread (after everything els is setup)
+    // start tick thread (after everything else is setup)
     _thread->start();
 }
 
@@ -49,7 +51,13 @@ LuaCore::~LuaCore()
 {
     // stop thread and wait for shutdown
     _thread->join();
-    _thread->stop();
+    //_thread->stop();
+
+    // save lua scripts
+    if(LuaCode::saveAll(_codeMap))
+        std::cout << "[Lua] saved " << _codeMap.size() << " Lua script(s)" << std::endl;
+    else
+        std::cout << "[Lua] error occured while saving Lua scripts" << std::endl;
 
     // close lua (after threads is stopped)
     lua_close(L);
@@ -67,19 +75,6 @@ void LuaCore::shutDown()
 {
     delete _instance;
     _instance = NULL;
-}
-
-void LuaCore::setUi(Lua4RSWidget *ui)
-{
-    _ui = ui;
-}
-
-Lua4RSWidget* LuaCore::getUI()
-{
-    ///TODO better fix
-    assert(_ui);
-
-    return _ui;
 }
 
 // invoke lua
@@ -134,18 +129,43 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
     }
 }
 
-Lua4RSNotify *LuaCore::notify() const
+// getter & setter
+Lua4RSNotify* LuaCore::notify() const
 {
     return _notify;
 }
 
-RsPeers *LuaCore::peers() const
+::codeMap LuaCore::codeMap() const
+{
+    return _codeMap;
+}
+
+RsPeers* LuaCore::peers() const
 {
     return _peers;
 }
 
-void LuaCore::setPeers(RsPeers *peers)
+void LuaCore::setPeers(RsPeers* peers)
 {
     _peers = peers;
+    LuaCode::setOwnID(_peers->getOwnId());
+
+    // load codes
+    if(LuaCode::loadAll(_codeMap))
+        std::cout << "[Lua] loaded " << _codeMap.size() << " Lua script(s)" << std::endl;
+    else
+        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
 }
 
+void LuaCore::setUi(Lua4RSWidget *ui)
+{
+    _ui = ui;
+}
+
+Lua4RSWidget* LuaCore::getUI()
+{
+    ///TODO better fix
+    assert(_ui);
+
+    return _ui;
+}

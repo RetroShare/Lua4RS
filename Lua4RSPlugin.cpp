@@ -38,7 +38,7 @@ Lua4RSPlugin::Lua4RSPlugin()
     _pluginHandler = NULL;
 }
 
-Lua4RSPlugin::~Lua4RSPlugin()
+void Lua4RSPlugin::stop()
 {
     LuaCore::shutDown();
 

@@ -10,12 +10,12 @@ class Lua4RSPlugin : public RsPlugin
 {
 public:
     Lua4RSPlugin();
-    ~Lua4RSPlugin();
 
     virtual MainPage*   qt_page() const;
     virtual QIcon       *qt_icon() const;
     virtual void        getPluginVersion(int& major,int& minor,int& svn_rev) const;
     virtual void        setPlugInHandler(RsPluginHandler *pgHandler);
+    virtual void        stop();
 
     virtual std::string configurationFileName() const { return std::string() ; }
 

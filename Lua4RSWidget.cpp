@@ -1,7 +1,7 @@
 #include "Lua4RSWidget.h"
 #include "ui_Lua4RSWidget.h"
 
-#include "Lua/LuaCore.h"
+#include <QWidget>
 
 Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4RSWidget)
 {
@@ -9,6 +9,8 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4R
 
     _lua = LuaCore::getInstance();
     _lua->setUi(this);
+
+    setLuaCodes(_lua->codeMap());
 
 //    connect(ui->pb_run, SIGNAL(clicked()), this, SLOT(runLua()));
 }
@@ -18,13 +20,13 @@ Lua4RSWidget::~Lua4RSWidget()
     delete ui;
 }
 
-/*
-void Lua4RSWidget::runLua()
+
+void Lua4RSWidget::setLuaCodes(const ::codeMap& map)
 {
-    std::string luaCode = ui->pte_code->toPlainText().toStdString();
-    _lua->runLua(luaCode);
+    for(::codeMap::const_iterator it = map.begin(); it != map.end(); ++it)
+        ui->lw_allscripts->addItem(QString::fromStdString(it->first));
 }
-*/
+
 
 void Lua4RSWidget::clearOutput()
 {

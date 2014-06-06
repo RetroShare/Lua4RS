@@ -41,6 +41,7 @@ public:
     RsPeers *peers() const;
     void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
+    ::codeMap codeMap() const;
 
 private:
     void reportLuaErrors(lua_State *L, int status);
@@ -56,7 +57,7 @@ private:
 
     RsPeers* _peers;
 
-    codeMap _codeMap;
+    ::codeMap _codeMap;
 };
 
 #endif // LUACORE_H

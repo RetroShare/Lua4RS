@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include <QDir>
+#include <QDirIterator>
 #include <QFileInfo>
 
 #include <retroshare/rsinit.h>
@@ -50,7 +51,7 @@ void LuaCode::setOwnID(const std::string& id)
 bool LuaCode::load(const std::string name, LuaCode &code)
 {
     ///TODO better fix
-    assert(_path == "");
+    assert(_path != "");
 
     std::string fileName = _path + name;
 
@@ -70,9 +71,7 @@ bool LuaCode::load(const std::string name, LuaCode &code)
 
     std::string line, c;
 
-    // first line = name
-    std::getline(file, line);
-    code.setName(line);
+    code.setName(name);
 
     ///TODO description
     code.setDesc("todo");
@@ -93,20 +92,34 @@ bool LuaCode::load(const std::string name, LuaCode &code)
 
 bool LuaCode::loadAll(codeMap &map)
 {
+    std::cout << "[Lua] loading all script files from " << _path << std::endl;
+
     // get everything with ".lua"
+    /*
     QStringList nameFilter(QString::fromStdString("*" + _extension));
     QDir directory(QString::fromStdString(_path));
     QStringList files = directory.entryList(nameFilter);
 
     // drop folders
     for( QStringList::iterator it = files.begin(); it != files.end(); ++it)
-        if( QFileInfo(*it).isFile())
+        if( QFileInfo(*it).isDir())
             files.removeOne(*it);
+    */
+
+    QStringList files;
+    QDirIterator dirIt(QString::fromStdString(_path));
+    while (dirIt.hasNext()) {
+        dirIt.next();
+        if (QFileInfo(dirIt.filePath()).isFile())
+            if (QFileInfo(dirIt.filePath()).suffix() == "lua")
+                files.append(dirIt.fileName());
+    }
 
     // load lua files
     for( QStringList::iterator it = files.begin(); it != files.end(); ++it)
     {
         LuaCode c;
+        std::cout << "[Lua] loading file " << it->toStdString() << " ..." << std::endl;
         if(load(it->toStdString(), c))
             map.insert(std::make_pair(c.name(), c));
         else
@@ -121,9 +134,17 @@ bool LuaCode::loadAll(codeMap &map)
 bool LuaCode::save(LuaCode &code)
 {
     ///TODO better fix
-    assert(_path == "");
+    assert(_path != "");
 
     std::string fileName = _path + code.name();
+
+    // check for .lua ending
+    {
+        QFile f(QString::fromStdString(fileName));
+        QFileInfo fi(f);
+        if(fi.suffix() != "lua")
+            fileName += ".lua";
+    }
 
     std::ofstream file;
     file.open(fileName.c_str(), std::ios::trunc);
@@ -132,9 +153,6 @@ bool LuaCode::save(LuaCode &code)
         std::cerr << "[Lua] can't open file " << fileName << std::endl;
         return false;
     }
-
-    // fist line = name
-    file << code.name() << std::endl;
 
     ///TODO dstription
 
@@ -149,11 +167,12 @@ bool LuaCode::save(LuaCode &code)
 
 bool LuaCode::saveAll(codeMap &map)
 {
+    std::cout << "[Lua] saving all script files" << std::endl;
     bool r = true;
     for(codeMap::iterator it = map.begin(); it != map.end(); ++it)
         if(!save(it->second))
         {
-            std::cerr << "[Lua] failed to save lua code " << it->first << std::endl;
+            std::cerr << "[Lua] failed to save lua script " << it->first << std::endl;
             r = false;
         }
 

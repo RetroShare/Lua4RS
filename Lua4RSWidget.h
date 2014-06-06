@@ -3,7 +3,7 @@
 
 #include <retroshare-gui/mainpage.h>
 
-#include <QWidget>
+#include "Lua/LuaCore.h"
 
 namespace Ui {
 class Lua4RSWidget;
@@ -27,6 +27,8 @@ class Lua4RSWidget : public MainPage
     void appendLog(const QString &s);
 
   private:
+    void setLuaCodes(const codeMap &map);
+
     Ui::Lua4RSWidget *ui;
     LuaCore* _lua;
 
