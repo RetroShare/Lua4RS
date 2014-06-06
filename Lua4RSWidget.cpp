@@ -3,9 +3,7 @@
 
 #include "Lua/LuaCore.h"
 
-Lua4RSWidget::Lua4RSWidget(QWidget *parent) : 
-    MainPage(parent), 
-    ui(new Ui::Lua4RSWidget)
+Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4RSWidget)
 {
     ui->setupUi(this);
 

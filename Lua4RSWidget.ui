@@ -63,7 +63,7 @@
    <property name="geometry">
     <rect>
      <x>8</x>
-     <y>187</y>
+     <y>188</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -84,8 +84,8 @@
   <widget class="QPushButton" name="pb_editscript">
    <property name="geometry">
     <rect>
-     <x>83</x>
-     <y>187</y>
+     <x>84</x>
+     <y>188</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -107,7 +107,7 @@
    <property name="geometry">
     <rect>
      <x>726</x>
-     <y>187</y>
+     <y>188</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -131,7 +131,7 @@
      <x>10</x>
      <y>55</y>
      <width>81</width>
-     <height>16</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -225,10 +225,10 @@
      <widget class="QTextBrowser" name="tb_output">
       <property name="geometry">
        <rect>
-        <x>5</x>
-        <y>5</y>
-        <width>757</width>
-        <height>151</height>
+        <x>0</x>
+        <y>0</y>
+        <width>767</width>
+        <height>161</height>
        </rect>
       </property>
      </widget>
@@ -472,10 +472,10 @@
      <widget class="QTextBrowser" name="tb_log">
       <property name="geometry">
        <rect>
-        <x>5</x>
-        <y>5</y>
-        <width>757</width>
-        <height>151</height>
+        <x>0</x>
+        <y>0</y>
+        <width>767</width>
+        <height>161</height>
        </rect>
       </property>
      </widget>
@@ -513,7 +513,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>491</y>
+      <y>490</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -572,7 +572,7 @@
     <property name="geometry">
      <rect>
       <x>377</x>
-      <y>491</y>
+      <y>490</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -635,9 +635,9 @@
    <widget class="QLineEdit" name="le_scriptname">
     <property name="geometry">
      <rect>
-      <x>101</x>
+      <x>91</x>
       <y>10</y>
-      <width>451</width>
+      <width>461</width>
       <height>23</height>
      </rect>
     </property>
@@ -648,7 +648,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Bury-The-Dead.lua</string>
+     <string>hello.lua</string>
     </property>
     <property name="maxLength">
      <number>80</number>
@@ -702,7 +702,7 @@
     <property name="geometry">
      <rect>
       <x>457</x>
-      <y>251</y>
+      <y>252</y>
       <width>95</width>
       <height>23</height>
      </rect>
@@ -718,7 +718,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>251</y>
+      <y>252</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -733,8 +733,8 @@
    <widget class="QPushButton" name="pb_save">
     <property name="geometry">
      <rect>
-      <x>84</x>
-      <y>251</y>
+      <x>85</x>
+      <y>252</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -794,7 +794,7 @@
     <property name="geometry">
      <rect>
       <x>597</x>
-      <y>290</y>
+      <y>294</y>
       <width>181</width>
       <height>20</height>
      </rect>
@@ -808,7 +808,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Lua4RS 0.1, 2014 by sehraf &amp; far*call</string>
+     <string>Lua4RS, 2014 by sehraf &amp; far*call</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -817,8 +817,8 @@
    <widget class="QPushButton" name="pb_run">
     <property name="geometry">
      <rect>
-      <x>159</x>
-      <y>251</y>
+      <x>161</x>
+      <y>252</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -849,11 +849,8 @@
      <enum>Qt::ScrollBarAlwaysOn</enum>
     </property>
     <property name="plainText">
-     <string>-- ----------------------------------------------------
--- Lua4RS Script : &quot;Bury-The-Dead&quot;
--- ----------------------------------------------------
-if ( os.Date() - RS.Friend.LastSeen() &gt;= 14 ) then
-  RS.Friend.MoveToGroup(&quot;Graveyard&quot;);
+     <string>for i=1,5,1 do
+  print(&quot;Hello RetroShare!&quot;)
 end;</string>
     </property>
     <property name="tabStopWidth">
@@ -864,7 +861,7 @@ end;</string>
     <property name="geometry">
      <rect>
       <x>559</x>
-      <y>251</y>
+      <y>252</y>
       <width>95</width>
       <height>23</height>
      </rect>
