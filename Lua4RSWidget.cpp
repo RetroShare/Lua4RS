@@ -20,27 +20,17 @@ Lua4RSWidget::~Lua4RSWidget()
     delete ui;
 }
 
-#include <assert.h>
 void Lua4RSWidget::setLuaCodes(LuaList* list)
 {
-    list->dump();
-
     LuaContainer* lc = NULL;
     for(size_t i = 0; i < list->size(); i++)
     {
         if(list->itemAt(i, lc))
-        {
-            if(lc == NULL)
-                std::cout << "[Lua] NULL!! i=" << i << std::endl;
-            else
-                std::cout << "[Lua] nicht NULL " << lc->getLuaCode()->name() << std::endl;
             ui->lw_allscripts->addItem(QString::fromStdString(lc->getLuaCode()->name()));
-        }
         else
             break;
     }
 }
-
 
 void Lua4RSWidget::clearOutput()
 {
