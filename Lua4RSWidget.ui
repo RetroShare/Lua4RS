@@ -216,13 +216,16 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tabpage_output">
      <attribute name="title">
       <string>Output</string>
      </attribute>
-     <widget class="QTextBrowser" name="tb_output">
+     <widget class="QPlainTextEdit" name="tb_output">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -233,6 +236,9 @@
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -478,7 +484,7 @@
      <attribute name="title">
       <string>Log</string>
      </attribute>
-     <widget class="QTextBrowser" name="tb_log">
+     <widget class="QPlainTextEdit" name="tb_log">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -486,6 +492,9 @@
         <width>767</width>
         <height>161</height>
        </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
