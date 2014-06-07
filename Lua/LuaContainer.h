@@ -1,5 +1,5 @@
-#ifndef LUASCRIPTCONTAINER_H
-#define LUASCRIPTCONTAINER_H
+#ifndef LUACONTAINER_H
+#define LUACONTAINER_H
 
 #include <QHash>
 #include "LuaCode.h"
@@ -7,13 +7,13 @@
 
 //typedef  QHash<QString,QString> LuaConfig;
 
-class LuaScriptContainer
+class LuaContainer
 {
 public:
-    LuaScriptContainer();
-    LuaScriptContainer(LuaCode luacode);
-    LuaScriptContainer(LuaCode luacode, LuaConfig luaconfig);
-    ~LuaScriptContainer();
+    LuaContainer();
+    LuaContainer(LuaCode luacode);
+    LuaContainer(LuaCode luacode, LuaConfig luaconfig);
+    ~LuaContainer();
 
     LuaCode getLuaCode();
     LuaConfig getLuaConfig();
@@ -25,5 +25,5 @@ private:
     LuaConfig _luaconfig ;
 };
 
-#endif // LUASCRIPTCONTAINER_H
+#endif // LUACONTAINER_H
 
