@@ -4,6 +4,8 @@
 #include <retroshare-gui/mainpage.h>
 
 #include <QWidget>
+#include <QTableWidgetItem>
+
 
 namespace Ui {
 class Lua4RSWidget;
@@ -43,6 +45,7 @@ class Lua4RSWidget : public MainPage
     void on_cbx_timeconstraint_toggled(bool checked);
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
+    void on_lw_allscripts_itemChanged(QTableWidgetItem *item);
 };
 
 #endif // LUA4RSMAINWIDGET_H

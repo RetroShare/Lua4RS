@@ -11,7 +11,9 @@ HEADERS +=  \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
     Lua4RSNotify.h \
-    Lua4RSTickThread.h
+    Lua4RSTickThread.h \
+    Lua/LuaScriptContainer.h \
+    Lua/LuaConfig.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
@@ -21,7 +23,9 @@ SOURCES +=  \
     Lua/LuaToRSPeers.cpp \
     Lua/LuaCode.cpp \
     Lua4RSNotify.cpp \
-    Lua4RSTickThread.cpp
+    Lua4RSTickThread.cpp \
+    Lua/LuaScriptContainer.cc \
+    Lua/LuaConfig.cc
 
 FORMS += \
     Lua4RSWidget.ui

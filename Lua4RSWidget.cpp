@@ -10,7 +10,35 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4R
     _lua = LuaCore::getInstance();
     _lua->setUi(this);
 
-//    connect(ui->pb_run, SIGNAL(clicked()), this, SLOT(runLua()));
+
+    // Fill Hints TreeWidget with main items
+    ui->tw_hints->setColumnCount(2);
+
+    // Info
+    QTreeWidgetItem *item_1 = new QTreeWidgetItem(ui->tw_hints);
+    item_1->setText(0, tr("Info"));
+        QTreeWidgetItem *item_11 = new QTreeWidgetItem(item_1);
+        item_11->setText(0, tr("rs_log_lastentry()"));
+        item_11->setText(1, tr("rs_log_lastentry()"));
+
+    // Friends
+    QTreeWidgetItem *item_2 = new QTreeWidgetItem(ui->tw_hints);
+    item_2->setText(0, tr("Friends"));
+        QTreeWidgetItem *item_21 = new QTreeWidgetItem(item_2);
+        item_21->setText(0, tr("rs_friend_online()"));
+        item_21->setText(1, tr("rs_friend_online()"));
+        QTreeWidgetItem *item_22 = new QTreeWidgetItem(item_2);
+        item_22->setText(0, tr("rs_friend_offline()"));
+        item_22->setText(1, tr("rs_friend_offline()"));
+
+    // Files
+    QTreeWidgetItem *item_3 = new QTreeWidgetItem(ui->tw_hints);
+    item_3->setText(0, tr("Files"));
+        QTreeWidgetItem *item_31 = new QTreeWidgetItem(item_3);
+        item_31->setText(0, tr("rs_files_search()"));
+        item_31->setText(1, tr("rs_files_search()"));
+
+    //...
 }
 
 Lua4RSWidget::~Lua4RSWidget()
@@ -110,20 +138,12 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
     {
         ;
     }
-    else
-    {
-        ;
-    }
 }
 
 // "...between" toggled :
 void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 {
     if (checked)
-    {
-        ;
-    }
-    else
     {
         ;
     }
@@ -139,4 +159,13 @@ void Lua4RSWidget::on_tied_timefrom_editingFinished()
 void Lua4RSWidget::on_tied_timeto_editingFinished()
 {
 
+}
+
+// AllMyScripts : selected row changed (by click or cursor key)
+void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
+{
+    if (item)
+    {
+        return;
+    }
 }

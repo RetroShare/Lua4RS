@@ -2,6 +2,7 @@
 #define LUACODE_H
 
 #include <string>
+#include <map>
 
 ///TODO better fix of this include mess ..
 class LuaCode;
