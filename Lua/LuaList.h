@@ -28,6 +28,7 @@ public:
     bool removeItemAndDelete(LuaContainer* container);
 
     size_t size();
+    void sort();
 
     void setFilePath(const std::string& path);
 

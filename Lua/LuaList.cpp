@@ -87,6 +87,29 @@ size_t LuaList::size()
     return _luaList.size();
 }
 
+// comparison, not case sensitive.
+bool compare_nocase (const std::string& first, const std::string& second)
+{
+    unsigned int i=0;
+    while ( (i<first.length()) && (i<second.length()) )
+    {
+        if (tolower(first[i])<tolower(second[i])) return true;
+        else if (tolower(first[i])>tolower(second[i])) return false;
+        ++i;
+    }
+    return ( first.length() < second.length() );
+}
+
+bool LuaListCompare(LuaContainer* a, LuaContainer* b)
+{
+    return compare_nocase(a->getLuaCode()->name(), b->getLuaCode()->name());
+}
+
+void LuaList::sort()
+{
+    _luaList.sort(LuaListCompare);
+}
+
 bool LuaList::load(const std::string& name, LuaContainer* container)
 {
     if(_filePath == "")
