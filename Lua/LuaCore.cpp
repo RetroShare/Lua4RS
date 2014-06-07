@@ -56,7 +56,7 @@ LuaCore::~LuaCore()
     _thread->join();
 
     // save lua scripts
-    if(_luaList->saveAll(_path))
+    if(_luaList->saveAll())
         std::cout << "[Lua] saved " << _luaList->size() << " Lua script(s)" << std::endl;
     else
         std::cout << "[Lua] error occured while saving Lua scripts" << std::endl;
@@ -74,7 +74,8 @@ void LuaCore::setPeers(RsPeers* peers)
     _path = RsInit::RsConfigDirectory() + "/" + _peers->getOwnId() + "/" + _folderName + "/";
 
     // load codes
-    if(_luaList->loadAll(_path))
+    _luaList->setFilePath(_path);
+    if(_luaList->loadAll())
         std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
     else
         std::cout << "[Lua] didn't load any Lua scripts" << std::endl;

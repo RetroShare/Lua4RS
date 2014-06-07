@@ -2,9 +2,16 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <QDir>
+#include <QDirIterator>
+#include <QFile>
+#include <QFileInfo>
+#include <QString>
+
 #include "LuaList.h"
 
-LuaList::LuaList()
+LuaList::LuaList() :
+    _filePath("")
 {
     _luaList.clear();
 }
@@ -17,13 +24,22 @@ LuaList::~LuaList()
     _luaList.clear();
 }
 
+void LuaList::setFilePath(const std::string& path)
+{
+    _filePath = path;
+}
+
 bool LuaList::itemAt(size_t index, LuaContainer*& container)
 {
     // check if index is out of bound
     if(index >= _luaList.size())
         return false;
 
-    container = _luaList.at(index);
+    LuaContainerList::iterator it = _luaList.begin();
+    for(size_t i = 0; i < index; i++)
+        it++;
+
+    container = (*it);
     return true;
 }
 
@@ -44,9 +60,26 @@ bool LuaList::itemByName(const std::string& name, LuaContainer*& container)
     return false;
 }
 
-void LuaList::addItem(LuaContainer* lc)
+void LuaList::addItem(LuaContainer* container)
 {
-    _luaList.push_back(lc);
+    _luaList.push_back(container);
+}
+
+bool LuaList::addItemAndSave(LuaContainer* container)
+{
+    addItem(container);
+    return save(container);
+}
+
+void LuaList::removeItem(LuaContainer* container)
+{
+    _luaList.remove(container);
+}
+
+bool LuaList::removeItemAndDelete(LuaContainer* container)
+{
+    removeItem(container);
+    return remove(container);
 }
 
 size_t LuaList::size()
@@ -54,11 +87,13 @@ size_t LuaList::size()
     return _luaList.size();
 }
 
-bool LuaList::load(const std::string& name, LuaContainer* container, const std::string& path)
+bool LuaList::load(const std::string& name, LuaContainer* container)
 {
+    if(_filePath == "")
+        return false;
     // load code
     {
-        std::string fileName = path + name;
+        std::string fileName = _filePath + name;
 
         if( !QFile::exists(fileName.c_str()))
         {
@@ -99,9 +134,9 @@ bool LuaList::load(const std::string& name, LuaContainer* container, const std::
     return true;
 }
 
-bool LuaList::loadAll(const std::string& path)
+bool LuaList::loadAll()
 {
-    std::cout << "[Lua] loading all script files from " << path << std::endl;
+    std::cout << "[Lua] loading all script files from " << _filePath << std::endl;
 
     // get everything with ".lua"
     /*
@@ -117,7 +152,7 @@ bool LuaList::loadAll(const std::string& path)
 
 
     QStringList files;
-    QDirIterator dirIt(QString::fromStdString(path));
+    QDirIterator dirIt(QString::fromStdString(_filePath));
     while (dirIt.hasNext()) {
         dirIt.next();
         if (QFileInfo(dirIt.filePath()).isFile())
@@ -131,7 +166,7 @@ bool LuaList::loadAll(const std::string& path)
     {
         LuaContainer* c = new LuaContainer();
         std::cout << "[Lua] loading file " << it->toStdString() << " ..." << std::endl;
-        if(load(it->toStdString(), c, path))
+        if(load(it->toStdString(), c))
             _luaList.push_back(c);
         else
             std::cerr << "[Lua] can't load file " << it->toStdString() << std::endl;
@@ -142,11 +177,14 @@ bool LuaList::loadAll(const std::string& path)
         return true;
 }
 
-bool LuaList::save(LuaContainer* container, const std::string& path)
+bool LuaList::save(LuaContainer* container)
 {
+    if(_filePath == "")
+        return false;
+
     // safe code
     {
-        std::string fileName = path + container->getLuaCode()->name();
+        std::string fileName = _filePath + container->getLuaCode()->name();
 
         // check for .lua ending
         {
@@ -179,18 +217,35 @@ bool LuaList::save(LuaContainer* container, const std::string& path)
     return true;
 }
 
-bool LuaList::saveAll(const std::string& path)
+bool LuaList::saveAll()
 {
     std::cout << "[Lua] saving all script files" << std::endl;
     bool r = true;
     for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
-        if(!save((*it), path))
+        if(!save((*it)))
         {
             std::cerr << "[Lua] failed to save lua script " << (*it)->getLuaCode()->name() << std::endl;
             r = false;
         }
 
     return r;
+}
+
+bool LuaList::remove(LuaContainer *container)
+{
+    if(_filePath == "")
+        return false;
+
+    std::string fileName = _filePath + container->getLuaCode()->name();
+
+    if( !QFile::exists(fileName.c_str()))
+    {
+        std::cerr << "[Lua] can't find file " << fileName << std::endl;
+        return false;
+    }
+
+    QFile f(QString::fromStdString(fileName));
+    return f.remove();
 }
 
 void LuaList::dump()
