@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>754</height>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,7 +50,7 @@
     <bool>false</bool>
    </property>
    <property name="alternatingRowColors">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="selectionMode">
     <enum>QAbstractItemView::SingleSelection</enum>
@@ -62,7 +62,7 @@
     <enum>Qt::ElideLeft</enum>
    </property>
    <property name="showGrid">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="gridStyle">
     <enum>Qt::NoPen</enum>
@@ -296,7 +296,7 @@
      <x>9</x>
      <y>225</y>
      <width>791</width>
-     <height>521</height>
+     <height>541</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -312,7 +312,7 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>40</y>
+      <y>62</y>
       <width>221</width>
       <height>20</height>
      </rect>
@@ -341,7 +341,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>292</y>
+      <y>313</y>
       <width>771</width>
       <height>190</height>
      </rect>
@@ -649,7 +649,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>491</y>
+      <y>511</y>
       <width>110</width>
       <height>21</height>
      </rect>
@@ -677,7 +677,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>490</y>
+      <y>510</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -711,7 +711,7 @@
     <property name="geometry">
      <rect>
       <x>339</x>
-      <y>492</y>
+      <y>512</y>
       <width>40</width>
       <height>21</height>
      </rect>
@@ -736,7 +736,7 @@
     <property name="geometry">
      <rect>
       <x>377</x>
-      <y>490</y>
+      <y>510</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -764,7 +764,7 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>60</y>
+      <y>82</y>
       <width>221</width>
       <height>190</height>
      </rect>
@@ -785,7 +785,10 @@
      <bool>false</bool>
     </property>
     <property name="alternatingRowColors">
-     <bool>false</bool>
+     <bool>true</bool>
+    </property>
+    <property name="horizontalScrollMode">
+     <enum>QAbstractItemView::ScrollPerPixel</enum>
     </property>
     <property name="indentation">
      <number>16</number>
@@ -808,7 +811,7 @@
      <rect>
       <x>91</x>
       <y>9</y>
-      <width>461</width>
+      <width>231</width>
       <height>23</height>
      </rect>
     </property>
@@ -833,7 +836,7 @@
      <rect>
       <x>10</x>
       <y>13</y>
-      <width>91</width>
+      <width>76</width>
       <height>16</height>
      </rect>
     </property>
@@ -844,7 +847,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Script Name</string>
+     <string>Name</string>
     </property>
    </widget>
    <widget class="QLabel" name="l_hours">
@@ -854,7 +857,7 @@
     <property name="geometry">
      <rect>
       <x>485</x>
-      <y>492</y>
+      <y>512</y>
       <width>40</width>
       <height>21</height>
      </rect>
@@ -873,7 +876,7 @@
     <property name="geometry">
      <rect>
       <x>477</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -889,7 +892,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -905,7 +908,7 @@
     <property name="geometry">
      <rect>
       <x>85</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -921,8 +924,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
-      <width>101</width>
+      <y>62</y>
+      <width>76</width>
       <height>20</height>
      </rect>
     </property>
@@ -933,14 +936,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Lua Script Editor</string>
+     <string>Code</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cbx_timeconstraint">
     <property name="geometry">
      <rect>
       <x>147</x>
-      <y>491</y>
+      <y>511</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -965,7 +968,7 @@
     <property name="geometry">
      <rect>
       <x>597</x>
-      <y>294</y>
+      <y>315</y>
       <width>181</width>
       <height>20</height>
      </rect>
@@ -989,7 +992,7 @@
     <property name="geometry">
      <rect>
       <x>161</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -1005,7 +1008,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>82</y>
       <width>541</width>
       <height>190</height>
      </rect>
@@ -1032,13 +1035,45 @@ end;</string>
     <property name="geometry">
      <rect>
       <x>559</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Paste</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="l_scriptdesc">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>39</y>
+      <width>76</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="le_scriptdesc">
+    <property name="geometry">
+     <rect>
+      <x>91</x>
+      <y>35</y>
+      <width>461</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>says hello in output</string>
     </property>
    </widget>
   </widget>

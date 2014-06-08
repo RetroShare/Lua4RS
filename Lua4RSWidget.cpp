@@ -14,29 +14,49 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4R
     // Fill Hints TreeWidget with main items
     ui->tw_hints->setColumnCount(2);
 
+
+    QTreeWidgetItem *item_0 = new QTreeWidgetItem(ui->tw_hints);
+    item_0->setText(0, tr("RS."));
+
+        QTreeWidgetItem *item_01 = new QTreeWidgetItem(item_0);
+        item_01->setText(0, "Print()");
+        item_01->setToolTip(0,tr("..."));
+
+        QTreeWidgetItem *item_02 = new QTreeWidgetItem(item_0);
+        item_02->setText(0, "ClearLog()");
+        item_02->setToolTip(0,tr("..."));
+
     // Info
     QTreeWidgetItem *item_1 = new QTreeWidgetItem(ui->tw_hints);
-    item_1->setText(0, tr("Info"));
+    item_1->setText(0, tr("RS.Info."));
+
         QTreeWidgetItem *item_11 = new QTreeWidgetItem(item_1);
-        item_11->setText(0, tr("rs_log_lastentry()"));
-        item_11->setText(1, tr("rs_log_lastentry()"));
+        item_11->setText(0, "LastEntry()");
+        item_11->setToolTip(0,tr("Liefert den letzten Eintrag der Infoliste"));
+
+        QTreeWidgetItem *item_12 = new QTreeWidgetItem(item_1);
+        item_12->setText(0, "AllEntries()");
+        item_12->setToolTip(0,tr("Liefert alle Einträge der Infoliste"));
 
     // Friends
     QTreeWidgetItem *item_2 = new QTreeWidgetItem(ui->tw_hints);
-    item_2->setText(0, tr("Friends"));
+    item_2->setText(0, tr("RS.Friends."));
+
         QTreeWidgetItem *item_21 = new QTreeWidgetItem(item_2);
-        item_21->setText(0, tr("rs_friend_online()"));
-        item_21->setText(1, tr("rs_friend_online()"));
+        item_21->setText(0, "Online()");
+
         QTreeWidgetItem *item_22 = new QTreeWidgetItem(item_2);
-        item_22->setText(0, tr("rs_friend_offline()"));
-        item_22->setText(1, tr("rs_friend_offline()"));
+        item_22->setText(0, "Offline()");
 
     // Files
     QTreeWidgetItem *item_3 = new QTreeWidgetItem(ui->tw_hints);
-    item_3->setText(0, tr("Files"));
+    item_3->setText(0, tr("RS.Files."));
+
         QTreeWidgetItem *item_31 = new QTreeWidgetItem(item_3);
-        item_31->setText(0, tr("rs_files_search()"));
-        item_31->setText(1, tr("rs_files_search()"));
+        item_31->setText(0, "Search()");
+
+        QTreeWidgetItem *item_32 = new QTreeWidgetItem(item_3);
+        item_32->setText(0, "Download()");
 
     //...
 }
