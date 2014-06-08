@@ -67,8 +67,10 @@ Lua4RSWidget::~Lua4RSWidget()
     delete ui;
 }
 
-void Lua4RSWidget::setLuaCodes(LuaList* list)
+void Lua4RSWidget::setLuaCodes(LuaList* /*list*/)
 {
+    ///TODO needs rewrite
+    /*
     LuaContainer* lc = NULL;
     for(size_t i = 0; i < list->size(); i++)
     {
@@ -77,6 +79,7 @@ void Lua4RSWidget::setLuaCodes(LuaList* list)
         else
             break;
     }
+    */
 }
 
 void Lua4RSWidget::clearOutput()

@@ -3,9 +3,6 @@
 
 #include <retroshare-gui/mainpage.h>
 
-#include <QWidget>
-#include <QTableWidgetItem>
-
 #include "Lua/LuaCore.h"
 
 namespace Ui {
@@ -13,6 +10,7 @@ class Lua4RSWidget;
 }
 
 class LuaCore;
+class QTableWidgetItem;
 
 class Lua4RSWidget : public MainPage
 {

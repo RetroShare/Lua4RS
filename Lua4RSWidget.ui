@@ -362,7 +362,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabpage_output">
      <attribute name="title">
@@ -693,15 +693,15 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
     <property name="time">
      <time>
       <hour>8</hour>
       <minute>0</minute>
       <second>0</second>
      </time>
-    </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="l_and">
@@ -1099,7 +1099,16 @@ end;</string>
     <enum>QFrame::Sunken</enum>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>2</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
      <number>2</number>
     </property>
     <item>
@@ -1154,7 +1163,7 @@ end;</string>
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="icon">
-       <iconset>
+       <iconset resource="../../retroshare-gui/src/gui/images.qrc">
         <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
       </property>
       <property name="checkable">
@@ -1176,6 +1185,7 @@ end;</string>
   <zorder>titleBarFrame</zorder>
  </widget>
  <resources>
+  <include location="../../retroshare-gui/src/gui/images.qrc"/>
   <include location="Lua4RS_images.qrc"/>
  </resources>
  <connections/>
