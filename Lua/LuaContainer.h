@@ -5,10 +5,7 @@
 #include <QString>
 
 #include "LuaCode.h"
-
-
-///TODO - platzhalter
-typedef QMap<QString,QString> LuaConfig;
+#include "LuaConfig.h"
 
 class LuaContainer
 {
