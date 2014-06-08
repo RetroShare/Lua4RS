@@ -2,6 +2,7 @@
 #define LUACODE_H
 
 #include <string>
+#include <map>
 
 class LuaCode
 {

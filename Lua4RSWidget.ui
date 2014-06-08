@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>754</height>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QListWidget" name="lw_allscripts">
+  <widget class="QTableWidget" name="lw_allscripts">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -24,6 +24,9 @@
    </property>
    <property name="toolTip">
     <string/>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -38,10 +41,10 @@
     <number>0</number>
    </property>
    <property name="verticalScrollBarPolicy">
-    <enum>Qt::ScrollBarAsNeeded</enum>
+    <enum>Qt::ScrollBarAlwaysOn</enum>
    </property>
    <property name="editTriggers">
-    <set>QAbstractItemView::DoubleClicked</set>
+    <set>QAbstractItemView::NoEditTriggers</set>
    </property>
    <property name="dragDropOverwriteMode">
     <bool>false</bool>
@@ -58,6 +61,149 @@
    <property name="textElideMode">
     <enum>Qt::ElideLeft</enum>
    </property>
+   <property name="showGrid">
+    <bool>false</bool>
+   </property>
+   <property name="gridStyle">
+    <enum>Qt::NoPen</enum>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+   <property name="cornerButtonEnabled">
+    <bool>false</bool>
+   </property>
+   <property name="rowCount">
+    <number>2</number>
+   </property>
+   <property name="columnCount">
+    <number>5</number>
+   </property>
+   <attribute name="horizontalHeaderCascadingSectionResizes">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>155</number>
+   </attribute>
+   <attribute name="horizontalHeaderMinimumSectionSize">
+    <number>23</number>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderCascadingSectionResizes">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>17</number>
+   </attribute>
+   <attribute name="verticalHeaderHighlightSections">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>17</number>
+   </attribute>
+   <row/>
+   <row/>
+   <column>
+    <property name="text">
+     <string>Name</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Description</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Last Run</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Trigger</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Enabled</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </column>
+   <item row="0" column="0">
+    <property name="text">
+     <string>hello.lua</string>
+    </property>
+   </item>
+   <item row="0" column="1">
+    <property name="text">
+     <string>says hello in output</string>
+    </property>
+   </item>
+   <item row="0" column="2">
+    <property name="text">
+     <string>24.05.2014 02:13:44</string>
+    </property>
+   </item>
+   <item row="0" column="3">
+    <property name="text">
+     <string>Timer</string>
+    </property>
+    <property name="textAlignment">
+     <set>AlignLeft|AlignVCenter</set>
+    </property>
+   </item>
+   <item row="0" column="4">
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checkState">
+     <enum>Checked</enum>
+    </property>
+   </item>
+   <item row="1" column="0">
+    <property name="text">
+     <string>greetsehraf.lua</string>
+    </property>
+   </item>
+   <item row="1" column="1">
+    <property name="text">
+     <string>greets sehraf when he comes online</string>
+    </property>
+   </item>
+   <item row="1" column="2">
+    <property name="text">
+     <string>24.05.2014 15:30:00</string>
+    </property>
+   </item>
+   <item row="1" column="3">
+    <property name="text">
+     <string>Event</string>
+    </property>
+   </item>
+   <item row="1" column="4">
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checkState">
+     <enum>Unchecked</enum>
+    </property>
+   </item>
   </widget>
   <widget class="QPushButton" name="pb_newscript">
    <property name="geometry">
@@ -150,7 +296,7 @@
      <x>9</x>
      <y>225</y>
      <width>791</width>
-     <height>521</height>
+     <height>541</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -166,7 +312,7 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>40</y>
+      <y>62</y>
       <width>221</width>
       <height>20</height>
      </rect>
@@ -195,7 +341,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>292</y>
+      <y>313</y>
       <width>771</width>
       <height>190</height>
      </rect>
@@ -216,7 +362,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabpage_output">
      <attribute name="title">
@@ -253,7 +399,7 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>10</y>
+        <y>9</y>
         <width>61</width>
         <height>23</height>
        </rect>
@@ -277,7 +423,7 @@
       <property name="geometry">
        <rect>
         <x>190</x>
-        <y>10</y>
+        <y>9</y>
         <width>141</width>
         <height>23</height>
        </rect>
@@ -331,7 +477,7 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>50</y>
+        <y>49</y>
         <width>211</width>
         <height>23</height>
        </rect>
@@ -503,7 +649,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>491</y>
+      <y>511</y>
       <width>110</width>
       <height>21</height>
      </rect>
@@ -531,7 +677,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>490</y>
+      <y>510</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -547,15 +693,15 @@
     <property name="alignment">
      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
-    <property name="calendarPopup">
-     <bool>true</bool>
-    </property>
     <property name="time">
      <time>
       <hour>8</hour>
       <minute>0</minute>
       <second>0</second>
      </time>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="l_and">
@@ -565,7 +711,7 @@
     <property name="geometry">
      <rect>
       <x>339</x>
-      <y>492</y>
+      <y>512</y>
       <width>40</width>
       <height>21</height>
      </rect>
@@ -590,7 +736,7 @@
     <property name="geometry">
      <rect>
       <x>377</x>
-      <y>490</y>
+      <y>510</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -618,9 +764,9 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>59</y>
+      <y>82</y>
       <width>221</width>
-      <height>191</height>
+      <height>190</height>
      </rect>
     </property>
     <property name="toolTip">
@@ -638,24 +784,34 @@
     <property name="showDropIndicator" stdset="0">
      <bool>false</bool>
     </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+    <property name="horizontalScrollMode">
+     <enum>QAbstractItemView::ScrollPerPixel</enum>
+    </property>
+    <property name="indentation">
+     <number>16</number>
+    </property>
+    <property name="uniformRowHeights">
+     <bool>false</bool>
+    </property>
+    <property name="headerHidden">
+     <bool>true</bool>
+    </property>
     <property name="columnCount">
-     <number>1</number>
+     <number>0</number>
     </property>
     <attribute name="headerVisible">
      <bool>false</bool>
     </attribute>
-    <column>
-     <property name="text">
-      <string notr="true">1</string>
-     </property>
-    </column>
    </widget>
    <widget class="QLineEdit" name="le_scriptname">
     <property name="geometry">
      <rect>
       <x>91</x>
-      <y>10</y>
-      <width>461</width>
+      <y>9</y>
+      <width>231</width>
       <height>23</height>
      </rect>
     </property>
@@ -680,7 +836,7 @@
      <rect>
       <x>10</x>
       <y>13</y>
-      <width>91</width>
+      <width>76</width>
       <height>16</height>
      </rect>
     </property>
@@ -691,7 +847,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Script Name</string>
+     <string>Name</string>
     </property>
    </widget>
    <widget class="QLabel" name="l_hours">
@@ -701,7 +857,7 @@
     <property name="geometry">
      <rect>
       <x>485</x>
-      <y>492</y>
+      <y>512</y>
       <width>40</width>
       <height>21</height>
      </rect>
@@ -720,7 +876,7 @@
     <property name="geometry">
      <rect>
       <x>477</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -736,7 +892,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -752,7 +908,7 @@
     <property name="geometry">
      <rect>
       <x>85</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -768,8 +924,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
-      <width>101</width>
+      <y>62</y>
+      <width>76</width>
       <height>20</height>
      </rect>
     </property>
@@ -780,14 +936,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Lua Script Editor</string>
+     <string>Code</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="cbx_timeconstraint">
     <property name="geometry">
      <rect>
       <x>147</x>
-      <y>491</y>
+      <y>511</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -812,7 +968,7 @@
     <property name="geometry">
      <rect>
       <x>597</x>
-      <y>294</y>
+      <y>315</y>
       <width>181</width>
       <height>20</height>
      </rect>
@@ -836,7 +992,7 @@
     <property name="geometry">
      <rect>
       <x>161</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -852,7 +1008,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>82</y>
       <width>541</width>
       <height>190</height>
      </rect>
@@ -879,13 +1035,45 @@ end;</string>
     <property name="geometry">
      <rect>
       <x>559</x>
-      <y>252</y>
+      <y>274</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Paste</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="l_scriptdesc">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>39</y>
+      <width>76</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Description</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="le_scriptdesc">
+    <property name="geometry">
+     <rect>
+      <x>91</x>
+      <y>35</y>
+      <width>461</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>says hello in output</string>
     </property>
    </widget>
   </widget>
@@ -911,16 +1099,7 @@ end;</string>
     <enum>QFrame::Sunken</enum>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <property name="leftMargin">
-     <number>2</number>
-    </property>
-    <property name="topMargin">
-     <number>2</number>
-    </property>
-    <property name="rightMargin">
-     <number>2</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>2</number>
     </property>
     <item>
@@ -975,7 +1154,7 @@ end;</string>
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="icon">
-       <iconset resource="../../retroshare-gui/src/gui/images.qrc">
+       <iconset>
         <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
       </property>
       <property name="checkable">
@@ -998,7 +1177,6 @@ end;</string>
  </widget>
  <resources>
   <include location="Lua4RS_images.qrc"/>
-  <include location="../../retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>
