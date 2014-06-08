@@ -30,8 +30,20 @@ class Lua4RSWidget : public MainPage
   private:
     void setLuaCodes(LuaList* list);
 
+    // all scripts helper
+    LuaContainer* allScriptsGetLuaContainerFromSelectedRow();
+    LuaContainer* allScriptsGetLuaContainerFromRow(const int row);
+    void allScriptsAddRow(LuaContainer* container);
+
+    // this function will fill every form with it's corresponding values
+    void luaContainerToUi(LuaContainer* container);
+    // or the other way round
+    void uiToLuaContainer(LuaContainer* container);
+
     Ui::Lua4RSWidget *ui;
     LuaCore* _lua;
+
+    LuaContainer* _activeContainer;
 
   private slots:
     void on_pb_run_clicked();

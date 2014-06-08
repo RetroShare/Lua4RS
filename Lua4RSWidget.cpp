@@ -1,9 +1,14 @@
-#include "Lua4RSWidget.h"
-#include "ui_Lua4RSWidget.h"
+#include <assert.h>
 
 #include <QWidget>
 
-Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4RSWidget)
+#include "Lua4RSWidget.h"
+#include "ui_Lua4RSWidget.h"
+
+Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
+    MainPage(parent),
+    ui(new Ui::Lua4RSWidget),
+    _activeContainer(NULL)
 {
     ui->setupUi(this);
 
@@ -11,6 +16,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) : MainPage(parent), ui(new Ui::Lua4R
     _lua->setUi(this);
 
     setLuaCodes(_lua->codeList());
+    luaContainerToUi(_activeContainer);
 
     // Fill Hints TreeWidget with main items
     ui->tw_hints->setColumnCount(2);
@@ -67,19 +73,13 @@ Lua4RSWidget::~Lua4RSWidget()
     delete ui;
 }
 
-void Lua4RSWidget::setLuaCodes(LuaList* /*list*/)
+void Lua4RSWidget::setLuaCodes(LuaList* list)
 {
-    ///TODO needs rewrite
-    /*
-    LuaContainer* lc = NULL;
-    for(size_t i = 0; i < list->size(); i++)
-    {
-        if(list->itemAt(i, lc))
-            ui->lw_allscripts->addItem(QString::fromStdString(lc->getLuaCode()->name()));
-        else
-            break;
-    }
-    */
+    ui->tw_allscripts->setRowCount(0);
+
+    LuaContainerList::const_iterator it;
+    for(it = list->begin(); it != list->end(); ++it)
+        allScriptsAddRow(*it);
 }
 
 void Lua4RSWidget::clearOutput()
@@ -107,7 +107,91 @@ void Lua4RSWidget::appendLog(const QString& s)
     ui->tb_log->appendPlainText(s);
 }
 
+/* #############################################################
+ * # helper
+ * #############################################################
+ */
 
+LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromSelectedRow()
+{
+    // get corresponding LuaContainer
+    QModelIndexList rows = ui->tw_allscripts->selectionModel()->selectedRows();
+    if(rows.count() != 1)
+        return NULL;
+
+    return allScriptsGetLuaContainerFromRow(rows[0].row());
+}
+
+LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromRow(const int row)
+{
+    // get script name
+    QTableWidgetItem* name = ui->tw_allscripts->item(row, 0);
+
+    // get container by name
+    LuaContainer* container;
+    if(LuaCore::getInstance()->codeList()->itemByName(name->text().toStdString(), container))
+        return container;
+    else
+        return NULL;
+}
+
+void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
+{
+    // disable sorting (better performance)
+    ui->tw_allscripts->setSortingEnabled(false);
+    int rows = ui->tw_allscripts->rowCount();
+    ui->tw_allscripts->setRowCount(rows + 1);
+
+    QTableWidgetItem* name = new QTableWidgetItem();
+    QTableWidgetItem* desc = new QTableWidgetItem();
+    QTableWidgetItem* lastRun = new QTableWidgetItem();
+    QTableWidgetItem* trigger = new QTableWidgetItem();
+
+    name->setText(QString::fromStdString(container->getLuaCode()->name()));
+    desc->setText(QString::fromStdString(container->getLuaCode()->desc()));
+    ///TODO rest
+
+    ui->tw_allscripts->setItem(rows, 0, name);
+    ui->tw_allscripts->setItem(rows, 1, desc);
+    ui->tw_allscripts->setItem(rows, 2, lastRun);
+    ui->tw_allscripts->setItem(rows, 3, trigger);
+
+    ui->tw_allscripts->setSortingEnabled(true);
+}
+
+void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
+{
+    if(container == NULL)
+    {
+        ui->le_scriptname->clear();
+        ui->le_scriptdesc->clear();
+        ui->pte_luacode->clear();
+
+        ///TODO there might be better ways that this - good enough for the moment
+        ui->pte_luacode->setEnabled(false);
+    } else
+    {
+        ui->le_scriptname->setText(QString::fromStdString(container->getLuaCode()->name()));
+        ui->le_scriptdesc->setText(QString::fromStdString(container->getLuaCode()->desc()));
+        ui->pte_luacode->setPlainText(QString::fromStdString(container->getLuaCode()->code()));
+        ///TODO rest
+
+        ui->pte_luacode->setEnabled(true);
+    }
+}
+
+void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
+{
+    container->getLuaCode()->setName(ui->le_scriptname->text().toStdString());
+    container->getLuaCode()->setDesc(ui->le_scriptdesc->text().toStdString());
+    container->getLuaCode()->setCode(ui->pte_luacode->toPlainText().toStdString());
+    ///TODO rest
+}
+
+/* #############################################################
+ * # slots
+ * #############################################################
+ */
 // "Run" clicked : execute the script in the editor control
 void Lua4RSWidget::on_pb_run_clicked()
 {
@@ -120,18 +204,56 @@ void Lua4RSWidget::on_pb_run_clicked()
 // "New" clicked : create a new empty script
 void Lua4RSWidget::on_pb_newscript_clicked()
 {
+    ///TODO make fnction for creating new container
+    _activeContainer = new LuaContainer();
+    _activeContainer->getLuaCode()->setName("new.lua");
 
+    // add new container to list
+    _lua->codeList()->addItem(_activeContainer);
+
+    // update all scripts
+    setLuaCodes(_lua->codeList());
+
+    // update ui
+    luaContainerToUi(_activeContainer);
 }
 
 // "Edit" clicked : edit the script selected in AllMyScripts
 void Lua4RSWidget::on_pb_editscript_clicked()
 {
+    // get corresponding LuaContainer
+    LuaContainer* container = allScriptsGetLuaContainerFromSelectedRow();
 
+    if(container == NULL)
+        return;
+
+    // remeber conatiner
+    _activeContainer = container;
+
+    // update UI
+    luaContainerToUi(_activeContainer);
 }
 
 // "Delete" clicked : delete the script selected in AllMyScripts
 void Lua4RSWidget::on_pb_deletescript_clicked()
 {
+    LuaContainer* container = allScriptsGetLuaContainerFromSelectedRow();
+    if(container == NULL)
+        return;
+
+    if(_activeContainer == container)
+    {
+        // update UI when necessary
+        _activeContainer = NULL;
+        luaContainerToUi(_activeContainer);
+    }
+
+    _lua->codeList()->removeItemAndDelete(container);
+    delete container;
+
+    // update all scripts
+    setLuaCodes(_lua->codeList());
+
 
 }
 
@@ -144,7 +266,13 @@ void Lua4RSWidget::on_pb_load_clicked()
 // "Save" clicked : save the contents of the editor control to a file on disk
 void Lua4RSWidget::on_pb_save_clicked()
 {
+    // get values from ui
+    uiToLuaContainer(_activeContainer);
 
+    ///TODO no save function yet
+
+    // update all scripts
+    setLuaCodes(_lua->codeList());
 }
 
 // "Undock" clicked : detach the editor control from the plugin into an own window

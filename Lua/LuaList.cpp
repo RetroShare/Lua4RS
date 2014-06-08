@@ -29,6 +29,7 @@ void LuaList::setFilePath(const std::string& path)
     _filePath = path;
 }
 
+/*
 bool LuaList::itemAt(size_t index, LuaContainer*& container)
 {
     // check if index is out of bound
@@ -42,6 +43,7 @@ bool LuaList::itemAt(size_t index, LuaContainer*& container)
     container = (*it);
     return true;
 }
+*/
 
 bool inline LuaList::itemByName(const QString &name, LuaContainer*& container)
 {
@@ -58,6 +60,16 @@ bool LuaList::itemByName(const std::string& name, LuaContainer*& container)
         }
 
     return false;
+}
+
+LuaContainerList::const_iterator LuaList::begin()
+{
+    return _luaList.begin();
+}
+
+LuaContainerList::const_iterator LuaList::end()
+{
+    return _luaList.end();
 }
 
 void LuaList::addItem(LuaContainer* container)

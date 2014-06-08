@@ -7,7 +7,6 @@
 
 #include <retroshare/rsplugin.h>
 
-#include "LuaCode.h"
 #include "LuaList.h"
 #include "../Lua4RSNotify.h"
 #include "../Lua4RSTickThread.h"

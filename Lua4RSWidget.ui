@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QTableWidget" name="lw_allscripts">
+  <widget class="QTableWidget" name="tw_allscripts">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -1177,7 +1177,7 @@ end;</string>
    </layout>
   </widget>
   <zorder>gb_scriptdetailsarea</zorder>
-  <zorder>lw_allscripts</zorder>
+  <zorder>tw_allscripts</zorder>
   <zorder>pb_newscript</zorder>
   <zorder>pb_editscript</zorder>
   <zorder>pb_deletescript</zorder>

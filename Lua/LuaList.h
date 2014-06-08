@@ -18,9 +18,12 @@ public:
     bool loadAll();
     bool saveAll();
 
-    bool itemAt(size_t index, LuaContainer*& container);
+    //bool itemAt(size_t index, LuaContainer*& container);
     bool itemByName(const QString& name, LuaContainer*& container);
     bool itemByName(const std::string& name, LuaContainer*& container);
+
+    LuaContainerList::const_iterator begin();
+    LuaContainerList::const_iterator end();
 
     void addItem(LuaContainer* container);
     bool addItemAndSave(LuaContainer* container);
