@@ -27,19 +27,12 @@ enum TimerType {
 };
 
 //------------------------------------------------------------------------------
-class LuaConfigForTimer
+struct LuaConfigForTimer
 {
-public:
-    /*
-    script enabled/disabled
-    */
-    bool        _scriptEnabled;
-
     /*
     Timer type (=runEvery, runOnce or runStartup)
     */
     TimerType   _timerType;
-
 
     /*
     Amount and time unit. Only valid if _timerType = runEvery
@@ -51,6 +44,57 @@ public:
     DateTime for "_runOnce". Only valid if _timerType = runOnce
     */
     QDateTime   _runOnceDateTime;
+};
+
+//------------------------------------------------------------------------------
+struct LuaConfigForEvent
+{
+
+};
+
+//------------------------------------------------------------------------------
+class LuaConfig
+{
+public:
+    LuaConfig();
+    ~LuaConfig();
+
+    bool TestTriggered();
+    int Save();
+    int Load();
+
+    /*
+    Getter/Setter
+    */
+    void setTriggerType(TriggerType triggertype);
+    TriggerType getTriggerType();
+
+    void setScriptEnabled(bool scriptenabled);
+    bool getScriptEnabled();
+
+    void setEnableConstraintFrom(QTime& enableconstraintfrom);
+    QTime& getEnableConstraintFrom();
+
+    void setEnableConstraintTo(QTime& enableconstraintto);
+    QTime& getEnableConstraintTo();
+
+    LuaConfigForTimer getConfigForTimer();
+    void setConfigForTimer(LuaConfigForTimer configfortimer);
+
+    LuaConfigForEvent getConfigForEvent();
+    void setConfigForEvent(LuaConfigForEvent configforevent);
+
+protected:
+    /*
+    which kind of trigger will start the script: ByTimer or ByEvent
+    (those two triggertypes for now)
+    */
+    TriggerType _triggerType;
+
+    /*
+    script enabled/disabled
+    */
+    bool _scriptEnabled;
 
     /*
     _scriptEnabledConstraint. this overrules all TimerType's operations.
@@ -65,34 +109,14 @@ public:
 
     then the script will run every 2 hours during the time from 09:00:00
     to 17:00:00. from 17:00:01 to 08:59:59 the script will not run.
+    This constraint applies to event based triggers as well.
     */
     QTime       _enableConstraintFrom;
     QTime       _enableConstraintTo;
 
-
-
-
-};
-
-//------------------------------------------------------------------------------
-class LuaConfigForEvent
-{
-public:
-
-
-};
-
-//------------------------------------------------------------------------------
-class LuaConfig
-{
-public:
-    LuaConfig();
-    ~LuaConfig();
-
-    bool TestTriggered();
-
-protected:
-    TriggerType _triggerType;
+    /*
+    ...
+    */
     LuaConfigForTimer _configForTimer;
     LuaConfigForEvent _configForEvent;
 };
