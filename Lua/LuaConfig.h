@@ -29,20 +29,14 @@ enum TimerType {
 //------------------------------------------------------------------------------
 struct LuaConfigForTimer
 {
-    /*
-    Timer type (=runEvery, runOnce or runStartup)
-    */
+    // Timer type (=runEvery, runOnce or runStartup)
     TimerType   _timerType;
 
-    /*
-    Amount and time unit. Only valid if _timerType = runEvery
-    */
+    // Amount and time unit. Only valid if _timerType = runEvery
     uint        _runEveryAmount;
     TimeUnit    _runEveryUnit;
 
-    /*
-    DateTime for "_runOnce". Only valid if _timerType = runOnce
-    */
+    // DateTime for "_runOnce". Only valid if _timerType = runOnce
     QDateTime   _runOnceDateTime;
 };
 
@@ -59,18 +53,28 @@ public:
     LuaConfig();
     ~LuaConfig();
 
-    bool TestTriggered();
+    // test if triggered by this timestamp
+    bool isTriggered(const QDateTime &dt);
+
+    // test if triggered by this event
+    bool isTriggered(int event);
+
+    // save this LuaConfig
     int Save();
+
+    // load this LuaConfig
     int Load();
 
-    /*
-    Getter/Setter
-    */
+    // Getter/Setter
+
     void setTriggerType(TriggerType triggertype);
     TriggerType getTriggerType();
 
     void setScriptEnabled(bool scriptenabled);
     bool getScriptEnabled();
+
+    void setEnableConstraint(bool enableconstraint);
+    bool getEnableConstraint();
 
     void setEnableConstraintFrom(QTime& enableconstraintfrom);
     QTime& getEnableConstraintFrom();
@@ -84,17 +88,19 @@ public:
     LuaConfigForEvent getConfigForEvent();
     void setConfigForEvent(LuaConfigForEvent configforevent);
 
+    QString getDescription();
+    void setDescription(QString description);
+
 protected:
-    /*
-    which kind of trigger will start the script: ByTimer or ByEvent
-    (those two triggertypes for now)
-    */
+    // which kind of trigger will start this script: "ByTimer" or "ByEvent"
+    // (only these two triggertypes for now)
     TriggerType _triggerType;
 
-    /*
-    script enabled/disabled
-    */
-    bool _scriptEnabled;
+    // is script enabled?
+    bool        _scriptEnabled;
+
+    // is enableConstraint active?
+    bool        _enableConstraint;
 
     /*
     _scriptEnabledConstraint. this overrules all TimerType's operations.
@@ -114,11 +120,15 @@ protected:
     QTime       _enableConstraintFrom;
     QTime       _enableConstraintTo;
 
-    /*
-    ...
-    */
+    // ...
     LuaConfigForTimer _configForTimer;
+
+    // ...
     LuaConfigForEvent _configForEvent;
+
+    // the description field is stored in LuaConfig
+    QString _description;
+
 };
 
 #endif // LUACONFIG_H
