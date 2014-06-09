@@ -72,17 +72,34 @@ bool LuaConfig::isTriggered(int event)
     }
 }
 
-//
-int LuaConfig::Save()
+// save - returns 0 if save was successful
+int LuaConfig::save()
 {
     return -1;
 }
 
-//
-int LuaConfig::Load()
+// load - returns 0 if load was successful
+int LuaConfig::load()
 {
     return -1;
 }
+
+// fromString - loads this LuaConfig from <str>. returns 0 if successful.
+int fromString(const QString& str)
+{
+    if (str == "")
+    {
+        return -1;
+    }
+    return 0;
+}
+
+// toString - returns a string representation of this LuaConfig
+QString toString()
+{
+    return QString("");
+}
+
 
 
 // setTriggerType

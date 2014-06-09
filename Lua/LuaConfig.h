@@ -4,6 +4,8 @@
 
 #include <QTime>
 #include <QDateTime>
+#include <QString>
+
 
 enum TriggerType {
     ByTimer     = 10,
@@ -60,10 +62,17 @@ public:
     bool isTriggered(int event);
 
     // save this LuaConfig
-    int Save();
+    int save();
 
     // load this LuaConfig
-    int Load();
+    int load();
+
+    // load this LuaConfig from <str>
+    int fromString(const QString& str);
+
+    // return a string representation of this LuaConfig
+    QString toString();
+
 
     // Getter/Setter
 
