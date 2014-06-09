@@ -1,11 +1,13 @@
 #include "LuaContainer.h"
 
 LuaContainer::LuaContainer() :
-    _luaCode(new LuaCode())
+    _luaCode(new LuaCode()),
+    _luaConfig(new LuaConfig())
 {
 }
 
-LuaContainer::LuaContainer(LuaCode* luacode)
+LuaContainer::LuaContainer(LuaCode* luacode) :
+    _luaConfig(new LuaConfig())
 {
     _luaCode = luacode;
 }
