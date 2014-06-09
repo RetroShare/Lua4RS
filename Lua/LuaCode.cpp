@@ -1,3 +1,5 @@
+#include <QString>
+
 #include "LuaCode.h"
 
 LuaCode::LuaCode() :
@@ -7,14 +9,14 @@ LuaCode::LuaCode() :
 {
 }
 
-LuaCode::LuaCode(std::string name, std::string desc) :
+LuaCode::LuaCode(QString name, QString desc) :
     _code(""),
     _desc(desc),
     _name(name)
 {
 }
 
-LuaCode::LuaCode(std::string name, std::string desc, std::string code) :
+LuaCode::LuaCode(QString name, QString desc, QString code) :
     _code(code),
     _desc(desc),
     _name(name)
@@ -30,32 +32,32 @@ bool inline LuaCode::save()
 */
 
 // getter/setter
-std::string LuaCode::code() const
+QString LuaCode::code() const
 {
     return _code;
 }
 
-void LuaCode::setCode(const std::string &code)
+void LuaCode::setCode(const QString &code)
 {
     _code = code;
 }
 
-std::string LuaCode::desc() const
+QString LuaCode::desc() const
 {
     return _desc;
 }
 
-void LuaCode::setDesc(const std::string &desc)
+void LuaCode::setDesc(const QString &desc)
 {
     _desc = desc;
 }
 
-std::string LuaCode::name() const
+QString LuaCode::name() const
 {
     return _name;
 }
 
-void LuaCode::setName(const std::string &name)
+void LuaCode::setName(const QString &name)
 {
     _name = name;
 }

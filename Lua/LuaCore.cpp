@@ -131,7 +131,7 @@ void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap param
         std::cerr << "[Lua] can't find script " << name << std::endl;
         return;
     }
-    code += lc->getLuaCode()->code();
+    code += lc->getCode().toStdString();
 
     runLuaByString(code);
 }

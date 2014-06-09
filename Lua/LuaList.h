@@ -44,7 +44,7 @@ private:
     bool remove(LuaContainer* container);
 
     LuaContainerList _luaList;
-    std::string _filePath;
+    QString _filePath;
 };
 
 #endif // LUALIST_H

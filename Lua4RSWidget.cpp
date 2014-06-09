@@ -147,8 +147,8 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     QTableWidgetItem* lastRun = new QTableWidgetItem();
     QTableWidgetItem* trigger = new QTableWidgetItem();
 
-    name->setText(QString::fromStdString(container->getLuaCode()->name()));
-    desc->setText(QString::fromStdString(container->getLuaCode()->desc()));
+    name->setText(container->getName());
+    desc->setText(container->getDesc());
     ///TODO rest
 
     ui->tw_allscripts->setItem(rows, 0, name);
@@ -171,9 +171,9 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         ui->pte_luacode->setEnabled(false);
     } else
     {
-        ui->le_scriptname->setText(QString::fromStdString(container->getLuaCode()->name()));
-        ui->le_scriptdesc->setText(QString::fromStdString(container->getLuaCode()->desc()));
-        ui->pte_luacode->setPlainText(QString::fromStdString(container->getLuaCode()->code()));
+        ui->le_scriptname->setText(container->getName());
+        ui->le_scriptdesc->setText(container->getDesc());
+        ui->pte_luacode->setPlainText(container->getCode());
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);
@@ -182,9 +182,9 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 
 void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 {
-    container->getLuaCode()->setName(ui->le_scriptname->text().toStdString());
-    container->getLuaCode()->setDesc(ui->le_scriptdesc->text().toStdString());
-    container->getLuaCode()->setCode(ui->pte_luacode->toPlainText().toStdString());
+    container->setName(ui->le_scriptname->text());
+    container->setDesc(ui->le_scriptdesc->text());
+    container->setCode(ui->pte_luacode->toPlainText());
     ///TODO rest
 }
 
@@ -204,9 +204,9 @@ void Lua4RSWidget::on_pb_run_clicked()
 // "New" clicked : create a new empty script
 void Lua4RSWidget::on_pb_newscript_clicked()
 {
-    ///TODO make fnction for creating new container
+    ///TODO make function for creating new container
     _activeContainer = new LuaContainer();
-    _activeContainer->getLuaCode()->setName("new.lua");
+    _activeContainer->setName(QString("new.lua"));
 
     // add new container to list
     _lua->codeList()->addItem(_activeContainer);
@@ -227,7 +227,7 @@ void Lua4RSWidget::on_pb_editscript_clicked()
     if(container == NULL)
         return;
 
-    // remeber conatiner
+    // remember conatiner
     _activeContainer = container;
 
     // update UI
@@ -241,20 +241,19 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
     if(container == NULL)
         return;
 
+    // update UI when necessary
     if(_activeContainer == container)
     {
-        // update UI when necessary
         _activeContainer = NULL;
         luaContainerToUi(_activeContainer);
     }
 
     _lua->codeList()->removeItemAndDelete(container);
     delete container;
+    container = NULL;
 
     // update all scripts
     setLuaCodes(_lua->codeList());
-
-
 }
 
 // "Load" clicked : load a scriptfile from disk into the editor control

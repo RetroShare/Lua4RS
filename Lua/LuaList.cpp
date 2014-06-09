@@ -26,7 +26,7 @@ LuaList::~LuaList()
 
 void LuaList::setFilePath(const std::string& path)
 {
-    _filePath = path;
+    _filePath = QString::fromStdString(path);
 }
 
 /*
@@ -45,21 +45,22 @@ bool LuaList::itemAt(size_t index, LuaContainer*& container)
 }
 */
 
-bool inline LuaList::itemByName(const QString &name, LuaContainer*& container)
-{
-    return itemByName(name.toStdString(), container);
-}
-
-bool LuaList::itemByName(const std::string& name, LuaContainer*& container)
+bool LuaList::itemByName(const QString &name, LuaContainer*& container)
 {
     for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
-        if((*it)->getLuaCode()->name() == name)
+        if((*it)->getName() == name)
         {
             container = (*it);
             return true;
         }
 
     return false;
+
+}
+
+bool LuaList::itemByName(const std::string& name, LuaContainer*& container)
+{
+    return itemByName(QString::fromStdString(name), container);
 }
 
 LuaContainerList::const_iterator LuaList::begin()
@@ -99,22 +100,9 @@ size_t LuaList::size()
     return _luaList.size();
 }
 
-// comparison, not case sensitive.
-bool compare_nocase (const std::string& first, const std::string& second)
-{
-    unsigned int i=0;
-    while ( (i<first.length()) && (i<second.length()) )
-    {
-        if (tolower(first[i])<tolower(second[i])) return true;
-        else if (tolower(first[i])>tolower(second[i])) return false;
-        ++i;
-    }
-    return ( first.length() < second.length() );
-}
-
 bool LuaListCompare(LuaContainer* a, LuaContainer* b)
 {
-    return compare_nocase(a->getLuaCode()->name(), b->getLuaCode()->name());
+    return a->getName().compare(b->getName(), Qt::CaseInsensitive);
 }
 
 void LuaList::sort()
@@ -128,28 +116,28 @@ bool LuaList::load(const std::string& name, LuaContainer* container)
         return false;
     // load code
     {
-        std::string fileName = _filePath + name;
+        QString fileName = _filePath + QString::fromStdString(name);
 
-        if( !QFile::exists(fileName.c_str()))
+        if( !QFile::exists(fileName))
         {
-            std::cerr << "[Lua] can't find file " << fileName << std::endl;
+            std::cerr << "[Lua] can't find file " << fileName.toStdString() << std::endl;
             return false;
         }
 
         std::ifstream file;
-        file.open(fileName.c_str(), std::ios::in);
+        file.open(fileName.toLocal8Bit().data(), std::ios::in);
         if(!file.good() || !file.is_open())
         {
-            std::cerr << "[Lua] can't open file " << fileName << std::endl;
+            std::cerr << "[Lua] can't open file " << fileName.toStdString() << std::endl;
             return false;
         }
 
         std::string line, c;
 
-        container->getLuaCode()->setName(name);
+        container->setName(name);
 
         ///TODO description
-        container->getLuaCode()->setDesc("todo");
+        container->setDesc(QString("todo"));
 
         // rest = code
         c = "";
@@ -158,7 +146,7 @@ bool LuaList::load(const std::string& name, LuaContainer* container)
             std::getline(file, line);
             c += line + '\n';
         }
-        container->getLuaCode()->setCode(c);
+        container->setCode(c);
 
         file.close();
     }
@@ -171,7 +159,7 @@ bool LuaList::load(const std::string& name, LuaContainer* container)
 
 bool LuaList::loadAll()
 {
-    std::cout << "[Lua] loading all script files from " << _filePath << std::endl;
+    std::cout << "[Lua] loading all script files from " << _filePath.toStdString() << std::endl;
 
     // get everything with ".lua"
     /*
@@ -187,7 +175,7 @@ bool LuaList::loadAll()
 
 
     QStringList files;
-    QDirIterator dirIt(QString::fromStdString(_filePath));
+    QDirIterator dirIt(_filePath);
     while (dirIt.hasNext()) {
         dirIt.next();
         if (QFileInfo(dirIt.filePath()).isFile())
@@ -219,28 +207,28 @@ bool LuaList::save(LuaContainer* container)
 
     // safe code
     {
-        std::string fileName = _filePath + container->getLuaCode()->name();
+        QString fileName = _filePath + container->getName();
 
         // check for .lua ending
         {
-            QFile f(QString::fromStdString(fileName));
+            QFile f(fileName);
             QFileInfo fi(f);
             if(fi.suffix() != "lua")
                 fileName += ".lua";
         }
 
         std::ofstream file;
-        file.open(fileName.c_str(), std::ios::trunc);
+        file.open(fileName.toLocal8Bit().data(), std::ios::trunc);
         if(!file.is_open())
         {
-            std::cerr << "[Lua] can't open file " << fileName << std::endl;
+            std::cerr << "[Lua] can't open file " << fileName.toStdString() << std::endl;
             return false;
         }
 
         ///TODO dstription
 
         // rest = code
-        file << container->getLuaCode()->code();
+        file << container->getCode().toStdString();
 
         file.flush();
         file.close();
@@ -259,7 +247,7 @@ bool LuaList::saveAll()
     for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
         if(!save((*it)))
         {
-            std::cerr << "[Lua] failed to save lua script " << (*it)->getLuaCode()->name() << std::endl;
+            std::cerr << "[Lua] failed to save lua script " << (*it)->getName().toStdString() << std::endl;
             r = false;
         }
 
@@ -271,15 +259,15 @@ bool LuaList::remove(LuaContainer *container)
     if(_filePath == "")
         return false;
 
-    std::string fileName = _filePath + container->getLuaCode()->name();
+    QString fileName = _filePath + container->getName();
 
-    if( !QFile::exists(fileName.c_str()))
+    if( !QFile::exists(fileName))
     {
-        std::cerr << "[Lua] can't find file " << fileName << std::endl;
+        std::cerr << "[Lua] can't find file " << fileName.toStdString() << std::endl;
         return false;
     }
 
-    QFile f(QString::fromStdString(fileName));
+    QFile f(fileName);
     return f.remove();
 }
 
@@ -295,11 +283,8 @@ void LuaList::dump()
             std::cout << "NULL" << std::endl;
         else
         {
-            std::cout << "LuaCode: ";
-            if(c->getLuaCode() == NULL)
-                std::cout << "NULL" << std::endl;
-            else
-                std::cout << "Name: " << c->getLuaCode()->name() << std::endl;
+            std::cout << "Name: " << c->getName().toStdString() << std::endl;
+            std::cout << "Desc: " << c->getDesc().toStdString() << std::endl;
         }
     }
 }

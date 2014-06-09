@@ -7,10 +7,9 @@
   
 20140608, sehraf
   - new/edit/save/delete front-end code is a mess (but working) - see next points
-  - need an API for LuaContainer to handle things (instead of handling things in the front-end code ....)
+  - (DONE) need an API for LuaContainer to handle things (instead of handling things in the front-end code ....)
   - need a rename function that renames files on the hard disk (also need code that detects renames)
-  - hide LuaCode and LuaConfig completely and make necessary things available through LuaContainer API
+  - (DONE) hide LuaCode and LuaConfig completely and make necessary things available through LuaContainer API
   - move script description to config
-  - (low priority) rename lw_allscrpts to tw_allscript
   - (low priority) rename LuaContainerList to LuaContainerList_t
   - (low priority) rename LuaList to LuaContainerList (to be more clear)

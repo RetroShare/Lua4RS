@@ -1,32 +1,31 @@
 #ifndef LUACODE_H
 #define LUACODE_H
 
-#include <string>
-#include <map>
+class QString;
 
 class LuaCode
 {
 public:
     LuaCode();
-    LuaCode(std::string name, std::string desc);
-    LuaCode(std::string name, std::string desc, std::string code);
+    LuaCode(QString name, QString desc);
+    LuaCode(QString name, QString desc, QString code);
 
     // bool save();
 
     // getter/setter
-    std::string code() const;
-    void setCode(const std::string &code);
+    QString code() const;
+    void setCode(const QString &code);
 
-    std::string desc() const;
-    void setDesc(const std::string &desc);
+    QString desc() const;
+    void setDesc(const QString &desc);
 
-    std::string name() const;
-    void setName(const std::string &name);
+    QString name() const;
+    void setName(const QString &name);
 
 private:
-    std::string _code;
-    std::string _desc;
-    std::string _name;
+    QString _code;
+    QString _desc;
+    QString _name;
 };
 
 #endif // LUACODE_H
