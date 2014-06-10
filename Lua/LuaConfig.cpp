@@ -10,7 +10,7 @@ LuaConfig::~LuaConfig()
 
 
 //
-bool LuaConfig::isTriggered(const QDateTime& dt)
+bool LuaConfig::isTriggered(const LuaEvent luaevent)
 {
     if (_triggerType != ByTimer)
     {
@@ -19,8 +19,8 @@ bool LuaConfig::isTriggered(const QDateTime& dt)
 
     if (_enableConstraint)
     {
-        if ((dt.time() < _enableConstraintFrom) &&
-            (dt.time() > _enableConstraintTo))
+        if ((luaevent.timeStamp.time() < _enableConstraintFrom) &&
+            (luaevent.timeStamp.time() > _enableConstraintTo))
         {
             return false; // ...we cannot be triggered outside of the constraint intervall
         }
@@ -36,7 +36,7 @@ bool LuaConfig::isTriggered(const QDateTime& dt)
         //----------------------------------------------------------------------
         case runOnce:
         {
-            if( QDateTime::currentDateTime() != dt )
+            if( QDateTime::currentDateTime() != luaevent.timeStamp )
             {
                 return false;
             }
@@ -59,24 +59,12 @@ bool LuaConfig::isTriggered(const QDateTime& dt)
 }
 
 
-// isTriggered
-bool LuaConfig::isTriggered(int event)
-{
-    if (event == 0)
-    {
-        return false;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 // save - returns 0 if save was successful
 int LuaConfig::save()
 {
     return -1;
 }
+
 
 // load - returns 0 if load was successful
 int LuaConfig::load()
@@ -108,11 +96,13 @@ void LuaConfig::setTriggerType(TriggerType triggertype)
     _triggerType = triggertype;
 }
 
+
 // getTriggerType
 TriggerType LuaConfig::getTriggerType()
 {
     return _triggerType;
 }
+
 
 // setScriptEnabled
 void LuaConfig::setScriptEnabled(bool scriptenabled)
@@ -120,11 +110,13 @@ void LuaConfig::setScriptEnabled(bool scriptenabled)
     _scriptEnabled = scriptenabled;
 }
 
+
 // getScriptEnabled
 bool LuaConfig::getScriptEnabled()
 {
     return _scriptEnabled;
 }
+
 
 // setEnableConstraint
 void LuaConfig::setEnableConstraint(bool enableconstraint)
@@ -132,11 +124,13 @@ void LuaConfig::setEnableConstraint(bool enableconstraint)
     _enableConstraint = enableconstraint;
 }
 
+
 // getEnableConstraint
 bool LuaConfig::getEnableConstraint()
 {
     return _enableConstraint;
 }
+
 
 // setEnableConstraintFrom
 void LuaConfig::setEnableConstraintFrom(QTime& enableconstraintfrom)
@@ -144,11 +138,13 @@ void LuaConfig::setEnableConstraintFrom(QTime& enableconstraintfrom)
     _enableConstraintFrom = enableconstraintfrom;
 }
 
+
 // getEnableConstraintFrom
 QTime& LuaConfig::getEnableConstraintFrom()
 {
     return _enableConstraintFrom;
 }
+
 
 // setEnableConstraintTo
 void LuaConfig::setEnableConstraintTo(QTime& enableconstraintto)
@@ -156,11 +152,13 @@ void LuaConfig::setEnableConstraintTo(QTime& enableconstraintto)
     _enableConstraintTo = enableconstraintto;
 }
 
+
 // getEnableConstraintTo
 QTime& LuaConfig::getEnableConstraintTo()
 {
     return _enableConstraintTo;
 }
+
 
 // getConfigForTimer
 LuaConfigForTimer LuaConfig::getConfigForTimer()
@@ -168,11 +166,13 @@ LuaConfigForTimer LuaConfig::getConfigForTimer()
     return _configForTimer;
 }
 
+
 // setConfigForTimer
 void LuaConfig::setConfigForTimer(LuaConfigForTimer configfortimer)
 {
     _configForTimer = configfortimer;
 }
+
 
 // getConfigForEvent
 LuaConfigForEvent LuaConfig::getConfigForEvent()
@@ -180,17 +180,20 @@ LuaConfigForEvent LuaConfig::getConfigForEvent()
     return _configForEvent;
 }
 
+
 // setConfigForEvent
 void LuaConfig::setConfigForEvent(LuaConfigForEvent configforevent)
 {
     _configForEvent = configforevent;
 }
 
+
 // getDescription
 QString LuaConfig::getDescription()
 {
     return _description;
 }
+
 
 // setDescription
 void LuaConfig::setDescription(QString description)

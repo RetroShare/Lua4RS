@@ -14,7 +14,10 @@ HEADERS +=  \
     Lua4RSTickThread.h \
     Lua/LuaList.h \
     Lua/LuaConfig.h \
-    Lua/LuaContainer.h
+    Lua/LuaContainer.h \
+    Lua/LuaEvent.h \
+    Lua/LuaTriggerBase.h \
+    Lua/LuaTrigger.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
@@ -27,7 +30,9 @@ SOURCES +=  \
     Lua4RSTickThread.cpp \
     Lua/LuaList.cpp \
     Lua/LuaConfig.cpp \
-    Lua/LuaContainer.cpp
+    Lua/LuaContainer.cpp \
+    Lua/LuaTriggerBase.cpp \
+    Lua/LuaTrigger.cpp
 
 FORMS += \
     Lua4RSWidget.ui

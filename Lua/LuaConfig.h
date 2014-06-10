@@ -1,7 +1,10 @@
 #ifndef LUACONFIG_H
 #define LUACONFIG_H
 
+#include "LuaEvent.h"
+#include "LuaTrigger.h"
 
+#include <QList>
 #include <QTime>
 #include <QDateTime>
 #include <QString>
@@ -28,6 +31,7 @@ enum TimerType {
     runStartup  = 30
 };
 
+
 //------------------------------------------------------------------------------
 struct LuaConfigForTimer
 {
@@ -42,11 +46,11 @@ struct LuaConfigForTimer
     QDateTime   _runOnceDateTime;
 };
 
-//------------------------------------------------------------------------------
 struct LuaConfigForEvent
 {
-
 };
+
+
 
 //------------------------------------------------------------------------------
 class LuaConfig
@@ -55,11 +59,8 @@ public:
     LuaConfig();
     ~LuaConfig();
 
-    // test if triggered by this timestamp
-    bool isTriggered(const QDateTime &dt);
-
     // test if triggered by this event
-    bool isTriggered(int event);
+    bool isTriggered (LuaEvent luaevent);
 
     // save this LuaConfig
     int save();
@@ -101,6 +102,9 @@ public:
     void setDescription(QString description);
 
 protected:
+    QList <LuaTrigger> mytriggers;
+
+
     // which kind of trigger will start this script: "ByTimer" or "ByEvent"
     // (only these two triggertypes for now)
     TriggerType _triggerType;
