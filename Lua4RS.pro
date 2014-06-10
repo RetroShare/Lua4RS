@@ -1,6 +1,6 @@
 !include("../Common/retroshare_plugin.pri")::error( "Could not include file ../Common/retroshare_plugin.pri" )
 
-CONFIG += qt resources uic qrc debug
+CONFIG += qt resources uic qrc
 
 LIBS += -llua
 
