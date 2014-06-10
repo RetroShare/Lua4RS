@@ -11,11 +11,7 @@
 #include "../Lua4RSNotify.h"
 #include "../Lua4RSTickThread.h"
 
-extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
-}
+class lua_State;
 
 typedef std::map<std::string, std::string>  parameterMap;
 

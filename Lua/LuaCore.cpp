@@ -3,6 +3,14 @@
 
 #include <retroshare/rsinit.h>
 
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
+
+#include "../LuaBridge/Source/LuaBridge/LuaBridge.h"
+
 #include "LuaCore.h"
 #include "../Lua4RSWidget.h"
 
@@ -33,19 +41,32 @@ LuaCore::LuaCore() :
     */
     luaL_openlibs(L);
 
+    /*
     lua_register(L, "rs_print", rs_print);
     lua_register(L, "rs_clear", rs_clear);
 
     // peers
-/*
+
     lua_register(L, "getOwnId", rs_peers_getOwnId);
     lua_register(L, "getOnlineList", rs_peers_getOnlineList);
     lua_register(L, "getFriendList", rs_peers_getFriendList);
     lua_register(L, "getPeerCount", rs_peers_getPeerCount);
     lua_register(L, "getPeerName", rs_peers_getPeerName);
     lua_register(L, "getPeerDetails", rs_peers_getPeerDetails);
-*/
-
+    */
+    luabridge::getGlobalNamespace(L)
+        .beginNamespace("rs")
+            .addCFunction("print", rs_print)
+            .addCFunction("clear", rs_clear)
+        .endNamespace()
+        .beginNamespace("peers")
+            .addCFunction("getOwnId", rs_peers_getOwnId)
+            .addCFunction("getOnlineList", rs_peers_getOnlineList)
+            .addCFunction("getFriendList", rs_peers_getFriendList)
+            .addCFunction("getPeerCount", rs_peers_getPeerCount)
+            .addCFunction("getPeerName", rs_peers_getPeerName)
+            .addCFunction("getPeerDetails", rs_peers_getPeerDetails)
+        .endNamespace();
     // start tick thread (after everything else is setup)
     _thread->start();
 }
