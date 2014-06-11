@@ -1,5 +1,5 @@
 #include "LuaTriggerTimerInterval.h"
-#include "LuaEvent.h"
+#include "../LuaEvent.h"
 
 LuaTriggerTimerInterval::LuaTriggerTimerInterval() {}
 LuaTriggerTimerInterval::~LuaTriggerTimerInterval() {}

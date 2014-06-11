@@ -1,5 +1,5 @@
 #include "LuaTriggerBase.h"
-#include "LuaEvent.h"
+#include "../LuaEvent.h"
 
 LuaTriggerBase::LuaTriggerBase() {}
 LuaTriggerBase::~LuaTriggerBase() {}

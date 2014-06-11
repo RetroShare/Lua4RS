@@ -2,7 +2,7 @@
 #define LUATRIGGERTIMERINTERVAL_H
 
 #include <QString>
-#include "LuaEvent.h"
+#include "../LuaEvent.h"
 #include "LuaTriggerBase.h"
 
 /*

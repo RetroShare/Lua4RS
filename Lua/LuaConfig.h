@@ -2,7 +2,7 @@
 #define LUACONFIG_H
 
 #include "LuaEvent.h"
-#include "LuaTriggerBase.h"
+#include "Trigger/LuaTriggerBase.h"
 
 #include <QList>
 #include <QTime>
