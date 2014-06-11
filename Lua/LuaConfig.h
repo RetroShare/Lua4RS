@@ -1,7 +1,10 @@
 #ifndef LUACONFIG_H
 #define LUACONFIG_H
 
+#include "LuaEvent.h"
+#include "LuaTriggerBase.h"
 
+#include <QList>
 #include <QTime>
 #include <QDateTime>
 #include <QString>
@@ -28,6 +31,7 @@ enum TimerType {
     runStartup  = 30
 };
 
+
 //------------------------------------------------------------------------------
 struct LuaConfigForTimer
 {
@@ -42,11 +46,11 @@ struct LuaConfigForTimer
     QDateTime   _runOnceDateTime;
 };
 
-//------------------------------------------------------------------------------
 struct LuaConfigForEvent
 {
-
 };
+
+
 
 //------------------------------------------------------------------------------
 class LuaConfig
@@ -55,11 +59,8 @@ public:
     LuaConfig();
     ~LuaConfig();
 
-    // test if triggered by this timestamp
-    bool isTriggered(const QDateTime &dt);
-
     // test if triggered by this event
-    bool isTriggered(int event);
+    bool isTriggered (LuaEvent luaevent);
 
     // save this LuaConfig
     int save();
@@ -67,49 +68,39 @@ public:
     // load this LuaConfig
     int load();
 
-    // load this LuaConfig from <str>
-    int fromString(const QString& str);
-
-    // return a string representation of this LuaConfig
-    QString toString();
+    void addTrigger(LuaTriggerBase& trigger);
 
 
     // Getter/Setter
 
-    void setTriggerType(TriggerType triggertype);
-    TriggerType getTriggerType();
+    void enableScript(bool enable);
+    bool isScriptEnabled();
 
-    void setScriptEnabled(bool scriptenabled);
-    bool getScriptEnabled();
+    void enableConstraint(bool enable);
+    bool isConstraintEnabled();
 
-    void setEnableConstraint(bool enableconstraint);
-    bool getEnableConstraint();
+    void setConstraintFrom(QTime& enableconstraintfrom);
+    QTime& getConstraintFrom();
 
-    void setEnableConstraintFrom(QTime& enableconstraintfrom);
-    QTime& getEnableConstraintFrom();
-
-    void setEnableConstraintTo(QTime& enableconstraintto);
-    QTime& getEnableConstraintTo();
-
-    LuaConfigForTimer getConfigForTimer();
-    void setConfigForTimer(LuaConfigForTimer configfortimer);
-
-    LuaConfigForEvent getConfigForEvent();
-    void setConfigForEvent(LuaConfigForEvent configforevent);
+    void setConstraintTo(QTime& constraintto);
+    QTime& getConstraintTo();
 
     QString getDescription();
     void setDescription(QString description);
 
 protected:
-    // which kind of trigger will start this script: "ByTimer" or "ByEvent"
-    // (only these two triggertypes for now)
-    TriggerType _triggerType;
+    // the description field is stored in LuaConfig
+    QString _description;
+
+    // List of Trigger objects which may trigger this script
+    QList <LuaTriggerBase> _mytriggers;
+
 
     // is script enabled?
-    bool        _scriptEnabled;
+    bool        _enableScript;
 
     // is enableConstraint active?
-    bool        _enableConstraint;
+    bool        _constraint;
 
     /*
     _scriptEnabledConstraint. this overrules all TimerType's operations.
@@ -126,17 +117,8 @@ protected:
     to 17:00:00. from 17:00:01 to 08:59:59 the script will not run.
     This constraint applies to event based triggers as well.
     */
-    QTime       _enableConstraintFrom;
-    QTime       _enableConstraintTo;
-
-    // ...
-    LuaConfigForTimer _configForTimer;
-
-    // ...
-    LuaConfigForEvent _configForEvent;
-
-    // the description field is stored in LuaConfig
-    QString _description;
+    QTime       _constraintFrom;
+    QTime       _constraintTo;
 
 };
 

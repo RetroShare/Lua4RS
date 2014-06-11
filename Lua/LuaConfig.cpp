@@ -1,75 +1,14 @@
 #include "LuaConfig.h"
+#include "LuaTriggerBase.h"
 
-LuaConfig::LuaConfig()
+LuaConfig::LuaConfig() {}
+LuaConfig::~LuaConfig() {}
+
+
+// Test all triggers if one or more are triggered by <luaevent>
+bool LuaConfig::isTriggered(const LuaEvent luaevent)
 {
-}
-
-LuaConfig::~LuaConfig()
-{
-}
-
-
-//
-bool LuaConfig::isTriggered(const QDateTime& dt)
-{
-    if (_triggerType != ByTimer)
-    {
-        return false; // ...we cannot be triggered by a timebased trigger
-    }
-
-    if (_enableConstraint)
-    {
-        if ((dt.time() < _enableConstraintFrom) &&
-            (dt.time() > _enableConstraintTo))
-        {
-            return false; // ...we cannot be triggered outside of the constraint intervall
-        }
-    }
-
-    switch (_configForTimer._timerType)
-    {
-        //----------------------------------------------------------------------
-        case runEvery:
-        {
-            return false;
-        }
-        //----------------------------------------------------------------------
-        case runOnce:
-        {
-            if( QDateTime::currentDateTime() != dt )
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        //----------------------------------------------------------------------
-        case runStartup: // f*c: runStartup should be a event type trigger!
-        {
-            return false;
-        }
-        //----------------------------------------------------------------------
-        default:
-        {
-            return false;
-        }
-    }
-}
-
-
-// isTriggered
-bool LuaConfig::isTriggered(int event)
-{
-    if (event == 0)
-    {
-        return false;
-    }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 // save - returns 0 if save was successful
@@ -84,106 +23,58 @@ int LuaConfig::load()
     return -1;
 }
 
-// fromString - loads this LuaConfig from <str>. returns 0 if successful.
-int fromString(const QString& str)
+void addTrigger(LuaTriggerBase& trigger)
 {
-    if (str == "")
-    {
-        return -1;
-    }
-    return 0;
-}
 
-// toString - returns a string representation of this LuaConfig
-QString toString()
-{
-    return QString("");
 }
 
 
-
-// setTriggerType
-void LuaConfig::setTriggerType(TriggerType triggertype)
+// enableScript
+void LuaConfig::enableScript(bool enable)
 {
-    _triggerType = triggertype;
+    _enableScript = enable;
 }
 
-// getTriggerType
-TriggerType LuaConfig::getTriggerType()
+// isScriptEnabled
+bool LuaConfig::isScriptEnabled()
 {
-    return _triggerType;
+    return _enableScript;
 }
 
-// setScriptEnabled
-void LuaConfig::setScriptEnabled(bool scriptenabled)
+// enableConstraint
+void LuaConfig::enableConstraint(bool enable)
 {
-    _scriptEnabled = scriptenabled;
+    _constraint = enable;
 }
 
-// getScriptEnabled
-bool LuaConfig::getScriptEnabled()
+// isConstraintEnabled
+bool LuaConfig::isConstraintEnabled()
 {
-    return _scriptEnabled;
+    return _constraint;
 }
 
-// setEnableConstraint
-void LuaConfig::setEnableConstraint(bool enableconstraint)
+// setConstraintFrom
+void LuaConfig::setConstraintFrom(QTime& constraintfrom)
 {
-    _enableConstraint = enableconstraint;
+    _constraintFrom = constraintfrom;
 }
 
-// getEnableConstraint
-bool LuaConfig::getEnableConstraint()
+// getConstraintFrom
+QTime& LuaConfig::getConstraintFrom()
 {
-    return _enableConstraint;
+    return _constraintFrom;
 }
 
-// setEnableConstraintFrom
-void LuaConfig::setEnableConstraintFrom(QTime& enableconstraintfrom)
+// setConstraintTo
+void LuaConfig::setConstraintTo(QTime& constraintto)
 {
-    _enableConstraintFrom = enableconstraintfrom;
+    _constraintTo = constraintto;
 }
 
-// getEnableConstraintFrom
-QTime& LuaConfig::getEnableConstraintFrom()
+// getConstraintTo
+QTime& LuaConfig::getConstraintTo()
 {
-    return _enableConstraintFrom;
-}
-
-// setEnableConstraintTo
-void LuaConfig::setEnableConstraintTo(QTime& enableconstraintto)
-{
-    _enableConstraintTo = enableconstraintto;
-}
-
-// getEnableConstraintTo
-QTime& LuaConfig::getEnableConstraintTo()
-{
-    return _enableConstraintTo;
-}
-
-// getConfigForTimer
-LuaConfigForTimer LuaConfig::getConfigForTimer()
-{
-    return _configForTimer;
-}
-
-// setConfigForTimer
-void LuaConfig::setConfigForTimer(LuaConfigForTimer configfortimer)
-{
-    _configForTimer = configfortimer;
-}
-
-// getConfigForEvent
-LuaConfigForEvent LuaConfig::getConfigForEvent()
-{
-    return _configForEvent;
-}
-
-// setConfigForEvent
-void LuaConfig::setConfigForEvent(LuaConfigForEvent configforevent)
-{
-    _configForEvent = configforevent;
+    return _constraintTo;
 }
 
 // getDescription
