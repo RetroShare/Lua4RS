@@ -2,7 +2,7 @@
 #define LUACONFIG_H
 
 #include "LuaEvent.h"
-#include "LuaTrigger.h"
+#include "LuaTriggerBase.h"
 
 #include <QList>
 #include <QTime>
@@ -102,7 +102,11 @@ public:
     void setDescription(QString description);
 
 protected:
-    QList <LuaTrigger> mytriggers;
+    // the description field is stored in LuaConfig
+    QString _description;
+
+    // List of Trigger objects which may trigger this script
+    QList <LuaTriggerBase> _mytriggers;
 
 
     // which kind of trigger will start this script: "ByTimer" or "ByEvent"
@@ -139,8 +143,6 @@ protected:
     // ...
     LuaConfigForEvent _configForEvent;
 
-    // the description field is stored in LuaConfig
-    QString _description;
 
 };
 

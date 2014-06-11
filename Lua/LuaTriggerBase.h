@@ -3,11 +3,15 @@
 
 #include "LuaEvent.h"
 
+
 class LuaTriggerBase
 {
 public:
     LuaTriggerBase();
-    virtual bool isTriggered (LuaEvent luaevent) = 0;
+    virtual ~LuaTriggerBase();
+
+    virtual bool isTriggered (LuaEvent luaevent);
+
 };
 
 #endif // LUATRIGGERBASE_H
