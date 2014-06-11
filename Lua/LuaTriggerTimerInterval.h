@@ -1,6 +1,7 @@
 #ifndef LUATRIGGERTIMERINTERVAL_H
 #define LUATRIGGERTIMERINTERVAL_H
 
+#include <QString>
 #include "LuaEvent.h"
 #include "LuaTriggerBase.h"
 
@@ -16,10 +17,16 @@ class LuaTriggerTimerInterval : public LuaTriggerBase
 public:
     LuaTriggerTimerInterval();
     ~LuaTriggerTimerInterval();
+
     bool isTriggered (LuaEvent luaevent);
 
-protected:
+    QString& toString();
 
+    void fromString(QString &str);
+
+protected:
+    int _timeramount;
+    int _timerunit;
 
 };
 

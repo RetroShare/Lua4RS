@@ -68,35 +68,22 @@ public:
     // load this LuaConfig
     int load();
 
-    // load this LuaConfig from <str>
-    int fromString(const QString& str);
-
-    // return a string representation of this LuaConfig
-    QString toString();
+    void addTrigger(LuaTriggerBase& trigger);
 
 
     // Getter/Setter
 
-    void setTriggerType(TriggerType triggertype);
-    TriggerType getTriggerType();
+    void enableScript(bool enable);
+    bool isScriptEnabled();
 
-    void setScriptEnabled(bool scriptenabled);
-    bool getScriptEnabled();
+    void enableConstraint(bool enable);
+    bool isConstraintEnabled();
 
-    void setEnableConstraint(bool enableconstraint);
-    bool getEnableConstraint();
+    void setConstraintFrom(QTime& enableconstraintfrom);
+    QTime& getConstraintFrom();
 
-    void setEnableConstraintFrom(QTime& enableconstraintfrom);
-    QTime& getEnableConstraintFrom();
-
-    void setEnableConstraintTo(QTime& enableconstraintto);
-    QTime& getEnableConstraintTo();
-
-    LuaConfigForTimer getConfigForTimer();
-    void setConfigForTimer(LuaConfigForTimer configfortimer);
-
-    LuaConfigForEvent getConfigForEvent();
-    void setConfigForEvent(LuaConfigForEvent configforevent);
+    void setConstraintTo(QTime& constraintto);
+    QTime& getConstraintTo();
 
     QString getDescription();
     void setDescription(QString description);
@@ -109,15 +96,11 @@ protected:
     QList <LuaTriggerBase> _mytriggers;
 
 
-    // which kind of trigger will start this script: "ByTimer" or "ByEvent"
-    // (only these two triggertypes for now)
-    TriggerType _triggerType;
-
     // is script enabled?
-    bool        _scriptEnabled;
+    bool        _enableScript;
 
     // is enableConstraint active?
-    bool        _enableConstraint;
+    bool        _constraint;
 
     /*
     _scriptEnabledConstraint. this overrules all TimerType's operations.
@@ -134,15 +117,8 @@ protected:
     to 17:00:00. from 17:00:01 to 08:59:59 the script will not run.
     This constraint applies to event based triggers as well.
     */
-    QTime       _enableConstraintFrom;
-    QTime       _enableConstraintTo;
-
-    // ...
-    LuaConfigForTimer _configForTimer;
-
-    // ...
-    LuaConfigForEvent _configForEvent;
-
+    QTime       _constraintFrom;
+    QTime       _constraintTo;
 
 };
 

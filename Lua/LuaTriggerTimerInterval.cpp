@@ -12,3 +12,14 @@ bool LuaTriggerTimerInterval::isTriggered(LuaEvent luaevent)
     }
     return false;
 }
+
+QString& LuaTriggerTimerInterval::toString()
+{
+}
+
+void LuaTriggerTimerInterval::fromString(QString &str)
+{
+}
+
+
+
