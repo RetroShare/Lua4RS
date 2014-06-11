@@ -2,7 +2,7 @@
 #define LUATRIGGERTIMERINTERVAL_H
 
 #include <QString>
-#include "../LuaEvent.h"
+//#include "../LuaEvent.h"
 #include "LuaTriggerBase.h"
 
 /*
@@ -20,9 +20,9 @@ public:
 
     bool isTriggered (LuaEvent luaevent);
 
-    QString& toString();
+    QString toSettings();
 
-    void fromString(QString &str);
+    void fromSettings(QString &str);
 
 protected:
     int _timeramount;

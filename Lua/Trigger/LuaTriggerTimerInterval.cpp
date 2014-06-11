@@ -1,10 +1,9 @@
 #include "LuaTriggerTimerInterval.h"
-#include "../LuaEvent.h"
 
-LuaTriggerTimerInterval::LuaTriggerTimerInterval() {}
-LuaTriggerTimerInterval::~LuaTriggerTimerInterval() {}
+LuaTriggerTimerInterval::LuaTriggerTimerInterval () {}
+LuaTriggerTimerInterval::~LuaTriggerTimerInterval () {}
 
-bool LuaTriggerTimerInterval::isTriggered(LuaEvent luaevent)
+bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
 {
     if (luaevent.eventId == L4R_TIMERTICK)
     {
@@ -13,12 +12,17 @@ bool LuaTriggerTimerInterval::isTriggered(LuaEvent luaevent)
     return false;
 }
 
-QString& LuaTriggerTimerInterval::toString()
+QString LuaTriggerTimerInterval::toSettings ()
 {
+    return QString("");
 }
 
-void LuaTriggerTimerInterval::fromString(QString &str)
+void LuaTriggerTimerInterval::fromSettings (QString &str)
 {
+    if (str == "")
+    {
+        return;
+    }
 }
 
 

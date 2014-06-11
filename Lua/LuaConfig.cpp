@@ -23,9 +23,9 @@ int LuaConfig::load()
     return -1;
 }
 
-void addTrigger(LuaTriggerBase& trigger)
+void LuaConfig::addTrigger(LuaTriggerBase& trigger)
 {
-
+    _mytriggers.append(trigger);
 }
 
 

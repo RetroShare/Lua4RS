@@ -13,9 +13,9 @@ public:
 
     virtual bool isTriggered (LuaEvent luaevent);
 
-    virtual QString& toString();
+    virtual QString toSettings();
 
-    virtual void fromString(QString& str);
+    virtual void fromSettings(QString& str);
 
 };
 
