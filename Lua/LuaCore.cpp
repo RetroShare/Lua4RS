@@ -47,12 +47,12 @@ LuaCore::LuaCore() :
 
     // peers
 
-    lua_register(L, "getOwnId", rs_peers_getOwnId);
-    lua_register(L, "getOnlineList", rs_peers_getOnlineList);
-    lua_register(L, "getFriendList", rs_peers_getFriendList);
-    lua_register(L, "getPeerCount", rs_peers_getPeerCount);
-    lua_register(L, "getPeerName", rs_peers_getPeerName);
-    lua_register(L, "getPeerDetails", rs_peers_getPeerDetails);
+    lua_register(L, "getOwnId", peers_getOwnId);
+    lua_register(L, "getOnlineList", peers_getOnlineList);
+    lua_register(L, "getFriendList", peers_getFriendList);
+    lua_register(L, "getPeerCount", peers_getPeerCount);
+    lua_register(L, "getPeerName", peers_getPeerName);
+    lua_register(L, "getPeerDetails", peers_getPeerDetails);
     */
     luabridge::getGlobalNamespace(L)
         .beginNamespace("rs")
@@ -60,12 +60,12 @@ LuaCore::LuaCore() :
             .addCFunction("clear", rs_clear)
         .endNamespace()
         .beginNamespace("peers")
-            .addCFunction("getOwnId", rs_peers_getOwnId)
-            .addCFunction("getOnlineList", rs_peers_getOnlineList)
-            .addCFunction("getFriendList", rs_peers_getFriendList)
-            .addCFunction("getPeerCount", rs_peers_getPeerCount)
-            .addCFunction("getPeerName", rs_peers_getPeerName)
-            .addCFunction("getPeerDetails", rs_peers_getPeerDetails)
+            .addCFunction("getOwnId", peers_getOwnId)
+            .addCFunction("getOnlineList", peers_getOnlineList)
+            .addCFunction("getFriendList", peers_getFriendList)
+            .addCFunction("getPeerCount", peers_getPeerCount)
+            .addCFunction("getPeerName", peers_getPeerName)
+            .addCFunction("getPeerDetails", peers_getPeerDetails)
         .endNamespace();
     // start tick thread (after everything else is setup)
     _thread->start();
