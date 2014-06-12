@@ -35,6 +35,7 @@ LuaCore::LuaCore() :
 
     lua_register(L, "rs_print", rs_print);
     lua_register(L, "rs_clear", rs_clear);
+    lua_register(L, "rsInit", rs_initRsNamespace);
 
     // peers
     lua_register(L, "getOwnId", peers_getOwnId);

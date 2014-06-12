@@ -29,4 +29,20 @@ extern "C" {
         LuaCore::getInstance()->getUI()->clearOutput();
         return 0;
     }
+
+    int rs_initRsNamespace(lua_State* L)
+    {
+        lua_newtable(L);
+        int top = lua_gettop(L);
+
+        lua_pushstring(L, "print");
+        lua_pushcfunction(L, rs_print);
+        lua_settable(L, top);
+
+        lua_pushstring(L, "clear");
+        lua_pushcfunction(L, rs_clear);
+        lua_settable(L, top);
+
+        return 1;
+    }
 }
