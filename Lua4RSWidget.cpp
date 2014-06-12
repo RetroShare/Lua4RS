@@ -268,7 +268,8 @@ void Lua4RSWidget::on_pb_save_clicked()
     // get values from ui
     uiToLuaContainer(_activeContainer);
 
-    ///TODO no save function yet
+    if(!_lua->codeList()->saveAll())
+        std::verr << "[Lua] saving failed" << std::endl;
 
     // update all scripts
     setLuaCodes(_lua->codeList());
