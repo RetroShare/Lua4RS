@@ -27,6 +27,9 @@ LuaList::~LuaList()
 void LuaList::setFilePath(const std::string& path)
 {
     _filePath = QString::fromStdString(path);
+
+    if(!QDir(_filePath).exists())
+        QDir().mkpath(_filePath);
 }
 
 /*
@@ -227,6 +230,12 @@ bool LuaList::save(LuaContainer* container)
 
         ///TODO dstription
 
+        std::string code;
+#ifdef _WIN32
+        code = container->getCode().toLocal8Bit().constData();
+#else
+        code = container->getCode().toUtf8().constData();
+#endif
         // rest = code
         file << container->getCode().toStdString();
 
