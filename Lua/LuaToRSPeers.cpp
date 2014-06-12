@@ -93,21 +93,21 @@ extern "C" {
         pushTable(L, t1, "extAddr", details.extAddr.c_str());
         pushTable(L, t1, "extPort", details.extPort);
 
-//        lua_pushstring(L, "ipAddressList");
-//        {
-//            lua_newtable(L);
-//            int t2 = lua_gettop(L);
-//            int i = 0;
-//            for(std::list<std::string>::iterator it = details.ipAddressList.begin(); it != details.ipAddressList.end(); ++it, i++)
-//                pushArray(L, t2, i, it->c_str());
+        lua_pushstring(L, "ipAddressList");
+        {
+            lua_newtable(L);
+            int t2 = lua_gettop(L);
+            int i = 0;
+            for(std::list<std::string>::iterator it = details.ipAddressList.begin(); it != details.ipAddressList.end(); ++it, i++)
+                pushArray(L, t2, i, it->c_str());
 
-//            /* this doesn't fit to an array
-//            lua_pushstring(L, "size");
-//            lua_pushunsigned(L, details.ipAddressList.size());
-//            lua_settable(L, t2);
-//            */
-//        }
-//        lua_settable(L, t1);
+            /* this doesn't fit to an array
+            lua_pushstring(L, "size");
+            lua_pushunsigned(L, details.ipAddressList.size());
+            lua_settable(L, t2);
+            */
+        }
+        lua_settable(L, t1);
 
         pushTable(L, t1, "lastConnect", details.lastConnect);
         pushTable(L, t1, "lastUsed", details.lastUsed);
