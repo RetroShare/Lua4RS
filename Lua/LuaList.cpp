@@ -147,7 +147,11 @@ bool LuaList::load(const std::string& name, LuaContainer* container)
         while(!file.eof())
         {
             std::getline(file, line);
-            c += line + '\n';
+            c += line;
+
+            // don't add \n at the end of the file
+            if(!file.eof())
+                c += '\n';
         }
         container->setCode(c);
 
@@ -237,7 +241,7 @@ bool LuaList::save(LuaContainer* container)
         code = container->getCode().toUtf8().constData();
 #endif
         // rest = code
-        file << container->getCode().toStdString();
+        file << code;
 
         file.flush();
         file.close();

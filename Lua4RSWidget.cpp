@@ -197,7 +197,14 @@ void Lua4RSWidget::on_pb_run_clicked()
 {
     appendLog(QString("running Lua script: ") + ui->le_scriptname->text());
 
-    std::string luaCode = ui->pte_luacode->toPlainText().toStdString();
+    QString code = ui->pte_luacode->toPlainText();
+    // not sure if this is actually needed - better safe than sorry
+    std::string luaCode;
+#ifdef _WIN32
+    luaCode = code.toLocal8Bit().constData();
+#else
+    luaCode = code.toUtf8().constData();
+#endif
     _lua->runLuaByString(luaCode);
 }
 
@@ -269,7 +276,7 @@ void Lua4RSWidget::on_pb_save_clicked()
     uiToLuaContainer(_activeContainer);
 
     if(!_lua->codeList()->saveAll())
-        std::verr << "[Lua] saving failed" << std::endl;
+        std::cerr << "[Lua] saving failed" << std::endl;
 
     // update all scripts
     setLuaCodes(_lua->codeList());
