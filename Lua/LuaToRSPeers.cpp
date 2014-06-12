@@ -9,7 +9,6 @@ extern "C" {
 
 
 extern "C" {
-    // peers
 
     int peers_getOwnId(lua_State* L)
     {
@@ -27,13 +26,8 @@ extern "C" {
         int top = lua_gettop(L);
 
         std::list<std::string>::iterator it = ids.begin();
-        for (size_t i = 0; i < ids.size(); i++, it++)
-        {
-            lua_pushinteger(L, i);
-            lua_pushstring(L, it->c_str());
-            lua_settable(L, top);
-        }
-
+        for (size_t i = 1; it != ids.end(); i++, ++it)
+            pushArray(L, top, i, it->c_str());
         return 1;
     }
 
@@ -46,12 +40,8 @@ extern "C" {
         int top = lua_gettop(L);
 
         std::list<std::string>::iterator it = ids.begin();
-        for (size_t i = 0; it != ids.end(); i++, it++)
-        {
-            lua_pushinteger(L, i);
-            lua_pushstring(L, it->c_str());
-            lua_settable(L, top);
-        }
+        for (size_t i = 1; it != ids.end(); i++, ++it)
+            pushArray(L, top, i, it->c_str());
 
         return 1;
     }
@@ -91,85 +81,54 @@ extern "C" {
         lua_newtable(L);
         int t1 = lua_gettop(L);
 
-        lua_pushstring(L, "id");
-        lua_pushstring(L, details.id.c_str());
-        lua_settable(L, t1);
+        pushTable(L, t1, "id", details.id.c_str());
+        pushTable(L, t1, "gpg_id", details.gpg_id.c_str());
+        pushTable(L, t1, "name", details.name.c_str());
+        pushTable(L, t1, "email", details.email.c_str());
+        pushTable(L, t1, "location", details.location.c_str());
+        pushTable(L, t1, "org", details.org.c_str());
+        pushTable(L, t1, "state", details.state);
+        pushTable(L, t1, "connectAddr", details.connectAddr.c_str());
+        pushTable(L, t1, "connectPort", details.connectPort);
+        pushTable(L, t1, "extAddr", details.extAddr.c_str());
+        pushTable(L, t1, "extPort", details.extPort);
 
-        lua_pushstring(L, "gpg_id");
-        lua_pushstring(L, details.gpg_id.c_str());
-        lua_settable(L, t1);
+//        lua_pushstring(L, "ipAddressList");
+//        {
+//            lua_newtable(L);
+//            int t2 = lua_gettop(L);
+//            int i = 0;
+//            for(std::list<std::string>::iterator it = details.ipAddressList.begin(); it != details.ipAddressList.end(); ++it, i++)
+//                pushArray(L, t2, i, it->c_str());
 
-        lua_pushstring(L, "name");
-        lua_pushstring(L, details.name.c_str());
-        lua_settable(L, t1);
+//            /* this doesn't fit to an array
+//            lua_pushstring(L, "size");
+//            lua_pushunsigned(L, details.ipAddressList.size());
+//            lua_settable(L, t2);
+//            */
+//        }
+//        lua_settable(L, t1);
 
-        lua_pushstring(L, "email");
-        lua_pushstring(L, details.email.c_str());
-        lua_settable(L, t1);
+        pushTable(L, t1, "lastConnect", details.lastConnect);
+        pushTable(L, t1, "lastUsed", details.lastUsed);
+        pushTable(L, t1, "connectState", details.connectState);
+        pushTable(L, t1, "connectStateString", details.connectStateString.c_str());
 
-        lua_pushstring(L, "location");
-        lua_pushstring(L, details.location.c_str());
-        lua_settable(L, t1);
+        return 1;
+    }
 
-        lua_pushstring(L, "org");
-        lua_pushstring(L, details.org.c_str());
-        lua_settable(L, t1);
+    // last but not least - namespace
+    int peers_initNamespace(lua_State* L)
+    {
+        lua_newtable(L);
+        int top = lua_gettop(L);
 
-        lua_pushstring(L, "state");
-        lua_pushunsigned(L, details.state);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "connectAddr");
-        lua_pushstring(L, details.connectAddr.c_str());
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "connectPort");
-        lua_pushunsigned(L, details.connectPort);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "extAddr");
-        lua_pushstring(L, details.extAddr.c_str());
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "extPort");
-        lua_pushunsigned(L, details.extPort);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "ipAddressList");
-        {
-            lua_newtable(L);
-            int t2 = lua_gettop(L);
-            int i = 0;
-            for(std::list<std::string>::iterator it = details.ipAddressList.begin(); it != details.ipAddressList.end(); ++it, i++)
-            {
-                lua_pushinteger(L, i);
-                lua_pushstring(L, it->c_str());
-                lua_settable(L, t2);
-            }
-            lua_pushstring(L, "size");
-            lua_pushunsigned(L, details.ipAddressList.size());
-            lua_settable(L, t2);
-        }
-        lua_settable(L, t1);
-
-        // todo ip list
-        // std::list<std::string>  ipAddressList;
-
-        lua_pushstring(L, "lastConnect");
-        lua_pushunsigned(L, details.lastConnect);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "lastUsed");
-        lua_pushunsigned(L, details.lastUsed);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "connectState");
-        lua_pushunsigned(L, details.connectState);
-        lua_settable(L, t1);
-
-        lua_pushstring(L, "connectStateString");
-        lua_pushstring(L, details.connectStateString.c_str());
-        lua_settable(L, t1);
+        pushTable(L, top, "getOwnId", peers_getOwnId);
+        pushTable(L, top, "getOnlineList", peers_getOnlineList);
+        pushTable(L, top, "getFriendList", peers_getFriendList);
+        pushTable(L, top, "getPeerCount", peers_getPeerCount);
+        pushTable(L, top, "getPeerName", peers_getPeerName);
+        pushTable(L, top, "getPeerDetails", peers_getPeerDetails);
 
         return 1;
     }

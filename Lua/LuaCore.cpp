@@ -33,6 +33,10 @@ LuaCore::LuaCore() :
     */
     luaL_openlibs(L);
 
+    lua_register(L, "rs_initRsNamespace", rs_initRsNamespace);
+    lua_register(L, "peers_initNamespace", peers_initNamespace);
+
+    /*
     lua_register(L, "rs_print", rs_print);
     lua_register(L, "rs_clear", rs_clear);
     lua_register(L, "rsInit", rs_initRsNamespace);
@@ -44,6 +48,7 @@ LuaCore::LuaCore() :
     lua_register(L, "getPeerCount", peers_getPeerCount);
     lua_register(L, "getPeerName", peers_getPeerName);
     lua_register(L, "getPeerDetails", peers_getPeerDetails);
+    */
 
     // start tick thread (after everything else is setup)
     _thread->start();
@@ -103,9 +108,15 @@ void LuaCore::runLuaByString(const std::string& code)
         return;
     }
 
-    // std::cout << "[LUA] executing lua ... ";
-    int ret = luaL_dostring(L, code.c_str());
-    // std::cout << "done" << std::endl;
+    // add namespaces
+    std::string code2 = "";
+    code2 += "rs = rs_initRsNamespace() \n";
+    code2 += "peers = peers_initNamespace() \n";
+
+    code2 += code;
+
+
+    int ret = luaL_dostring(L, code2.c_str());
     reportLuaErrors(L, ret);
 }
 
@@ -121,7 +132,7 @@ void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap param
 
     // set parameters
     for(std::map<std::string, std::string>::iterator it = paramMap.begin(); it != paramMap.end(); ++it)
-        code += it->first + " = " + it->second + '\n';
+        code += it->first + " = " + it->second + "\n";
 
     // get code
     LuaContainer* lc = NULL;
