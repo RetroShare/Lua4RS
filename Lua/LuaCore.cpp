@@ -1,6 +1,9 @@
 #include <assert.h>
 #include <iostream>
 
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
 #include <retroshare/rsinit.h>
 
 #include "LuaCore.h"
@@ -22,33 +25,7 @@ LuaCore::LuaCore() :
     // lua files get loaded when _peer is set
 
     L = luaL_newstate();
-
-    /*
-    luaopen_base(L);
-    luaopen_io(L);
-    luaopen_table(L);
-    luaopen_string(L);
-    luaopen_math(L);
-    luaopen_os(L);
-    */
     luaL_openlibs(L);
-
-    lua_register(L, "rs_initRsNamespace", rs_initRsNamespace);
-    lua_register(L, "peers_initNamespace", peers_initNamespace);
-
-    /*
-    lua_register(L, "rs_print", rs_print);
-    lua_register(L, "rs_clear", rs_clear);
-    lua_register(L, "rsInit", rs_initRsNamespace);
-
-    // peers
-    lua_register(L, "getOwnId", peers_getOwnId);
-    lua_register(L, "getOnlineList", peers_getOnlineList);
-    lua_register(L, "getFriendList", peers_getFriendList);
-    lua_register(L, "getPeerCount", peers_getPeerCount);
-    lua_register(L, "getPeerName", peers_getPeerName);
-    lua_register(L, "getPeerDetails", peers_getPeerDetails);
-    */
 
     // start tick thread (after everything else is setup)
     _thread->start();
@@ -99,6 +76,57 @@ void LuaCore::shutDown()
     _instance = NULL;
 }
 
+void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
+{
+    int top;
+
+    // two namespaces
+    tw->setColumnCount(2);
+
+    // rs namespace
+    QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
+    rs->setText(0, "rs.");
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, rs_clear, "clear()", "clears the output", rs);
+    addFunctionToLuaAndTw(top, rs_print, "print()", "prints to output", rs);
+
+    lua_setglobal(L, "rs");
+
+    // peers namespace
+    QTreeWidgetItem *peers = new QTreeWidgetItem(tw);
+    peers->setText(0, "peers.");
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, peers_getOwnId, "getOwnId()", "returns own SSL id", peers);
+    addFunctionToLuaAndTw(top, peers_getOnlineList, "getOnlineList()", "returns list of online friends (SSL id)", peers);
+    addFunctionToLuaAndTw(top, peers_getFriendList, "getFriendList()", "returns list of all friends (SSL id)", peers);
+    addFunctionToLuaAndTw(top, peers_getPeerCount, "getPeerCount()", "returns number of all friends and online friends", peers);
+    addFunctionToLuaAndTw(top, peers_getPeerName, "getPeerName()", "returns the name for a given SSL/PGP id", peers);
+    addFunctionToLuaAndTw(top, peers_getPeerDetails, "getPeerDetails()", "returns peer details as a table for a given SSL id", peers);
+
+    lua_setglobal(L, "peers");
+}
+
+void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, QTreeWidgetItem* item)
+{
+    QTreeWidgetItem *i = new QTreeWidgetItem(item);
+    i->setText(0, QString::fromStdString(name));
+    i->setToolTip(0, QString::fromStdString(hint));
+
+    // name can be like foo(bar) but function name is just foo
+    std::string luaFuncName;
+    size_t pos;
+    if((pos = name.find_first_of('(')) != std::string::npos)
+        luaFuncName = name.substr(0, pos);
+    else
+        luaFuncName = name;
+
+    pushTable(L, tableTop, luaFuncName, f);
+}
+
 // invoke lua
 void LuaCore::runLuaByString(const std::string& code)
 {
@@ -108,15 +136,7 @@ void LuaCore::runLuaByString(const std::string& code)
         return;
     }
 
-    // add namespaces
-    std::string code2 = "";
-    code2 += "rs = rs_initRsNamespace() \n";
-    code2 += "peers = peers_initNamespace() \n";
-
-    code2 += code;
-
-
-    int ret = luaL_dostring(L, code2.c_str());
+    int ret = luaL_dostring(L, code.c_str());
     reportLuaErrors(L, ret);
 }
 

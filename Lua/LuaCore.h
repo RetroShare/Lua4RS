@@ -20,6 +20,8 @@ extern "C" {
 typedef std::map<std::string, std::string>  parameterMap;
 
 class Lua4RSWidget;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 class LuaCore
 {
@@ -29,6 +31,8 @@ public:
 
     static LuaCore* getInstance();
     static void shutDown();
+
+    void setupRsFunctionsAndTw(QTreeWidget* tw);
 
     // invoke lua
     void runLuaByString(const std::string& code);
@@ -45,6 +49,7 @@ public:
 
 private:
     void reportLuaErrors(lua_State *L, int status);
+    void addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, QTreeWidgetItem* item);
 
     static LuaCore* _instance;
 

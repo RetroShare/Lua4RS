@@ -116,20 +116,4 @@ extern "C" {
 
         return 1;
     }
-
-    // last but not least - namespace
-    int peers_initNamespace(lua_State* L)
-    {
-        lua_newtable(L);
-        int top = lua_gettop(L);
-
-        pushTable(L, top, "getOwnId", peers_getOwnId);
-        pushTable(L, top, "getOnlineList", peers_getOnlineList);
-        pushTable(L, top, "getFriendList", peers_getFriendList);
-        pushTable(L, top, "getPeerCount", peers_getPeerCount);
-        pushTable(L, top, "getPeerName", peers_getPeerName);
-        pushTable(L, top, "getPeerDetails", peers_getPeerDetails);
-
-        return 1;
-    }
 }
