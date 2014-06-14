@@ -14,53 +14,25 @@
 
 LuaCore* LuaCore::_instance;
 
+
 LuaCore::LuaCore() :
-    _folderName("Lua4RS")
+  _folderName("Lua4RS")
 {
-    _luaList = new LuaList();
-    _notify = new Lua4RSNotify();
-    _peers = NULL; // gets set later
-    _thread = new Lua4RSTickThread();
+  _luaList = new LuaList();
+  _notify = new Lua4RSNotify();
+  _peers = NULL; // gets set later
+  _thread = new Lua4RSTickThread();
 
-    // lua files get loaded when _peer is set
+  // lua files get loaded when _peer is set
 
-    L = luaL_newstate();
-    luaL_openlibs(L);
+  L = luaL_newstate();
+  luaL_openlibs( L );
 
-    lua_register(L, "rs_initRsNamespace", rs_initRsNamespace);
-    lua_register(L, "peers_initNamespace", peers_initNamespace);
-
-    /*
-    lua_register(L, "rs_print", rs_print);
-    lua_register(L, "rs_clear", rs_clear);
-    lua_register(L, "rsInit", rs_initRsNamespace);
-
-    // peers
-
-    lua_register(L, "getOwnId", peers_getOwnId);
-    lua_register(L, "getOnlineList", peers_getOnlineList);
-    lua_register(L, "getFriendList", peers_getFriendList);
-    lua_register(L, "getPeerCount", peers_getPeerCount);
-    lua_register(L, "getPeerName", peers_getPeerName);
-    lua_register(L, "getPeerDetails", peers_getPeerDetails);
-    */
-    luabridge::getGlobalNamespace(L)
-        .beginNamespace("rs")
-            .addCFunction("print", rs_print)
-            .addCFunction("clear", rs_clear)
-        .endNamespace()
-        .beginNamespace("peers")
-            .addCFunction("getOwnId", peers_getOwnId)
-            .addCFunction("getOnlineList", peers_getOnlineList)
-            .addCFunction("getFriendList", peers_getFriendList)
-            .addCFunction("getPeerCount", peers_getPeerCount)
-            .addCFunction("getPeerName", peers_getPeerName)
-            .addCFunction("getPeerDetails", peers_getPeerDetails)
-        .endNamespace();
-
-    // start tick thread (after everything else is setup)
-    _thread->start();
+  // start tick thread (after everything else is setup)
+  _thread->start();
 }
+
+
 
 LuaCore::~LuaCore()
 {
