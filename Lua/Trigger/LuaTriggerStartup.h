@@ -1,7 +1,6 @@
 #ifndef LUATRIGGERSTARTUP_H
 #define LUATRIGGERSTARTUP_H
 
-//#include "../LuaEvent.h"
 #include "LuaTriggerBase.h"
 
 class LuaTriggerStartup : public LuaTriggerBase
@@ -12,9 +11,12 @@ public:
 
     bool isTriggered (LuaEvent luaevent);
 
-    QString toSettings();
+    void toSettings(QSettings& mySettings);
 
-    void fromSettings(QString &str);
+    void fromSettings(const QSettings& mySettings);
+
+    const QString classname() { return "LuaTriggerStartup";}
+
 
 };
 

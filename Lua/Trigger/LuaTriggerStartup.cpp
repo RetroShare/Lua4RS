@@ -13,17 +13,14 @@ bool LuaTriggerStartup::isTriggered (LuaEvent luaevent)
     return false;
 }
 
-QString LuaTriggerStartup::toSettings ()
+void LuaTriggerStartup::toSettings(QSettings &mySettings)
 {
-    return QString("");
+    return;
 }
 
-void LuaTriggerStartup::fromSettings (QString &str)
+void LuaTriggerStartup::fromSettings (const QSettings& mySettings)
 {
-    if (str == "")
-    {
-        return;
-    }
+    return;
 }
 
 

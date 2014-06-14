@@ -13,15 +13,12 @@ bool LuaTriggerShutdown::isTriggered (LuaEvent luaevent)
     return false;
 }
 
-QString LuaTriggerShutdown::toSettings ()
+void LuaTriggerShutdown::toSettings (QSettings& mySettings)
 {
-    return QString("");
+    return;
 }
 
-void LuaTriggerShutdown::fromSettings (QString &str)
+void LuaTriggerShutdown::fromSettings (const QSettings &mySettings)
 {
-    if (str == "")
-    {
-        return;
-    }
+    return;
 }

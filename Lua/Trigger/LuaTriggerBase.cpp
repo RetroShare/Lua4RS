@@ -1,11 +1,20 @@
 #include "LuaTriggerBase.h"
-//#include "../LuaEvent.h"
 
 LuaTriggerBase::LuaTriggerBase() {}
+
 LuaTriggerBase::~LuaTriggerBase() {}
 
-bool LuaTriggerBase::isTriggered (LuaEvent luaevent) {return false;}
+bool LuaTriggerBase::isTriggered (LuaEvent luaevent)
+{
+    return false;
+}
 
-QString LuaTriggerBase::toSettings() {return "";}
+void LuaTriggerBase::toSettings(QSettings& mySettings)
+{
+}
 
-void LuaTriggerBase::fromSettings(QString& str) {}
+void LuaTriggerBase::fromSettings(const QSettings& mySettings)
+{
+}
+
+

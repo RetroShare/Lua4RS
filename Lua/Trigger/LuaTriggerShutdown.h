@@ -1,7 +1,6 @@
 #ifndef LUATRIGGERSHUTDOWN_H
 #define LUATRIGGERSHUTDOWN_H
 
-//#include "../LuaEvent.h"
 #include "LuaTriggerBase.h"
 
 class LuaTriggerShutdown : public LuaTriggerBase
@@ -12,9 +11,11 @@ public:
 
     bool isTriggered (LuaEvent luaevent);
 
-    QString toSettings();
+    void toSettings(QSettings& mySettings);
 
-    void fromSettings(QString &str);
+    void fromSettings(const QSettings& mySettings);
+
+    const QString classname() { return "LuaTriggerShutdown";}
 
 };
 

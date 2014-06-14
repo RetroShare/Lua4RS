@@ -13,15 +13,12 @@ bool LuaTriggerEvent::isTriggered (LuaEvent luaevent)
     return false;
 }
 
-QString LuaTriggerEvent::toSettings ()
+void LuaTriggerEvent::toSettings(QSettings &mySettings)
 {
-    return QString("");
+    return;
 }
 
-void LuaTriggerEvent::fromSettings (QString &str)
+void LuaTriggerEvent::fromSettings (const QSettings& mySettings)
 {
-    if (str == "")
-    {
-        return;
-    }
+    return;
 }

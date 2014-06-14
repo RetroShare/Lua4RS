@@ -160,6 +160,7 @@ void Lua4RSWidget::on_pb_run_clicked()
     luaCode = code.toUtf8().constData();
 #endif
     _lua->runLuaByString(luaCode);
+
 }
 
 // "New" clicked : create a new empty script
