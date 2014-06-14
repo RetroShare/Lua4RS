@@ -59,7 +59,7 @@ void Lua4RSWidget::appendLog(const std::string& s)
 
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    ui->tb_log->appendPlainText(s);
+    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString() + QString(" > ") + s);
 }
 
 /* #############################################################
@@ -150,7 +150,7 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 // "Run" clicked : execute the script in the editor control
 void Lua4RSWidget::on_pb_run_clicked()
 {
-    appendLog(QString("running Lua script: ") + ui->le_scriptname->text());
+    appendLog(QString("running: ") + ui->le_scriptname->text());
 
     QString code = ui->pte_luacode->toPlainText();
     // not sure if this is actually needed - better safe than sorry
@@ -228,6 +228,9 @@ void Lua4RSWidget::on_pb_load_clicked()
 // "Save" clicked : save the contents of the editor control to a file on disk
 void Lua4RSWidget::on_pb_save_clicked()
 {
+    if(_activeContainer == NULL)
+        return;
+
     // get values from ui
     uiToLuaContainer(_activeContainer);
 
@@ -290,7 +293,9 @@ void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
 }
 
 // AllMyScripts : double click
-void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex &index)
+void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex& /*index*/)
 {
+    // save then load
+    on_pb_save_clicked();
     on_pb_editscript_clicked();
 }
