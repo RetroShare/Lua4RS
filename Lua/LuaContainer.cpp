@@ -71,12 +71,12 @@ void LuaContainer::setName(const std::string& name)
     setName(QString::fromStdString(name));
 }
 
-void LuaContainer::getSettings(QSettings &settings)
+void LuaContainer::getSettings(QSettings& settings)
 {
-    _luaConfig->toSettings(s);
+    _luaConfig->toSettings(settings);
 }
 
-void LuaContainer::loadSettings(const QSettings& settings)
+void LuaContainer::loadSettings(QSettings& settings)
 {
     _luaConfig->fromSettings(settings);
 }

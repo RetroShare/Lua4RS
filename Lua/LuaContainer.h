@@ -27,7 +27,7 @@ public:
     void setName(const std::string& name);
 
     void getSettings(QSettings& settings);
-    void loadSettings(const QSettings& settings);
+    void loadSettings(QSettings& settings);
 
 private:
     LuaCode* _luaCode;

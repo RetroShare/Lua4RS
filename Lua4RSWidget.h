@@ -11,6 +11,8 @@ class Lua4RSWidget;
 
 class LuaCore;
 class QTableWidgetItem;
+class QModelIndex;
+
 
 class Lua4RSWidget : public MainPage
 {

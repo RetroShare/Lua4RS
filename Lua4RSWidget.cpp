@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include <QWidget>
+#include <QModelIndex>
 
 #include "Lua4RSWidget.h"
 #include "ui_Lua4RSWidget.h"
