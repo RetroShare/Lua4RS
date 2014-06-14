@@ -14,16 +14,20 @@
 
 LuaCore* LuaCore::_instance;
 
+
 LuaCore::LuaCore() :
-    _folderName("Lua4RS")
+  _folderName("Lua4RS")
 {
     _luaList = new LuaList();
     _notify = new Lua4RSNotify();
     _peers = NULL; // gets set later
     _thread = new Lua4RSTickThread();
 
-    // lua files get loaded when _peer is set
-
+    /*
+     * Notes:
+     *  - Lua files are loaded when _peers is set
+     *  - RS functions get registered to Lua when GUI is initialized
+     */
     L = luaL_newstate();
     luaL_openlibs(L);
 

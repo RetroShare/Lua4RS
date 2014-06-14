@@ -16,11 +16,12 @@ HEADERS +=  \
     Lua/LuaConfig.h \
     Lua/LuaContainer.h \
     Lua/LuaEvent.h \
-    Lua/LuaTriggerBase.h \
-    Lua/LuaTriggerTimerInterval.h \
-    Lua/LuaTriggerStartup.h \
-    Lua/LuaTriggerEvent.h \
-    Lua/LuaTriggerShutdown.h
+    Lua/Trigger/LuaTriggerBase.h \
+    Lua/Trigger/LuaTriggerTimerInterval.h \
+    Lua/Trigger/LuaTriggerStartup.h \
+    Lua/Trigger/LuaTriggerEvent.h \
+    Lua/Trigger/LuaTriggerShutdown.h \
+    Lua/Trigger/LuaTriggerOnce.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
@@ -34,11 +35,12 @@ SOURCES +=  \
     Lua/LuaList.cpp \
     Lua/LuaConfig.cpp \
     Lua/LuaContainer.cpp \
-    Lua/LuaTriggerBase.cpp \
-    Lua/LuaTriggerTimerInterval.cpp \
-    Lua/LuaTriggerStartup.cpp \
-    Lua/LuaTriggerEvent.cpp \
-    Lua/LuaTriggerShutdown.cpp
+    Lua/Trigger/LuaTriggerBase.cpp \
+    Lua/Trigger/LuaTriggerTimerInterval.cpp \
+    Lua/Trigger/LuaTriggerStartup.cpp \
+    Lua/Trigger/LuaTriggerEvent.cpp \
+    Lua/Trigger/LuaTriggerShutdown.cpp \
+    Lua/Trigger/LuaTriggerOnce.cpp
 
 FORMS += \
     Lua4RSWidget.ui

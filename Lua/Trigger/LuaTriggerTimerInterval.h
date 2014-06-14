@@ -2,31 +2,28 @@
 #define LUATRIGGERTIMERINTERVAL_H
 
 #include <QString>
-#include "LuaEvent.h"
 #include "LuaTriggerBase.h"
-
-/*
-
-    Trigger for a Timer Interval (Run Every section in GUI)
-
-*/
-
 
 class LuaTriggerTimerInterval : public LuaTriggerBase
 {
 public:
     LuaTriggerTimerInterval();
+
     ~LuaTriggerTimerInterval();
 
     bool isTriggered (LuaEvent luaevent);
 
-    QString& toString();
+    void toSettings(QSettings& mySettings);
 
-    void fromString(QString &str);
+    void fromSettings(const QSettings &mySettings);
+
+    const QString classname() { return "LuaTriggerTimerInterval";}
 
 protected:
     int _timeramount;
     int _timerunit;
+    QDate _lastrun;
+
 
 };
 
