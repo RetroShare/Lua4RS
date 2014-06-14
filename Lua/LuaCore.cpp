@@ -87,6 +87,15 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     // two namespaces
     tw->setColumnCount(2);
 
+    // no headers to not to confuse the user
+    tw->setHeaderHidden(true);
+
+    // make it big enough to show the full functionnames
+    tw->setColumnWidth(0,250);
+
+    // second col is only a "container" for the paste value, therefore it needs no width
+    tw->setColumnWidth(1,0);
+
     // rs namespace
     QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
     rs->setText(0, "rs.");

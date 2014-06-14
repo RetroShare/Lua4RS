@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>817</width>
+    <width>885</width>
     <height>718</height>
    </rect>
   </property>
@@ -979,6 +979,9 @@ end;</string>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAsNeeded</enum>
                </property>
+               <property name="horizontalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
@@ -986,7 +989,10 @@ end;</string>
                 <bool>false</bool>
                </property>
                <property name="alternatingRowColors">
-                <bool>true</bool>
+                <bool>false</bool>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
                </property>
                <property name="horizontalScrollMode">
                 <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -1004,6 +1010,9 @@ end;</string>
                 <number>0</number>
                </property>
                <attribute name="headerVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="headerStretchLastSection">
                 <bool>false</bool>
                </attribute>
               </widget>
