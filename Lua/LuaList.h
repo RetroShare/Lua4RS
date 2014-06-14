@@ -39,7 +39,7 @@ public:
     void dump();
 
 private:
-    bool load(const std::string& name, LuaContainer* container);
+    bool load(const std::string& name, LuaContainer* container, bool ignoreNoSettingsFile = true);
     bool save(LuaContainer* container);
     bool remove(LuaContainer* container);
 

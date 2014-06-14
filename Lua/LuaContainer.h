@@ -1,7 +1,7 @@
 #ifndef LUACONTAINER_H
 #define LUACONTAINER_H
 
-#include <QMap>
+#include <QSettings>
 #include <QString>
 
 #include "LuaCode.h"
@@ -15,15 +15,6 @@ public:
     LuaContainer(LuaCode* luacode, LuaConfig* luaconfig);
     ~LuaContainer();
 
-    /*
-    LuaCode* getLuaCode();
-    void setLuaCode(LuaCode& luacode);
-    void setLuaCode(LuaCode* luacode);
-    LuaConfig* getLuaConfig();
-    void setLuaConfig(LuaConfig& luaconfig);
-    void setLuaConfig(LuaConfig* luaconfig);
-    */
-
     QString getCode();
     QString getDesc();
     QString getName();
@@ -34,6 +25,9 @@ public:
     void setDesc(const std::string& desc);
     void setName(const QString& name);
     void setName(const std::string& name);
+
+    void getSettings(QSettings& settings);
+    void loadSettings(const QSettings& settings);
 
 private:
     LuaCode* _luaCode;

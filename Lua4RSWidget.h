@@ -59,6 +59,7 @@ class Lua4RSWidget : public MainPage
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
     void on_lw_allscripts_itemChanged(QTableWidgetItem *item);
+    void on_tw_allscripts_doubleClicked(const QModelIndex &index);
 };
 
 #endif // LUA4RSMAINWIDGET_H

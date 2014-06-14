@@ -287,3 +287,9 @@ void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
         return;
     }
 }
+
+// AllMyScripts : double click
+void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex &index)
+{
+    on_pb_editscript_clicked();
+}

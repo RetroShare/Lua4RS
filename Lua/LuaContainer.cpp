@@ -19,13 +19,13 @@ LuaContainer::LuaContainer(LuaCode* luacode, LuaConfig* luaconfig)
     _luaConfig = luaconfig;
 }
 
-// getter / setter
 LuaContainer::~LuaContainer()
 {
     delete _luaCode;
     delete _luaConfig;
 }
 
+// getter / setter
 QString LuaContainer::getCode()
 {
     return _luaCode->code();
@@ -71,34 +71,12 @@ void LuaContainer::setName(const std::string& name)
     setName(QString::fromStdString(name));
 }
 
-/*
-LuaCode* LuaContainer::getLuaCode()
+void LuaContainer::getSettings(QSettings &settings)
 {
-    return _luaCode;
+    _luaConfig->toSettings(s);
 }
 
-void LuaContainer::setLuaCode(LuaCode& luacode)
+void LuaContainer::loadSettings(const QSettings& settings)
 {
-    _luaCode = &luacode;
+    _luaConfig->fromSettings(settings);
 }
-
-void LuaContainer::setLuaCode(LuaCode* luacode)
-{
-    _luaCode = luacode;
-}
-
-LuaConfig *LuaContainer::getLuaConfig()
-{
-    return &_luaConfig;
-}
-
-void LuaContainer::setLuaConfig(LuaConfig& luaconfig)
-{
-    _luaConfig = luaconfig;
-}
-
-void LuaContainer::setLuaConfig(LuaConfig *luaconfig)
-{
-    _luaConfig = *luaconfig;
-}
-*/
