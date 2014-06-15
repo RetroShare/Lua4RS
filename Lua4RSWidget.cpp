@@ -21,6 +21,10 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
 
     // Fill Hints TreeWidget with main items
     _lua->setupRsFunctionsAndTw(ui->tw_hints);
+
+    // f*c: Set header resize mode of tw_allscripts to content dependant
+    ui->tw_allscripts->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
 }
 
 Lua4RSWidget::~Lua4RSWidget()
