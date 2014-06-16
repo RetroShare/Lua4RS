@@ -17,7 +17,6 @@ public:
 
     const QString classname() { return "LuaTriggerOnce";}
 
-
 protected:
     QDateTime _onceDateTime;
 };

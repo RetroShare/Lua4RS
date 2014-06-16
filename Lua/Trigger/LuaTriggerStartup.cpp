@@ -15,13 +15,13 @@ bool LuaTriggerStartup::isTriggered (LuaEvent luaevent)
 
 void LuaTriggerStartup::toSettings(QSettings &mySettings)
 {
-    return;
+    mySettings.setValue("TriggerClass"  , classname());
+    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 void LuaTriggerStartup::fromSettings (const QSettings& mySettings)
 {
-    return;
+    mySettings.value   ("TriggerClass"  , classname());
+    mySettings.value   ("LastRun"       , _lastRun);
 }
-
-
 

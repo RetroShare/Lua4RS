@@ -16,18 +16,21 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
 void LuaTriggerTimerInterval::toSettings(QSettings &mySettings)
 {
     mySettings.setValue("TriggerClass"  , classname());
-    mySettings.setValue("TimerAmount"   , _timeramount);
-    mySettings.setValue("TimerUnit"     , _timerunit);
-    mySettings.setValue("LastRun"       , _lastrun);
+    mySettings.setValue("TimerAmount"   , _timerAmount);
+    mySettings.setValue("TimerUnit"     , _timerUnit);
+    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 
 void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
 {
-    mySettings.value   ("TriggerClass"     , classname());
-    mySettings.value   ("TimerAmount"      , _timeramount);
-    mySettings.value   ("TimerUnit"        , _timerunit);
-    mySettings.value   ("LastRun"          , _lastrun);
+    mySettings.value   ("TriggerClass"  , classname());
+    mySettings.value   ("TimerAmount"   , _timerAmount);
+    mySettings.value   ("TimerUnit"     , _timerUnit);
+    mySettings.value   ("LastRun"       , _lastRun);
+
+    _timerInterval = _timerAmount * _timerUnit;
+
 }
 
 

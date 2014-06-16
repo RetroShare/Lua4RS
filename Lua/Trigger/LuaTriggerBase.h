@@ -21,6 +21,9 @@ public:
 
     virtual const QString classname() { return "LuaTriggerBase";}
 
+protected:
+    QDateTime _lastRun;
+
 };
 
 #endif // LUATRIGGERBASE_H

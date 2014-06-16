@@ -18,7 +18,7 @@ public:
     const QString classname() { return "LuaTriggerEvent";}
 
 protected:
-    uint _eventid;
+    uint _eventId;
 };
 
 #endif // LUATRIGGEREVENT_H

@@ -16,7 +16,6 @@ public:
     void fromSettings(const QSettings& mySettings);
 
     const QString classname() { return "LuaTriggerShutdown";}
-
 };
 
 #endif // LUATRIGGERSHUTDOWN_H

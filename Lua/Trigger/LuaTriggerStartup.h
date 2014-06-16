@@ -16,8 +16,6 @@ public:
     void fromSettings(const QSettings& mySettings);
 
     const QString classname() { return "LuaTriggerStartup";}
-
-
 };
 
 #endif // LUATRIGGERSTARTUP_H

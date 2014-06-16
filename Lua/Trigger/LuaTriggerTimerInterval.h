@@ -4,6 +4,13 @@
 #include <QString>
 #include "LuaTriggerBase.h"
 
+
+#define TIMER_UNIT_MULT_SEC     1
+#define TIMER_UNIT_MULT_MIN     60
+#define TIMER_UNIT_MULT_HOUR    3600
+#define TIMER_UNIT_MULT_DAY     86400
+#define TIMER_UNIT_MULT_WEEK    604800
+
 class LuaTriggerTimerInterval : public LuaTriggerBase
 {
 public:
@@ -20,11 +27,9 @@ public:
     const QString classname() { return "LuaTriggerTimerInterval";}
 
 protected:
-    int _timeramount;
-    int _timerunit;
-    QDate _lastrun;
-
-
+    uint _timerAmount;
+    uint _timerUnit;
+    uint _timerInterval;
 };
 
 #endif // LUATRIGGERTIMERINTERVAL_H

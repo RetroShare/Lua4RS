@@ -256,7 +256,7 @@ void Lua4RSWidget::on_pb_pastehint_clicked()
 
 }
 
-// "Enabled" toggled :
+// "Enabled Script" toggled :
 void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 {
     if (checked)
@@ -265,7 +265,13 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
     }
 }
 
-// "...between" toggled :
+
+//------------------------------------------------------------------------------
+// Execution Constraint
+//------------------------------------------------------------------------------
+
+// "...between" toggled : Constraint enabled/disabled has changed
+// note: think about disabling constraint from and to timeedits if unchecked
 void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 {
     if (checked)
@@ -274,17 +280,23 @@ void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
     }
 }
 
-// from time changed :
+// from : Constraint "from"-time has changed
+// note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timefrom_editingFinished()
 {
 
 }
 
-// to time changed :
+// to : Constraint "to"-time has changed
+// note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timeto_editingFinished()
 {
 
 }
+
+//------------------------------------------------------------------------------
+// All Scripts
+//------------------------------------------------------------------------------
 
 // AllMyScripts : selected row changed (by click or cursor key)
 void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
@@ -302,3 +314,23 @@ void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex& /*index*/)
     on_pb_save_clicked();
     on_pb_editscript_clicked();
 }
+
+
+//------------------------------------------------------------------------------
+// Tabpage "By Event"
+//------------------------------------------------------------------------------
+
+// "Run Every" : amount of timer units has changed
+// note: if changed, rb_runevery should be selected
+void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
+{
+
+}
+
+// "RunEvery" : unit of timer units has changed
+// note: if changed, rb_runevery should be selected
+void Lua4RSWidget::on_spb_everycount_editingFinished()
+{
+
+}
+

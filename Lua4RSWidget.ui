@@ -1121,7 +1121,7 @@ end;</string>
             <enum>QTabWidget::Rounded</enum>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tabpage_output">
             <attribute name="title">
@@ -1277,10 +1277,10 @@ end;</string>
                     </font>
                    </property>
                    <property name="editable">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="currentIndex">
-                    <number>5</number>
+                    <number>0</number>
                    </property>
                    <property name="maxVisibleItems">
                     <number>15</number>
@@ -1290,27 +1290,7 @@ end;</string>
                    </property>
                    <item>
                     <property name="text">
-                     <string>Years</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Months</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Weeks</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Days</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Hours</string>
+                     <string>Seconds</string>
                     </property>
                    </item>
                    <item>
@@ -1320,7 +1300,17 @@ end;</string>
                    </item>
                    <item>
                     <property name="text">
-                     <string>Seconds</string>
+                     <string>Hours</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Days</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Weeks</string>
                     </property>
                    </item>
                   </widget>

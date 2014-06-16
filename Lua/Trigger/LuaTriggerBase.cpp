@@ -11,10 +11,12 @@ bool LuaTriggerBase::isTriggered (LuaEvent luaevent)
 
 void LuaTriggerBase::toSettings(QSettings& mySettings)
 {
+    return;
 }
 
 void LuaTriggerBase::fromSettings(const QSettings& mySettings)
 {
+    return;
 }
 
 
