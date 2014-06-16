@@ -1,8 +1,6 @@
 #ifndef LUA4RSTICKTHREAD_H
 #define LUA4RSTICKTHREAD_H
 
-#include <stdlib.h>
-
 #include <retroshare/rsplugin.h>
 #include "util/rsthreads.h"
 
@@ -21,6 +19,8 @@ private:
     // virtual	void stop(); /* calls pthread_exit() */
 
     time_t _lastRun;
+    time_t _initTime;
+    bool _startUpEventTriggered;
 };
 
 #endif // LUA4RSTICKTHREAD_H

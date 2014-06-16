@@ -1,5 +1,8 @@
+#include <retroshare/rsstatus.h>
+
 #include "Lua4RSNotify.h"
-#include <iostream>
+#include "Lua/LuaCore.h"
+#include "Lua/LuaEvent.h"
 
 Lua4RSNotify::Lua4RSNotify()
 {
@@ -7,50 +10,102 @@ Lua4RSNotify::Lua4RSNotify()
 
 void Lua4RSNotify::notifyListPreChange              (int /* list */, int /* type */)
 {
-    std::cout << "notifyListPreChange" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_INFO_PEERLISTCHANGE_PRE;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyListChange                 (int /* list */, int /* type */)
 {
-    std::cout << "notifyListChange" << std::endl;
-}
+    LuaEvent e;
+    e.eventId = L4R_INFO_PEERLISTCHANGE;
+    e.timeStamp = QDateTime::currentDateTime();
 
-void Lua4RSNotify::notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */)
-{
-    std::cout << "notifyChatStatus" << std::endl;
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */)
 {
-    std::cout << "notifyChatLobbyEvent" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_LOBBY_EVENT;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
+}
+
+void Lua4RSNotify::notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */)
+{
+    LuaEvent e;
+    e.eventId = L4R_FRIEND_CUSTOM_STATE;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */)
 {
-    std::cout << "notifyHashingInfo" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_FILE_HASHING_DONE;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */)
 {
-    std::cout << "notifyDiskFull" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_INFO_DISK_FULL;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
-void Lua4RSNotify::notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */)
+void Lua4RSNotify::notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t status)
 {
-    std::cout << "notifyPeerStatusChanged" << std::endl;
+    if(status == RS_STATUS_ONLINE)
+    {
+        LuaEvent e;
+        e.eventId = L4R_FRIEND_CAMEONLINE;
+        e.timeStamp = QDateTime::currentDateTime();
+
+        LuaCore::getInstance()->processEvent(e);
+    }
+
+    if(status == RS_STATUS_OFFLINE)
+    {
+        LuaEvent e;
+        e.eventId = L4R_FRIEND_WENTOFFLINE;
+        e.timeStamp = QDateTime::currentDateTime();
+
+        LuaCore::getInstance()->processEvent(e);
+    }
 }
 
 void Lua4RSNotify::notifyPeerStatusChangedSummary   ()
 {
-    std::cout << "notifyPeerStatusChangedSummary" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_FRIENDS_STATUS_CHANGED;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDiscInfoChanged            ()
 {
-    std::cout << "notifyDiscInfoChanged" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_INFO_DISCOVERY_UPDATE;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDownloadComplete           (const std::string& /* fileHash  */)
 {
-    std::cout << "notifyDownloadComplete" << std::endl;
+    LuaEvent e;
+    e.eventId = L4R_FILE_DOWNLOADFINISHED;
+    e.timeStamp = QDateTime::currentDateTime();
+
+    LuaCore::getInstance()->processEvent(e);
 }

@@ -7,22 +7,26 @@
 //------------------------------------------------------------------------------
 struct LuaEvent {
     uint eventId;
-    QDateTime& timeStamp;
+    QDateTime timeStamp;
     void* dataParm;
 };
 
 //------------------------------------------------------------------------------
 //  Fundamental Events from the Plugin
 //------------------------------------------------------------------------------
-#define L4R_NOEVENT                     0
-#define L4R_TIMERTICK                   1
-#define L4R_STARTUP                     2
+#define L4R_NOEVENT                     00000
+#define L4R_TIMERTICK                   00001
+#define L4R_STARTUP                     00002
 #define L4R_SHUTDOWN                    99999
 
 //------------------------------------------------------------------------------
 //  Events from Infolog
 //------------------------------------------------------------------------------
 #define L4R_INFO_NEWENTRY               10000
+#define L4R_INFO_PEERLISTCHANGE         10010
+#define L4R_INFO_PEERLISTCHANGE_PRE     10011
+#define L4R_INFO_DISCOVERY_UPDATE       10020
+#define L4R_INFO_DISK_FULL              10030
 
 //------------------------------------------------------------------------------
 //  Events from Friends
@@ -31,6 +35,8 @@ struct LuaEvent {
 #define L4R_FRIEND_WENTOFFLINE          11010
 #define L4R_FRIEND_ADDED                11020
 #define L4R_FRIEND_BLOCKED              11030
+#define L4R_FRIEND_CUSTOM_STATE         11040
+#define L4R_FRIENDS_STATUS_CHANGED      11050
 
 //------------------------------------------------------------------------------
 //  Events from File Downloads
@@ -44,6 +50,7 @@ struct LuaEvent {
 //------------------------------------------------------------------------------
 #define L4R_FILE_UPLOADSTARTED          13000
 #define L4R_FILE_UPLOADFINISHED         13010
+#define L4R_FILE_HASHING_DONE           13020
 
 //------------------------------------------------------------------------------
 //  Events from File Searches
@@ -68,6 +75,7 @@ struct LuaEvent {
 #define L4R_LOBBY_PEERLEFT              16030
 #define L4R_LOBBY_PEERMUTED             16040
 #define L4R_LOBBY_PEERUNMUTED           16050
+#define L4R_LOBBY_EVENT                 16060
 
 //------------------------------------------------------------------------------
 //  Events from Private Chats

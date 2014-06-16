@@ -32,7 +32,11 @@ public:
     static LuaCore* getInstance();
     static void shutDown();
 
+    bool sane() { return _ui != NULL && _peers != NULL; }
+
     void setupRsFunctionsAndTw(QTreeWidget* tw);
+
+    void processEvent(LuaEvent& e);
 
     // invoke lua
     void runLuaByString(const std::string& code);

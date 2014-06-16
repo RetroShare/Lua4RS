@@ -143,6 +143,19 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const st
     pushTable(L, tableTop, luaFuncName, f);
 }
 
+void LuaCore::processEvent(LuaEvent &e)
+{
+    // to catch to early events
+    if(!sane())
+    {
+        std::cerr << "[Lua] LuaCore not ready - event " << e.eventId  << std::endl;
+        return;
+    }
+
+    // do some magic here
+    std::cerr << "[Lua] trigger ... event " << e.eventId  << std::endl;
+}
+
 // invoke lua
 void LuaCore::runLuaByString(const std::string& code)
 {
