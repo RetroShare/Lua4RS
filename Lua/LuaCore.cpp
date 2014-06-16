@@ -83,50 +83,53 @@ void LuaCore::shutDown()
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 {
     int top;
+    std::string namespc; // namespace (with '.' at the end)
 
     // two namespaces
     tw->setColumnCount(2);
 
+    // setup tree widget (after ColumnCount was set!)
     // no headers to not to confuse the user
     tw->setHeaderHidden(true);
-
     // make it big enough to show the full functionnames
     tw->setColumnWidth(0,250);
-
     // second col is only a "container" for the paste value, therefore it needs no width
     tw->setColumnWidth(1,0);
 
     // rs namespace
+    namespc = "rs.";
     QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
-    rs->setText(0, "rs.");
+    rs->setText(0, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, rs_clear, "clear()", "clears the output", rs);
-    addFunctionToLuaAndTw(top, rs_print, "print()", "prints to output", rs);
+    addFunctionToLuaAndTw(top, rs_clear, "clear()", "clears the output", namespc, rs);
+    addFunctionToLuaAndTw(top, rs_print, "print()", "prints to output", namespc, rs);
 
     lua_setglobal(L, "rs");
 
     // peers namespace
+    namespc = "peers.";
     QTreeWidgetItem *peers = new QTreeWidgetItem(tw);
-    peers->setText(0, "peers.");
+    peers->setText(0, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, peers_getOwnId, "getOwnId()", "returns own SSL id", peers);
-    addFunctionToLuaAndTw(top, peers_getOnlineList, "getOnlineList()", "returns list of online friends (SSL id)", peers);
-    addFunctionToLuaAndTw(top, peers_getFriendList, "getFriendList()", "returns list of all friends (SSL id)", peers);
-    addFunctionToLuaAndTw(top, peers_getPeerCount, "getPeerCount()", "returns number of all friends and online friends", peers);
-    addFunctionToLuaAndTw(top, peers_getPeerName, "getPeerName()", "returns the name for a given SSL/PGP id", peers);
-    addFunctionToLuaAndTw(top, peers_getPeerDetails, "getPeerDetails()", "returns peer details as a table for a given SSL id", peers);
+    addFunctionToLuaAndTw(top, peers_getOwnId, "getOwnId()", "returns own SSL id", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_getOnlineList, "getOnlineList()", "returns list of online friends (SSL id)", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_getFriendList, "getFriendList()", "returns list of all friends (SSL id)", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_getPeerCount, "getPeerCount()", "returns number of all friends and online friends", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_getPeerName, "getPeerName()", "returns the name for a given SSL/PGP id", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_getPeerDetails, "getPeerDetails()", "returns peer details as a table for a given SSL id", namespc, peers);
 
     lua_setglobal(L, "peers");
 }
 
-void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, QTreeWidgetItem* item)
+void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, const std::string& namespc, QTreeWidgetItem* item)
 {
     QTreeWidgetItem *i = new QTreeWidgetItem(item);
     i->setText(0, QString::fromStdString(name));
+    i->setText(1, QString::fromStdString(namespc + name));
     i->setToolTip(0, QString::fromStdString(hint));
 
     // name can be like foo(bar) but function name is just foo

@@ -167,18 +167,6 @@ bool LuaList::loadAll()
     std::cout << "[Lua] loading all script files from " << _filePath.toStdString() << std::endl;
 
     // get everything with ".lua"
-    /*
-    QStringList nameFilter(QString::fromStdString("*.lua"));
-    QDir directory(QString::fromStdString(path));
-    QStringList files = directory.entryList(nameFilter);
-
-    // drop folders
-    for( QStringList::iterator it = files.begin(); it != files.end(); ++it)
-        if( QFileInfo(*it).isDir())
-            files.removeOne(*it);
-    */
-
-
     QStringList files;
     QDirIterator dirIt(_filePath);
     while (dirIt.hasNext()) {

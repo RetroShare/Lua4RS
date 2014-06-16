@@ -23,14 +23,6 @@ LuaCode::LuaCode(QString name, QString desc, QString code) :
 {
 }
 
-/*
-//only one non static
-bool inline LuaCode::save()
-{
-    return save(*this);
-}
-*/
-
 // getter/setter
 QString LuaCode::code() const
 {
