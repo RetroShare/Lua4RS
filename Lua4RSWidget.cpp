@@ -324,13 +324,24 @@ void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex& /*index*/)
 // note: if changed, rb_runevery should be selected
 void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
 {
-
+/*
+    tbd:
+    1. hole ref auf akt. container
+    2. hole ref auf config aus container
+    3. wandle wert aus dropdown (secs, mins, days ...) in sec um
+    4. schreibe diesen sec-wert nach config._timerunit
+*/
 }
 
 // "RunEvery" : unit of timer units has changed
 // note: if changed, rb_runevery should be selected
 void Lua4RSWidget::on_spb_everycount_editingFinished()
 {
-
+/*
+    tbd:
+    1. hole ref auf akt. container
+    2. hole ref auf config aus container
+    3. schreibe wert aus spinbutton nach config._timeramount
+*/
 }
 

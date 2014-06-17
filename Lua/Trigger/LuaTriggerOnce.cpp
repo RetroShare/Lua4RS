@@ -1,7 +1,12 @@
 #include "LuaTriggerOnce.h"
 
 LuaTriggerOnce::LuaTriggerOnce() {}
+
+
+
 LuaTriggerOnce::~LuaTriggerOnce() {}
+
+
 
 bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
 {
@@ -9,22 +14,27 @@ bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
     {
         if (luaevent.timeStamp == _onceDateTime)
         {
+            _lastRun = QDateTime().currentDateTime();
             return true;
         }
     }
     return false;
 }
 
+
+
 void LuaTriggerOnce::toSettings(QSettings &mySettings)
 {
-    mySettings.setValue("TriggerClass"  , classname());
+    mySettings.setValue("Classname"     , classname());
     mySettings.setValue("When"          , _onceDateTime);
     mySettings.setValue("LastRun"       , _lastRun);
 }
 
+
+
 void LuaTriggerOnce::fromSettings (const QSettings& mySettings)
 {
-    mySettings.value   ("TriggerClass"  , classname());
+    mySettings.value   ("Classname"     , classname());
     mySettings.value   ("When"          , _onceDateTime);
     mySettings.value   ("LastRun"       , _lastRun);
 }

@@ -10,6 +10,12 @@
 #include <QSettings>
 
 
+#define LUA_TRIGGER_TIMER_INTERVAL      "LuaTriggerTimerInterval"
+#define LUA_TRIGGER_STARTUP             "LuaTriggerStartup"
+#define LUA_TRIGGER_SHUTDOWN            "LuaTriggerShutdown"
+#define LUA_TRIGGER_ONCE                "LuaTriggerTimerOnce"
+#define LUA_TRIGGER_EVENT               "LuaTriggerEvent"
+
 enum TimeUnit {
     Second      = 1,
     Minute      = Second * 60,
@@ -32,8 +38,7 @@ public:
     bool isTriggered (LuaEvent luaevent);
 
     // add a trigger to our triggerlist
-    void addTrigger(LuaTriggerBase& trigger);
-
+    void addTrigger(LuaTriggerBase *trigger);
 
     // load this luaconfig from QSettings data
     void fromSettings(QSettings& mySettings);
@@ -66,21 +71,7 @@ protected:
     // is constraint active?
     bool _constraint;
 
-    /*
-    _scriptEnabledConstraint. this overrules all TimerType's operations.
-
-    e.g.:
-        _scriptEnabled = true
-        _timerType = runEvery
-        _runEveryAmount = 2
-        _runEveryUnit = Hour
-        _enableConstraintFrom = "09:00:00"
-        _enableConstraintTo = "17:00:00"
-
-    then the script will run every 2 hours during the time from 09:00:00
-    to 17:00:00. from 17:00:01 to 08:59:59 the script will not run.
-    This constraint applies to event based triggers as well.
-    */
+    // constraint window
     QTime _constraintFrom;
     QTime _constraintTo;
 
@@ -88,7 +79,7 @@ protected:
     QString _description;
 
     // List of Trigger objects which may trigger this script
-    QList <LuaTriggerBase> _myTriggers;
+    QList <LuaTriggerBase*> _myTriggers;
 
     QDateTime _lastTriggered;
 };
