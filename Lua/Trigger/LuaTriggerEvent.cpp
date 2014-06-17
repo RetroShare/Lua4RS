@@ -1,10 +1,14 @@
 #include "LuaTriggerEvent.h"
 
-LuaTriggerEvent::LuaTriggerEvent() {}
+LuaTriggerEvent::LuaTriggerEvent()
+{
+}
 
 
 
-LuaTriggerEvent::~LuaTriggerEvent() {}
+LuaTriggerEvent::~LuaTriggerEvent()
+{
+}
 
 
 

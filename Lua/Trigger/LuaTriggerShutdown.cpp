@@ -1,10 +1,14 @@
 #include "LuaTriggerShutdown.h"
 
-LuaTriggerShutdown::LuaTriggerShutdown() {}
+LuaTriggerShutdown::LuaTriggerShutdown()
+{
+}
 
 
 
-LuaTriggerShutdown::~LuaTriggerShutdown() {}
+LuaTriggerShutdown::~LuaTriggerShutdown()
+{
+}
 
 
 

@@ -38,7 +38,7 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
 
 
 
-void LuaTriggerTimerInterval::toSettings(QSettings &mySettings)
+void LuaTriggerTimerInterval::toSettings(QSettings& mySettings)
 {
     mySettings.setValue("Classname"     , classname());
     mySettings.setValue("TimerAmount"   , _timerAmount);

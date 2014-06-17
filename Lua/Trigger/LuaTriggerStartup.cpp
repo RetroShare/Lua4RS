@@ -1,10 +1,14 @@
 #include "LuaTriggerStartup.h"
 
-LuaTriggerStartup::LuaTriggerStartup() {}
+LuaTriggerStartup::LuaTriggerStartup()
+{
+}
 
 
 
-LuaTriggerStartup::~LuaTriggerStartup() {}
+LuaTriggerStartup::~LuaTriggerStartup()
+{
+}
 
 
 

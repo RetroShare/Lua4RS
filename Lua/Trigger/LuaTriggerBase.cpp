@@ -1,11 +1,14 @@
 #include "LuaTriggerBase.h"
-#include <iostream>
 
-LuaTriggerBase::LuaTriggerBase() {}
+LuaTriggerBase::LuaTriggerBase()
+{
+}
 
 
 
-LuaTriggerBase::~LuaTriggerBase() {}
+LuaTriggerBase::~LuaTriggerBase()
+{
+}
 
 
 

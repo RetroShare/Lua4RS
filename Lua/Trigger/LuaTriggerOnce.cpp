@@ -1,10 +1,14 @@
 #include "LuaTriggerOnce.h"
 
-LuaTriggerOnce::LuaTriggerOnce() {}
+LuaTriggerOnce::LuaTriggerOnce()
+{
+}
 
 
 
-LuaTriggerOnce::~LuaTriggerOnce() {}
+LuaTriggerOnce::~LuaTriggerOnce()
+{
+}
 
 
 

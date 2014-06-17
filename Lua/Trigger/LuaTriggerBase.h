@@ -1,6 +1,8 @@
 #ifndef LUATRIGGERBASE_H
 #define LUATRIGGERBASE_H
 
+#include <iostream>
+
 #include "../LuaEvent.h"
 #include <QString>
 #include <QSettings>

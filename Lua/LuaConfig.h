@@ -1,6 +1,8 @@
 #ifndef LUACONFIG_H
 #define LUACONFIG_H
 
+#include <iostream>
+
 #include "Trigger/LuaTriggerBase.h"
 
 #include <QList>
