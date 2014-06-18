@@ -1,18 +1,11 @@
 #include "LuaConfig.h"
 
-#include "Trigger/LuaTriggerBase.h"
-#include "Trigger/LuaTriggerTimerInterval.h"
-#include "Trigger/LuaTriggerStartup.h"
-#include "Trigger/LuaTriggerShutdown.h"
-#include "Trigger/LuaTriggerEvent.h"
-#include "Trigger/LuaTriggerOnce.h"
-
-
 
 
 LuaConfig::LuaConfig()
 {
 }
+
 
 
 LuaConfig::~LuaConfig()

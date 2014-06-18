@@ -64,6 +64,7 @@ class Lua4RSWidget : public MainPage
     void on_tw_allscripts_doubleClicked(const QModelIndex &index);
     void on_dd_everyunits_currentIndexChanged(int index);
     void on_spb_everycount_editingFinished();
+    void on_rb_runonevent_toggled(bool checked);
 };
 
 #endif // LUA4RSMAINWIDGET_H

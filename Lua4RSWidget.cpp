@@ -24,6 +24,25 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
 
     // f*c: Set header resize mode of tw_allscripts to content dependant
     ui->tw_allscripts->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
+
+    // Help Button
+    QString help_str = tr(
+    "<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Lua4RS</h1> \
+      <p>With Lua4RS you get three things with one Plugin: </p> \
+      <ul> \
+        <li>You can write, save, load and run Lua programs within RetroShare.</li> \
+        <li>You can use Lua programs like macros (think of macros in LibreOffice) \
+            to control and automate many features of RetroShare. </li> \
+        <li>You can execute your Lua programs either by timer control (think of \
+            cron or at) or by certain RetroShare events (e.g. <i>a friend comes \
+            online</i> or <i>a chat message is received</i> and many more).</li> \
+      </ul> \
+    ") ;
+
+    registerHelpButton(ui->helpButton, help_str) ;
+
+
 }
 
 Lua4RSWidget::~Lua4RSWidget()
@@ -344,4 +363,46 @@ void Lua4RSWidget::on_spb_everycount_editingFinished()
     3. schreibe wert aus spinbutton nach config._timeramount
 */
 }
+
+
+void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
+{
+    if(checked==true){
+        ui->rb_every->setChecked(false);
+
+        ui->rb_once->setChecked(false);
+
+        ui->rb_startup->setChecked(false);
+
+        ui->rb_shutdown->setChecked(false);
+
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
