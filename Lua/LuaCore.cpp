@@ -95,6 +95,9 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     // second col is only a "container" for the paste value, therefore it needs no width
     tw->setColumnWidth(1,0);
 
+    // we need to mess aroung with lua
+    RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
+
     // rs namespace
     namespc = "rs.";
     QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
