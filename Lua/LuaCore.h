@@ -62,12 +62,13 @@ private:
 
     lua_State* L;
 
-    Lua4RSWidget* _ui;
+    RsMutex _mutex;
+    RsPeers* _peers;
+
+    LuaList* _luaList;
     Lua4RSNotify* _notify;
     Lua4RSTickThread* _thread;
-    LuaList* _luaList;
-
-    RsPeers* _peers;
+    Lua4RSWidget* _ui;
 };
 
 #endif // LUACORE_H

@@ -4,7 +4,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include <retroshare/rsinit.h>
+#include <retroshare/rsinit.h>  // needed for config dir
 
 #include "LuaCore.h"
 #include "../Lua4RSWidget.h"
@@ -14,15 +14,14 @@
 
 LuaCore* LuaCore::_instance;
 
-
 LuaCore::LuaCore() :
-  _folderName("Lua4RS")
+    _folderName ("Lua4RS"),
+    _mutex      ("Lua4RS"),
+    _peers      (NULL),
+    _luaList    (new LuaList()),
+    _notify     (new Lua4RSNotify()),
+    _thread     (new Lua4RSTickThread())
 {
-    _luaList = new LuaList();
-    _notify = new Lua4RSNotify();
-    _peers = NULL; // gets set later
-    _thread = new Lua4RSTickThread();
-
     /*
      * Notes:
      *  - Lua files are loaded when _peers is set
@@ -200,6 +199,7 @@ void LuaCore::runLuaByString(const std::string& code)
         return;
     }
 
+    RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
     int ret = luaL_dostring(L, code.c_str());
     reportLuaErrors(L, ret);
 }
