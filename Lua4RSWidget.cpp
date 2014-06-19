@@ -25,7 +25,6 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     // f*c: Set header resize mode of tw_allscripts to content dependant
     ui->tw_allscripts->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-
     // Help Button
     QString help_str = tr(
     "<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Lua4RS</h1> \
@@ -38,11 +37,9 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
             cron or at) or by certain RetroShare events (e.g. <i>a friend comes \
             online</i> or <i>a chat message is received</i> and many more).</li> \
       </ul> \
-    ") ;
+    ");
 
-    registerHelpButton(ui->helpButton, help_str) ;
-
-
+    registerHelpButton(ui->helpButton, help_str);
 }
 
 Lua4RSWidget::~Lua4RSWidget()
@@ -101,15 +98,26 @@ LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromSelectedRow()
 
 LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromRow(const int row)
 {
+    if(row < 0)
+        return NULL;
+
     // get script name
     QTableWidgetItem* name = ui->tw_allscripts->item(row, 0);
 
+    std::cout << "[Lua] Lua4RSWidget::allScriptsGetLuaContainerFromRow : trying to load LuaContaienr for " << name->text().toStdString() << " ...";
+
     // get container by name
     LuaContainer* container;
-    if(LuaCore::getInstance()->codeList()->itemByName(name->text().toStdString(), container))
+    if(LuaCore::getInstance()->codeList()->itemByName(name->text(), container))
+    {
+        std::cout << " got it!" << std::endl;
         return container;
+    }
     else
+    {
+        std::cout << " failed!" << std::endl;
         return NULL;
+    }
 }
 
 void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
@@ -165,6 +173,17 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     ///TODO rest
 }
 
+void Lua4RSWidget::switchContainer(LuaContainer* container)
+{
+    // remember conatiner
+    _activeContainer = container;
+
+    // update UI
+    luaContainerToUi(_activeContainer);
+
+    std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
+}
+
 /* #############################################################
  * # slots
  * #############################################################
@@ -210,13 +229,11 @@ void Lua4RSWidget::on_pb_editscript_clicked()
     LuaContainer* container = allScriptsGetLuaContainerFromSelectedRow();
 
     if(container == NULL)
+    {
+        std::cerr << "[Lua] Lua4RSWidget::on_pb_editscript_clicked : got NULL" << std::endl;
         return;
-
-    // remember conatiner
-    _activeContainer = container;
-
-    // update UI
-    luaContainerToUi(_activeContainer);
+    }
+    switchContainer(container);
 }
 
 // "Delete" clicked : delete the script selected in AllMyScripts
@@ -257,7 +274,9 @@ void Lua4RSWidget::on_pb_save_clicked()
     uiToLuaContainer(_activeContainer);
 
     if(!_lua->codeList()->saveAll())
-        std::cerr << "[Lua] saving failed" << std::endl;
+        std::cerr << "[Lua] Lua4RSWidget::on_pb_save_clicked() : failed to save " << _activeContainer->getName().toStdString() << std::endl;
+    else
+        std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : saved " << _activeContainer->getName().toStdString() << std::endl;
 
     // update all scripts
     setLuaCodes(_lua->codeList());
@@ -326,13 +345,25 @@ void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
     }
 }
 
-// AllMyScripts : double click
-void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex& /*index*/)
+// AllMyScripts : cell double clicked
+void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
 {
+    if(row < 0)
+        return;
+
     // save then load
     on_pb_save_clicked();
-    on_pb_editscript_clicked();
+
+    // get container
+    LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
+    if(container == NULL)
+    {
+        std::cerr << "[Lua] Lua4RSWidget::on_tw_allscripts_doubleClicked : got NULL" << std::endl;
+        return;
+    }
+    switchContainer(container);
 }
+
 
 
 //------------------------------------------------------------------------------
@@ -364,7 +395,6 @@ void Lua4RSWidget::on_spb_everycount_editingFinished()
 */
 }
 
-
 void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
 {
     if(checked==true){
@@ -379,30 +409,3 @@ void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

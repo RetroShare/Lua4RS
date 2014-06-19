@@ -31,6 +31,7 @@ class Lua4RSWidget : public MainPage
 
   private:
     void setLuaCodes(LuaList* list);
+    void switchContainer(LuaContainer* container);
 
     // all scripts helper
     LuaContainer* allScriptsGetLuaContainerFromSelectedRow();
@@ -61,7 +62,7 @@ class Lua4RSWidget : public MainPage
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
     void on_lw_allscripts_itemChanged(QTableWidgetItem *item);
-    void on_tw_allscripts_doubleClicked(const QModelIndex &index);
+    void on_tw_allscripts_cellDoubleClicked(int row, int column);
     void on_dd_everyunits_currentIndexChanged(int index);
     void on_spb_everycount_editingFinished();
     void on_rb_runonevent_toggled(bool checked);
