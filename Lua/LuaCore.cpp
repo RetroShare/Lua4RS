@@ -155,7 +155,7 @@ void LuaCore::processEvent(LuaEvent &e)
     }
 
     // do some magic here
-    std::cerr << "[Lua] trigger ... event " << e.eventId  << std::endl;
+    std::cerr << "[Lua] processing event : " << e.eventId  << std::endl;
 }
 
 // invoke lua

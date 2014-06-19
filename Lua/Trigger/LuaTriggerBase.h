@@ -1,6 +1,8 @@
 #ifndef LUATRIGGERBASE_H
 #define LUATRIGGERBASE_H
 
+#include <iostream>
+
 #include "../LuaEvent.h"
 #include <QString>
 #include <QSettings>
@@ -19,7 +21,11 @@ public:
 
     virtual void fromSettings(const QSettings &mySettings);
 
-    virtual const QString classname() { return "LuaTriggerBase";}
+    virtual QString classname();
+
+protected:
+    QString _classname;
+    QDateTime _lastRun;
 
 };
 

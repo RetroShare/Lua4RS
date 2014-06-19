@@ -24,6 +24,25 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
 
     // f*c: Set header resize mode of tw_allscripts to content dependant
     ui->tw_allscripts->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
+
+    // Help Button
+    QString help_str = tr(
+    "<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Lua4RS</h1> \
+      <p>With Lua4RS you get three things with one Plugin: </p> \
+      <ul> \
+        <li>You can write, save, load and run Lua programs within RetroShare.</li> \
+        <li>You can use Lua programs like macros (think of macros in LibreOffice) \
+            to control and automate many features of RetroShare. </li> \
+        <li>You can execute your Lua programs either by timer control (think of \
+            cron or at) or by certain RetroShare events (e.g. <i>a friend comes \
+            online</i> or <i>a chat message is received</i> and many more).</li> \
+      </ul> \
+    ") ;
+
+    registerHelpButton(ui->helpButton, help_str) ;
+
+
 }
 
 Lua4RSWidget::~Lua4RSWidget()
@@ -62,7 +81,7 @@ void Lua4RSWidget::appendLog(const std::string& s)
 
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString() + QString(" > ") + s);
+    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss") + QString(" > ") + s);
 }
 
 /* #############################################################
@@ -256,7 +275,7 @@ void Lua4RSWidget::on_pb_pastehint_clicked()
 
 }
 
-// "Enabled" toggled :
+// "Enabled Script" toggled :
 void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 {
     if (checked)
@@ -265,7 +284,13 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
     }
 }
 
-// "...between" toggled :
+
+//------------------------------------------------------------------------------
+// Execution Constraint
+//------------------------------------------------------------------------------
+
+// "...between" toggled : Constraint enabled/disabled has changed
+// note: think about disabling constraint from and to timeedits if unchecked
 void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 {
     if (checked)
@@ -274,17 +299,23 @@ void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
     }
 }
 
-// from time changed :
+// from : Constraint "from"-time has changed
+// note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timefrom_editingFinished()
 {
 
 }
 
-// to time changed :
+// to : Constraint "to"-time has changed
+// note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timeto_editingFinished()
 {
 
 }
+
+//------------------------------------------------------------------------------
+// All Scripts
+//------------------------------------------------------------------------------
 
 // AllMyScripts : selected row changed (by click or cursor key)
 void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
@@ -302,3 +333,76 @@ void Lua4RSWidget::on_tw_allscripts_doubleClicked(const QModelIndex& /*index*/)
     on_pb_save_clicked();
     on_pb_editscript_clicked();
 }
+
+
+//------------------------------------------------------------------------------
+// Tabpage "By Event"
+//------------------------------------------------------------------------------
+
+// "Run Every" : amount of timer units has changed
+// note: if changed, rb_runevery should be selected
+void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
+{
+/*
+    tbd:
+    1. hole ref auf akt. container
+    2. hole ref auf config aus container
+    3. wandle wert aus dropdown (secs, mins, days ...) in sec um
+    4. schreibe diesen sec-wert nach config._timerunit
+*/
+}
+
+// "RunEvery" : unit of timer units has changed
+// note: if changed, rb_runevery should be selected
+void Lua4RSWidget::on_spb_everycount_editingFinished()
+{
+/*
+    tbd:
+    1. hole ref auf akt. container
+    2. hole ref auf config aus container
+    3. schreibe wert aus spinbutton nach config._timeramount
+*/
+}
+
+
+void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
+{
+    if(checked==true){
+        ui->rb_every->setChecked(false);
+
+        ui->rb_once->setChecked(false);
+
+        ui->rb_startup->setChecked(false);
+
+        ui->rb_shutdown->setChecked(false);
+
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

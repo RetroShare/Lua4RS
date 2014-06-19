@@ -6,9 +6,9 @@
 
 //------------------------------------------------------------------------------
 struct LuaEvent {
-    uint eventId;
-    QDateTime timeStamp;
-    void* dataParm;
+    uint        eventId;
+    QDateTime   timeStamp;
+    QObject*    dataParm;
 };
 
 //------------------------------------------------------------------------------

@@ -15,10 +15,10 @@ public:
 
     void fromSettings(const QSettings &mySettings);
 
-    const QString classname() { return "LuaTriggerEvent";}
+    QString classname();
 
 protected:
-    uint _eventid;
+    uint _eventId;
 };
 
 #endif // LUATRIGGEREVENT_H
