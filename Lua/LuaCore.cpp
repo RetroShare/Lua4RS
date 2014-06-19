@@ -156,41 +156,6 @@ void LuaCore::processEvent(LuaEvent &e)
 
     // do some magic here
     std::cerr << "[Lua] processing event : " << e.eventId  << std::endl;
-
-/*  some magic:
-
-    foreach container c do
-    {
-        bool istriggered = c.config.isTriggered(e)
-        if ( istriggered )
-        {
-            run : c.config.code (ggfs. mit übergabe der daten in e.dataparm an lua)
-        }
-    }
-
-ist zustand:
-    unser eventsystem ist derzeit synchron. d.h., jedes event e das in
-    Lua4RSTickThread erzeugt wird, wird synchron an processEvent()
-    weitergegeben. (lua4rstickthread blockiert bis processEvent() zurückkehrt.)
-
-    processEvent(e) checkt dann iterativ, ob ein trigger durch
-    das event e ausgelöst wurde. wenn ja, wird der zugeh. luacode ausgeführt.
-    nachdem die lua ausführung abgeschlossen ist und die lua-ausführungsfunction
-    zurückkehrt, sind wir wieder in processEvent und die nächste config wird
-    auf evtl ausgelöste trigger geprüft, bis schließlich alle trigger
-    durchgegangen wurden.
-
-    ERST DANN kehrt processEvent zu seinem Aufrufer in Lua4RSTickThread zurück
-    und das nächste event kann erzeugt werden.
-
-frage:
-    was passiert, wenn ein lua script, dessen ausführung durch einen trigger
-    angestossen wurde, bspw 10 minuten lang läuft?
-
->> korrigier mich, wenn ich irgendwo im obigen falsch liege.
-
-*/
-
 }
 
 // invoke lua

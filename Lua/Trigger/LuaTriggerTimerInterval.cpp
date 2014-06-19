@@ -2,6 +2,7 @@
 
 LuaTriggerTimerInterval::LuaTriggerTimerInterval ()
 {
+    _classname = "LuaTriggerTimerInterval";
 }
 
 
@@ -18,7 +19,7 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
     {
         // if _lastRun was never set before,
         // then we need some very old datetime first
-        if(_lastRun.isValid() == false)
+        if(!_lastRun.isValid())
         {
             _lastRun.setTime_t(0);
         }
@@ -40,24 +41,33 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
 
 void LuaTriggerTimerInterval::toSettings(QSettings& mySettings)
 {
-    mySettings.setValue("Classname"     , classname());
+    LuaTriggerBase::toSettings(mySettings);
+
+//    mySettings.setValue("Classname"     , classname());
+//    mySettings.setValue("LastRun"       , _lastRun);
     mySettings.setValue("TimerAmount"   , _timerAmount);
     mySettings.setValue("TimerUnit"     , _timerUnit);
-    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 
 
 void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
 {
-    mySettings.value   ("Classname"     , classname());
+    LuaTriggerBase::fromSettings(mySettings);
+//    mySettings.value   ("Classname"     , classname());
+//    mySettings.value   ("LastRun"       , _lastRun);
     mySettings.value   ("TimerAmount"   , _timerAmount);
     mySettings.value   ("TimerUnit"     , _timerUnit);
-    mySettings.value   ("LastRun"       , _lastRun);
 
     _timerInterval = _timerAmount * _timerUnit;
 
 }
 
+
+
+QString LuaTriggerTimerInterval::classname()
+{
+    return _classname;
+}
 
 

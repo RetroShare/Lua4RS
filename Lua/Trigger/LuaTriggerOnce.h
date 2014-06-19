@@ -15,7 +15,7 @@ public:
 
     void fromSettings(const QSettings &mySettings);
 
-    const QString classname() { return "LuaTriggerOnce";}
+    QString classname();
 
 protected:
     QDateTime _onceDateTime;

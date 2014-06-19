@@ -81,7 +81,7 @@ void Lua4RSWidget::appendLog(const std::string& s)
 
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString() + QString(" > ") + s);
+    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss") + QString(" > ") + s);
 }
 
 /* #############################################################

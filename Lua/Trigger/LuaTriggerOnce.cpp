@@ -2,6 +2,7 @@
 
 LuaTriggerOnce::LuaTriggerOnce()
 {
+    _classname = "LuaTriggerOnce";
 }
 
 
@@ -29,18 +30,27 @@ bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
 
 void LuaTriggerOnce::toSettings(QSettings &mySettings)
 {
-    mySettings.setValue("Classname"     , classname());
+    LuaTriggerBase::toSettings(mySettings);
+
+//    mySettings.setValue("Classname"     , classname());
+//    mySettings.setValue("LastRun"       , _lastRun);
     mySettings.setValue("When"          , _onceDateTime);
-    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 
 
 void LuaTriggerOnce::fromSettings (const QSettings& mySettings)
 {
-    mySettings.value   ("Classname"     , classname());
+    LuaTriggerBase::fromSettings(mySettings);
+
+//    mySettings.value   ("Classname"     , classname());
+//    mySettings.value   ("LastRun"       , _lastRun);
     mySettings.value   ("When"          , _onceDateTime);
-    mySettings.value   ("LastRun"       , _lastRun);
 }
 
 
+
+QString LuaTriggerOnce::classname()
+{
+    return _classname;
+}

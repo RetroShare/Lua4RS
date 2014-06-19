@@ -21,9 +21,10 @@ public:
 
     virtual void fromSettings(const QSettings &mySettings);
 
-    virtual const QString classname() { return "LuaTriggerBase";}
+    virtual QString classname();
 
 protected:
+    QString _classname;
     QDateTime _lastRun;
 
 };

@@ -2,6 +2,7 @@
 
 LuaTriggerShutdown::LuaTriggerShutdown()
 {
+    _classname = "LuaTriggerShutdown";
 }
 
 
@@ -26,15 +27,27 @@ bool LuaTriggerShutdown::isTriggered (LuaEvent luaevent)
 
 void LuaTriggerShutdown::toSettings (QSettings& mySettings)
 {
-    mySettings.setValue("Classname"     , classname());
-    mySettings.setValue("LastRun"       , _lastRun);
+    LuaTriggerBase::toSettings(mySettings);
+
+//    mySettings.setValue("Classname"     , classname());
+//    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 
 
 void LuaTriggerShutdown::fromSettings (const QSettings &mySettings)
 {
-    mySettings.value   ("Classname"     , classname());
-    mySettings.value   ("LastRun"       , _lastRun);
+    LuaTriggerBase::fromSettings(mySettings);
+
+//    mySettings.value   ("Classname"     , classname());
+//    mySettings.value   ("LastRun"       , _lastRun);
 }
+
+
+
+QString LuaTriggerShutdown::classname()
+{
+    return _classname;
+}
+
 

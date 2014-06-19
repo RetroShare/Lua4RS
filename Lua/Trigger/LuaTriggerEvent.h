@@ -15,7 +15,7 @@ public:
 
     void fromSettings(const QSettings &mySettings);
 
-    const QString classname() { return "LuaTriggerEvent";}
+    QString classname();
 
 protected:
     uint _eventId;

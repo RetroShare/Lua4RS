@@ -24,7 +24,7 @@ public:
 
     void fromSettings(const QSettings &mySettings);
 
-    const QString classname() { return "LuaTriggerTimerInterval";}
+    QString classname();
 
 protected:
     uint _timerAmount;
