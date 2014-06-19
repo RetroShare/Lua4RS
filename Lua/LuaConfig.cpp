@@ -126,6 +126,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             std::cerr << "[Lua] LuaConfig::fromSettings : empty classname! (i=" << i << ")" << std::endl;
             continue;
         }
+        mySettings.value("Classname", className);
 /*
         if (     className == LUA_TRIGGER_TIMER_INTERVAL) {
             atrigger = new LuaTriggerTimerInterval();
@@ -167,7 +168,6 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         }
 */
 
-        LuaTriggerBase* atrigger = 0;
 
         if (     className == LUA_TRIGGER_TIMER_INTERVAL) { atrigger = new LuaTriggerTimerInterval(); }
         else if (className == LUA_TRIGGER_STARTUP)        { atrigger = new LuaTriggerStartup(); }
@@ -176,6 +176,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         else if (className == LUA_TRIGGER_EVENT)          { atrigger = new LuaTriggerEvent(); }
         else {
             std::cerr << "[Lua] LuaConfig::fromSettings() : unknown Trigger class :" << className.toStdString() << std::endl;
+            atrigger = 0;
         }
 
         if (atrigger)
