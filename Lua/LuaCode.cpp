@@ -4,21 +4,18 @@
 
 LuaCode::LuaCode() :
     _code(""),
-    _desc(""),
     _name("")
 {
 }
 
-LuaCode::LuaCode(QString name, QString desc) :
+LuaCode::LuaCode(QString name) :
     _code(""),
-    _desc(desc),
     _name(name)
 {
 }
 
-LuaCode::LuaCode(QString name, QString desc, QString code) :
+LuaCode::LuaCode(QString name, QString code) :
     _code(code),
-    _desc(desc),
     _name(name)
 {
 }
@@ -32,16 +29,6 @@ QString LuaCode::code() const
 void LuaCode::setCode(const QString &code)
 {
     _code = code;
-}
-
-QString LuaCode::desc() const
-{
-    return _desc;
-}
-
-void LuaCode::setDesc(const QString &desc)
-{
-    _desc = desc;
 }
 
 QString LuaCode::name() const

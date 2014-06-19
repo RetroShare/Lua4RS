@@ -69,7 +69,7 @@ public:
     QTime getConstraintTo();
 
     QString getDescription();
-    void setDescription(QString description);
+    void setDescription(const QString &description);
 
 protected:
     // is script enabled?

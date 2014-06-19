@@ -1,12 +1,13 @@
 #include "LuaConfig.h"
 
+#define INI_KEY_CLASSNAME   "Classname"
+#define INI_KEY_DESC        "Description"
+#define INI_KEY_TRIGGER     "Trigger"
 
-
-LuaConfig::LuaConfig()
+LuaConfig::LuaConfig() :
+    _description("")
 {
 }
-
-
 
 LuaConfig::~LuaConfig()
 {
@@ -103,7 +104,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
 // *** draft ***
 
     // first get description from ini
-    mySettings.value("Description", _description);
+    _description = mySettings.value(INI_KEY_DESC, "").toString();
 
     // now get each trigger from its ini group
     QString iniGroup;
@@ -113,13 +114,18 @@ void LuaConfig::fromSettings(QSettings &mySettings)
     for (int i=0 ; i<_myTriggers.size() ; ++i)
     {
         iniGroup.clear();
-        iniGroup.append("Trigger_%1").arg(i);
+        iniGroup.append("%1_%2").arg(INI_KEY_TRIGGER).arg(i);
 
         mySettings.beginGroup(iniGroup);
 
         // Get the classname of the current trigger
         className.clear();
-        mySettings.value("Classname", className);
+        className = mySettings.value(INI_KEY_CLASSNAME, "").toString();
+        if(className == "")
+        {
+            std::cerr << "[Lua] LuaConfig::fromSettings : empty classname! (i=" << i << ")" << std::endl;
+            continue;
+        }
 /*
         if (     className == LUA_TRIGGER_TIMER_INTERVAL) {
             atrigger = new LuaTriggerTimerInterval();
@@ -192,20 +198,17 @@ void LuaConfig::toSettings(QSettings &mySettings)
 
     // first save description to ini
     if (_description != "")
-    {
-        mySettings.setValue("Description", _description);
-    }
+        mySettings.setValue(INI_KEY_DESC, _description);
     else
-    {
-        mySettings.setValue("Description", "It enters a description. It does so whenever it is told to.");
-    }
+        mySettings.setValue(INI_KEY_DESC, "It enters a description. It does so whenever it is told to.");
+
 
     // now save each trigger in a group
     QString inigroup;
     for (int i=0 ; i<_myTriggers.size() ; ++i)
     {
         inigroup.clear();
-        inigroup.append("Trigger_%1").arg(i);
+        inigroup.append("%1_%2").arg(INI_KEY_TRIGGER).arg(i);
 
         mySettings.beginGroup(inigroup);
 /*
@@ -309,7 +312,7 @@ QString LuaConfig::getDescription()
 
 
 // setDescription
-void LuaConfig::setDescription(QString description)
+void LuaConfig::setDescription(const QString& description)
 {
     _description = description;
 }

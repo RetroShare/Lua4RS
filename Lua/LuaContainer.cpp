@@ -33,7 +33,7 @@ QString LuaContainer::getCode()
 
 QString LuaContainer::getDesc()
 {
-    return _luaCode->desc();
+    return _luaConfig->getDescription();
 }
 
 QString LuaContainer::getName()
@@ -53,7 +53,7 @@ void LuaContainer::setCode(const std::string& code)
 
 void LuaContainer::setDesc(const QString& desc)
 {
-    _luaCode->setDesc(desc);
+    _luaConfig->setDescription(desc);
 }
 
 void LuaContainer::setDesc(const std::string& desc)
