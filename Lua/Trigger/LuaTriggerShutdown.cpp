@@ -28,9 +28,6 @@ bool LuaTriggerShutdown::isTriggered (LuaEvent luaevent)
 void LuaTriggerShutdown::toSettings (QSettings& mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
-
-//    mySettings.setValue("Classname"     , classname());
-//    mySettings.setValue("LastRun"       , _lastRun);
 }
 
 
@@ -38,9 +35,6 @@ void LuaTriggerShutdown::toSettings (QSettings& mySettings)
 void LuaTriggerShutdown::fromSettings (const QSettings &mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
-
-//    mySettings.value   ("Classname"     , classname());
-//    mySettings.value   ("LastRun"       , _lastRun);
 }
 
 

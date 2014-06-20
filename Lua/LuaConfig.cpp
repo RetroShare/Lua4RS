@@ -11,31 +11,8 @@ LuaConfig::LuaConfig() :
 
 LuaConfig::~LuaConfig()
 {
-
-// *** draft ***
-
     for (int i=0 ; i<_myTriggers.size() ; ++i)
     {
-/*
-        if (     _myTriggers[i]->classname() == LUA_TRIGGER_TIMER_INTERVAL) {
-            delete ((LuaTriggerTimerInterval*)_myTriggers.at(i));
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_STARTUP) {
-            delete ((LuaTriggerStartup*)_myTriggers.at(i));
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_SHUTDOWN) {
-            delete ((LuaTriggerShutdown*)_myTriggers.at(i));
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_ONCE) {
-            delete ((LuaTriggerOnce*)_myTriggers.at(i));
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_EVENT) {
-            delete ((LuaTriggerEvent*)_myTriggers.at(i));
-        }
-        else {
-            std::cerr << "[Lua] LuaConfig::dtor() : unknown Trigger class :" << _myTriggers[i]->classname().toStdString() << std::endl;
-        }
-*/
         delete _myTriggers.at(i);
     }
     _myTriggers.clear();
@@ -65,14 +42,11 @@ bool LuaConfig::isTriggered(const LuaEvent luaevent)
         // now test each trigger if it is triggered by the event
         for (int i=0 ; i<_myTriggers.size() ; ++i)
         {
-            // f*c tbd : welches isTriggered wird hier aufgerufen? das
-            // von LuaTriggerBase?? ich hoffe nicht!
+            // if at least one trigger returns true then we *are* triggered.
             if ( _myTriggers.at(i)->isTriggered (luaevent) )
             {
                 // lets remember the time we've been triggered
                 _lastTriggered = QDateTime().currentDateTime();
-
-                // if at least one trigger returns true then we *are* triggered.
                 return true;
             }
         }
@@ -100,22 +74,22 @@ void LuaConfig::addTrigger(LuaTriggerBase* trigger)
 // load this luaconfig from QSettings data
 void LuaConfig::fromSettings(QSettings &mySettings)
 {
-
-// *** draft ***
-
     // first get description from ini
     _description = mySettings.value(INI_KEY_DESC, "").toString();
 
     // now get each trigger from its ini group
-    QString iniGroup;
     QString className;
     LuaTriggerBase* atrigger;
 
+    QString iniGroup;
+    QStringList iniGroups = mySettings.childGroups();
+
+
     for (int i=0 ; i<_myTriggers.size() ; ++i)
     {
+        // open new ini group for each trigger obj
         iniGroup.clear();
         iniGroup.append("%1_%2").arg(INI_KEY_TRIGGER).arg(i);
-
         mySettings.beginGroup(iniGroup);
 
         // Get the classname of the current trigger
@@ -126,48 +100,6 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             std::cerr << "[Lua] LuaConfig::fromSettings : empty classname! (i=" << i << ")" << std::endl;
             continue;
         }
-        mySettings.value("Classname", className);
-/*
-        if (     className == LUA_TRIGGER_TIMER_INTERVAL) {
-            atrigger = new LuaTriggerTimerInterval();
-            if (atrigger) {
-                ((LuaTriggerTimerInterval*)atrigger)->fromSettings(mySettings);
-                addTrigger(atrigger);
-            }
-        }
-        else if (className == LUA_TRIGGER_STARTUP) {
-            atrigger = new LuaTriggerStartup();
-            if (atrigger) {
-                ((LuaTriggerStartup*)atrigger)->fromSettings(mySettings);
-                addTrigger(atrigger);
-            }
-        }
-        else if (className == LUA_TRIGGER_SHUTDOWN) {
-            atrigger = new LuaTriggerShutdown();
-            if (atrigger) {
-                ((LuaTriggerShutdown*)atrigger)->fromSettings(mySettings);
-                addTrigger(atrigger);
-            }
-        }
-        else if (className == LUA_TRIGGER_ONCE) {
-            atrigger = new LuaTriggerOnce();
-            if (atrigger) {
-                ((LuaTriggerOnce*)atrigger)->fromSettings(mySettings);
-                addTrigger(atrigger);
-            }
-        }
-        else if (className == LUA_TRIGGER_EVENT) {
-            atrigger = new LuaTriggerEvent();
-            if (atrigger) {
-                ((LuaTriggerEvent*)atrigger)->fromSettings(mySettings);
-                addTrigger(atrigger);
-            }
-        }
-        else {
-            std::cerr << "[Lua] LuaConfig::fromSettings() : unknown Trigger class :" << className.toStdString() << std::endl;
-        }
-*/
-
 
         if (     className == LUA_TRIGGER_TIMER_INTERVAL) { atrigger = new LuaTriggerTimerInterval(); }
         else if (className == LUA_TRIGGER_STARTUP)        { atrigger = new LuaTriggerStartup(); }
@@ -179,7 +111,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             atrigger = 0;
         }
 
-        if (atrigger)
+        if (atrigger != 0)
         {
             atrigger->fromSettings(mySettings);
             addTrigger(atrigger);
@@ -194,9 +126,6 @@ void LuaConfig::fromSettings(QSettings &mySettings)
 // serialize this luaconfig to QSettings data
 void LuaConfig::toSettings(QSettings &mySettings)
 {
-
-// *** draft ***
-
     // first save description to ini
     if (_description != "")
         mySettings.setValue(INI_KEY_DESC, _description);
@@ -212,26 +141,7 @@ void LuaConfig::toSettings(QSettings &mySettings)
         inigroup.append("%1_%2").arg(INI_KEY_TRIGGER).arg(i);
 
         mySettings.beginGroup(inigroup);
-/*
-        if (     _myTriggers[i]->classname() == LUA_TRIGGER_TIMER_INTERVAL) {
-            ((LuaTriggerTimerInterval*)_myTriggers.at(i))->fromSettings(mySettings);
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_STARTUP) {
-            ((LuaTriggerStartup*)_myTriggers.at(i))->fromSettings(mySettings);
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_SHUTDOWN) {
-            ((LuaTriggerShutdown*)_myTriggers.at(i))->fromSettings(mySettings);
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_ONCE) {
-            ((LuaTriggerOnce*)_myTriggers.at(i))->fromSettings(mySettings);
-        }
-        else if (_myTriggers[i]->classname() == LUA_TRIGGER_EVENT) {
-            ((LuaTriggerEvent*)_myTriggers.at(i))->fromSettings(mySettings);
-        }
-        else {
-            std::cerr << "[Lua] LuaConfig::toSettings() : unknown Trigger class :" << _myTriggers[i]->classname().toStdString() << std::endl;
-        }
-*/
+
         _myTriggers.at(i)->fromSettings(mySettings);
 
         mySettings.endGroup();

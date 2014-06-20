@@ -178,6 +178,16 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 
     container->setConstraintsEnable(ui->cbx_timeconstraint->isChecked());
     ///TODO rest
+/*
+    // Script enabled
+    container->setEnabled(ui->cbx_enable->isChecked());
+
+    // Time constraint
+    container->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
+    container->setConstraintFrom(ui->tied_timefrom->time());
+    container->setConstraintTo(ui->tied_timeto->time());
+*/
+
 }
 
 void Lua4RSWidget::switchContainer(LuaContainer* container)
@@ -319,24 +329,42 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 // note: think about disabling constraint from and to timeedits if unchecked
 void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 {
-    if (checked)
+/*
+    if(_activeContainer == NULL)
     {
-        ;
+        std::cerr << "[Lua] Lua4RSWidget::on_cbx_timeconstraint_toggled : got no activeContainer" << std::endl;
+        return;
     }
+    _activeContainer->_luaConfig->enableConstraint(checked);
+*/
 }
 
 // from : Constraint "from"-time has changed
 // note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timefrom_editingFinished()
 {
-
+/*
+    if(_activeContainer == NULL)
+    {
+        std::cerr << "[Lua] Lua4RSWidget::on_tied_timefrom_editingFinished : got no activeContainer" << std::endl;
+        return;
+    }
+    _activeContainer->_luaConfig->setConstraintFrom(ui->tied_timefrom->time());
+*/
 }
 
 // to : Constraint "to"-time has changed
 // note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timeto_editingFinished()
 {
-
+/*
+    if(_activeContainer == NULL)
+    {
+        std::cerr << "[Lua] Lua4RSWidget::on_tied_timeto_editingFinished : got no activeContainer" << std::endl;
+        return;
+    }
+    _activeContainer->_luaConfig->setConstraintTo(ui->tied_timeto->time());
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -402,15 +430,27 @@ void Lua4RSWidget::on_spb_everycount_editingFinished()
 
 void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
 {
-    if(checked==true){
-        ui->rb_every->setChecked(false);
-
-        ui->rb_once->setChecked(false);
-
-        ui->rb_startup->setChecked(false);
-
-        ui->rb_shutdown->setChecked(false);
-
-
-    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

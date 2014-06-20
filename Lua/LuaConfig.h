@@ -14,6 +14,7 @@
 #include <QTime>
 #include <QDateTime>
 #include <QString>
+#include <QStringList>
 #include <QSettings>
 
 
