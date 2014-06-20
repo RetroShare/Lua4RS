@@ -29,8 +29,8 @@ public:
     void getSettings(QSettings& settings);
     void loadSettings(QSettings& settings);
 
-    bool getConstraintsEnable();
-    void setConstraintsEnable(const bool enable);
+    bool getConstraintEnable();
+    void setConstraintEnable(const bool enable);
 
 private:
     LuaCode* _luaCode;

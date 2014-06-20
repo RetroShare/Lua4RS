@@ -149,83 +149,20 @@ void LuaConfig::toSettings(QSettings &mySettings)
 }
 
 
+// getter/setter
+void    LuaConfig::enableScript(bool enable)                  { _enableScript = enable; }
+bool    LuaConfig::isScriptEnabled()                          { return _enableScript; }
 
-// enableScript
-void LuaConfig::enableScript(bool enable)
-{
-    _enableScript = enable;
-}
+void    LuaConfig::enableConstraint(bool enable)              { _constraint = enable; }
+bool    LuaConfig::isConstraintEnabled()                      { return _constraint; }
 
+void    LuaConfig::setConstraintFrom(QTime constraintfrom)    { _constraintFrom = constraintfrom; }
+QTime   LuaConfig::getConstraintFrom()                        { return _constraintFrom; }
 
+void    LuaConfig::setConstraintTo(QTime constraintto)        { _constraintTo = constraintto; }
+QTime   LuaConfig::getConstraintTo()                          { return _constraintTo; }
 
-// isScriptEnabled
-bool LuaConfig::isScriptEnabled()
-{
-    return _enableScript;
-}
-
-
-
-// enableConstraint
-void LuaConfig::enableConstraint(bool enable)
-{
-    _constraint = enable;
-}
-
-
-
-// isConstraintEnabled
-bool LuaConfig::isConstraintEnabled()
-{
-    return _constraint;
-}
-
-
-
-// setConstraintFrom
-void LuaConfig::setConstraintFrom(QTime constraintfrom)
-{
-    _constraintFrom = constraintfrom;
-}
-
-
-
-// getConstraintFrom
-QTime LuaConfig::getConstraintFrom()
-{
-    return _constraintFrom;
-}
-
-
-
-// setConstraintTo
-void LuaConfig::setConstraintTo(QTime constraintto)
-{
-    _constraintTo = constraintto;
-}
-
-
-
-// getConstraintTo
-QTime LuaConfig::getConstraintTo()
-{
-    return _constraintTo;
-}
-
-
-
-// getDescription
-QString LuaConfig::getDescription()
-{
-    return _description;
-}
-
-
-
-// setDescription
-void LuaConfig::setDescription(const QString& description)
-{
-    _description = description;
-}
+QString LuaConfig::getDescription()                           { return _description; }
+void    LuaConfig::setDescription(const QString& description) { _description = description; }
 
 

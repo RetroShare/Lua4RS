@@ -163,7 +163,7 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         ui->le_scriptdesc->setText(container->getDesc());
         ui->pte_luacode->setPlainText(container->getCode());
 
-        ui->cbx_timeconstraint->setChecked(container->getConstraintsEnable());
+        ui->cbx_timeconstraint->setChecked(container->getConstraintEnable());
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);
@@ -176,7 +176,7 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     container->setDesc(ui->le_scriptdesc->text());
     container->setCode(ui->pte_luacode->toPlainText());
 
-    container->setConstraintsEnable(ui->cbx_timeconstraint->isChecked());
+    container->setConstraintEnable(ui->cbx_timeconstraint->isChecked());
     ///TODO rest
 /*
     // Script enabled
@@ -329,14 +329,12 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 // note: think about disabling constraint from and to timeedits if unchecked
 void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 {
-/*
     if(_activeContainer == NULL)
     {
         std::cerr << "[Lua] Lua4RSWidget::on_cbx_timeconstraint_toggled : got no activeContainer" << std::endl;
         return;
     }
-    _activeContainer->_luaConfig->enableConstraint(checked);
-*/
+    _activeContainer->setConstraintEnable(checked);
 }
 
 // from : Constraint "from"-time has changed
