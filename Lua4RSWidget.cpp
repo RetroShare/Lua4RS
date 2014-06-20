@@ -148,9 +148,12 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 {
     if(container == NULL)
     {
+        // for settings things to default / resetting
         ui->le_scriptname->clear();
         ui->le_scriptdesc->clear();
         ui->pte_luacode->clear();
+
+        ui->cbx_timeconstraint->setChecked(false);
 
         ///TODO there might be better ways that this - good enough for the moment
         ui->pte_luacode->setEnabled(false);
@@ -159,6 +162,8 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         ui->le_scriptname->setText(container->getName());
         ui->le_scriptdesc->setText(container->getDesc());
         ui->pte_luacode->setPlainText(container->getCode());
+
+        ui->cbx_timeconstraint->setChecked(container->getConstraintsEnable());
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);
@@ -170,6 +175,8 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     container->setName(ui->le_scriptname->text());
     container->setDesc(ui->le_scriptdesc->text());
     container->setCode(ui->pte_luacode->toPlainText());
+
+    container->setConstraintsEnable(ui->cbx_timeconstraint->isChecked());
     ///TODO rest
 }
 
@@ -363,8 +370,6 @@ void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
     }
     switchContainer(container);
 }
-
-
 
 //------------------------------------------------------------------------------
 // Tabpage "By Event"
