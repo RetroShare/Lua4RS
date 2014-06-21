@@ -41,5 +41,12 @@ void    LuaContainer::setName(const QString& name)      { _luaCode->setName(name
 void    LuaContainer::getSettings(QSettings& settings)  { _luaConfig->toSettings(settings); }
 void    LuaContainer::loadSettings(QSettings& settings) { _luaConfig->fromSettings(settings); }
 
+bool    LuaContainer::getEnabled()                  { _luaConfig->isScriptEnabled(); }
+void    LuaContainer::setEnabled(const bool enable) { _luaConfig->enableScript(enable); }
+
+// constraint
 bool    LuaContainer::getConstraintEnable()                    { return _luaConfig->isConstraintEnabled(); }
 void    LuaContainer::setConstraintEnable(const bool enable)   { _luaConfig->enableConstraint(enable); }
+
+void    LuaContainer::getConstraintFromTo(QTime& from, QTime& to)                { from = _luaConfig->getConstraintFrom(); to = _luaConfig->getConstraintTo(); }
+void    LuaContainer::setConstraintFromTo(const QTime& from, const QTime& to)    { _luaConfig->setConstraintFrom(from); _luaConfig->setConstraintTo(to); }

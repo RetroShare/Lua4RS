@@ -146,24 +146,43 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
 
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 {
+    // for settings things to default / resetting
     if(container == NULL)
     {
-        // for settings things to default / resetting
+        // name, desc, code
         ui->le_scriptname->clear();
         ui->le_scriptdesc->clear();
         ui->pte_luacode->clear();
 
+        // enable, constraint
+        ui->cbx_enable->setChecked(false);
         ui->cbx_timeconstraint->setChecked(false);
+        {
+            QTime n;
+            n.setHMS(0, 0, 0);
+            ui->tied_timefrom->setTime(n);
+            ui->tied_timeto->setTime(n);
+        }
+        ///TODO rest
 
         ///TODO there might be better ways that this - good enough for the moment
         ui->pte_luacode->setEnabled(false);
     } else
     {
+        // name, desc, code
         ui->le_scriptname->setText(container->getName());
         ui->le_scriptdesc->setText(container->getDesc());
         ui->pte_luacode->setPlainText(container->getCode());
 
+
+        ui->cbx_enable->setChecked(container->getEnabled());
         ui->cbx_timeconstraint->setChecked(container->getConstraintEnable());
+        {
+            QTime from, to;
+            container->getConstraintFromTo(from, to);
+            ui->tied_timefrom->setTime(from);
+            ui->tied_timeto->setTime(to);
+        }
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);
@@ -172,22 +191,21 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 
 void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 {
+    // name, desc, code
     container->setName(ui->le_scriptname->text());
     container->setDesc(ui->le_scriptdesc->text());
     container->setCode(ui->pte_luacode->toPlainText());
 
-    container->setConstraintEnable(ui->cbx_timeconstraint->isChecked());
-    ///TODO rest
-/*
-    // Script enabled
+    // enable, constraint
     container->setEnabled(ui->cbx_enable->isChecked());
-
-    // Time constraint
-    container->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
-    container->setConstraintFrom(ui->tied_timefrom->time());
-    container->setConstraintTo(ui->tied_timeto->time());
-*/
-
+    container->setConstraintEnable(ui->cbx_timeconstraint->isChecked());
+    {
+        QTime from, to;
+        from = ui->tied_timefrom->time();
+        to = ui->tied_timeto->time();
+        container->setConstraintFromTo(from, to);
+    }
+    ///TODO rest
 }
 
 void Lua4RSWidget::switchContainer(LuaContainer* container)
