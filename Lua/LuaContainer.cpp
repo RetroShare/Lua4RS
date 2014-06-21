@@ -45,8 +45,8 @@ bool    LuaContainer::getEnabled()                  { _luaConfig->isScriptEnable
 void    LuaContainer::setEnabled(const bool enable) { _luaConfig->enableScript(enable); }
 
 // constraint
-bool    LuaContainer::getConstraintEnable()                    { return _luaConfig->isConstraintEnabled(); }
-void    LuaContainer::setConstraintEnable(const bool enable)   { _luaConfig->enableConstraint(enable); }
+bool    LuaContainer::getConstraintEnabled()                    { return _luaConfig->isConstraintEnabled(); }
+void    LuaContainer::setConstraintEnabled(const bool enable)   { _luaConfig->enableConstraint(enable); }
 
 void    LuaContainer::getConstraintFromTo(QTime& from, QTime& to)                { from = _luaConfig->getConstraintFrom(); to = _luaConfig->getConstraintTo(); }
 void    LuaContainer::setConstraintFromTo(const QTime& from, const QTime& to)    { _luaConfig->setConstraintFrom(from); _luaConfig->setConstraintTo(to); }

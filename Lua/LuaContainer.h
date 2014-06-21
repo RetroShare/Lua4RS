@@ -32,8 +32,8 @@ public:
     bool getEnabled();
     void setEnabled(const bool enable);
 
-    bool getConstraintEnable();
-    void setConstraintEnable(const bool enable);
+    bool getConstraintEnabled();
+    void setConstraintEnabled(const bool enable);
 
     void getConstraintFromTo(QTime& from, QTime& to);
     void setConstraintFromTo(const QTime& from, const QTime& to);

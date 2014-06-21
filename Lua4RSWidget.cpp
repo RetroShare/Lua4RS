@@ -176,7 +176,7 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 
 
         ui->cbx_enable->setChecked(container->getEnabled());
-        ui->cbx_timeconstraint->setChecked(container->getConstraintEnable());
+        ui->cbx_timeconstraint->setChecked(container->getConstraintEnabled());
         {
             QTime from, to;
             container->getConstraintFromTo(from, to);
@@ -198,7 +198,7 @@ void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 
     // enable, constraint
     container->setEnabled(ui->cbx_enable->isChecked());
-    container->setConstraintEnable(ui->cbx_timeconstraint->isChecked());
+    container->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
     {
         QTime from, to;
         from = ui->tied_timefrom->time();
@@ -352,7 +352,7 @@ void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
         std::cerr << "[Lua] Lua4RSWidget::on_cbx_timeconstraint_toggled : got no activeContainer" << std::endl;
         return;
     }
-    _activeContainer->setConstraintEnable(checked);
+    _activeContainer->setConstraintEnabled(checked);
 }
 
 // from : Constraint "from"-time has changed
