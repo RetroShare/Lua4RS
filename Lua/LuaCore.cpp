@@ -102,6 +102,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     namespc = "rs.";
     QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
     rs->setText(0, QString::fromStdString(namespc));
+    rs->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
@@ -114,6 +115,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     namespc = "peers.";
     QTreeWidgetItem *peers = new QTreeWidgetItem(tw);
     peers->setText(0, QString::fromStdString(namespc));
+    peers->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 

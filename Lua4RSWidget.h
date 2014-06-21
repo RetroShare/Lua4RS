@@ -66,6 +66,8 @@ class Lua4RSWidget : public MainPage
     void on_dd_everyunits_currentIndexChanged(int index);
     void on_spb_everycount_editingFinished();
     void on_rb_runonevent_toggled(bool checked);
+    void on_pb_pastehint_released();
+    void on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column);
 };
 
 #endif // LUA4RSMAINWIDGET_H

@@ -448,6 +448,30 @@ void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
 {
 }
 
+//------------------------------------------------------------------------------
+// hints
+//------------------------------------------------------------------------------
+void Lua4RSWidget::on_pb_pastehint_released()
+{
+    QList<QTreeWidgetItem*> items = ui->tw_hints->selectedItems();
+    if(items.empty() || items.size() != 1 || !ui->pte_luacode->isEnabled())
+        return;
+
+    ui->pte_luacode->insertPlainText(items.at(0)->text(1));
+}
+
+void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+    QString hint = item->text(1);
+
+    // when you want to expant a namespace, you double click it --> don't append namespaces
+    if(hint.endsWith('.') || !ui->pte_luacode->isEnabled())
+        return;
+
+    ui->pte_luacode->insertPlainText(hint);
+}
+
+
 
 
 
