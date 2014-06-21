@@ -194,7 +194,7 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     if(!saneValues())
     {
         std::cerr << "[Lua] Lua4RSWidget::uiToLuaContainer : wrong values detected - aborting" << std::endl;
-        return;
+        return false;
     }
 
     // name, desc, code
@@ -212,6 +212,8 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
         container->setConstraintFromTo(from, to);
     }
     ///TODO rest
+
+    return true;
 }
 
 void Lua4RSWidget::switchContainer(LuaContainer* container)
