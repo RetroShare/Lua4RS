@@ -39,8 +39,8 @@ public:
     void setConstraintFromTo(const QTime& from, const QTime& to);
 
 private:
-    LuaCode* _luaCode;
-    LuaConfig* _luaConfig ;
+    LuaCode* _code;
+    LuaConfig* _config ;
 };
 
 #endif // LUACONTAINER_H
