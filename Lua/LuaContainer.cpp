@@ -36,7 +36,13 @@ void    LuaContainer::setDesc(const QString& desc)      { _config->setDescriptio
 
 QString LuaContainer::getName()                         { return _code->name(); }
 void    LuaContainer::setName(const std::string& name)  { setName(QString::fromStdString(name)); }
-void    LuaContainer::setName(const QString& name)      { _code->setName(name); }
+void    LuaContainer::setName(const QString& name)
+{
+    if(name.endsWith(".lua"))
+        _code->setName(name);
+    else
+        _code->setName(name + ".lua");
+}
 
 void    LuaContainer::getSettings(QSettings& settings)  { _config->toSettings(settings); }
 void    LuaContainer::loadSettings(QSettings& settings) { _config->fromSettings(settings); }

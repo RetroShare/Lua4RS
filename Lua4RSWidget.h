@@ -33,6 +33,9 @@ class Lua4RSWidget : public MainPage
     void setLuaCodes(LuaList* list);
     void switchContainer(LuaContainer* container);
 
+    // checks whether things entered in GUI are sane (like name is not empry)
+    bool saneValues();
+
     // all scripts helper
     LuaContainer* allScriptsGetLuaContainerFromSelectedRow();
     LuaContainer* allScriptsGetLuaContainerFromRow(const int row);
@@ -41,7 +44,7 @@ class Lua4RSWidget : public MainPage
     // this function will fill every form with it's corresponding values
     void luaContainerToUi(LuaContainer* container);
     // or the other way round
-    void uiToLuaContainer(LuaContainer* container);
+    bool uiToLuaContainer(LuaContainer* container);
 
     Ui::Lua4RSWidget *ui;
     LuaCore* _lua;

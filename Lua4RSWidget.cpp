@@ -189,8 +189,14 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
     }
 }
 
-void Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
+bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
 {
+    if(!saneValues())
+    {
+        std::cerr << "[Lua] Lua4RSWidget::uiToLuaContainer : wrong values detected - aborting" << std::endl;
+        return;
+    }
+
     // name, desc, code
     container->setName(ui->le_scriptname->text());
     container->setDesc(ui->le_scriptdesc->text());
@@ -217,6 +223,20 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     luaContainerToUi(_activeContainer);
 
     std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
+}
+
+bool Lua4RSWidget::saneValues()
+{
+    bool ret = true;
+    if(ui->le_scriptname->text().isEmpty())
+    {
+        std::cerr << "[Lua] Lua4RSWidget::saneValues : emtpy name found" << std::endl;
+        ret = false;
+    }
+
+    ///TODO check rest
+
+    return ret;
 }
 
 /* #############################################################
@@ -309,7 +329,9 @@ void Lua4RSWidget::on_pb_save_clicked()
     {
         QString oldName = _activeContainer->getName();
         // get values from ui
-        uiToLuaContainer(_activeContainer);
+        if(!uiToLuaContainer(_activeContainer))
+            return;
+
         if(_activeContainer->getName() != oldName)
         {
             std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : renaming " << oldName.toStdString() << " to " << _activeContainer->getName().toStdString() << std::endl;
