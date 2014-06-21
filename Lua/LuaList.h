@@ -17,6 +17,7 @@ public:
 
     bool loadAll();
     bool saveAll();
+    void rename(const QString& oldName, const QString& newName);
 
     //bool itemAt(size_t index, LuaContainer*& container);
     bool itemByName(const QString& name, LuaContainer*& container);
@@ -39,9 +40,11 @@ public:
     void dump();
 
 private:
-    bool load(const std::string& name, LuaContainer* container, bool ignoreNoSettingsFile = true);
+    bool load(const QString& name, LuaContainer* container, bool ignoreNoSettingsFile = true);
     bool save(LuaContainer* container);
     bool remove(LuaContainer* container);
+
+    void getFileNames(const QString& name, QString& luaFileName, QString& settingsFileName);
 
     LuaContainerList _luaList;
     QString _filePath;

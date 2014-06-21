@@ -97,7 +97,7 @@ void LuaList::sort()
     _luaList.sort(LuaListCompare);
 }
 
-bool LuaList::load(const std::string& name, LuaContainer* container, bool ignoreNoSettingsFile)
+bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSettingsFile)
 {
     if(_filePath == "")
         return false;
@@ -105,8 +105,8 @@ bool LuaList::load(const std::string& name, LuaContainer* container, bool ignore
     // set name
     container->setName(name);
 
-    QString luaFileName = _filePath + QString::fromStdString(name);
-    QString settingsFileName =  luaFileName + QString(".ini");
+    QString luaFileName, settingsFileName;
+    getFileNames(name, luaFileName, settingsFileName);
 
     // load code
     {
@@ -182,7 +182,7 @@ bool LuaList::loadAll()
     {
         LuaContainer* c = new LuaContainer();
         std::cout << "[Lua] loading file " << it->toStdString() << " ..." << std::endl;
-        if(load(it->toStdString(), c))
+        if(load((*it), c))
             _luaList.push_back(c);
         else
             std::cerr << "[Lua] can't load file " << it->toStdString() << std::endl;
@@ -198,15 +198,8 @@ bool LuaList::save(LuaContainer* container)
     if(_filePath == "")
         return false;
 
-    QString luaFileName = _filePath + container->getName();
-    // check for .lua ending
-    {
-        QFile f(luaFileName);
-        QFileInfo fi(f);
-        if(fi.suffix() != "lua")
-            luaFileName += ".lua";
-    }
-    QString settingsFileName =  luaFileName + QString(".ini");
+    QString luaFileName, settingsFileName;
+    getFileNames(container->getName(), luaFileName, settingsFileName);
 
     // safe code
     {
@@ -274,6 +267,27 @@ bool LuaList::remove(LuaContainer *container)
 
     QFile f(fileName);
     return f.remove();
+}
+
+void LuaList::rename(const QString& oldName, const QString& newName)
+{
+    QString luaFileNameOld, luaFileNameNew, settingsFileNameOld, settingsFileNameNew;
+    getFileNames(oldName, luaFileNameOld, settingsFileNameOld);
+    getFileNames(newName, luaFileNameNew, settingsFileNameNew);
+
+    QFile fCode(luaFileNameOld);
+    QFile fSettings(settingsFileNameOld);
+
+    if(fCode.exists())
+        fCode.rename(luaFileNameNew);
+    if(fSettings.exists())
+        fSettings.rename(settingsFileNameNew);
+}
+
+void LuaList::getFileNames(const QString& name, QString& luaFileName, QString& settingsFileName)
+{
+    luaFileName = _filePath + name;
+    settingsFileName =  luaFileName + QString(".ini");
 }
 
 void LuaList::dump()

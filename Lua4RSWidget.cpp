@@ -305,8 +305,17 @@ void Lua4RSWidget::on_pb_save_clicked()
     if(_activeContainer == NULL)
         return;
 
-    // get values from ui
-    uiToLuaContainer(_activeContainer);
+    // check for rename
+    {
+        QString oldName = _activeContainer->getName();
+        // get values from ui
+        uiToLuaContainer(_activeContainer);
+        if(_activeContainer->getName() != oldName)
+        {
+            std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : renaming " << oldName.toStdString() << " to " << _activeContainer->getName().toStdString() << std::endl;
+            _lua->codeList()->rename(oldName, _activeContainer->getName());
+        }
+    }
 
     if(!_lua->codeList()->saveAll())
         std::cerr << "[Lua] Lua4RSWidget::on_pb_save_clicked() : failed to save " << _activeContainer->getName().toStdString() << std::endl;
