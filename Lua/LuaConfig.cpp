@@ -1,13 +1,19 @@
 #include "LuaConfig.h"
 
-#define INI_KEY_CLASSNAME   "Classname"
-#define INI_KEY_DESC        "Description"
-#define INI_KEY_TRIGGER     "Trigger"
+#define INI_KEY_CLASSNAME           "Classname"
+#define INI_KEY_CONSTRAINT_ENABLED  "ConstraintEnabled"
+#define INI_KEY_CONSTRAINT_FROM     "ConstraintFrom"
+#define INI_KEY_CONSTRAINT_TO       "ConstraintTo"
+#define INI_KEY_DESC                "Description"
+#define INI_KEY_ENABLED             "Enabled"
+#define INI_KEY_TRIGGER             "Trigger"
 
 LuaConfig::LuaConfig() :
     _description(""),
     _enableScript(false),
-    _constraint(false)
+    _constraint(false),
+    _constraintFrom(QTime(0, 0, 0)),
+    _constraintTo(QTime(0, 0, 0))
 {
 }
 
@@ -81,8 +87,14 @@ void LuaConfig::fromSettings(QSettings &mySettings)
     QString         childGroup;
     QString         className;
 
-    // first get description from ini
-    _description = mySettings.value(INI_KEY_DESC, "").toString();
+    // first get description and stuff from ini
+    _description    = mySettings.value(INI_KEY_DESC, "").toString();
+    _enableScript   = mySettings.value(INI_KEY_ENABLED, false).toBool();
+
+    _constraint     = mySettings.value(INI_KEY_CONSTRAINT_ENABLED, false).toBool();
+    _constraintFrom = mySettings.value(INI_KEY_CONSTRAINT_FROM, QTime()).toTime();
+    _constraintTo   = mySettings.value(INI_KEY_CONSTRAINT_TO, QTime()).toTime();
+
 
     // then fetch all groups of ini file
     childGroups = mySettings.childGroups();
@@ -135,15 +147,15 @@ void LuaConfig::fromSettings(QSettings &mySettings)
 void LuaConfig::toSettings(QSettings &mySettings)
 {
     // first save description to ini
-    if (_description != "")
-    {
-        mySettings.setValue(INI_KEY_DESC, _description);
-    }
-    else
-    {
-        mySettings.setValue(INI_KEY_DESC, "It enters a description. It does so whenever it is told to.");
-    }
+    if (_description == "")
+        _description = "It enters a description. It does so whenever it is told to.";
 
+    mySettings.setValue(INI_KEY_DESC, _description);
+    mySettings.setValue(INI_KEY_ENABLED, _enableScript);
+
+    mySettings.setValue(INI_KEY_CONSTRAINT_ENABLED, _constraint);
+    mySettings.setValue(INI_KEY_CONSTRAINT_FROM, _constraintFrom);
+    mySettings.setValue(INI_KEY_CONSTRAINT_TO, _constraintTo);
 
     // now save each trigger in a group
     QString inigroup;
