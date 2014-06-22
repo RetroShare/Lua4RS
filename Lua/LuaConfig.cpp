@@ -5,7 +5,9 @@
 #define INI_KEY_TRIGGER     "Trigger"
 
 LuaConfig::LuaConfig() :
-    _description("")
+    _description(""),
+    _enableScript(false),
+    _constraint(false)
 {
 }
 

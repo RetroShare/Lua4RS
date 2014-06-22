@@ -43,10 +43,10 @@ public:
     ~LuaConfig();
 
     // test my triggers if triggered by <luaevent>
-    bool isTriggered (LuaEvent luaevent);
+    bool isTriggered(const LuaEvent& luaevent);
 
     // add a trigger to our triggerlist
-    void addTrigger(LuaTriggerBase *trigger);
+    void addTrigger(LuaTriggerBase* trigger);
 
     // load this luaconfig from QSettings data
     void fromSettings(QSettings& mySettings);
