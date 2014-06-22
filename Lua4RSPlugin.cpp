@@ -10,6 +10,9 @@
 
 
 extern "C" {
+#ifdef WIN32
+    __declspec(dllexport)
+#endif
     void *RETROSHARE_PLUGIN_provide()
     {
         static Lua4RSPlugin *p = new Lua4RSPlugin() ;
@@ -21,12 +24,18 @@ extern "C" {
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
     // with same revision numbers, assuming that the revision numbers are up-to-date.
     //
+#ifdef WIN32
+    __declspec(dllexport)
+#endif
     uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
 
     // This symbol contains the svn revision number grabbed from the executable.
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
     // with same revision numbers, assuming that the revision numbers are up-to-date.
     //
+#ifdef WIN32
+    __declspec(dllexport)
+#endif
     uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
