@@ -7,7 +7,11 @@
 #include <retroshare/rsinit.h>  // needed for config dir
 
 #include "LuaCore.h"
+#include "LuaList.h"
 #include "../Lua4RSWidget.h"
+#include "../Lua4RSNotify.h"
+#include "../Lua4RSTickThread.h"
+
 
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"

@@ -4,8 +4,8 @@
 #include <QSettings>
 #include <QString>
 
-#include "LuaCode.h"
-#include "LuaConfig.h"
+class LuaCode;
+class LuaConfig;
 
 class LuaContainer
 {

@@ -1,10 +1,13 @@
 #include <assert.h>
 
-#include <QWidget>
 #include <QModelIndex>
+#include <QTreeWidgetItem>
+#include <QWidget>
 
-#include "Lua4RSWidget.h"
 #include "ui_Lua4RSWidget.h"
+#include "Lua4RSWidget.h"
+#include "Lua/LuaCore.h"
+#include "Lua/LuaList.h"
 
 Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     MainPage(parent),

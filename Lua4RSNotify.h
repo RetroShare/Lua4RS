@@ -2,7 +2,6 @@
 #define LUA4RSNOTIFY_H
 
 #include <retroshare/rsplugin.h>
-// #include "plugins/rspqiservice.h"
 #include <retroshare/rsiface.h>
 
 class Lua4RSNotify : public NotifyClient

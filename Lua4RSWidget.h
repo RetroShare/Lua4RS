@@ -3,16 +3,18 @@
 
 #include <retroshare-gui/mainpage.h>
 
-#include "Lua/LuaCore.h"
-
 namespace Ui {
 class Lua4RSWidget;
 }
 
-class LuaCore;
-class QTableWidgetItem;
 class QModelIndex;
+class QTableWidgetItem;
+class QTreeWidgetItem;
 
+
+class LuaCore;
+class LuaContainer;
+class LuaList;
 
 class Lua4RSWidget : public MainPage
 {

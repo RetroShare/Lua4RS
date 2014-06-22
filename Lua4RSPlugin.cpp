@@ -1,6 +1,7 @@
 #include <retroshare/rsplugin.h>
 #include <util/rsversion.h>
 
+#include "Lua4RSNotify.h"
 #include "Lua4RSPlugin.h"
 #include "Lua4RSWidget.h"
 #include "Lua/LuaCore.h"

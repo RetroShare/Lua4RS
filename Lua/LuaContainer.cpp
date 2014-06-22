@@ -1,4 +1,6 @@
 #include "LuaContainer.h"
+#include "LuaCode.h"
+#include "LuaConfig.h"
 
 LuaContainer::LuaContainer() :
     _code(new LuaCode()),
@@ -47,7 +49,7 @@ void    LuaContainer::setName(const QString& name)
 void    LuaContainer::getSettings(QSettings& settings)  { _config->toSettings(settings); }
 void    LuaContainer::loadSettings(QSettings& settings) { _config->fromSettings(settings); }
 
-bool    LuaContainer::getEnabled()                  { _config->isScriptEnabled(); }
+bool    LuaContainer::getEnabled()                  { return _config->isScriptEnabled(); }
 void    LuaContainer::setEnabled(const bool enable) { _config->enableScript(enable); }
 
 // constraint

@@ -6,10 +6,9 @@
 #include <map>
 
 #include <retroshare/rsplugin.h>
+#include <util/rsthreads.h>
 
-#include "LuaList.h"
-#include "../Lua4RSNotify.h"
-#include "../Lua4RSTickThread.h"
+#include "LuaEvent.h"
 
 extern "C" {
 #include "lua.h"
@@ -19,9 +18,13 @@ extern "C" {
 
 typedef std::map<std::string, std::string>  parameterMap;
 
-class Lua4RSWidget;
 class QTreeWidget;
 class QTreeWidgetItem;
+
+class Lua4RSWidget;
+class Lua4RSNotify;
+class Lua4RSTickThread;
+class LuaList;
 
 class LuaCore
 {

@@ -2,7 +2,7 @@
 #define LUA4RSTICKTHREAD_H
 
 #include <retroshare/rsplugin.h>
-#include "util/rsthreads.h"
+#include <util/rsthreads.h>
 
 class Lua4RSTickThread : public RsThread
 {
