@@ -456,6 +456,14 @@ void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
 // note: if changed, rb_runevery should be selected
 void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
 {
+    uint TIME_UNITS[5] = {1, 60, 3600, 86400, 604800};
+    uint unit,amount,interval;
+
+    amount = ui->spb_everycount->value();
+    unit = TIME_UNITS[index];
+    interval = amount * unit;
+
+    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
 /*
     tbd:
     1. hole ref auf akt. container
@@ -465,17 +473,24 @@ void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
 */
 }
 
-// "RunEvery" : unit of timer units has changed
-// note: if changed, rb_runevery should be selected
 void Lua4RSWidget::on_spb_everycount_editingFinished()
 {
-/*
-    tbd:
-    1. hole ref auf akt. container
-    2. hole ref auf config aus container
-    3. schreibe wert aus spinbutton nach config._timeramount
-*/
 }
+
+// "RunEvery" : unit of timer units has changed
+// note: if changed, rb_runevery should be selected
+void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
+{
+    uint TIME_UNITS[5] = {1, 60, 3600, 86400, 604800};
+    uint unit,amount,interval;
+
+    amount = arg1;
+    unit = TIME_UNITS[ui->dd_everyunits->currentIndex()];
+    interval = amount * unit;
+
+    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
+}
+
 
 void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
 {
@@ -503,6 +518,7 @@ void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int colu
 
     ui->pte_luacode->insertPlainText(hint);
 }
+
 
 
 

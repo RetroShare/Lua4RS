@@ -71,6 +71,7 @@ class Lua4RSWidget : public MainPage
     void on_rb_runonevent_toggled(bool checked);
     void on_pb_pastehint_released();
     void on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column);
+    void on_spb_everycount_valueChanged(int arg1);
 };
 
 #endif // LUA4RSMAINWIDGET_H

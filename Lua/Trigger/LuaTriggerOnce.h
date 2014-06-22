@@ -3,6 +3,9 @@
 
 #include "LuaTriggerBase.h"
 
+#define INI_KEY_WHEN    "When"
+
+
 class LuaTriggerOnce : public LuaTriggerBase
 {
 public:

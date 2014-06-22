@@ -17,7 +17,7 @@ bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
 {
     if (luaevent.eventId == L4R_TIMERTICK)
     {
-        if (luaevent.timeStamp == _onceDateTime)
+        if (luaevent.timeStamp == _onceDateTime) // f*c: this is too strict. we have to hit the exact second here.
         {
             _lastRun = QDateTime().currentDateTime();
             return true;
@@ -31,7 +31,7 @@ bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
 void LuaTriggerOnce::toSettings(QSettings &mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
-    mySettings.setValue("When", _onceDateTime);
+    mySettings.setValue(INI_KEY_WHEN, _onceDateTime);
 }
 
 
@@ -39,7 +39,7 @@ void LuaTriggerOnce::toSettings(QSettings &mySettings)
 void LuaTriggerOnce::fromSettings (const QSettings& mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
-    _onceDateTime = mySettings.value("When", "").toDateTime();
+    _onceDateTime = mySettings.value(INI_KEY_WHEN, "").toDateTime();
 }
 
 

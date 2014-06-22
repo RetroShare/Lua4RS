@@ -11,6 +11,11 @@
 #define TIMER_UNIT_MULT_DAY     86400
 #define TIMER_UNIT_MULT_WEEK    604800
 
+#define INI_KEY_TIMER_AMOUNT    "TimerAmount"
+#define INI_KEY_TIMER_UNIT      "TimerUnit"
+
+
+
 class LuaTriggerTimerInterval : public LuaTriggerBase
 {
 public:

@@ -1422,7 +1422,7 @@ end;</string>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0,0,0">
+                <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0,0,0,0">
                  <property name="spacing">
                   <number>5</number>
                  </property>
@@ -1478,7 +1478,13 @@ end;</string>
                    <property name="alignment">
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
+                   <property name="specialValueText">
+                    <string/>
+                   </property>
                    <property name="accelerated">
+                    <bool>true</bool>
+                   </property>
+                   <property name="keyboardTracking">
                     <bool>true</bool>
                    </property>
                    <property name="suffix">
@@ -1528,7 +1534,7 @@ end;</string>
                     <bool>false</bool>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>3</number>
                    </property>
                    <property name="maxVisibleItems">
                     <number>15</number>
@@ -1561,6 +1567,22 @@ end;</string>
                      <string>Weeks</string>
                     </property>
                    </item>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="l_runeveryhelper">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <weight>50</weight>
+                     <bold>false</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>(86400 secs)</string>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -1638,10 +1660,17 @@ end;</string>
                    </property>
                    <property name="date">
                     <date>
-                     <year>2006</year>
+                     <year>2014</year>
                      <month>9</month>
                      <day>26</day>
                     </date>
+                   </property>
+                   <property name="time">
+                    <time>
+                     <hour>20</hour>
+                     <minute>15</minute>
+                     <second>0</second>
+                    </time>
                    </property>
                    <property name="displayFormat">
                     <string>d MMM yyyy, HH:mm:ss t</string>

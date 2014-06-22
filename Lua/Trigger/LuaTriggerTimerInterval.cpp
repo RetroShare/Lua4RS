@@ -43,8 +43,8 @@ void LuaTriggerTimerInterval::toSettings(QSettings& mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
 
-    mySettings.setValue("TimerAmount", _timerAmount);
-    mySettings.setValue("TimerUnit", _timerUnit);
+    mySettings.setValue(INI_KEY_TIMER_AMOUNT,_timerAmount);
+    mySettings.setValue(INI_KEY_TIMER_UNIT,_timerUnit);
 }
 
 
@@ -52,8 +52,8 @@ void LuaTriggerTimerInterval::toSettings(QSettings& mySettings)
 void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
-    _timerAmount = mySettings.value   ("TimerAmount", "").toUInt();
-    _timerUnit = mySettings.value   ("TimerUnit", "").toUInt();
+    _timerAmount = mySettings.value(INI_KEY_TIMER_AMOUNT, "").toUInt();
+    _timerUnit = mySettings.value(INI_KEY_TIMER_UNIT, "").toUInt();
 
     _timerInterval = _timerAmount * _timerUnit;
 
