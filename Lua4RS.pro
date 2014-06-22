@@ -2,7 +2,17 @@
 
 CONFIG += qt resources uic qrc
 
-LIBS += -llua
+HEADERS -= upnp/upnputil.h
+SOURCES -= upnp/upnputil.c
+
+linux-* {
+    LIBS += -llua
+}
+
+win32 {
+    LIBS += -llua52
+    INCLUDEPATH += ../../../lua-5.2.3/src
+}
 
 HEADERS +=  \
     Lua4RSPlugin.h \
