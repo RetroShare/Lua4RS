@@ -18,6 +18,11 @@ LuaList::LuaList() :
 
 LuaList::~LuaList()
 {
+    clearList();
+}
+
+void LuaList::clearList()
+{
     for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
         delete *it;
 
@@ -176,6 +181,9 @@ bool LuaList::loadAll()
                 files.append(dirIt.fileName());
     }
 
+    if(!_luaList.empty())
+        // clear list before loading
+        clearList();
 
     // load lua files
     for( QStringList::iterator it = files.begin(); it != files.end(); ++it)

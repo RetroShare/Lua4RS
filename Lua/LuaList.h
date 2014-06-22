@@ -46,6 +46,8 @@ private:
 
     void getFileNames(const QString& name, QString& luaFileName, QString& settingsFileName);
 
+    void clearList();
+
     LuaContainerList _luaList;
     QString _filePath;
 };

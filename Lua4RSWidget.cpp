@@ -232,7 +232,10 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     // update UI
     luaContainerToUi(_activeContainer);
 
-    std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
+    if(_activeContainer != NULL)
+        std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
+    else
+        std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to NULL "<< std::endl;
 }
 
 void saneValuesHelper(const QString& msg, QString& allMsgs)
@@ -363,7 +366,42 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
 // "Load" clicked : load a scriptfile from disk into the editor control
 void Lua4RSWidget::on_pb_load_clicked()
 {
+    QString name = "";
+    if(_activeContainer != NULL)
+    {
+        // a file was opened -> save it's name
+        name = _activeContainer->getName();
 
+        // ask for confirmation
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Information);
+        mbox.setText("Continue?");
+        mbox.setInformativeText("Any unsaved changes will be lost!");
+        mbox.setStandardButtons( QMessageBox::Ok | QMessageBox::Abort);
+
+        if(mbox.exec() != QMessageBox::Ok)
+            return;
+    }
+
+    LuaList* list = _lua->codeList();
+
+    list->loadAll();
+    // _activeContainer is invalid from now on!
+    _activeContainer = NULL;
+
+    setLuaCodes(list);
+
+    if(name == "")
+        // no file was opened - were are done
+        return;
+
+    ///TODO make the better (e.g. ask user if he wants to save his changes)
+    LuaContainer* lc;
+    if(list->itemByName(name, lc))
+        switchContainer(lc);
+    else
+        // couldn't find the file one was working one ...
+        switchContainer(NULL);
 }
 
 // "Save" clicked : save the contents of the editor control to a file on disk
