@@ -260,14 +260,14 @@ bool Lua4RSWidget::saneValues()
         ret = false;
     }
 
-    if(ui->cbx_timeconstraint->isChecked() && ui->rb_once->isChecked() && ( // contraint enabled + run once
-            ui->tied_timefrom->time() < ui->tied_timeto->time() &&          // from < to e.g. from 09:00 to 15:00
+    if(ui->cbx_timeconstraint->isChecked() && ui->rb_once->isChecked() && ((    // contraint enabled + run once
+            ui->tied_timefrom->time() < ui->tied_timeto->time() &&              // from < to e.g. from 09:00 to 15:00
                 (ui->dte_runonce->time() < ui->tied_timefrom->time() || ui->dte_runonce->time() > ui->tied_timeto->time())      // run once is outside of time window
             ) || (
-            ui->tied_timefrom->time() > ui->tied_timeto->time() &&          // from > to e.g. from 23:00 to 06:00
+            ui->tied_timefrom->time() > ui->tied_timeto->time() &&              // from > to e.g. from 23:00 to 06:00
                 (ui->dte_runonce->time() <= ui->tied_timefrom->time() && ui->dte_runonce->time() >= ui->tied_timeto->time())    // run once is outside of time window
             // !(ui->dte_runonce->time() >  ui->tied_timefrom->time() || ui->dte_runonce->time() <  ui->tied_timeto->time())    equivalent - maybe easier to understand
-            ))
+            )))
     {
         saneValuesHelper("runOnce value lies outside of constraint", msg);
         ret = false;
@@ -587,7 +587,7 @@ void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
 }
 
 
-void Lua4RSWidget::on_rb_runonevent_toggled(bool checked)
+void Lua4RSWidget::on_rb_runonevent_toggled(bool /*checked*/)
 {
 }
 
@@ -603,7 +603,7 @@ void Lua4RSWidget::on_pb_pastehint_released()
     ui->pte_luacode->insertPlainText(items.at(0)->text(1));
 }
 
-void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column)
+void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 {
     QString hint = item->text(1);
 

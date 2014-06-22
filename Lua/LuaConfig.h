@@ -76,6 +76,9 @@ public:
     void setLastTriggered(const QDateTime &lastTriggered);
 
 protected:
+    // the description field is stored in LuaConfig
+    QString _description;
+
     // is script enabled?
     bool _enableScript;
 
@@ -85,9 +88,6 @@ protected:
     // constraint window
     QTime _constraintFrom;
     QTime _constraintTo;
-
-    // the description field is stored in LuaConfig
-    QString _description;
 
     // List of Trigger objects which may trigger this script
     QList <LuaTriggerBase*> _myTriggers;
