@@ -369,18 +369,22 @@ void Lua4RSWidget::on_pb_load_clicked()
     QString name = "";
     if(_activeContainer != NULL)
     {
-        // a file was opened -> save it's name
+        // a file was opened -> save its name
         name = _activeContainer->getName();
 
         // ask for confirmation
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Information);
         mbox.setText("Continue?");
-        mbox.setInformativeText("Any unsaved changes will be lost!");
-        mbox.setStandardButtons( QMessageBox::Ok | QMessageBox::Abort);
+        mbox.setInformativeText("You have a Lua script opened. Save it before closing it?");
+        mbox.setStandardButtons( QMessageBox::Save | QMessageBox::Discard | QMessageBox::Abort);
 
-        if(mbox.exec() != QMessageBox::Ok)
+        int ret = mbox.exec();
+        if(ret == QMessageBox::Abort)
             return;
+
+        if(ret == QMessageBox::Save)
+            on_pb_save_clicked();
     }
 
     LuaList* list = _lua->codeList();
@@ -395,7 +399,6 @@ void Lua4RSWidget::on_pb_load_clicked()
         // no file was opened - were are done
         return;
 
-    ///TODO make the better (e.g. ask user if he wants to save his changes)
     LuaContainer* lc;
     if(list->itemByName(name, lc))
         switchContainer(lc);
