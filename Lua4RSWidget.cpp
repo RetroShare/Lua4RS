@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include <QMessageBox>
 #include <QModelIndex>
 #include <QTreeWidgetItem>
 #include <QWidget>
@@ -230,16 +231,53 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
 }
 
+void saneValuesHelper(const QString& msg, QString& allMsgs)
+{
+    std::cerr << "[Lua] Lua4RSWidget::saneValues : " << msg.toStdString() << std::endl;
+    allMsgs += "- " + msg + '\n';
+}
+
 bool Lua4RSWidget::saneValues()
 {
+    QString msg = "The following problem(s) was/were found:\n";
     bool ret = true;
     if(ui->le_scriptname->text().isEmpty())
     {
-        std::cerr << "[Lua] Lua4RSWidget::saneValues : emtpy name found" << std::endl;
+        saneValuesHelper("script name is empty", msg);
+        ret = false;
+    }
+
+    if(ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
+    {
+        saneValuesHelper("runOnce value lies in the past", msg);
+        ret = false;
+    }
+
+    if(ui->cbx_timeconstraint->isChecked() && ui->rb_once->isChecked() && ( // contraint enabled + run once
+            ui->tied_timefrom->time() < ui->tied_timeto->time() &&          // from < to e.g. from 09:00 to 15:00
+                (ui->dte_runonce->time() < ui->tied_timefrom->time() || ui->dte_runonce->time() > ui->tied_timeto->time())      // run once is outside of time window
+            ) || (
+            ui->tied_timefrom->time() > ui->tied_timeto->time() &&          // from > to e.g. from 23:00 to 06:00
+                (ui->dte_runonce->time() <= ui->tied_timefrom->time() && ui->dte_runonce->time() >= ui->tied_timeto->time())    // run once is outside of time window
+            // !(ui->dte_runonce->time() >  ui->tied_timefrom->time() || ui->dte_runonce->time() <  ui->tied_timeto->time())    equivalent - maybe easier to understand
+            ))
+    {
+        saneValuesHelper("runOnce value lies outside of constraint", msg);
         ret = false;
     }
 
     ///TODO check rest
+
+    if(!ret)
+    {
+        // show errors to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText("Error(s) while checking");
+        mbox.setInformativeText(msg);
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+    }
 
     return ret;
 }
