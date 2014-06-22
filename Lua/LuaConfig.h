@@ -72,6 +72,9 @@ public:
     QString getDescription();
     void setDescription(const QString &description);
 
+    QDateTime getLastTriggered() const;
+    void setLastTriggered(const QDateTime &lastTriggered);
+
 protected:
     // is script enabled?
     bool _enableScript;

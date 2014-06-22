@@ -6,6 +6,7 @@
 #define INI_KEY_CONSTRAINT_TO       "ConstraintTo"
 #define INI_KEY_DESC                "Description"
 #define INI_KEY_ENABLED             "Enabled"
+#define INI_KEY_LAST_TRIGGERED      "LastTriggered"
 #define INI_KEY_TRIGGER             "Trigger"
 
 LuaConfig::LuaConfig() :
@@ -13,7 +14,8 @@ LuaConfig::LuaConfig() :
     _enableScript(false),
     _constraint(false),
     _constraintFrom(QTime(0, 0, 0)),
-    _constraintTo(QTime(0, 0, 0))
+    _constraintTo(QTime(0, 0, 0)),
+    _lastTriggered(QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)))
 {
 }
 
@@ -90,6 +92,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
     // first get description and stuff from ini
     _description    = mySettings.value(INI_KEY_DESC, "").toString();
     _enableScript   = mySettings.value(INI_KEY_ENABLED, false).toBool();
+    _lastTriggered  = mySettings.value(INI_KEY_LAST_TRIGGERED, QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0))).toDateTime();
 
     _constraint     = mySettings.value(INI_KEY_CONSTRAINT_ENABLED, false).toBool();
     _constraintFrom = mySettings.value(INI_KEY_CONSTRAINT_FROM, QTime()).toTime();
@@ -152,6 +155,7 @@ void LuaConfig::toSettings(QSettings &mySettings)
 
     mySettings.setValue(INI_KEY_DESC, _description);
     mySettings.setValue(INI_KEY_ENABLED, _enableScript);
+    mySettings.setValue(INI_KEY_LAST_TRIGGERED, _lastTriggered);
 
     mySettings.setValue(INI_KEY_CONSTRAINT_ENABLED, _constraint);
     mySettings.setValue(INI_KEY_CONSTRAINT_FROM, _constraintFrom);
@@ -174,19 +178,23 @@ void LuaConfig::toSettings(QSettings &mySettings)
 
 
 // getter/setter
-void    LuaConfig::enableScript(bool enable)                  { _enableScript = enable; }
-bool    LuaConfig::isScriptEnabled()                          { return _enableScript; }
+void        LuaConfig::enableScript(bool enable)                        { _enableScript = enable; }
+bool        LuaConfig::isScriptEnabled()                                { return _enableScript; }
 
-void    LuaConfig::enableConstraint(bool enable)              { _constraint = enable; }
-bool    LuaConfig::isConstraintEnabled()                      { return _constraint; }
+void        LuaConfig::enableConstraint(bool enable)                    { _constraint = enable; }
+bool        LuaConfig::isConstraintEnabled()                            { return _constraint; }
 
-void    LuaConfig::setConstraintFrom(QTime constraintfrom)    { _constraintFrom = constraintfrom; }
-QTime   LuaConfig::getConstraintFrom()                        { return _constraintFrom; }
+void        LuaConfig::setConstraintFrom(QTime constraintfrom)          { _constraintFrom = constraintfrom; }
+QTime       LuaConfig::getConstraintFrom()                              { return _constraintFrom; }
 
-void    LuaConfig::setConstraintTo(QTime constraintto)        { _constraintTo = constraintto; }
-QTime   LuaConfig::getConstraintTo()                          { return _constraintTo; }
+void        LuaConfig::setConstraintTo(QTime constraintto)              { _constraintTo = constraintto; }
+QTime       LuaConfig::getConstraintTo()                                { return _constraintTo; }
 
-QString LuaConfig::getDescription()                           { return _description; }
-void    LuaConfig::setDescription(const QString& description) { _description = description; }
+QString     LuaConfig::getDescription()                                 { return _description; }
+void        LuaConfig::setDescription(const QString& description)       { _description = description; }
+
+QDateTime   LuaConfig::getLastTriggered() const                         { return _lastTriggered; }
+void        LuaConfig::setLastTriggered(const QDateTime &lastTriggered) { _lastTriggered = lastTriggered; }
+
 
 

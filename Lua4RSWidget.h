@@ -67,6 +67,7 @@ class Lua4RSWidget : public MainPage
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
     void on_lw_allscripts_itemChanged(QTableWidgetItem *item);
+    void on_tw_allscripts_cellClicked(int row, int column);
     void on_tw_allscripts_cellDoubleClicked(int row, int column);
     void on_dd_everyunits_currentIndexChanged(int index);
     void on_spb_everycount_editingFinished();
@@ -74,6 +75,7 @@ class Lua4RSWidget : public MainPage
     void on_pb_pastehint_released();
     void on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column);
     void on_spb_everycount_valueChanged(int arg1);
+
 };
 
 #endif // LUA4RSMAINWIDGET_H

@@ -32,6 +32,9 @@ public:
     bool getEnabled();
     void setEnabled(const bool enable);
 
+    QDateTime getLastTriggered();
+    void setLastTriggered(const QDateTime& dt);
+
     bool getConstraintEnabled();
     void setConstraintEnabled(const bool enable);
 

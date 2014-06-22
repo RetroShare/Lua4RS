@@ -52,6 +52,9 @@ void    LuaContainer::loadSettings(QSettings& settings) { _config->fromSettings(
 bool    LuaContainer::getEnabled()                  { return _config->isScriptEnabled(); }
 void    LuaContainer::setEnabled(const bool enable) { _config->enableScript(enable); }
 
+QDateTime   LuaContainer::getLastTriggered()                    { return _config->getLastTriggered(); }
+void        LuaContainer::setLastTriggered(const QDateTime& dt) { _config->setLastTriggered(dt); }
+
 // constraint
 bool    LuaContainer::getConstraintEnabled()                    { return _config->isConstraintEnabled(); }
 void    LuaContainer::setConstraintEnabled(const bool enable)   { _config->enableConstraint(enable); }

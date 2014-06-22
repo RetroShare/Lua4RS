@@ -55,9 +55,13 @@ void Lua4RSWidget::setLuaCodes(LuaList* list)
 {
     ui->tw_allscripts->setRowCount(0);
 
+    // disable sorting (better performance)
+    ui->tw_allscripts->setSortingEnabled(false);
     LuaContainerList::const_iterator it;
     for(it = list->begin(); it != list->end(); ++it)
         allScriptsAddRow(*it);
+
+    ui->tw_allscripts->setSortingEnabled(true);
 }
 
 void Lua4RSWidget::clearOutput()
@@ -126,8 +130,6 @@ LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromRow(const int row)
 
 void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
 {
-    // disable sorting (better performance)
-    ui->tw_allscripts->setSortingEnabled(false);
     int rows = ui->tw_allscripts->rowCount();
     ui->tw_allscripts->setRowCount(rows + 1);
 
@@ -135,17 +137,19 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     QTableWidgetItem* desc = new QTableWidgetItem();
     QTableWidgetItem* lastRun = new QTableWidgetItem();
     QTableWidgetItem* trigger = new QTableWidgetItem();
+    QTableWidgetItem* enabled = new QTableWidgetItem();
 
     name->setText(container->getName());
     desc->setText(container->getDesc());
-    ///TODO rest
+    lastRun->setText(container->getLastTriggered().toString());
+    trigger->setText("TODO");
+    enabled->setCheckState(container->getEnabled() ? Qt::Checked : Qt::Unchecked);
 
     ui->tw_allscripts->setItem(rows, 0, name);
     ui->tw_allscripts->setItem(rows, 1, desc);
     ui->tw_allscripts->setItem(rows, 2, lastRun);
     ui->tw_allscripts->setItem(rows, 3, trigger);
-
-    ui->tw_allscripts->setSortingEnabled(true);
+    ui->tw_allscripts->setItem(rows, 4, enabled);
 }
 
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
@@ -461,7 +465,6 @@ void Lua4RSWidget::on_tied_timeto_editingFinished()
 // All Scripts
 //------------------------------------------------------------------------------
 
-// AllMyScripts : selected row changed (by click or cursor key)
 void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
 {
     if (item)
@@ -470,7 +473,17 @@ void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
     }
 }
 
-// AllMyScripts : cell double clicked
+void Lua4RSWidget::on_tw_allscripts_cellClicked(int row, int column)
+{
+    if(column == 4) // 4 = enabled
+    {
+        LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
+        QTableWidgetItem* cell = ui->tw_allscripts->item(row, column);
+
+        container->setEnabled(cell->checkState() == Qt::Checked ? true : false);
+    }
+}
+
 void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
 {
     if(row < 0)
@@ -559,8 +572,6 @@ void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int colu
 
     ui->pte_luacode->insertPlainText(hint);
 }
-
-
 
 
 
