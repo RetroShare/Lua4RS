@@ -24,17 +24,6 @@
 #define LUA_TRIGGER_ONCE                "LuaTriggerTimerOnce"
 #define LUA_TRIGGER_EVENT               "LuaTriggerEvent"
 
-enum TimeUnit {
-    Second      = 1,
-    Minute      = Second * 60,
-    Hour        = Minute * 60,
-    Day         = Hour   * 24,
-    Week        = Day    *  7,
-    Month       = Week   *  4,
-    Year        = Month  * 12
-};
-
-
 
 class LuaConfig
 {

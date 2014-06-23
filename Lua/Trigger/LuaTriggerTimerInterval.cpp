@@ -21,7 +21,7 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
         // then we need some very old datetime first
         if(!_lastRun.isValid())
         {
-            _lastRun.setTime_t(0);
+            _lastRun = QDateTime(QDate(1970, 1, 1),QTime(0, 0, 0));
         }
 
         // is it our big moment?
@@ -55,7 +55,7 @@ void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
     _timerAmount = mySettings.value(INI_KEY_TIMER_AMOUNT, "").toUInt();
     _timerUnit = mySettings.value(INI_KEY_TIMER_UNIT, "").toUInt();
 
-    _timerInterval = _timerAmount * _timerUnit;
+//    _timerInterval = _timerAmount * _timerUnit;
 
 }
 

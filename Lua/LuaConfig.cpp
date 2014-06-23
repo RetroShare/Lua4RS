@@ -141,6 +141,15 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         // close current group
         mySettings.endGroup();
     }
+
+    if(_myTriggers.empty())
+    {
+        atrigger = new LuaTriggerStartup();
+        addTrigger(atrigger);
+
+        atrigger = new LuaTriggerShutdown();
+        addTrigger(atrigger);
+    }
 }
 
 
@@ -165,12 +174,12 @@ void LuaConfig::toSettings(QSettings &mySettings)
     QString inigroup;
     for (int i = 0 ; i < _myTriggers.size() ; ++i)
     {
-        inigroup.clear();
-        inigroup.append("%1_%2").arg(INI_KEY_TRIGGER).arg(i);
+        inigroup = INI_KEY_TRIGGER + QString("_");
+        inigroup += i;
 
         mySettings.beginGroup(inigroup);
 
-        _myTriggers.at(i)->fromSettings(mySettings);
+        _myTriggers.at(i)->toSettings(mySettings);
 
         mySettings.endGroup();
     }
