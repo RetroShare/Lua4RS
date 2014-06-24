@@ -271,7 +271,7 @@ bool Lua4RSWidget::saneValues()
         ret = false;
     }
 
-    if(ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
+    if(ui->rb_once->isChecked() && ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
     {
         saneValuesHelper("runOnce value lies in the past", msg);
         ret = false;
