@@ -43,6 +43,9 @@ class Lua4RSWidget : public MainPage
     LuaContainer* allScriptsGetLuaContainerFromRow(const int row);
     void allScriptsAddRow(LuaContainer* container);
 
+    // init the gui at startup and after a container switch
+    void cleanUi();
+
     // this function will fill every form with it's corresponding values
     void luaContainerToUi(LuaContainer* container);
     // or the other way round
@@ -71,11 +74,16 @@ class Lua4RSWidget : public MainPage
     void on_tw_allscripts_cellDoubleClicked(int row, int column);
     void on_dd_everyunits_currentIndexChanged(int index);
     void on_spb_everycount_editingFinished();
-    void on_rb_runonevent_toggled(bool checked);
     void on_pb_pastehint_released();
     void on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column);
     void on_spb_everycount_valueChanged(int arg1);
 
+    void on_rb_runonevent_toggled(bool checked);
+    void on_rb_once_toggled(bool checked);
+    void on_rb_startup_toggled(bool checked);
+    void on_rb_shutdown_toggled(bool checked);
+    void on_rb_every_toggled(bool checked);
+    void on_dd_events_currentIndexChanged(int index);
 };
 
 #endif // LUA4RSMAINWIDGET_H

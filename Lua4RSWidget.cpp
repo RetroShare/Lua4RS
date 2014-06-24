@@ -21,6 +21,9 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     _lua->setUi(this);
 
     setLuaCodes(_lua->codeList());
+
+    cleanUi();
+
     luaContainerToUi(_activeContainer);
 
     // Fill Hints TreeWidget with main items
@@ -151,6 +154,35 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     ui->tw_allscripts->setItem(rows, 3, trigger);
     ui->tw_allscripts->setItem(rows, 4, enabled);
 }
+
+// init the gui at startup and after a container switch before the ini is loaded
+void Lua4RSWidget::cleanUi()
+{
+    ui->cbx_enable->setChecked(false);
+    ui->cbx_timeconstraint->setChecked(false);
+    ui->tied_timefrom->setTime(QTime(0,0,0));
+    ui->tied_timeto->setTime(QTime(0,0,0));
+
+    ui->le_scriptname->clear();;
+    ui->le_scriptdesc->clear;
+    ui->pte_luacode->clear();
+
+    ui->rb_every->setChecked(false);
+    ui->rb_once->setChecked(false);
+    ui->rb_startup->setChecked(false);
+    ui->rb_shutdown->setChecked(false);
+
+    ui->rb_runonevent->setChecked(false);
+    ui->dd_events->setCurrentIndex(0);
+
+    ui->spb_everycount->setValue(5);
+    ui->dd_everyunits->setCurrentIndex(1);
+
+    ui->dte_runonce->setDate(QDate(1970,1,1));
+    ui->dte_runonce->setTime(QTime(0,0,0));
+}
+
+
 
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 {
@@ -544,7 +576,7 @@ void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
 }
 
 //------------------------------------------------------------------------------
-// Tabpage "By Event"
+// Tabpage "By Timer"
 //------------------------------------------------------------------------------
 
 // "Run Every" : amount of timer units has changed
@@ -586,10 +618,62 @@ void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
     ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
 }
 
+// Run Every was selected
+void Lua4RSWidget::on_rb_every_toggled(bool checked)
+{
+    if (checked == true){
+        ui->rb_every->setStyleSheet     ("background:lightgreen;");
+        ui->rb_once->setStyleSheet      ("background:transparent;");
+        ui->rb_startup->setStyleSheet   ("background:transparent;");
+        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+    }
+}
 
+// Run Once was selected
+void Lua4RSWidget::on_rb_once_toggled(bool checked)
+{
+    if (checked == true){
+        ui->rb_every->setStyleSheet     ("background:transparent;");
+        ui->rb_once->setStyleSheet      ("background:lightgreen;");
+        ui->rb_startup->setStyleSheet   ("background:transparent;");
+        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+    }
+}
+
+// Run at startup was selected
+void Lua4RSWidget::on_rb_startup_toggled(bool checked)
+{
+    if (checked == true){
+        ui->rb_every->setStyleSheet     ("background:transparent;");
+        ui->rb_once->setStyleSheet      ("background:transparent;");
+        ui->rb_startup->setStyleSheet   ("background:lightgreen;");
+        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+    }
+}
+
+// Run at shutdown was selected
+void Lua4RSWidget::on_rb_shutdown_toggled(bool checked)
+{
+    if (checked == true){
+        ui->rb_every->setStyleSheet     ("background:transparent;");
+        ui->rb_once->setStyleSheet      ("background:transparent;");
+        ui->rb_startup->setStyleSheet   ("background:transparent;");
+        ui->rb_shutdown->setStyleSheet  ("background:lightgreen;");
+    }
+}
+
+//------------------------------------------------------------------------------
+// Tabpage "By Event"
+//------------------------------------------------------------------------------
 void Lua4RSWidget::on_rb_runonevent_toggled(bool /*checked*/)
 {
 }
+
+void Lua4RSWidget::on_dd_events_currentIndexChanged(int index)
+{
+
+}
+
 
 //------------------------------------------------------------------------------
 // hints
@@ -613,26 +697,5 @@ void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int /*co
 
     ui->pte_luacode->insertPlainText(hint);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

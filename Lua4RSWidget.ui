@@ -17,16 +17,7 @@
    <property name="spacing">
     <number>10</number>
    </property>
-   <property name="leftMargin">
-    <number>9</number>
-   </property>
-   <property name="topMargin">
-    <number>9</number>
-   </property>
-   <property name="rightMargin">
-    <number>9</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>9</number>
    </property>
    <item>
@@ -65,16 +56,7 @@
       <property name="spacing">
        <number>0</number>
       </property>
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -162,7 +144,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../../retroshare-gui/src/gui/images.qrc">
+         <iconset>
           <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
         </property>
         <property name="checkable">
@@ -181,16 +163,7 @@
      <property name="spacing">
       <number>10</number>
      </property>
-     <property name="leftMargin">
-      <number>2</number>
-     </property>
-     <property name="topMargin">
-      <number>2</number>
-     </property>
-     <property name="rightMargin">
-      <number>2</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>2</number>
      </property>
      <item>
@@ -198,16 +171,7 @@
        <property name="spacing">
         <number>1</number>
        </property>
-       <property name="leftMargin">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>2</number>
-       </property>
-       <property name="rightMargin">
-        <number>2</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>2</number>
        </property>
        <item>
@@ -218,16 +182,7 @@
          <property name="sizeConstraint">
           <enum>QLayout::SetNoConstraint</enum>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item>
@@ -308,16 +263,7 @@
          <property name="spacing">
           <number>1</number>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item>
@@ -516,16 +462,7 @@
          <property name="sizeConstraint">
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item>
@@ -683,16 +620,7 @@
        <property name="spacing">
         <number>1</number>
        </property>
-       <property name="leftMargin">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>2</number>
-       </property>
-       <property name="rightMargin">
-        <number>2</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>2</number>
        </property>
        <item>
@@ -707,16 +635,7 @@
          <property name="spacing">
           <number>5</number>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item>
@@ -813,18 +732,18 @@
            <property name="buttonSymbols">
             <enum>QAbstractSpinBox::UpDownArrows</enum>
            </property>
-           <property name="displayFormat">
-            <string>HH:mm:ss 'h</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>true</bool>
-           </property>
            <property name="time">
             <time>
              <hour>8</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
+           </property>
+           <property name="displayFormat">
+            <string>HH:mm:ss 'h</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -875,15 +794,15 @@
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
-           <property name="displayFormat">
-            <string>HH:mm:ss 'h</string>
-           </property>
            <property name="time">
             <time>
              <hour>17</hour>
              <minute>0</minute>
              <second>0</second>
             </time>
+           </property>
+           <property name="displayFormat">
+            <string>HH:mm:ss 'h</string>
            </property>
           </widget>
          </item>
@@ -916,16 +835,7 @@
          <property name="verticalSpacing">
           <number>2</number>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item row="0" column="0">
@@ -1035,16 +945,7 @@
          <property name="spacing">
           <number>1</number>
          </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>2</number>
          </property>
          <item>
@@ -1052,16 +953,7 @@
            <property name="spacing">
             <number>1</number>
            </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>2</number>
            </property>
            <item>
@@ -1069,16 +961,7 @@
              <property name="spacing">
               <number>1</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1113,16 +996,7 @@
              <property name="spacing">
               <number>1</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1153,16 +1027,7 @@ end;</string>
              <property name="spacing">
               <number>1</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1280,16 +1145,7 @@ end;</string>
            <property name="spacing">
             <number>1</number>
            </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>2</number>
            </property>
            <item>
@@ -1297,16 +1153,7 @@ end;</string>
              <property name="spacing">
               <number>1</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1351,16 +1198,7 @@ end;</string>
              <property name="spacing">
               <number>1</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1419,16 +1257,7 @@ end;</string>
              <property name="spacing">
               <number>0</number>
              </property>
-             <property name="leftMargin">
-              <number>1</number>
-             </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
+             <property name="margin">
               <number>1</number>
              </property>
              <item>
@@ -1486,16 +1315,7 @@ end;</string>
          <property name="sizeConstraint">
           <enum>QLayout::SetDefaultConstraint</enum>
          </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>1</number>
          </property>
          <item>
@@ -1552,16 +1372,7 @@ end;</string>
                <property name="spacing">
                 <number>1</number>
                </property>
-               <property name="leftMargin">
-                <number>1</number>
-               </property>
-               <property name="topMargin">
-                <number>1</number>
-               </property>
-               <property name="rightMargin">
-                <number>1</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>1</number>
                </property>
                <item>
@@ -1600,16 +1411,7 @@ end;</string>
                <property name="spacing">
                 <number>1</number>
                </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>2</number>
                </property>
                <item>
@@ -1698,7 +1500,7 @@ end;</string>
                     <number>9999</number>
                    </property>
                    <property name="value">
-                    <number>1</number>
+                    <number>5</number>
                    </property>
                   </widget>
                  </item>
@@ -1732,7 +1534,7 @@ end;</string>
                     <bool>false</bool>
                    </property>
                    <property name="currentIndex">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <property name="maxVisibleItems">
                     <number>15</number>
@@ -1779,7 +1581,7 @@ end;</string>
                     </font>
                    </property>
                    <property name="text">
-                    <string>(86400 secs)</string>
+                    <string>(300 secs)</string>
                    </property>
                   </widget>
                  </item>
@@ -2042,16 +1844,7 @@ end;</string>
                <property name="spacing">
                 <number>1</number>
                </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>2</number>
                </property>
                <item>
@@ -2217,16 +2010,7 @@ end;</string>
                <property name="sizeConstraint">
                 <enum>QLayout::SetNoConstraint</enum>
                </property>
-               <property name="leftMargin">
-                <number>1</number>
-               </property>
-               <property name="topMargin">
-                <number>1</number>
-               </property>
-               <property name="rightMargin">
-                <number>1</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>1</number>
                </property>
                <item>
@@ -2257,7 +2041,6 @@ end;</string>
   </layout>
  </widget>
  <resources>
-  <include location="../../retroshare-gui/src/gui/images.qrc"/>
   <include location="Lua4RS_images.qrc"/>
  </resources>
  <connections/>
