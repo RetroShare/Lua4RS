@@ -23,7 +23,7 @@ LuaList::~LuaList()
 
 void LuaList::clearList()
 {
-    for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
+    for(LuaContainerList::const_iterator it = _luaList.begin(); it != _luaList.end(); ++it)
         delete *it;
 
     _luaList.clear();
@@ -39,7 +39,7 @@ void LuaList::setFilePath(const std::string& path)
 
 bool LuaList::itemByName(const QString &name, LuaContainer*& container)
 {
-    for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
+    for(LuaContainerList::const_iterator it = _luaList.begin(); it != _luaList.end(); ++it)
         if((*it)->getName() == name)
         {
             container = (*it);
@@ -65,8 +65,90 @@ LuaContainerList::const_iterator LuaList::end()
     return _luaList.end();
 }
 
+LuaContainer* LuaList::createItem()
+{
+    LuaContainer* container = new LuaContainer();
+
+    /*
+     * name the new container newX.lua with x being the lower number that is not already used
+     *
+     * first iterate over all container and get all numbers that are in use (like new1.lua, new3.lua and new4.lua)
+     * second iterate over all numbers in use and finde the smalles not used
+     *
+     * new42.lua
+     * 012345678 <- position
+     *
+     * 42 is at pos 3 and 2 chars long
+     *
+     * --> to get the number substring(3, length - 7) will do the trick
+     */
+    QList<int> usedNr;
+    QString name, nr;
+    for(LuaContainerList::const_iterator it = _luaList.begin(); it != _luaList.end(); ++it)
+    {
+        name = (*it)->getName();
+
+        // 'new0.lua' is 8 char. long --> minimum length is 8
+        if(name.length() < 8)
+            continue;
+
+        if(!(*it)->getName().startsWith("new"))
+            continue;
+
+        // try to get the number
+        nr = name.mid(3, name.length() - 7);
+        int i;
+        bool ok;
+        i = nr.toInt(&ok);
+        if(ok)
+            usedNr.push_back(i);
+    }
+
+    // very important
+    qSort(usedNr);
+
+    if(usedNr.empty())
+        // easy!
+        container->setName(QString("new0.lua"));
+    else
+    {
+        QString name;
+        for(int i = 0; i  < usedNr.size(); ++i)
+        {
+            // usedNr[i] shoudl be i! (since we sorted it before)
+            if(usedNr[i] == i)
+                continue;
+
+            // if not, we found an unused number
+
+            name = "new";
+            name += QString::number(i);
+            name += ".lua";
+
+            break;
+        }
+        // if all fails ...
+        if(name == "")
+        {
+            name = "new";
+            name += QString::number(usedNr.size());
+            name += ".lua";
+        }
+        container->setName(name);
+    }
+    return container;
+}
+
 void LuaList::addItem(LuaContainer* container)
 {
+    for(LuaContainerList::const_iterator it = _luaList.begin(); it != _luaList.end(); ++it)
+        if((*it)->getName() == container->getName())
+        {
+            // a file with the same name already exists
+            std::cerr << "[Lua] LuaList::addItem : ERROR: name already exists " << container->getName().toStdString() << std::endl;
+            return;
+        }
+
     _luaList.push_back(container);
 }
 
@@ -83,8 +165,16 @@ void LuaList::removeItem(LuaContainer* container)
 
 bool LuaList::removeItemAndDelete(LuaContainer* container)
 {
+    // remove item from list
     removeItem(container);
-    return remove(container);
+
+    // remove item from disk
+    bool rc = remove(container);
+
+    // remove item from ram
+    delete container;
+
+    return rc;
 }
 
 size_t LuaList::size()

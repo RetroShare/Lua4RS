@@ -26,6 +26,8 @@ public:
     LuaContainerList::const_iterator begin();
     LuaContainerList::const_iterator end();
 
+    LuaContainer* createItem();
+
     void addItem(LuaContainer* container);
     bool addItemAndSave(LuaContainer* container);
     void removeItem(LuaContainer* container);

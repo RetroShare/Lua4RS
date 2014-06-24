@@ -35,6 +35,8 @@ class Lua4RSWidget : public MainPage
     void setLuaCodes(LuaList* list);
     void switchContainer(LuaContainer* container);
 
+    void newScript();
+
     // checks whether things entered in GUI are sane (like name is not empry)
     bool saneValues();
 

@@ -263,17 +263,17 @@ void saneValuesHelper(const QString& msg, QString& allMsgs)
 
 bool Lua4RSWidget::saneValues()
 {
-    QString msg = "The following problem(s) was/were found:\n";
+    QString msg = tr("The following problem(s) was/were found:\n");
     bool ret = true;
     if(ui->le_scriptname->text().isEmpty())
     {
-        saneValuesHelper("script name is empty", msg);
+        saneValuesHelper(tr("script name is empty"), msg);
         ret = false;
     }
 
     if(ui->rb_once->isChecked() && ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
     {
-        saneValuesHelper("runOnce value lies in the past", msg);
+        saneValuesHelper(tr("runOnce value lies in the past"), msg);
         ret = false;
     }
 
@@ -286,7 +286,7 @@ bool Lua4RSWidget::saneValues()
             // !(ui->dte_runonce->time() >  ui->tied_timefrom->time() || ui->dte_runonce->time() <  ui->tied_timeto->time())    equivalent - maybe easier to understand
             )))
     {
-        saneValuesHelper("runOnce value lies outside of constraint", msg);
+        saneValuesHelper(tr("runOnce value lies outside of constraint"), msg);
         ret = false;
     }
 
@@ -297,13 +297,26 @@ bool Lua4RSWidget::saneValues()
         // show errors to user
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Warning);
-        mbox.setText("Error(s) while checking");
+        mbox.setText(tr("Error(s) while checking"));
         mbox.setInformativeText(msg);
         mbox.setStandardButtons(QMessageBox::Ok);
         mbox.exec();
     }
 
     return ret;
+}
+
+void Lua4RSWidget::newScript()
+{
+    _activeContainer = _lua->codeList()->createItem();
+    // add new container to list
+    _lua->codeList()->addItem(_activeContainer);
+
+    // update all scripts
+    setLuaCodes(_lua->codeList());
+
+    // update ui
+    luaContainerToUi(_activeContainer);
 }
 
 /* #############################################################
@@ -330,18 +343,7 @@ void Lua4RSWidget::on_pb_run_clicked()
 // "New" clicked : create a new empty script
 void Lua4RSWidget::on_pb_newscript_clicked()
 {
-    ///TODO make function for creating new container
-    _activeContainer = new LuaContainer();
-    _activeContainer->setName(QString("new.lua"));
-
-    // add new container to list
-    _lua->codeList()->addItem(_activeContainer);
-
-    // update all scripts
-    setLuaCodes(_lua->codeList());
-
-    // update ui
-    luaContainerToUi(_activeContainer);
+    newScript();
 }
 
 // "Edit" clicked : edit the script selected in AllMyScripts
@@ -373,7 +375,7 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
     }
 
     _lua->codeList()->removeItemAndDelete(container);
-    delete container;
+    // container is deleted now
     container = NULL;
 
     // update all scripts
@@ -392,8 +394,8 @@ void Lua4RSWidget::on_pb_load_clicked()
         // ask for confirmation
         QMessageBox mbox;
         mbox.setIcon(QMessageBox::Information);
-        mbox.setText("Continue?");
-        mbox.setInformativeText("You have a Lua script opened. Save it before closing it?");
+        mbox.setText(tr("Continue?"));
+        mbox.setInformativeText(tr("You have a Lua script opened. Save it before closing it?"));
         mbox.setStandardButtons( QMessageBox::Save | QMessageBox::Discard | QMessageBox::Abort);
 
         int ret = mbox.exec();
