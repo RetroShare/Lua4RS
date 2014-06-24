@@ -163,8 +163,8 @@ void Lua4RSWidget::cleanUi()
     ui->tied_timefrom->setTime(QTime(0,0,0));
     ui->tied_timeto->setTime(QTime(0,0,0));
 
-    ui->le_scriptname->clear();;
-    ui->le_scriptdesc->clear;
+    ui->le_scriptname->clear();
+    ui->le_scriptdesc->clear();
     ui->pte_luacode->clear();
 
     ui->rb_every->setChecked(false);
@@ -182,28 +182,12 @@ void Lua4RSWidget::cleanUi()
     ui->dte_runonce->setTime(QTime(0,0,0));
 }
 
-
-
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 {
     // for settings things to default / resetting
     if(container == NULL)
     {
-        // name, desc, code
-        ui->le_scriptname->clear();
-        ui->le_scriptdesc->clear();
-        ui->pte_luacode->clear();
-
-        // enable, constraint
-        ui->cbx_enable->setChecked(false);
-        ui->cbx_timeconstraint->setChecked(false);
-        {
-            QTime n;
-            n.setHMS(0, 0, 0);
-            ui->tied_timefrom->setTime(n);
-            ui->tied_timeto->setTime(n);
-        }
-        ///TODO rest
+        cleanUi();
 
         ///TODO there might be better ways that this - good enough for the moment
         ui->pte_luacode->setEnabled(false);
@@ -262,6 +246,7 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     _activeContainer = container;
 
     // update UI
+    cleanUi();
     luaContainerToUi(_activeContainer);
 
     if(_activeContainer != NULL)
