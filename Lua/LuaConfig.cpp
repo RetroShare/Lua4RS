@@ -175,7 +175,7 @@ void LuaConfig::toSettings(QSettings &mySettings)
     for (int i = 0 ; i < _myTriggers.size() ; ++i)
     {
         inigroup = INI_KEY_TRIGGER + QString("_");
-        inigroup += i;
+        inigroup += QString::number(i);
 
         mySettings.beginGroup(inigroup);
 
