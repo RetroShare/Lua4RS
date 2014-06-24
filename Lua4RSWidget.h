@@ -36,6 +36,7 @@ class Lua4RSWidget : public MainPage
     void switchContainer(LuaContainer* container);
 
     void newScript();
+    bool saveScript(bool showErrorMsg = true);
 
     // checks whether things entered in GUI are sane (like name is not empry)
     bool saneValues();
@@ -65,13 +66,10 @@ class Lua4RSWidget : public MainPage
     void on_pb_deletescript_clicked();
     void on_pb_load_clicked();
     void on_pb_save_clicked();
-    void on_pb_undock_clicked();
-    void on_pb_pastehint_clicked();
     void on_cbx_enable_toggled(bool checked);
     void on_cbx_timeconstraint_toggled(bool checked);
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
-    void on_lw_allscripts_itemChanged(QTableWidgetItem *item);
     void on_tw_allscripts_cellClicked(int row, int column);
     void on_tw_allscripts_cellDoubleClicked(int row, int column);
     void on_dd_everyunits_currentIndexChanged(int index);

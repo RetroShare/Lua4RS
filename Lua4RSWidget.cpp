@@ -10,6 +10,8 @@
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
 
+#define ALL_SCRIPTS_ENABLE_COLUMN 4
+
 Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     MainPage(parent),
     ui(new Ui::Lua4RSWidget),
@@ -319,6 +321,38 @@ void Lua4RSWidget::newScript()
     luaContainerToUi(_activeContainer);
 }
 
+bool Lua4RSWidget::saveScript(bool showErrorMsg)
+{
+    if(_activeContainer == NULL)
+        return true;
+
+    // check for rename
+    {
+        QString oldName = _activeContainer->getName();
+        // get values from ui
+        if(!uiToLuaContainer(_activeContainer))
+            return false;
+
+        if(_activeContainer->getName() != oldName)
+        {
+            std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : renaming " << oldName.toStdString() << " to " << _activeContainer->getName().toStdString() << std::endl;
+            _lua->codeList()->rename(oldName, _activeContainer->getName());
+        }
+    }
+
+    bool rc = _lua->codeList()->saveAll();
+    if(!rc && showErrorMsg)
+    {
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText(tr("an error occured while saving"));
+        mbox.setStandardButtons( QMessageBox::Ok );
+        mbox.exec();
+    }
+    return rc;
+}
+
 /* #############################################################
  * # slots
  * #############################################################
@@ -403,7 +437,7 @@ void Lua4RSWidget::on_pb_load_clicked()
             return;
 
         if(ret == QMessageBox::Save)
-            on_pb_save_clicked();
+            saveScript();
     }
 
     LuaList* list = _lua->codeList();
@@ -429,50 +463,28 @@ void Lua4RSWidget::on_pb_load_clicked()
 // "Save" clicked : save the contents of the editor control to a file on disk
 void Lua4RSWidget::on_pb_save_clicked()
 {
-    if(_activeContainer == NULL)
-        return;
-
-    // check for rename
-    {
-        QString oldName = _activeContainer->getName();
-        // get values from ui
-        if(!uiToLuaContainer(_activeContainer))
-            return;
-
-        if(_activeContainer->getName() != oldName)
-        {
-            std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : renaming " << oldName.toStdString() << " to " << _activeContainer->getName().toStdString() << std::endl;
-            _lua->codeList()->rename(oldName, _activeContainer->getName());
-        }
-    }
-
-    if(!_lua->codeList()->saveAll())
-        std::cerr << "[Lua] Lua4RSWidget::on_pb_save_clicked() : failed to save " << _activeContainer->getName().toStdString() << std::endl;
-    else
-        std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : saved " << _activeContainer->getName().toStdString() << std::endl;
-
-    // update all scripts
-    setLuaCodes(_lua->codeList());
-}
-
-// "Undock" clicked : detach the editor control from the plugin into an own window
-void Lua4RSWidget::on_pb_undock_clicked()
-{
-
-}
-
-// "Paste" clicked : paste the selected rs hint into the editor at cursor pos
-void Lua4RSWidget::on_pb_pastehint_clicked()
-{
-
+    saveScript();
 }
 
 // "Enabled Script" toggled :
 void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 {
-    if (checked)
+    if(_activeContainer == NULL)
+        return;
+
+    _activeContainer->setEnabled(checked);
+
+    // update all scripts
+    LuaContainer* lc;
+    for(int i = 0; i < ui->tw_allscripts->rowCount(); ++i)
     {
-        ;
+        lc = allScriptsGetLuaContainerFromRow(i);
+        if(lc == _activeContainer)
+        {
+            QTableWidgetItem* enabled = ui->tw_allscripts->item(i, ALL_SCRIPTS_ENABLE_COLUMN);
+            enabled->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
+            break;
+        }
     }
 }
 
@@ -525,22 +537,18 @@ void Lua4RSWidget::on_tied_timeto_editingFinished()
 // All Scripts
 //------------------------------------------------------------------------------
 
-void Lua4RSWidget::on_lw_allscripts_itemChanged(QTableWidgetItem *item)
-{
-    if (item)
-    {
-        return;
-    }
-}
-
 void Lua4RSWidget::on_tw_allscripts_cellClicked(int row, int column)
 {
-    if(column == 4) // 4 = enabled
+    if(column == ALL_SCRIPTS_ENABLE_COLUMN) // 4 = enabled
     {
         LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
         QTableWidgetItem* cell = ui->tw_allscripts->item(row, column);
 
         container->setEnabled(cell->checkState() == Qt::Checked ? true : false);
+
+        if(container == _activeContainer)
+            // update ui->cbx_enable
+            ui->cbx_enable->setChecked(_activeContainer->getEnabled());
     }
 }
 
@@ -550,7 +558,7 @@ void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
         return;
 
     // save then load
-    on_pb_save_clicked();
+    saveScript();
 
     // get container
     LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
