@@ -25,6 +25,7 @@ class Lua4RSWidget;
 class Lua4RSNotify;
 class Lua4RSTickThread;
 class LuaList;
+class LuaContainer;
 
 class LuaCore
 {
@@ -42,9 +43,10 @@ public:
     void processEvent(LuaEvent& e);
 
     // invoke lua
-    void runLuaByString(const std::string& code);
-    void runLuaByName(const std::string& name);
-    void runLuaByNameWithParams(const std::string& name, parameterMap paramMap);
+    void runLuaByString(const QString& code);
+    void runLuaByName(const QString& name);
+    //void runLuaByNameWithParams(const QString& name, parameterMap paramMap);
+    void runLuaByEvent(LuaContainer* container, const LuaEvent& event);
 
     // getter & setter
     Lua4RSWidget* getUI();

@@ -363,14 +363,8 @@ void Lua4RSWidget::on_pb_run_clicked()
     appendLog(QString("running: ") + ui->le_scriptname->text());
 
     QString code = ui->pte_luacode->toPlainText();
-    // not sure if this is actually needed - better safe than sorry
-    std::string luaCode;
-#ifdef _WIN32
-    luaCode = code.toLocal8Bit().constData();
-#else
-    luaCode = code.toUtf8().constData();
-#endif
-    _lua->runLuaByString(luaCode);
+
+    _lua->runLuaByString(code);
 
 }
 

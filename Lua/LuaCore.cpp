@@ -161,11 +161,16 @@ void LuaCore::processEvent(LuaEvent &e)
     }
 
     // do some magic here
-    std::cerr << "[Lua] processing event : " << e.eventId  << std::endl;
+    std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
+    for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
+    {
+        if((*it)->isTriggered(e))
+            runLuaByEvent((*it), e);
+    }
 }
 
 // invoke lua
-void LuaCore::runLuaByString(const std::string& code)
+void LuaCore::runLuaByString(const QString& code)
 {
     if(_ui == NULL)
     {
@@ -173,18 +178,37 @@ void LuaCore::runLuaByString(const std::string& code)
         return;
     }
 
+    std::string code2;
+#ifdef _WIN32
+    code2 = code.toLocal8Bit().constData();
+#else
+    code2 = code.toUtf8().constData();
+#endif
+
     RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
-    int ret = luaL_dostring(L, code.c_str());
+    int ret = luaL_dostring(L, code2.c_str());
     reportLuaErrors(L, ret);
 }
 
-void LuaCore::runLuaByName(const std::string& name)
+void LuaCore::runLuaByName(const QString& name)
 {
+    /*
     parameterMap m;
     runLuaByNameWithParams(name, m);
+    */
+    // get code
+    LuaContainer* lc = NULL;
+    if(!_luaList->itemByName(name, lc))
+    {
+        std::cerr << "[Lua] can't find script " << name.toStdString() << std::endl;
+        return;
+    }
+
+    runLuaByString(lc->getCode());
 }
 
-void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap paramMap)
+/*
+void LuaCore::runLuaByNameWithParams(const QString& name, parameterMap paramMap)
 {
     std::string code = "";
 
@@ -202,6 +226,14 @@ void LuaCore::runLuaByNameWithParams(const std::string& name, parameterMap param
     code += lc->getCode().toStdString();
 
     runLuaByString(code);
+}
+*/
+
+void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
+{
+    // do some magic with parameters from event
+
+    runLuaByString(container->getCode());
 }
 
 void LuaCore::reportLuaErrors(lua_State *L, int status)

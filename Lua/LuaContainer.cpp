@@ -27,6 +27,11 @@ LuaContainer::~LuaContainer()
     delete _config;
 }
 
+bool LuaContainer::isTriggered(const LuaEvent &event)
+{
+    return _config->isTriggered(event);
+}
+
 // getter / setter
 QString LuaContainer::getCode()                         { return _code->code(); }
 void    LuaContainer::setCode(const QString& code)      { _code->setCode(code); }

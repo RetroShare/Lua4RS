@@ -30,7 +30,7 @@ bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
 
         if( timeWindow <= luaevent.timeStamp  )
         {
-            _lastRun = QDateTime().currentDateTime();
+            _lastRun = QDateTime::currentDateTime();
             return true;
         }
     }
@@ -56,6 +56,7 @@ void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
     _timerUnit = mySettings.value(INI_KEY_TIMER_UNIT, "").toUInt();
 
 //    _timerInterval = _timerAmount * _timerUnit;
+    _timerInterval = 5;
 
 }
 

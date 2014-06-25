@@ -4,6 +4,8 @@
 #include <QSettings>
 #include <QString>
 
+#include "LuaEvent.h"
+
 class LuaCode;
 class LuaConfig;
 
@@ -18,6 +20,8 @@ public:
     QString getCode();
     QString getDesc();
     QString getName();
+
+    bool isTriggered(const LuaEvent& event);
 
     void setCode(const QString& code);
     void setCode(const std::string& code);

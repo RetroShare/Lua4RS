@@ -142,6 +142,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         mySettings.endGroup();
     }
 
+    /* only for debugging
     if(_myTriggers.empty())
     {
         atrigger = new LuaTriggerStartup();
@@ -150,6 +151,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         atrigger = new LuaTriggerShutdown();
         addTrigger(atrigger);
     }
+    */
 }
 
 
