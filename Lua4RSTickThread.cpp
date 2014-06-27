@@ -14,7 +14,8 @@ Lua4RSTickThread::Lua4RSTickThread() :
     RsThread(),
     _lastRun( time(0) ),
     _initTime( time(0) ),
-    _startUpEventTriggered( false )
+    _startUpEventTriggered( false ),
+    _counter( 0 )
 {
 }
 
@@ -23,15 +24,17 @@ void Lua4RSTickThread::run()
     while(isRunning())
     {
         // tick each X second
-        if(_lastRun + tickIntervalInSeconds <= time(0))
+        if(_lastRun + tickIntervalInSeconds <= time(0) && _startUpEventTriggered)
         {
             LuaEvent e;
             e.eventId = L4R_TIMERTICK;
             e.timeStamp = QDateTime::currentDateTime();
+            e.dataParm->setValue("u32counter", _counter);
 
             LuaCore::getInstance()->processEvent(e);
 
             _lastRun = time(0);
+            _counter++;
         }
 
         // start up event

@@ -71,7 +71,7 @@ void Lua4RSWidget::setLuaCodes(LuaList* list)
 
 void Lua4RSWidget::clearOutput()
 {
-    ui->tb_output->clear();
+    QMetaObject::invokeMethod(this, "clearOutput_invoke", Qt::AutoConnection);
 }
 
 void Lua4RSWidget::appendOutput(const std::string& s)
@@ -81,7 +81,7 @@ void Lua4RSWidget::appendOutput(const std::string& s)
 
 void Lua4RSWidget::appendOutput(const QString& s)
 {
-    ui->tb_output->appendPlainText(s);
+    QMetaObject::invokeMethod(this, "appendOutput_invoke", Qt::AutoConnection, Q_ARG(QString, s));
 }
 
 void Lua4RSWidget::appendLog(const std::string& s)
@@ -91,7 +91,7 @@ void Lua4RSWidget::appendLog(const std::string& s)
 
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss") + QString(" > ") + s);
+    QMetaObject::invokeMethod(this, "appendLog_invoke", Qt::AutoConnection, Q_ARG(QString, s));
 }
 
 /* #############################################################
@@ -357,6 +357,22 @@ bool Lua4RSWidget::saveScript(bool showErrorMsg)
  * # slots
  * #############################################################
  */
+
+void Lua4RSWidget::appendOutput_invoke(const QString s)
+{
+    ui->tb_output->appendPlainText(s);
+}
+
+void Lua4RSWidget::appendLog_invoke(const QString s)
+{
+    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss") + QString(" > ") + s);
+}
+
+void Lua4RSWidget::clearOutput_invoke()
+{
+    ui->tb_output->clear();
+}
+
 // "Run" clicked : execute the script in the editor control
 void Lua4RSWidget::on_pb_run_clicked()
 {

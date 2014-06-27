@@ -84,6 +84,10 @@ class Lua4RSWidget : public MainPage
     void on_rb_shutdown_toggled(bool checked);
     void on_rb_every_toggled(bool checked);
     void on_dd_events_currentIndexChanged(int index);
+
+    void appendOutput_invoke(const QString s);
+    void appendLog_invoke(const QString s);
+    void clearOutput_invoke();
 };
 
 #endif // LUA4RSMAINWIDGET_H

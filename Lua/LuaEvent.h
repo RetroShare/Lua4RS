@@ -2,14 +2,27 @@
 #define LUAEVENT_H
 
 #include <QDateTime>
-
+#include <QSettings>
 
 //------------------------------------------------------------------------------
 struct LuaEvent {
+    LuaEvent() : dataParm(new QSettings()) {}
+    ~LuaEvent() { delete dataParm; }
+
     uint        eventId;
     QDateTime   timeStamp;
-    QObject*    dataParm;
+    QSettings*  dataParm;
 };
+/*
+ * 3 chars to identify type
+ * Types:
+ * - string : str
+ * - int    : int
+ * - uint32 : u32
+ * - uint64 : u64
+ * - bool   : boo
+ * - std::list<TurtleFileInfo>  : tfi
+ */
 
 //------------------------------------------------------------------------------
 //  Fundamental Events from the Plugin
@@ -36,7 +49,8 @@ struct LuaEvent {
 #define L4R_FRIEND_ADDED                11020
 #define L4R_FRIEND_BLOCKED              11030
 #define L4R_FRIEND_CUSTOM_STATE         11040
-#define L4R_FRIENDS_STATUS_CHANGED      11050
+#define L4R_FRIEND_STATUS_CHANGED       11050
+#define L4R_FRIEND_STATUS_CHANGED_MANY  11060
 
 //------------------------------------------------------------------------------
 //  Events from File Downloads

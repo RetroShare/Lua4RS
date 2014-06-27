@@ -43,6 +43,15 @@ LuaCore::~LuaCore()
     // stop thread and wait for shutdown
     _thread->join();
 
+    // send shotdown event
+    {
+        LuaEvent e;
+        e.eventId = L4R_SHUTDOWN;
+        e.timeStamp = QDateTime::currentDateTime();
+
+        processEvent(e);
+    }
+
     // save lua scripts
     if(_luaList->saveAll())
         std::cout << "[Lua] saved " << _luaList->size() << " Lua script(s)" << std::endl;
