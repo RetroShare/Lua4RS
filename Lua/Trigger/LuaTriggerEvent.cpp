@@ -13,7 +13,7 @@ LuaTriggerEvent::~LuaTriggerEvent()
 
 
 
-bool LuaTriggerEvent::isTriggered (LuaEvent luaevent)
+bool LuaTriggerEvent::isTriggered (const LuaEvent& luaevent)
 {
     if (luaevent.eventId == _eventId)
     {

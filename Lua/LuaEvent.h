@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 struct LuaEvent {
     LuaEvent() : dataParm(new QSettings()) {}
-    //~LuaEvent() { delete dataParm; }
+    ~LuaEvent() { delete dataParm; }
 
     uint        eventId;
     QDateTime   timeStamp;

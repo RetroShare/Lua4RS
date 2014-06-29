@@ -13,7 +13,7 @@ LuaTriggerTimerInterval::~LuaTriggerTimerInterval ()
 
 
 
-bool LuaTriggerTimerInterval::isTriggered (LuaEvent luaevent)
+bool LuaTriggerTimerInterval::isTriggered (const LuaEvent& luaevent)
 {
     if (luaevent.eventId == L4R_TIMERTICK)
     {

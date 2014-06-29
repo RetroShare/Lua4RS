@@ -165,7 +165,7 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const st
     pushTable(L, tableTop, luaFuncName, f);
 }
 
-void LuaCore::processEvent(LuaEvent &e)
+void LuaCore::processEvent(const LuaEvent& e)
 {
     // to catch to early events
     if(!sane())

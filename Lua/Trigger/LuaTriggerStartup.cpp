@@ -13,7 +13,7 @@ LuaTriggerStartup::~LuaTriggerStartup()
 
 
 
-bool LuaTriggerStartup::isTriggered (LuaEvent luaevent)
+bool LuaTriggerStartup::isTriggered (const LuaEvent& luaevent)
 {
     if ( luaevent.eventId == L4R_STARTUP )
     {

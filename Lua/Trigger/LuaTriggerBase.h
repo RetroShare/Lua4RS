@@ -15,7 +15,7 @@ public:
 
     virtual ~LuaTriggerBase();
 
-    virtual bool isTriggered (LuaEvent luaevent);
+    virtual bool isTriggered (const LuaEvent& luaevent);
 
     virtual void toSettings(QSettings& mySettings);
 

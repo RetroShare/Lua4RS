@@ -9,7 +9,7 @@ public:
     LuaTriggerStartup();
     ~LuaTriggerStartup();
 
-    bool isTriggered (LuaEvent luaevent);
+    bool isTriggered (const LuaEvent& luaevent);
 
     void toSettings(QSettings& mySettings);
 

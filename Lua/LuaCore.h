@@ -40,7 +40,7 @@ public:
 
     void setupRsFunctionsAndTw(QTreeWidget* tw);
 
-    void processEvent(LuaEvent& e);
+    void processEvent(const LuaEvent& e);
 
     // invoke lua
     void runLuaByString(const QString& code);

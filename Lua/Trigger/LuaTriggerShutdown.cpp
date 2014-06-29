@@ -13,7 +13,7 @@ LuaTriggerShutdown::~LuaTriggerShutdown()
 
 
 
-bool LuaTriggerShutdown::isTriggered (LuaEvent luaevent)
+bool LuaTriggerShutdown::isTriggered (const LuaEvent& luaevent)
 {
     if (luaevent.eventId == L4R_SHUTDOWN)
     {

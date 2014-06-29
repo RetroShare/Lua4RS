@@ -13,7 +13,7 @@ LuaTriggerOnce::~LuaTriggerOnce()
 
 
 
-bool LuaTriggerOnce::isTriggered (LuaEvent luaevent)
+bool LuaTriggerOnce::isTriggered (const LuaEvent& luaevent)
 {
     if (luaevent.eventId == L4R_TIMERTICK)
     {
