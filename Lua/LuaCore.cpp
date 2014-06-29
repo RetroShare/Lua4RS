@@ -24,7 +24,8 @@ LuaCore::LuaCore() :
     _peers      (NULL),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
-    _thread     (new Lua4RSTickThread())
+    _thread     (new Lua4RSTickThread()),
+    _shutDownImminent (false)
 {
     /*
      * Notes:
@@ -40,6 +41,10 @@ LuaCore::LuaCore() :
 
 LuaCore::~LuaCore()
 {
+    // disbale output - gui might be gone by now!
+    _ui->disableOutput();
+    _shutDownImminent = true;
+
     // stop thread and wait for shutdown
     _thread->join();
 
@@ -169,6 +174,10 @@ void LuaCore::processEvent(LuaEvent &e)
         return;
     }
 
+    // block everythign except onShutdown when RS is exiting
+    if(_shutDownImminent && e.eventId != L4R_SHUTDOWN)
+        return;
+
     // do some magic here
     std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
     for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
@@ -242,6 +251,7 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
 {
     // do some magic with parameters from event
 
+    emit _ui->appendLog("triggered script: " + container->getName());
     runLuaByString(container->getCode());
 }
 
@@ -253,7 +263,7 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
         std::cerr << "-- " << s << std::endl;
 
         s = "Lua error: " + s;
-        _ui->appendLog(s);
+        emit _ui->appendLog(s);
 
         lua_pop(L, 1); // remove error message
     }

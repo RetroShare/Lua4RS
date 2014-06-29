@@ -18,12 +18,15 @@ class LuaList;
 
 class Lua4RSWidget : public MainPage
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     explicit Lua4RSWidget(QWidget *parent = 0);
     ~Lua4RSWidget();
 
+    void disableOutput();
+
+public slots:
     void clearOutput();
     void appendOutput(const std::string &s);
     void appendOutput(const QString &s);
@@ -31,7 +34,7 @@ class Lua4RSWidget : public MainPage
     void appendLog(const std::string &s);
     void appendLog(const QString &s);
 
-  private:
+private:
     void setLuaCodes(LuaList* list);
     void switchContainer(LuaContainer* container);
 
@@ -59,7 +62,10 @@ class Lua4RSWidget : public MainPage
 
     LuaContainer* _activeContainer;
 
-  private slots:
+    // needed for shutdown process (when gui is gone but things may still be running)
+    bool _disableOutput;
+
+private slots:
     void on_pb_run_clicked();
     void on_pb_newscript_clicked();
     void on_pb_editscript_clicked();
@@ -84,10 +90,6 @@ class Lua4RSWidget : public MainPage
     void on_rb_shutdown_toggled(bool checked);
     void on_rb_every_toggled(bool checked);
     void on_dd_events_currentIndexChanged(int index);
-
-    void appendOutput_invoke(const QString s);
-    void appendLog_invoke(const QString s);
-    void clearOutput_invoke();
 };
 
 #endif // LUA4RSMAINWIDGET_H

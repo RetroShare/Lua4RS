@@ -97,7 +97,7 @@ extern "C" {
             for ( int n=1; n<=argc; ++n )
             {
                 const std::string s(lua_tostring(L, n));
-                LuaCore::getInstance()->getUI()->appendOutput(s);
+                emit LuaCore::getInstance()->getUI()->appendOutput(s);
             }
 
         return 0;
@@ -105,7 +105,7 @@ extern "C" {
 
     int rs_clear(lua_State* /*L*/)
     {
-        LuaCore::getInstance()->getUI()->clearOutput();
+        emit LuaCore::getInstance()->getUI()->clearOutput();
         return 0;
     }
 }

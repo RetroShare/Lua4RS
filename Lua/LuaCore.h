@@ -74,6 +74,12 @@ private:
     Lua4RSNotify* _notify;
     Lua4RSTickThread* _thread;
     Lua4RSWidget* _ui;
+
+    // disable trigger on shutdown
+    bool _shutDownImminent;
+
+signals:
+    void appendLog(const QString& s);
 };
 
 #endif // LUACORE_H
