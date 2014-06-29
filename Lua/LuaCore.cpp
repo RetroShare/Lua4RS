@@ -247,7 +247,7 @@ void LuaCore::runLuaByNameWithParams(const QString& name, parameterMap paramMap)
 }
 */
 
-void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
+void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& /*event*/)
 {
     // do some magic with parameters from event
 

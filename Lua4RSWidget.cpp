@@ -668,7 +668,7 @@ void Lua4RSWidget::on_rb_runonevent_toggled(bool /*checked*/)
 {
 }
 
-void Lua4RSWidget::on_dd_events_currentIndexChanged(int index)
+void Lua4RSWidget::on_dd_events_currentIndexChanged(int /*index*/)
 {
 
 }

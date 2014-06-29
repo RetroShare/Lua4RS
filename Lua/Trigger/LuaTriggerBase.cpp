@@ -14,7 +14,7 @@ LuaTriggerBase::~LuaTriggerBase()
 
 
 
-bool LuaTriggerBase::isTriggered (const LuaEvent& luaevent)
+bool LuaTriggerBase::isTriggered (const LuaEvent& /*luaevent*/)
 {
     std::cerr << "[Lua] isTriggered() called on LuaTriggerBase" << std::endl;
     return false;
