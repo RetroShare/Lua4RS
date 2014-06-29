@@ -1,3 +1,6 @@
+#include <QIcon>
+#include <QTranslator>
+
 #include <retroshare/rsplugin.h>
 #include <util/rsversion.h>
 
@@ -103,6 +106,24 @@ QIcon* Lua4RSPlugin::qt_icon() const
     }
 
     return _icon ;
+}
+
+QTranslator* Lua4RSPlugin::qt_translator(QApplication* /*app*/, const QString& languageCode, const QString& externalDir) const
+{
+    if (languageCode == "en") {
+        return NULL;
+    }
+
+    QTranslator* translator = new QTranslator();
+
+    if (translator->load(externalDir + "/Lua4RS_" + languageCode + ".qm")) {
+        return translator;
+    } else if (translator->load(":/lang/Lua4RS_" + languageCode + ".qm")) {
+        return translator;
+    }
+
+    delete(translator);
+    return NULL;
 }
 
 void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)

@@ -4,8 +4,6 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare-gui/mainpage.h>
 
-#include <QIcon>
-
 class Lua4RSPlugin : public RsPlugin
 {
 public:
@@ -13,6 +11,7 @@ public:
 
     virtual MainPage*   qt_page() const;
     virtual QIcon       *qt_icon() const;
+    virtual QTranslator *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
     virtual void        getPluginVersion(int& major,int& minor,int& svn_rev) const;
     virtual void        setPlugInHandler(RsPluginHandler *pgHandler);
     virtual void        stop();

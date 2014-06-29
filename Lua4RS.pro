@@ -60,4 +60,7 @@ TARGET = Lua4RS
 RESOURCES +=  \
     Lua4RS_images.qrc
 
+TRANSLATIONS += \
+    lang/Lua4RS_en.ts
+
 XUP.QT_VERSION = Qt System (4.8.1)
