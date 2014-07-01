@@ -20,6 +20,8 @@ class LuaTriggerTimerInterval : public LuaTriggerBase
 {
 public:
     LuaTriggerTimerInterval();
+    LuaTriggerTimerInterval(uint timerInterval);
+    LuaTriggerTimerInterval(uint timerAmount, uint timerUnit);
 
     ~LuaTriggerTimerInterval();
 

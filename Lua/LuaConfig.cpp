@@ -21,16 +21,23 @@ LuaConfig::LuaConfig() :
 
 LuaConfig::~LuaConfig()
 {
-    for (int i=0 ; i<_myTriggers.size() ; ++i)
+    int i = 0;
+    while(i < _myTriggers.count())
     {
-        delete _myTriggers.at(i);
+        LuaTriggerBase* t = _myTriggers.at(i);
+
+        _myTriggers.removeAt(i);
+
+        if (t != NULL)
+            delete t;
+        ++i;
     }
-    _myTriggers.clear();
 }
 
 
 
 // Test all triggers if one or more are triggered by <luaevent>
+
 bool LuaConfig::isTriggered(const LuaEvent& luaevent)
 {
     // is the script enabled at all?
@@ -67,6 +74,7 @@ bool LuaConfig::isTriggered(const LuaEvent& luaevent)
 
 
 // addTrigger - Add a trigger to the trigger list of this LuaConfig
+
 void LuaConfig::addTrigger(LuaTriggerBase* trigger)
 {
     if (trigger != NULL)
@@ -79,9 +87,41 @@ void LuaConfig::addTrigger(LuaTriggerBase* trigger)
     }
 }
 
+// gets no of triggers in _myTriggers
+
+uint LuaConfig::getTriggerCount()
+{
+    return _myTriggers.count();
+}
+
+// remove last trigger added to triggerlist
+
+void LuaConfig::removeLastTrigger()
+{
+    LuaTriggerBase* t = _myTriggers.last();
+
+    _myTriggers.removeLast();
+
+    if (t != NULL)
+        delete t;
+}
+
+// remove trigger at index from triggerlist
+
+void LuaConfig::removeTriggerAt(uint triggerIndex)
+{
+    LuaTriggerBase* t = _myTriggers.at(triggerIndex);
+
+    _myTriggers.removeAt(triggerIndex);
+
+    if (t != NULL)
+        delete (t);
+}
+
 
 
 // load this luaconfig from QSettings data
+
 void LuaConfig::fromSettings(QSettings &mySettings)
 {
     LuaTriggerBase* atrigger;
@@ -158,11 +198,12 @@ void LuaConfig::fromSettings(QSettings &mySettings)
 
 
 // serialize this luaconfig to QSettings data
+
 void LuaConfig::toSettings(QSettings &mySettings)
 {
     // first save description to ini
     if (_description == "")
-        _description = "It enters a description. It does so whenever it is told to.";
+        _description = "It enters a description! It does so whenever it is told to.";
 
     mySettings.setValue(INI_KEY_DESC, _description);
     mySettings.setValue(INI_KEY_ENABLED, _enableScript);
@@ -179,16 +220,19 @@ void LuaConfig::toSettings(QSettings &mySettings)
         inigroup = INI_KEY_TRIGGER + QString("_");
         inigroup += QString::number(i);
 
+        // first clean up the ini file for this trigger ...
+        mySettings.remove(inigroup);
+
+        // ... then rewrite the group with the values of the current trigger
         mySettings.beginGroup(inigroup);
-
         _myTriggers.at(i)->toSettings(mySettings);
-
         mySettings.endGroup();
     }
 }
 
 
 // getter/setter
+
 void        LuaConfig::enableScript(bool enable)                        { _enableScript = enable; }
 bool        LuaConfig::isScriptEnabled()                                { return _enableScript; }
 

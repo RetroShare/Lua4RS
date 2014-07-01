@@ -5,11 +5,14 @@ LuaTriggerOnce::LuaTriggerOnce()
     _classname = "LuaTriggerOnce";
 }
 
-
-
-LuaTriggerOnce::~LuaTriggerOnce()
+LuaTriggerOnce::LuaTriggerOnce(QDateTime &onceDateTime)
 {
+    _classname = "LuaTriggerOnce";
+    _onceDateTime = onceDateTime;
 }
+
+
+LuaTriggerOnce::~LuaTriggerOnce() {}
 
 
 

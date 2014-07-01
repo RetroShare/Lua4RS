@@ -3,6 +3,25 @@
 LuaTriggerTimerInterval::LuaTriggerTimerInterval ()
 {
     _classname = "LuaTriggerTimerInterval";
+    _timerAmount = 0;
+    _timerUnit = 0;
+    _timerInterval = 0;
+}
+
+LuaTriggerTimerInterval::LuaTriggerTimerInterval(uint timerInterval)
+{
+    _classname = "LuaTriggerTimerInterval";
+    _timerAmount = 0;
+    _timerUnit = 0;
+    _timerInterval = timerInterval;
+}
+
+LuaTriggerTimerInterval::LuaTriggerTimerInterval(uint timerAmount, uint timerUnit)
+{
+    _classname = "LuaTriggerTimerInterval";
+    _timerAmount = timerAmount;
+    _timerUnit = timerUnit;
+    _timerInterval = 0;
 }
 
 

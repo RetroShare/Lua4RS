@@ -5,6 +5,12 @@ LuaTriggerEvent::LuaTriggerEvent()
     _classname = "LuaTriggerEvent";
 }
 
+LuaTriggerEvent::LuaTriggerEvent(uint eventId)
+{
+    _classname = "LuaTriggerEvent";
+    _eventId = eventId;
+}
+
 
 
 LuaTriggerEvent::~LuaTriggerEvent()

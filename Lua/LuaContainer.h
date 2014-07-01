@@ -45,6 +45,20 @@ public:
     void getConstraintFromTo(QTime& from, QTime& to);
     void setConstraintFromTo(const QTime& from, const QTime& to);
 
+
+    void setRunEveryChecked(bool checked);
+    bool getRunEveryChecked();
+
+    void setRunOnceChecked(bool checked, QDateTime when);
+    bool getRunOnceChecked();
+
+    void setRunStartupChecked(bool checked);
+    bool getRunStartupChecked();
+
+    void setRunShutdownChecked(bool checked);
+    bool getRunShutdownChecked();
+
+
 private:
     LuaCode* _code;
     LuaConfig* _config ;

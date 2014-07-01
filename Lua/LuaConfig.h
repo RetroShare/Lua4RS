@@ -37,6 +37,15 @@ public:
     // add a trigger to our triggerlist
     void addTrigger(LuaTriggerBase* trigger);
 
+    // gets no of triggers in _myTriggers
+    uint getTriggerCount();
+
+    // remove last trigger added to triggerlist
+    void removeLastTrigger();
+
+    // remove trigger at index from triggerlist
+    void removeTriggerAt(uint triggerIndex);
+
     // load this luaconfig from QSettings data
     void fromSettings(QSettings& mySettings);
 
@@ -63,6 +72,7 @@ public:
 
     QDateTime getLastTriggered() const;
     void setLastTriggered(const QDateTime &lastTriggered);
+
 
 protected:
     // the description field is stored in LuaConfig

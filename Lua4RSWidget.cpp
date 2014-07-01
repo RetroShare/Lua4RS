@@ -513,28 +513,12 @@ void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
 // note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timefrom_editingFinished()
 {
-/*
-    if(_activeContainer == NULL)
-    {
-        std::cerr << "[Lua] Lua4RSWidget::on_tied_timefrom_editingFinished : got no activeContainer" << std::endl;
-        return;
-    }
-    _activeContainer->_luaConfig->setConstraintFrom(ui->tied_timefrom->time());
-*/
 }
 
 // to : Constraint "to"-time has changed
 // note: dont forget to check if from < to!
 void Lua4RSWidget::on_tied_timeto_editingFinished()
 {
-/*
-    if(_activeContainer == NULL)
-    {
-        std::cerr << "[Lua] Lua4RSWidget::on_tied_timeto_editingFinished : got no activeContainer" << std::endl;
-        return;
-    }
-    _activeContainer->_luaConfig->setConstraintTo(ui->tied_timeto->time());
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -577,6 +561,11 @@ void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
 //------------------------------------------------------------------------------
 // Tabpage "By Timer"
 //------------------------------------------------------------------------------
+void Lua4RSWidget::on_spb_everycount_editingFinished()
+{
+    return;
+}
+
 
 // "Run Every" : amount of timer units has changed
 // note: if changed, rb_runevery should be selected
@@ -589,18 +578,7 @@ void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
     unit = TIME_UNITS[index];
     interval = amount * unit;
 
-    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
-/*
-    tbd:
-    1. hole ref auf akt. container
-    2. hole ref auf config aus container
-    3. wandle wert aus dropdown (secs, mins, days ...) in sec um
-    4. schreibe diesen sec-wert nach config._timerunit
-*/
-}
-
-void Lua4RSWidget::on_spb_everycount_editingFinished()
-{
+    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" ); // just to see
 }
 
 // "RunEvery" : unit of timer units has changed
@@ -621,10 +599,12 @@ void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
 void Lua4RSWidget::on_rb_every_toggled(bool checked)
 {
     if (checked == true){
-        ui->rb_every->setStyleSheet     ("background:lightgreen;");
+        ui->rb_every->setStyleSheet     ("background:lime;");
         ui->rb_once->setStyleSheet      ("background:transparent;");
         ui->rb_startup->setStyleSheet   ("background:transparent;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+
+        _activeContainer->setRunEveryChecked(true);
     }
 }
 
@@ -633,9 +613,11 @@ void Lua4RSWidget::on_rb_once_toggled(bool checked)
 {
     if (checked == true){
         ui->rb_every->setStyleSheet     ("background:transparent;");
-        ui->rb_once->setStyleSheet      ("background:lightgreen;");
+        ui->rb_once->setStyleSheet      ("background:lime;");
         ui->rb_startup->setStyleSheet   ("background:transparent;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+
+        _activeContainer->setRunOnceChecked(true, ui->dte_runonce->dateTime());
     }
 }
 
@@ -645,8 +627,10 @@ void Lua4RSWidget::on_rb_startup_toggled(bool checked)
     if (checked == true){
         ui->rb_every->setStyleSheet     ("background:transparent;");
         ui->rb_once->setStyleSheet      ("background:transparent;");
-        ui->rb_startup->setStyleSheet   ("background:lightgreen;");
+        ui->rb_startup->setStyleSheet   ("background:lime;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+
+        _activeContainer->setRunStartupChecked(true);
     }
 }
 
@@ -657,7 +641,9 @@ void Lua4RSWidget::on_rb_shutdown_toggled(bool checked)
         ui->rb_every->setStyleSheet     ("background:transparent;");
         ui->rb_once->setStyleSheet      ("background:transparent;");
         ui->rb_startup->setStyleSheet   ("background:transparent;");
-        ui->rb_shutdown->setStyleSheet  ("background:lightgreen;");
+        ui->rb_shutdown->setStyleSheet  ("background:lime;");
+
+        _activeContainer->setRunShutdownChecked(true);
     }
 }
 

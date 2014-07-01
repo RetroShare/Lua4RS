@@ -419,7 +419,7 @@
              <string/>
             </property>
             <property name="checkState">
-             <enum>Checked</enum>
+             <enum>Unchecked</enum>
             </property>
            </item>
            <item row="1" column="0">
@@ -678,7 +678,7 @@
             <string>Enable script</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -1633,7 +1633,7 @@ end;</string>
                     <string>Run once at</string>
                    </property>
                    <property name="checked">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="autoExclusive">
                     <bool>true</bool>

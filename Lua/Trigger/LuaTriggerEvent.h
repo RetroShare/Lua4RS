@@ -7,6 +7,7 @@ class LuaTriggerEvent : public LuaTriggerBase
 {
 public:
     LuaTriggerEvent();
+    LuaTriggerEvent(uint eventId );
     ~LuaTriggerEvent();
 
     bool isTriggered (const LuaEvent& luaevent);

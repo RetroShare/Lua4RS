@@ -10,6 +10,7 @@ class LuaTriggerOnce : public LuaTriggerBase
 {
 public:
     LuaTriggerOnce();
+    LuaTriggerOnce(QDateTime& onceDateTime);
     ~LuaTriggerOnce();
 
     bool isTriggered (const LuaEvent& luaevent);
