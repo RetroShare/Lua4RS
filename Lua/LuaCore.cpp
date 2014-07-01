@@ -141,6 +141,10 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, peers_getOnlineList, "getOnlineList()", "returns list of online friends (SSL id)", namespc, peers);
     addFunctionToLuaAndTw(top, peers_getFriendList, "getFriendList()", "returns list of all friends (SSL id)", namespc, peers);
     addFunctionToLuaAndTw(top, peers_getPeerCount, "getPeerCount()", "returns number of all friends and online friends", namespc, peers);
+
+    addFunctionToLuaAndTw(top, peers_isFriend, "isFriend()", "returns if a peer is a friend", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_isGPGAccepted, "isGPGAccepted()", "returns is a GPG key is accepted", namespc, peers);
+    addFunctionToLuaAndTw(top, peers_isOnline, "isOnline()", "returns if a peer is online", namespc, peers);
     addFunctionToLuaAndTw(top, peers_getPeerName, "getPeerName()", "returns the name for a given SSL/PGP id", namespc, peers);
     addFunctionToLuaAndTw(top, peers_getPeerDetails, "getPeerDetails()", "returns peer details as a table for a given SSL id", namespc, peers);
 
