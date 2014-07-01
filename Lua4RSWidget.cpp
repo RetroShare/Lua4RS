@@ -604,7 +604,8 @@ void Lua4RSWidget::on_rb_every_toggled(bool checked)
         ui->rb_startup->setStyleSheet   ("background:transparent;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
 
-        _activeContainer->setRunEveryChecked(true);
+        if(_activeContainer != NULL)
+            _activeContainer->setRunEveryChecked(true);
     }
 }
 
@@ -617,7 +618,8 @@ void Lua4RSWidget::on_rb_once_toggled(bool checked)
         ui->rb_startup->setStyleSheet   ("background:transparent;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
 
-        _activeContainer->setRunOnceChecked(true, ui->dte_runonce->dateTime());
+        if(_activeContainer != NULL)
+            _activeContainer->setRunOnceChecked(true, ui->dte_runonce->dateTime());
     }
 }
 
@@ -630,7 +632,8 @@ void Lua4RSWidget::on_rb_startup_toggled(bool checked)
         ui->rb_startup->setStyleSheet   ("background:lime;");
         ui->rb_shutdown->setStyleSheet  ("background:transparent;");
 
-        _activeContainer->setRunStartupChecked(true);
+        if(_activeContainer != NULL)
+            _activeContainer->setRunStartupChecked(true);
     }
 }
 
@@ -643,7 +646,8 @@ void Lua4RSWidget::on_rb_shutdown_toggled(bool checked)
         ui->rb_startup->setStyleSheet   ("background:transparent;");
         ui->rb_shutdown->setStyleSheet  ("background:lime;");
 
-        _activeContainer->setRunShutdownChecked(true);
+        if(_activeContainer != NULL)
+            _activeContainer->setRunShutdownChecked(true);
     }
 }
 
