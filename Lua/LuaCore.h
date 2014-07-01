@@ -58,7 +58,7 @@ public:
 
 private:
     void reportLuaErrors(lua_State *L, int status);
-    void addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, const std::string &namespc, QTreeWidgetItem* item);
+    void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint);
 
     static LuaCore* _instance;
 

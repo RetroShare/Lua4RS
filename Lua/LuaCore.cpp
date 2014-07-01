@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <iostream>
 
+#include <QObject>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
@@ -124,8 +125,8 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, rs_clear, "clear()", "clears the output", namespc, rs);
-    addFunctionToLuaAndTw(top, rs_print, "print()", "prints to output", namespc, rs);
+    addFunctionToLuaAndTw(top, namespc, rs, rs_clear,   "clear()",  QObject::tr("clears the output"));
+    addFunctionToLuaAndTw(top, namespc, rs, rs_print,   "print()",  QObject::tr("prints to output"));
 
     lua_setglobal(L, "rs");
 
@@ -137,26 +138,26 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, peers_getOwnId, "getOwnId()", "returns own SSL id", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_getOnlineList, "getOnlineList()", "returns list of online friends (SSL id)", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_getFriendList, "getFriendList()", "returns list of all friends (SSL id)", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_getPeerCount, "getPeerCount()", "returns number of all friends and online friends", namespc, peers);
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getOwnId,          "getOwnId()",       QObject::tr("returns own SSL id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getOnlineList,     "getOnlineList()",  QObject::tr("returns list of online friends (SSL id)"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getFriendList,     "getFriendList()",  QObject::tr("returns list of all friends (SSL id)"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerCount,      "getPeerCount()",   QObject::tr("returns number of all friends and online friends"));
 
-    addFunctionToLuaAndTw(top, peers_isFriend, "isFriend()", "returns if a peer is a friend", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_isGPGAccepted, "isGPGAccepted()", "returns is a GPG key is accepted", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_isOnline, "isOnline()", "returns if a peer is online", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_getPeerName, "getPeerName()", "returns the name for a given SSL/PGP id", namespc, peers);
-    addFunctionToLuaAndTw(top, peers_getPeerDetails, "getPeerDetails()", "returns peer details as a table for a given SSL id", namespc, peers);
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isFriend,          "isFriend()",       QObject::tr("returns if a peer is a friend"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isGPGAccepted,     "isGPGAccepted()",  QObject::tr("returns is a GPG key is accepted"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isOnline,          "isOnline()",       QObject::tr("returns if a peer is online"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerName,       "getPeerName()",    QObject::tr("returns the name for a given SSL/PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerDetails,    "getPeerDetails()", QObject::tr("returns peer details as a table for a given SSL id"));
 
     lua_setglobal(L, "peers");
 }
 
-void LuaCore::addFunctionToLuaAndTw(int tableTop, int (*f)(lua_State*), const std::string& name, const std::string& hint, const std::string& namespc, QTreeWidgetItem* item)
+void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint)
 {
     QTreeWidgetItem *i = new QTreeWidgetItem(item);
     i->setText(0, QString::fromStdString(name));
     i->setText(1, QString::fromStdString(namespc + name));
-    i->setToolTip(0, QString::fromStdString(hint));
+    i->setToolTip(0, hint);
 
     // name can be like foo(bar) but function name is just foo
     std::string luaFuncName;
@@ -255,7 +256,7 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& /*event*/)
 {
     // do some magic with parameters from event
 
-    emit _ui->appendLog("triggered script: " + container->getName());
+    emit _ui->appendLog(QObject::tr("triggered script: ") + container->getName());
     runLuaByString(container->getCode());
 }
 
