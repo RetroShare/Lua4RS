@@ -144,10 +144,14 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerCount,      "getPeerCount()",   QObject::tr("returns number of all friends and online friends"));
 
     addFunctionToLuaAndTw(top, namespc, peers, peers_isFriend,          "isFriend()",       QObject::tr("returns if a peer is a friend"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_isGPGAccepted,     "isGPGAccepted()",  QObject::tr("returns is a GPG key is accepted"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isGPGAccepted,     "isGPGAccepted()",  QObject::tr("returns is a PGP key is accepted"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_isOnline,          "isOnline()",       QObject::tr("returns if a peer is online"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGName,        "getGPGName()",     QObject::tr("returns the PGP name for a given PGP id"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerName,       "getPeerName()",    QObject::tr("returns the name for a given SSL/PGP id"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerDetails,    "getPeerDetails()", QObject::tr("returns peer details as a table for a given SSL id"));
+
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGOwnId,       "getGPGOwnId()",    QObject::tr("returns own PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGId,          "getGPGId()",       QObject::tr("returns the PGP id for a given SSL/PGP id"));
 
     lua_setglobal(L, "peers");
 }

@@ -82,8 +82,8 @@ extern "C" {
         lua_pushboolean(L, online);
         return 1;
     }
-    // virtual bool isGPGAccepted(const std::string &gpg_id_is_friend)
 
+    // virtual bool isGPGAccepted(const std::string &gpg_id_is_friend)
     int peers_isGPGAccepted(lua_State* L)
     {
         if( getArgCount(L) != 1)
@@ -92,6 +92,18 @@ extern "C" {
         const std::string gpgid = lua_tostring(L, 1);
         const bool online = LuaCore::getInstance()->peers()->isGPGAccepted(gpgid);
         lua_pushboolean(L, online);
+        return 1;
+    }
+
+    // virtual std::string getGPGName(const std::string &gpg_id)
+    int peers_getGPGName(lua_State* L)
+    {
+        if( getArgCount(L) != 1)
+            return 0;
+
+        const std::string gpgId = lua_tostring(L, 1);
+        const std::string name = LuaCore::getInstance()->peers()->getGPGName(gpgId);
+        lua_pushstring(L, name.c_str());
         return 1;
     }
 
@@ -158,6 +170,26 @@ extern "C" {
 
         return 1;
     }
+
+    // virtual std::string getGPGOwnId()
+    int peers_getGPGOwnId(lua_State* L)
+    {
+        const std::string gpgID = LuaCore::getInstance()->peers()->getGPGOwnId();
+        lua_pushstring(L, gpgID.c_str());
+        return 1;
+    }
+
+    // virtual std::string getGPGId(const std::string &sslid_or_gpgid) //return the gpg id of the given gpg or ssl id
+    int peers_getGPGId(lua_State* L)
+    {
+        if( getArgCount(L) != 1)
+            return 0;
+
+        const std::string id = lua_tostring(L, 1);
+        const std::string gpgId = LuaCore::getInstance()->peers()->getGPGId(id);
+        lua_pushstring(L, gpgId.c_str());
+        return 1;
+    }
 }
 
 /// TODO
@@ -169,11 +201,6 @@ virtual bool   haveSecretKey(const std::string& gpg_id) = 0 ;
 
 //virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
 
-
-virtual std::string getGPGName(const std::string &gpg_id)	= 0;
-
-virtual std::string getGPGOwnId()				= 0;
-virtual std::string getGPGId(const std::string &sslid_or_gpgid)	= 0; //return the gpg id of the given gpg or ssl id
 virtual bool    isKeySupported(const std::string& gpg_ids)   = 0;
 virtual bool    getGPGAcceptedList(std::list<std::string> &gpg_ids)   = 0;
 virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
