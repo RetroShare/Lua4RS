@@ -23,7 +23,7 @@ private:
     time_t _lastRun;
     time_t _initTime;
     bool _startUpEventTriggered;
-    uint _counter;
+    uint32_t _counter;
 };
 
 #endif // LUA4RSTICKTHREAD_H
