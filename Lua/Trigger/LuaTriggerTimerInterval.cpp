@@ -37,6 +37,8 @@ bool LuaTriggerTimerInterval::isTriggered (const LuaEvent& luaevent)
         if( _lastRun.addSecs(_timerInterval) <= luaevent.timeStamp  )
         {
             _lastRun = QDateTime::currentDateTime();
+            // remove ms
+            _lastRun.setTime(QTime(_lastRun.time().hour(), _lastRun.time().minute(), _lastRun.time().second()));
             return true;
         }
     }

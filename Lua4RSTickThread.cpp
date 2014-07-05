@@ -29,6 +29,8 @@ void Lua4RSTickThread::run()
             LuaEvent e;
             e.eventId = L4R_TIMERTICK;
             e.timeStamp = QDateTime::currentDateTime();
+            // remove ms
+            e.timeStamp.setTime(QTime(e.timeStamp.time().hour(), e.timeStamp.time().minute(), e.timeStamp.time().second()));
             e.dataParm->setValue("u32counter", _counter);
 
             LuaCore::getInstance()->processEvent(e);
