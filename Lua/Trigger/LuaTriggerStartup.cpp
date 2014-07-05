@@ -2,7 +2,7 @@
 
 LuaTriggerStartup::LuaTriggerStartup()
 {
-    _classname = "LuaTriggerStartup";
+    _classname = LUA_TRIGGER_STARTUP;
 }
 
 LuaTriggerStartup::~LuaTriggerStartup() {}

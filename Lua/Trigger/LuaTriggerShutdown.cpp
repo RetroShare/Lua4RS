@@ -2,7 +2,7 @@
 
 LuaTriggerShutdown::LuaTriggerShutdown()
 {
-    _classname = "LuaTriggerShutdown";
+    _classname = LUA_TRIGGER_SHUTDOWN;
 }
 
 LuaTriggerShutdown::~LuaTriggerShutdown() {}

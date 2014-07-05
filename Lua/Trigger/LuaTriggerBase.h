@@ -7,6 +7,11 @@
 #include <QString>
 #include <QSettings>
 
+#define LUA_TRIGGER_TIMER_INTERVAL      "LuaTriggerTimerInterval"
+#define LUA_TRIGGER_STARTUP             "LuaTriggerStartup"
+#define LUA_TRIGGER_SHUTDOWN            "LuaTriggerShutdown"
+#define LUA_TRIGGER_ONCE                "LuaTriggerTimerOnce"
+#define LUA_TRIGGER_EVENT               "LuaTriggerEvent"
 
 class LuaTriggerBase
 {

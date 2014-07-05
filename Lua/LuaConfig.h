@@ -17,14 +17,6 @@
 #include <QStringList>
 #include <QSettings>
 
-
-#define LUA_TRIGGER_TIMER_INTERVAL      "LuaTriggerTimerInterval"
-#define LUA_TRIGGER_STARTUP             "LuaTriggerStartup"
-#define LUA_TRIGGER_SHUTDOWN            "LuaTriggerShutdown"
-#define LUA_TRIGGER_ONCE                "LuaTriggerTimerOnce"
-#define LUA_TRIGGER_EVENT               "LuaTriggerEvent"
-
-
 class LuaConfig
 {
 public:
@@ -39,12 +31,6 @@ public:
 
     // gets number of triggers in _myTriggers
     uint getTriggerCount();
-
-    // remove last trigger added to triggerlist
-    //void removeLastTrigger();
-
-    // remove trigger at index from triggerlist
-    //void removeTriggerAt(uint triggerIndex);
 
     // remove all trigger
     void removeAllTrigger();

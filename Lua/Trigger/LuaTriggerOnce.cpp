@@ -4,13 +4,13 @@
 
 LuaTriggerOnce::LuaTriggerOnce()
 {
-    _classname = "LuaTriggerOnce";
+    _classname = LUA_TRIGGER_ONCE;
     _onceDateTime = QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0));
 }
 
 LuaTriggerOnce::LuaTriggerOnce(const QDateTime& onceDateTime)
 {
-    _classname = "LuaTriggerOnce";
+    _classname = LUA_TRIGGER_ONCE;
     _onceDateTime = onceDateTime;
 }
 

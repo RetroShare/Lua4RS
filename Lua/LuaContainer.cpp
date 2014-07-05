@@ -83,7 +83,7 @@ bool    LuaContainer::getRunEveryChecked(uint& amout, uint& unit)
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
     {
-        if((*it)->classname() == "LuaTriggerTimerInterval")
+        if((*it)->classname() == LUA_TRIGGER_TIMER_INTERVAL)
         {
             LuaTriggerTimerInterval* t = dynamic_cast<LuaTriggerTimerInterval*>(*it);
             if(t == NULL)
@@ -109,7 +109,7 @@ bool    LuaContainer::getRunOnceChecked(QDateTime& when)
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
     {
-        if((*it)->classname() == "LuaTriggerOnce")
+        if((*it)->classname() == LUA_TRIGGER_ONCE)
         {
             LuaTriggerOnce* t = dynamic_cast<LuaTriggerOnce*>(*it);
             if(t == NULL)
@@ -135,7 +135,7 @@ bool    LuaContainer::getRunStartupChecked()
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
     {
-        if((*it)->classname() == "LuaTriggerStartup")
+        if((*it)->classname() == LUA_TRIGGER_STARTUP)
             return true;
     }
     return false;
@@ -152,7 +152,7 @@ bool    LuaContainer::getRunShutdownChecked()
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
     {
-        if((*it)->classname() == "LuaTriggerShutdown")
+        if((*it)->classname() == LUA_TRIGGER_SHUTDOWN)
             return true;
     }
     return false;

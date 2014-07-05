@@ -94,28 +94,6 @@ uint LuaConfig::getTriggerCount()
     return _myTriggers.count();
 }
 
-// remove last trigger added to triggerlist
-//void LuaConfig::removeLastTrigger()
-//{
-//    LuaTriggerBase* t = _myTriggers.last();
-
-//    _myTriggers.removeLast();
-
-//    if (t != NULL)
-//        delete t;
-//}
-
-// remove trigger at index from triggerlist
-//void LuaConfig::removeTriggerAt(uint triggerIndex)
-//{
-//    LuaTriggerBase* t = _myTriggers.at(triggerIndex);
-
-//    _myTriggers.removeAt(triggerIndex);
-
-//    if (t != NULL)
-//        delete (t);
-//}
-
 void LuaConfig::removeAllTrigger()
 {
     for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
