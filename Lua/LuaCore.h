@@ -5,6 +5,8 @@
 #include <string.h>
 #include <map>
 
+#include <QObject>
+
 #include <retroshare/rsplugin.h>
 #include <util/rsthreads.h>
 
@@ -27,8 +29,10 @@ class Lua4RSTickThread;
 class LuaList;
 class LuaContainer;
 
-class LuaCore
+class LuaCore : QObject
 {
+    Q_OBJECT
+
 public:
     LuaCore();
     ~LuaCore();
@@ -56,6 +60,10 @@ public:
     Lua4RSNotify *notify() const;
     LuaList* codeList() const;
 
+    // signals
+    void emitAppendOutput(const QString& s);
+    void emitClearOutput();
+
 private:
     void reportLuaErrors(lua_State *L, int status);
     void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint);
@@ -80,6 +88,8 @@ private:
 
 signals:
     void appendLog(const QString& s);
+    void appendOutput(const QString& s);
+    void clearOutput();
 };
 
 #endif // LUACORE_H

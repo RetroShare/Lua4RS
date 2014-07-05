@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <iostream>
 
-#include <QObject>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
@@ -260,7 +259,7 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& /*event*/)
 {
     // do some magic with parameters from event
 
-    emit _ui->appendLog(QObject::tr("triggered script: ") + container->getName());
+    emit appendLog(QObject::tr("triggered script: ") + container->getName());
     runLuaByString(container->getCode());
 }
 
@@ -272,7 +271,7 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
         std::cerr << "-- " << s << std::endl;
 
         s = "Lua error: " + s;
-        emit _ui->appendLog(s);
+        emit appendLog(QString::fromStdString(s));
 
         lua_pop(L, 1); // remove error message
     }
@@ -297,6 +296,10 @@ RsPeers* LuaCore::peers() const
 void LuaCore::setUi(Lua4RSWidget *ui)
 {
     _ui = ui;
+
+    QObject::connect(this, SIGNAL(appendLog(QString)), _ui, SLOT(appendLog(QString)));
+    QObject::connect(this, SIGNAL(appendOutput(QString)), _ui, SLOT(appendOutput(QString)));
+    QObject::connect(this, SIGNAL(clearOutput()), _ui, SLOT(clearOutput()));
 }
 
 Lua4RSWidget* LuaCore::getUI()
@@ -306,3 +309,7 @@ Lua4RSWidget* LuaCore::getUI()
 
     return _ui;
 }
+
+// emit
+void LuaCore::emitAppendOutput(const QString &s)    { emit appendOutput(s); }
+void LuaCore::emitClearOutput()                     { emit clearOutput(); }
