@@ -49,10 +49,10 @@ public:
     void removeAllTrigger();
 
     void addRunEveryTrigger(uint amout, uint unit);
-    bool getRunEveryChecked();
+    bool getRunEveryChecked(uint& amout, uint& unit);
 
     void addRunOnceTrigger(const QDateTime& when);
-    bool getRunOnceChecked();
+    bool getRunOnceChecked(QDateTime& when);
 
     void addRunStratupTrigger();
     bool getRunStartupChecked();

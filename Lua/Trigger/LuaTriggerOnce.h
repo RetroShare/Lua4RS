@@ -18,6 +18,8 @@ public:
 
     QString classname();
 
+    QDateTime getValues();
+
 protected:
     QDateTime _onceDateTime;
 };

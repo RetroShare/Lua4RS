@@ -324,12 +324,13 @@ bool LuaList::save(LuaContainer* container)
 
     // save config
     {
-        QSettings settings(settingsFileName, QSettings::IniFormat);
+        QSettings settings(settingsFileName, QSettings::IniFormat);        
         if(!settings.isWritable())
         {
             std::cerr << "[Lua] no write access for settings file " << settingsFileName.toStdString() << " -> aborting (code was saved)" << std::endl;
             return false;
         }
+        settings.clear();
         container->getSettings(settings);
     }
 

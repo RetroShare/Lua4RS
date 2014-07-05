@@ -51,3 +51,8 @@ QString LuaTriggerOnce::classname()
 {
     return _classname;
 }
+
+QDateTime LuaTriggerOnce::getValues()
+{
+    return _onceDateTime;
+}

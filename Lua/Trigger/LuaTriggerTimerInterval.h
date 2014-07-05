@@ -27,6 +27,8 @@ public:
 
     QString classname();
 
+    void getValues(uint& timerAmount, uint& timerUnit);
+
 protected:
     void calculateInterval();
 

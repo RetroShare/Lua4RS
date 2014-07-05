@@ -1578,6 +1578,9 @@
                    <property name="toolTip">
                     <string>Run the current script on an interval basis</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
                    <property name="text">
                     <string>Run every</string>
                    </property>
@@ -1764,6 +1767,9 @@
                    <property name="toolTip">
                     <string>Run the current script once at the specified time</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
                    <property name="text">
                     <string>Run once at</string>
                    </property>
@@ -1871,6 +1877,9 @@
                    <property name="toolTip">
                     <string>Run the current script only once when RS starts</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
+                   </property>
                    <property name="text">
                     <string>Run at Startup</string>
                    </property>
@@ -1925,6 +1934,9 @@
                      <weight>50</weight>
                      <bold>false</bold>
                     </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background:transparent;</string>
                    </property>
                    <property name="text">
                     <string>Run at Shutdown</string>

@@ -218,6 +218,26 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
             ui->tied_timefrom->setTime(from);
             ui->tied_timeto->setTime(to);
         }
+
+        // trigger
+        uint amount, unit;
+        if(container->getRunEveryChecked(amount, unit))
+        {
+            ui->cb_every->setChecked(true);
+            ui->spb_everycount->setValue(amount);
+            ui->dd_everyunits->setCurrentIndex(unit);
+        }
+        QDateTime dt;
+        if(container->getRunOnceChecked(dt))
+        {
+            ui->cb_once->setChecked(true);
+            ui->dte_runonce->setDateTime(dt);
+        }
+        if(container->getRunShutdownChecked())
+            ui->cb_shutdown->setChecked(true);
+        if(container->getRunStartupChecked())
+            ui->cb_startup->setChecked(true);
+
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);

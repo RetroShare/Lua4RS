@@ -76,6 +76,12 @@ QString LuaTriggerTimerInterval::classname()
     return _classname;
 }
 
+void LuaTriggerTimerInterval::getValues(uint& timerAmount, uint& timerUnit)
+{
+    timerAmount = _timerAmount;
+    timerUnit = _timerUnit;
+}
+
 void LuaTriggerTimerInterval::calculateInterval()
 {
     //                  sec, min, hour, day, week

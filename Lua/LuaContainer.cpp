@@ -79,8 +79,22 @@ void    LuaContainer::addRunEveryTrigger(uint amout, uint unit)
     _config->addTrigger(new LuaTriggerTimerInterval(amout, unit));
 }
 
-bool    LuaContainer::getRunEveryChecked()
+bool    LuaContainer::getRunEveryChecked(uint& amout, uint& unit)
 {
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+        if((*it)->classname() == "LuaTriggerTimerInterval")
+        {
+            LuaTriggerTimerInterval* t = dynamic_cast<LuaTriggerTimerInterval*>(*it);
+            if(t == NULL)
+            {
+                std::cerr << "[Lua] LuaContainer::getRunEveryChecked() - failed cast!" << std::endl;
+                continue; // since there should be only one trigger with that name the continue might be useless - keep it for now
+            }
+            t->getValues(amout, unit);
+            return true;
+        }
+    }
     return false;
 }
 
@@ -91,8 +105,22 @@ void    LuaContainer::addRunOnceTrigger(const QDateTime& when)
     _config->addTrigger(new LuaTriggerOnce(when));
 }
 
-bool    LuaContainer::getRunOnceChecked()
+bool    LuaContainer::getRunOnceChecked(QDateTime& when)
 {
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+        if((*it)->classname() == "LuaTriggerOnce")
+        {
+            LuaTriggerOnce* t = dynamic_cast<LuaTriggerOnce*>(*it);
+            if(t == NULL)
+            {
+                std::cerr << "[Lua] LuaContainer::getRunOnceChecked() - failed cast!" << std::endl;
+                continue; // since there should be only one trigger with that name the continue might be useless - keep it for now
+            }
+            when = t->getValues();
+            return true;
+        }
+    }
     return false;
 }
 
@@ -105,6 +133,11 @@ void    LuaContainer::addRunStratupTrigger()
 
 bool    LuaContainer::getRunStartupChecked()
 {
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+        if((*it)->classname() == "LuaTriggerStartup")
+            return true;
+    }
     return false;
 }
 
@@ -117,6 +150,11 @@ void    LuaContainer::addRunShutdownTrigger()
 
 bool    LuaContainer::getRunShutdownChecked()
 {
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+        if((*it)->classname() == "LuaTriggerShutdown")
+            return true;
+    }
     return false;
 }
 

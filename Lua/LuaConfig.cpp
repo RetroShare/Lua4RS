@@ -41,10 +41,7 @@ LuaConfig::~LuaConfig()
     _myTriggers.clear();
 }
 
-
-
 // Test all triggers if one or more are triggered by <luaevent>
-
 bool LuaConfig::isTriggered(const LuaEvent& luaevent)
 {
     // is the script enabled at all?
@@ -78,10 +75,7 @@ bool LuaConfig::isTriggered(const LuaEvent& luaevent)
     return false;
 }
 
-
-
 // addTrigger - Add a trigger to the trigger list of this LuaConfig
-
 void LuaConfig::addTrigger(LuaTriggerBase* trigger)
 {
     if (trigger != NULL)
@@ -129,6 +123,9 @@ void LuaConfig::removeAllTrigger()
 
     _myTriggers.clear();
 }
+
+QList<LuaTriggerBase*>::const_iterator LuaConfig::triggersBegin()   { return _myTriggers.begin(); }
+QList<LuaTriggerBase*>::const_iterator LuaConfig::triggersEnd()     { return _myTriggers.end(); }
 
 // load this luaconfig from QSettings data
 void LuaConfig::fromSettings(QSettings &mySettings)
@@ -190,17 +187,6 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         // close current group
         mySettings.endGroup();
     }
-
-    /* only for debugging
-    if(_myTriggers.empty())
-    {
-        atrigger = new LuaTriggerStartup();
-        addTrigger(atrigger);
-
-        atrigger = new LuaTriggerShutdown();
-        addTrigger(atrigger);
-    }
-    */
 }
 
 // serialize this luaconfig to QSettings data

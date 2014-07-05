@@ -55,6 +55,10 @@ public:
     // serialize this luaconfig to QSettings data
     void toSettings(QSettings& mySettings);
 
+    // to access trigger from config
+    QList<LuaTriggerBase*>::const_iterator triggersBegin();
+    QList<LuaTriggerBase*>::const_iterator triggersEnd();
+
 
     // Getter/Setter
 
