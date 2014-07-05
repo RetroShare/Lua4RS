@@ -21,20 +21,6 @@ LuaConfig::LuaConfig() :
 
 LuaConfig::~LuaConfig()
 {
-    /*
-    int i = 0;
-    while(i < _myTriggers.count())
-    {
-        LuaTriggerBase* t = _myTriggers.at(i);
-
-        _myTriggers.removeAt(i);
-
-        if (t != NULL)
-            delete t;
-        ++i;
-    }
-    */
-
     for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
         delete *it;
 

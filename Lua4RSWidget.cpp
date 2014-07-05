@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 #include <QModelIndex>
+#include <QShortcut>
 #include <QTreeWidgetItem>
 #include <QWidget>
 
@@ -50,6 +51,9 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     ");
 
     registerHelpButton(ui->helpButton, help_str);
+
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"), ui->pte_luacode);
+    QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_pb_save_clicked()));
 }
 
 Lua4RSWidget::~Lua4RSWidget()
