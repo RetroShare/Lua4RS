@@ -189,8 +189,7 @@ void Lua4RSWidget::cleanUi()
     ui->spb_everycount->setValue(5);
     ui->dd_everyunits->setCurrentIndex(1);
 
-    ui->dte_runonce->setDate(QDate(1970,1,1));
-    ui->dte_runonce->setTime(QTime(0,0,0));
+    ui->dte_runonce->setDateTime(QDateTime::currentDateTime());
 }
 
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
