@@ -1,6 +1,9 @@
 #include "LuaTriggerTimerInterval.h"
 
-LuaTriggerTimerInterval::LuaTriggerTimerInterval ()
+#define INI_KEY_TRIGGER_TIMER_AMOUNT    "TimerAmount"
+#define INI_KEY_TRIGGER_TIMER_UNIT      "TimerUnit"
+
+LuaTriggerTimerInterval::LuaTriggerTimerInterval()
 {
     _classname = "LuaTriggerTimerInterval";
     _timerAmount = 0;
@@ -8,29 +11,24 @@ LuaTriggerTimerInterval::LuaTriggerTimerInterval ()
     _timerInterval = 0;
 }
 
-LuaTriggerTimerInterval::LuaTriggerTimerInterval(uint timerInterval)
-{
-    _classname = "LuaTriggerTimerInterval";
-    _timerAmount = 0;
-    _timerUnit = 0;
-    _timerInterval = timerInterval;
-}
+//LuaTriggerTimerInterval::LuaTriggerTimerInterval(uint timerInterval)
+//{
+//    _classname = "LuaTriggerTimerInterval";
+//    _timerAmount = 0;
+//    _timerUnit = 0;
+//    _timerInterval = timerInterval;
+//}
 
 LuaTriggerTimerInterval::LuaTriggerTimerInterval(uint timerAmount, uint timerUnit)
 {
     _classname = "LuaTriggerTimerInterval";
     _timerAmount = timerAmount;
     _timerUnit = timerUnit;
-    _timerInterval = 0;
+
+    calculateInterval();
 }
 
-
-
-LuaTriggerTimerInterval::~LuaTriggerTimerInterval ()
-{
-}
-
-
+LuaTriggerTimerInterval::~LuaTriggerTimerInterval() {}
 
 bool LuaTriggerTimerInterval::isTriggered (const LuaEvent& luaevent)
 {
@@ -56,34 +54,33 @@ bool LuaTriggerTimerInterval::isTriggered (const LuaEvent& luaevent)
     return false;
 }
 
-
-
 void LuaTriggerTimerInterval::toSettings(QSettings& mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
 
-    mySettings.setValue(INI_KEY_TIMER_AMOUNT,_timerAmount);
-    mySettings.setValue(INI_KEY_TIMER_UNIT,_timerUnit);
+    mySettings.setValue(INI_KEY_TRIGGER_TIMER_AMOUNT,_timerAmount);
+    mySettings.setValue(INI_KEY_TRIGGER_TIMER_UNIT,_timerUnit);
 }
-
-
 
 void LuaTriggerTimerInterval::fromSettings (const QSettings& mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
-    _timerAmount = mySettings.value(INI_KEY_TIMER_AMOUNT, "").toUInt();
-    _timerUnit = mySettings.value(INI_KEY_TIMER_UNIT, "").toUInt();
+    _timerAmount = mySettings.value(INI_KEY_TRIGGER_TIMER_AMOUNT, 0).toUInt();
+    _timerUnit = mySettings.value(INI_KEY_TRIGGER_TIMER_UNIT, 0).toUInt();
 
-//    _timerInterval = _timerAmount * _timerUnit;
-    _timerInterval = 5;
-
+    calculateInterval();
 }
-
-
 
 QString LuaTriggerTimerInterval::classname()
 {
     return _classname;
+}
+
+void LuaTriggerTimerInterval::calculateInterval()
+{
+    //                  sec, min, hour, day, week
+    uint timeUnits[5] = {1, 60, 3600, 86400, 604800};
+    _timerInterval = _timerAmount * timeUnits[_timerUnit];;
 }
 
 

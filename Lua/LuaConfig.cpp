@@ -21,6 +21,7 @@ LuaConfig::LuaConfig() :
 
 LuaConfig::~LuaConfig()
 {
+    /*
     int i = 0;
     while(i < _myTriggers.count())
     {
@@ -32,6 +33,12 @@ LuaConfig::~LuaConfig()
             delete t;
         ++i;
     }
+    */
+
+    for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
+        delete *it;
+
+    _myTriggers.clear();
 }
 
 
@@ -88,40 +95,42 @@ void LuaConfig::addTrigger(LuaTriggerBase* trigger)
 }
 
 // gets no of triggers in _myTriggers
-
 uint LuaConfig::getTriggerCount()
 {
     return _myTriggers.count();
 }
 
 // remove last trigger added to triggerlist
+//void LuaConfig::removeLastTrigger()
+//{
+//    LuaTriggerBase* t = _myTriggers.last();
 
-void LuaConfig::removeLastTrigger()
-{
-    LuaTriggerBase* t = _myTriggers.last();
+//    _myTriggers.removeLast();
 
-    _myTriggers.removeLast();
-
-    if (t != NULL)
-        delete t;
-}
+//    if (t != NULL)
+//        delete t;
+//}
 
 // remove trigger at index from triggerlist
+//void LuaConfig::removeTriggerAt(uint triggerIndex)
+//{
+//    LuaTriggerBase* t = _myTriggers.at(triggerIndex);
 
-void LuaConfig::removeTriggerAt(uint triggerIndex)
+//    _myTriggers.removeAt(triggerIndex);
+
+//    if (t != NULL)
+//        delete (t);
+//}
+
+void LuaConfig::removeAllTrigger()
 {
-    LuaTriggerBase* t = _myTriggers.at(triggerIndex);
+    for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
+        delete *it;
 
-    _myTriggers.removeAt(triggerIndex);
-
-    if (t != NULL)
-        delete (t);
+    _myTriggers.clear();
 }
 
-
-
 // load this luaconfig from QSettings data
-
 void LuaConfig::fromSettings(QSettings &mySettings)
 {
     LuaTriggerBase* atrigger;
@@ -194,11 +203,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
     */
 }
 
-
-
-
 // serialize this luaconfig to QSettings data
-
 void LuaConfig::toSettings(QSettings &mySettings)
 {
     // first save description to ini

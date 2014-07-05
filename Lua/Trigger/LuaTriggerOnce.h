@@ -3,14 +3,11 @@
 
 #include "LuaTriggerBase.h"
 
-#define INI_KEY_WHEN    "When"
-
-
 class LuaTriggerOnce : public LuaTriggerBase
 {
 public:
     LuaTriggerOnce();
-    LuaTriggerOnce(QDateTime& onceDateTime);
+    LuaTriggerOnce(const QDateTime& onceDateTime);
     ~LuaTriggerOnce();
 
     bool isTriggered (const LuaEvent& luaevent);

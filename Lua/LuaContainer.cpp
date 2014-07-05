@@ -69,77 +69,52 @@ void    LuaContainer::setConstraintEnabled(const bool enable)   { _config->enabl
 void    LuaContainer::getConstraintFromTo(QTime& from, QTime& to)                { from = _config->getConstraintFrom(); to = _config->getConstraintTo(); }
 void    LuaContainer::setConstraintFromTo(const QTime& from, const QTime& to)    { _config->setConstraintFrom(from); _config->setConstraintTo(to); }
 
+// trigger
+void    LuaContainer::removeAllTrigger() { _config->removeAllTrigger(); }
 
-// bytimer tab
-
-// rb_runevery
-void    LuaContainer::setRunEveryChecked(bool checked)
+// every
+void    LuaContainer::addRunEveryTrigger(uint amout, uint unit)
 {
-    if(checked) {
-        std::cerr << "[Lua] LuaContainer::setRunEveryChecked() : triggercount=" << _config->getTriggerCount() << std::endl;
-        if ( _config->getTriggerCount() > 0) {
-            // first remove the last trigger added from another radiobutton if exists
-            _config->removeLastTrigger();
-        }
-        // add new trigger for this radiobutton
-        _config->addTrigger(new LuaTriggerTimerInterval());
-    }
+    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
+    _config->addTrigger(new LuaTriggerTimerInterval(amout, unit));
 }
+
 bool    LuaContainer::getRunEveryChecked()
 {
     return false;
 }
 
-
-// rb_runonce
-void    LuaContainer::setRunOnceChecked(bool checked, QDateTime when)
+// once
+void    LuaContainer::addRunOnceTrigger(const QDateTime& when)
 {
-    if(checked) {
-        if ( _config->getTriggerCount() > 0) {
-            // first remove the last trigger added from another radiobutton if exists
-            _config->removeLastTrigger();
-        }
-        // add new trigger for this radiobutton
-        _config->addTrigger(new LuaTriggerOnce(when));
-    }
+    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
+    _config->addTrigger(new LuaTriggerOnce(when));
 }
+
 bool    LuaContainer::getRunOnceChecked()
 {
     return false;
 }
 
-
-// rb_runatstartup
-void    LuaContainer::setRunStartupChecked(bool checked)
+// start up
+void    LuaContainer::addRunStratupTrigger()
 {
-    if(checked) {
-        if ( _config->getTriggerCount() > 0) {
-            // first remove the last trigger added from another radiobutton if exists
-            _config->removeLastTrigger();
-        }
-        // add new trigger for this radiobutton
-        _config->addTrigger(new LuaTriggerStartup());
-    }
+    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
+    _config->addTrigger(new LuaTriggerStartup());
 }
+
 bool    LuaContainer::getRunStartupChecked()
 {
     return false;
 }
 
-
-
-// rb_runatshutdown
-void    LuaContainer::setRunShutdownChecked(bool checked)
+// shut down
+void    LuaContainer::addRunShutdownTrigger()
 {
-    if(checked) {
-        if ( _config->getTriggerCount() > 0) {
-            // first remove the last trigger added from another radiobutton if exists
-            _config->removeLastTrigger();
-        }
-        // add new trigger for this radiobutton
-        _config->addTrigger(new LuaTriggerShutdown());
-    }
+    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
+    _config->addTrigger(new LuaTriggerShutdown());
 }
+
 bool    LuaContainer::getRunShutdownChecked()
 {
     return false;

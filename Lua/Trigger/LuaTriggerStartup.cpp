@@ -5,13 +5,7 @@ LuaTriggerStartup::LuaTriggerStartup()
     _classname = "LuaTriggerStartup";
 }
 
-
-
-LuaTriggerStartup::~LuaTriggerStartup()
-{
-}
-
-
+LuaTriggerStartup::~LuaTriggerStartup() {}
 
 bool LuaTriggerStartup::isTriggered (const LuaEvent& luaevent)
 {
@@ -24,20 +18,15 @@ bool LuaTriggerStartup::isTriggered (const LuaEvent& luaevent)
 }
 
 
-
 void LuaTriggerStartup::toSettings(QSettings &mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
 }
 
-
-
 void LuaTriggerStartup::fromSettings (const QSettings& mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
 }
-
-
 
 QString LuaTriggerStartup::classname()
 {

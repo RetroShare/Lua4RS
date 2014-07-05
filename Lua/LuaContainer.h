@@ -45,17 +45,19 @@ public:
     void getConstraintFromTo(QTime& from, QTime& to);
     void setConstraintFromTo(const QTime& from, const QTime& to);
 
+    // trigger
+    void removeAllTrigger();
 
-    void setRunEveryChecked(bool checked);
+    void addRunEveryTrigger(uint amout, uint unit);
     bool getRunEveryChecked();
 
-    void setRunOnceChecked(bool checked, QDateTime when);
+    void addRunOnceTrigger(const QDateTime& when);
     bool getRunOnceChecked();
 
-    void setRunStartupChecked(bool checked);
+    void addRunStratupTrigger();
     bool getRunStartupChecked();
 
-    void setRunShutdownChecked(bool checked);
+    void addRunShutdownTrigger();
     bool getRunShutdownChecked();
 
 

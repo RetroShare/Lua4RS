@@ -5,13 +5,7 @@ LuaTriggerShutdown::LuaTriggerShutdown()
     _classname = "LuaTriggerShutdown";
 }
 
-
-
-LuaTriggerShutdown::~LuaTriggerShutdown()
-{
-}
-
-
+LuaTriggerShutdown::~LuaTriggerShutdown() {}
 
 bool LuaTriggerShutdown::isTriggered (const LuaEvent& luaevent)
 {
@@ -23,21 +17,15 @@ bool LuaTriggerShutdown::isTriggered (const LuaEvent& luaevent)
     return false;
 }
 
-
-
 void LuaTriggerShutdown::toSettings (QSettings& mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
 }
 
-
-
 void LuaTriggerShutdown::fromSettings (const QSettings &mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
 }
-
-
 
 QString LuaTriggerShutdown::classname()
 {

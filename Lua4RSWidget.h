@@ -85,10 +85,10 @@ private slots:
     void on_spb_everycount_valueChanged(int arg1);
 
     void on_rb_runonevent_toggled(bool checked);
-    void on_rb_once_toggled(bool checked);
-    void on_rb_startup_toggled(bool checked);
-    void on_rb_shutdown_toggled(bool checked);
-    void on_rb_every_toggled(bool checked);
+    void on_cb_once_toggled(bool checked);
+    void on_cb_startup_toggled(bool checked);
+    void on_cb_shutdown_toggled(bool checked);
+    void on_cb_every_toggled(bool checked);
     void on_dd_events_currentIndexChanged(int index);
 };
 

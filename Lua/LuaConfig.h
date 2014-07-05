@@ -37,14 +37,17 @@ public:
     // add a trigger to our triggerlist
     void addTrigger(LuaTriggerBase* trigger);
 
-    // gets no of triggers in _myTriggers
+    // gets number of triggers in _myTriggers
     uint getTriggerCount();
 
     // remove last trigger added to triggerlist
-    void removeLastTrigger();
+    //void removeLastTrigger();
 
     // remove trigger at index from triggerlist
-    void removeTriggerAt(uint triggerIndex);
+    //void removeTriggerAt(uint triggerIndex);
+
+    // remove all trigger
+    void removeAllTrigger();
 
     // load this luaconfig from QSettings data
     void fromSettings(QSettings& mySettings);

@@ -178,10 +178,10 @@ void Lua4RSWidget::cleanUi()
     ui->le_scriptdesc->clear();
     ui->pte_luacode->clear();
 
-    ui->rb_every->setChecked(false);
-    ui->rb_once->setChecked(false);
-    ui->rb_startup->setChecked(false);
-    ui->rb_shutdown->setChecked(false);
+    ui->cb_every->setChecked(false);
+    ui->cb_once->setChecked(false);
+    ui->cb_startup->setChecked(false);
+    ui->cb_shutdown->setChecked(false);
 
     ui->rb_runonevent->setChecked(false);
     ui->dd_events->setCurrentIndex(0);
@@ -246,6 +246,18 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
         to = ui->tied_timeto->time();
         container->setConstraintFromTo(from, to);
     }
+
+    // add trigger
+    container->removeAllTrigger();
+    if(ui->cb_every->isChecked())
+        container->addRunEveryTrigger((uint)ui->spb_everycount->value(), (uint)ui->dd_everyunits->currentIndex());
+    if(ui->cb_once->isChecked())
+        container->addRunOnceTrigger(ui->dte_runonce->dateTime());
+    if(ui->cb_shutdown->isChecked())
+        container->addRunShutdownTrigger();
+    if(ui->cb_startup->isChecked())
+        container->addRunStratupTrigger();
+
     ///TODO rest
 
     return true;
@@ -282,13 +294,13 @@ bool Lua4RSWidget::saneValues()
         ret = false;
     }
 
-    if(ui->rb_once->isChecked() && ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
+    if(ui->cb_once->isChecked() && ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
     {
         saneValuesHelper(tr("runOnce value lies in the past"), msg);
         ret = false;
     }
 
-    if(ui->cbx_timeconstraint->isChecked() && ui->rb_once->isChecked() && ((    // contraint enabled + run once
+    if(ui->cbx_timeconstraint->isChecked() && ui->cb_once->isChecked() && ((    // contraint enabled + run once
             ui->tied_timefrom->time() < ui->tied_timeto->time() &&              // from < to e.g. from 09:00 to 15:00
                 (ui->dte_runonce->time() < ui->tied_timefrom->time() || ui->dte_runonce->time() > ui->tied_timeto->time())      // run once is outside of time window
             ) || (
@@ -298,6 +310,12 @@ bool Lua4RSWidget::saneValues()
             )))
     {
         saneValuesHelper(tr("runOnce value lies outside of constraint"), msg);
+        ret = false;
+    }
+
+    if(ui->spb_everycount->value() < 0)
+    {
+        saneValuesHelper(tr("run every value is below 0"), msg);
         ret = false;
     }
 
@@ -595,61 +613,33 @@ void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
     ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
 }
 
-// Run Every was selected
-void Lua4RSWidget::on_rb_every_toggled(bool checked)
-{
-    if (checked == true){
-        ui->rb_every->setStyleSheet     ("background:lime;");
-        ui->rb_once->setStyleSheet      ("background:transparent;");
-        ui->rb_startup->setStyleSheet   ("background:transparent;");
-        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
+// hack for color
+#define ACTIVE_COLOR "background:lightgreen;"
 
-        if(_activeContainer != NULL)
-            _activeContainer->setRunEveryChecked(true);
-    }
+// Run Every was selected
+void Lua4RSWidget::on_cb_every_toggled(bool checked)
+{
+    ui->cb_every->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
 }
 
 // Run Once was selected
-void Lua4RSWidget::on_rb_once_toggled(bool checked)
+void Lua4RSWidget::on_cb_once_toggled(bool checked)
 {
-    if (checked == true){
-        ui->rb_every->setStyleSheet     ("background:transparent;");
-        ui->rb_once->setStyleSheet      ("background:lime;");
-        ui->rb_startup->setStyleSheet   ("background:transparent;");
-        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
-
-        if(_activeContainer != NULL)
-            _activeContainer->setRunOnceChecked(true, ui->dte_runonce->dateTime());
-    }
+    ui->cb_once->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
 }
 
 // Run at startup was selected
-void Lua4RSWidget::on_rb_startup_toggled(bool checked)
+void Lua4RSWidget::on_cb_startup_toggled(bool checked)
 {
-    if (checked == true){
-        ui->rb_every->setStyleSheet     ("background:transparent;");
-        ui->rb_once->setStyleSheet      ("background:transparent;");
-        ui->rb_startup->setStyleSheet   ("background:lime;");
-        ui->rb_shutdown->setStyleSheet  ("background:transparent;");
-
-        if(_activeContainer != NULL)
-            _activeContainer->setRunStartupChecked(true);
-    }
+    ui->cb_startup->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
 }
 
 // Run at shutdown was selected
-void Lua4RSWidget::on_rb_shutdown_toggled(bool checked)
+void Lua4RSWidget::on_cb_shutdown_toggled(bool checked)
 {
-    if (checked == true){
-        ui->rb_every->setStyleSheet     ("background:transparent;");
-        ui->rb_once->setStyleSheet      ("background:transparent;");
-        ui->rb_startup->setStyleSheet   ("background:transparent;");
-        ui->rb_shutdown->setStyleSheet  ("background:lime;");
-
-        if(_activeContainer != NULL)
-            _activeContainer->setRunShutdownChecked(true);
-    }
+    ui->cb_shutdown->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
 }
+#undef ACTIVE_COLOR
 
 //------------------------------------------------------------------------------
 // Tabpage "By Event"
@@ -680,11 +670,9 @@ void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int /*co
 {
     QString hint = item->text(1);
 
-    // when you want to expant a namespace, you double click it --> don't append namespaces
+    // when you want to expant a namespace, you double click it --> don't append hint on a double click on a namespace
     if(hint.endsWith('.') || !ui->pte_luacode->isEnabled())
         return;
 
     ui->pte_luacode->insertPlainText(hint);
 }
-
-
