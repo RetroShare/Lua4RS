@@ -11,7 +11,7 @@ http://retroshare.sourceforge.net/
 This plugin let you interact with RetroShare. It exposes most RetroShare functions to Lua and provides a trigger system. You can write scripts that react to events (from RetroShare) like _a friends comes online_ or _received a new mail_. With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.
 
 ##Requirements##
-* RetroShare
+* RetroShare v0.5
 * Lua 5.2 
 
 ##How to build##
