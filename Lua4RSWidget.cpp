@@ -11,7 +11,7 @@
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
 
-#define ALL_SCRIPTS_COLUMN_ENABLE 4
+#define ALL_SCRIPTS_ENABLE_COLUMN 4
 
 Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     MainPage(parent),
@@ -22,6 +22,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     ui->setupUi(this);
 
     _lua = LuaCore::getInstance();
+    _lua->setUi(this);
 
     setLuaCodes(_lua->codeList());
 
@@ -525,7 +526,7 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
         lc = allScriptsGetLuaContainerFromRow(i);
         if(lc == _activeContainer)
         {
-            QTableWidgetItem* enabled = ui->tw_allscripts->item(i, ALL_SCRIPTS_COLUMN_ENABLE);
+            QTableWidgetItem* enabled = ui->tw_allscripts->item(i, ALL_SCRIPTS_ENABLE_COLUMN);
             enabled->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
             break;
         }
@@ -567,7 +568,7 @@ void Lua4RSWidget::on_tied_timeto_editingFinished()
 
 void Lua4RSWidget::on_tw_allscripts_cellClicked(int row, int column)
 {
-    if(column == ALL_SCRIPTS_COLUMN_ENABLE) // 4 = enabled
+    if(column == ALL_SCRIPTS_ENABLE_COLUMN) // 4 = enabled
     {
         LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
         QTableWidgetItem* cell = ui->tw_allscripts->item(row, column);

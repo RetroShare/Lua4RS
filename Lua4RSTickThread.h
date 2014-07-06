@@ -22,6 +22,7 @@ private:
 
     time_t _lastRun;
     time_t _initTime;
+    bool _startUpEventTriggered;
     uint32_t _counter;
 };
 
