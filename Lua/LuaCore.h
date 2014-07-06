@@ -40,7 +40,7 @@ public:
     static LuaCore* getInstance();
     static void shutDown();
 
-    bool sane() { return _ui != NULL && _peers != NULL; }
+    bool sane();
 
     void setupRsFunctionsAndTw(QTreeWidget* tw);
 

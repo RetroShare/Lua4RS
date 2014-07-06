@@ -97,6 +97,11 @@ void LuaCore::shutDown()
     _instance = NULL;
 }
 
+bool LuaCore::sane()
+{
+    return _ui != NULL && _peers != NULL;
+}
+
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 {
     int top;
