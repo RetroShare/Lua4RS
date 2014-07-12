@@ -123,7 +123,7 @@ int p3Lua4RS::tick()
     }
 
     // tick each X second
-    if(_lastRun + _tickIntervalInSeconds <= (uint)time(0) && _startUpEventTriggered)
+    if(_lastRun + _tickIntervalInSeconds <= (uint)time(0))
     {
         LuaEvent e;
         e.eventId = L4R_TIMERTICK;

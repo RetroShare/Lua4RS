@@ -41,8 +41,6 @@ void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t
     e.dataParm->setValue("strnickname", QString::fromStdString(nickname));
     e.dataParm->setValue("stranyString", QString::fromStdString(any_string));
 
-    std::cout << "[Lua] chat event: lobby=" << lobby_id << " event=" << event_type << " nick=" << nickname << " any_string=" << any_string << std::endl;
-
     LuaCore::getInstance()->processEvent(e);
 }
 
