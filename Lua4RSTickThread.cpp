@@ -1,7 +1,7 @@
 #include <ctime>
 #include <unistd.h>
 
-#include "Lua4RSConfig.h"
+#include "gui/Lua4RSConfig.h"
 #include "Lua4RSTickThread.h"
 #include "interface/Lua4RSInterface.h"
 #include "Lua/LuaCore.h"

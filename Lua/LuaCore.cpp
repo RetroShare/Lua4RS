@@ -8,9 +8,9 @@
 
 #include "LuaCore.h"
 #include "LuaList.h"
-#include "../Lua4RSWidget.h"
-#include "../Lua4RSNotify.h"
-#include "../Lua4RSTickThread.h"
+#include "gui/Lua4RSWidget.h"
+#include "Lua4RSNotify.h"
+#include "Lua4RSTickThread.h"
 
 
 #include "LuaToRS.cpp"

@@ -6,8 +6,6 @@
 #include <retroshare/rsplugin.h>
 #include <util/rsthreads.h>
 
-#include "Lua4RSConfig.h"
-
 class Lua4RSTickThread :  public RsThread
 {
 public:

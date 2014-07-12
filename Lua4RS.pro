@@ -16,12 +16,13 @@ win32 {
 
 HEADERS +=  \
     Lua4RSPlugin.h \
-    Lua4RSWidget.h \
+    Lua4RSNotify.h \
+    Lua4RSTickThread.h \
+    gui/Lua4RSWidget.h \
+    gui/Lua4RSConfig.h \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
-    Lua4RSNotify.h \
-    Lua4RSTickThread.h \
     Lua/LuaList.h \
     Lua/LuaConfig.h \
     Lua/LuaContainer.h \
@@ -32,19 +33,19 @@ HEADERS +=  \
     Lua/Trigger/LuaTriggerEvent.h \
     Lua/Trigger/LuaTriggerShutdown.h \
     Lua/Trigger/LuaTriggerOnce.h \
-    Lua4RSConfig.h \
     service/p3Lua4RS.h \
     interface/Lua4RSInterface.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
-    Lua4RSWidget.cpp \
+    Lua4RSNotify.cpp \
+    Lua4RSTickThread.cpp \
+    gui/Lua4RSWidget.cpp \
+    gui/Lua4RSConfig.cpp \
     Lua/LuaCore.cpp \
     Lua/LuaToRS.cpp \
     Lua/LuaToRSPeers.cpp \
     Lua/LuaCode.cpp \
-    Lua4RSNotify.cpp \
-    Lua4RSTickThread.cpp \
     Lua/LuaList.cpp \
     Lua/LuaConfig.cpp \
     Lua/LuaContainer.cpp \
@@ -54,12 +55,11 @@ SOURCES +=  \
     Lua/Trigger/LuaTriggerEvent.cpp \
     Lua/Trigger/LuaTriggerShutdown.cpp \
     Lua/Trigger/LuaTriggerOnce.cpp \
-    Lua4RSConfig.cpp \
     service/p3Lua4RS.cpp
 
 FORMS += \
-    Lua4RSWidget.ui \
-    Lua4RSConfig.ui
+    gui/Lua4RSWidget.ui \
+    gui/Lua4RSConfig.ui
 
 TARGET = Lua4RS
 

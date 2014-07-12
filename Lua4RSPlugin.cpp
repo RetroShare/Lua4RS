@@ -4,10 +4,10 @@
 #include <retroshare/rsplugin.h>
 #include <util/rsversion.h>
 
-#include "Lua4RSConfig.h"
+#include "gui/Lua4RSConfig.h"
 #include "Lua4RSNotify.h"
 #include "Lua4RSPlugin.h"
-#include "Lua4RSWidget.h"
+#include "gui/Lua4RSWidget.h"
 #include "interface/Lua4RSInterface.h"
 #include "Lua/LuaCore.h"
 #include "service/p3Lua4RS.h"
