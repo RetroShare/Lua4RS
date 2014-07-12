@@ -8,7 +8,7 @@
 #include <QObject>
 
 #include <retroshare/rsplugin.h>
-#include <util/rsthreads.h>
+#include <util/rsthreads.h> // for RsMutex
 
 #include "LuaEvent.h"
 
@@ -80,7 +80,6 @@ private:
 
     LuaList* _luaList;
     Lua4RSNotify* _notify;
-    Lua4RSTickThread* _thread;
     Lua4RSWidget* _ui;
 
     // disable trigger on shutdown

@@ -18,9 +18,6 @@ public:
     virtual uint getTickIntervalInSeconds() const = 0;
     virtual void setTickIntervalInSeconds(const uint &value) = 0;
 
-    virtual uint getSleepPeriodInMilliseconds() const = 0;
-    virtual void setSleepPeriodInMilliseconds(const uint &value) = 0;
-
     virtual uint getSecondsToStarUpEvent() const = 0;
     virtual void setSecondsToStarUpEvent(const uint &value) = 0;
 };

@@ -4,17 +4,23 @@
 #include <serialiser/rsconfigitems.h>
 
 #include "p3Lua4RS.h"
+#include "Lua/LuaCore.h"
 
 #define L4RCONFIG_TIMER_STARTUP "L4RCONFIG_TIMER_STARTUP"
-#define L4RCONFIG_TIMER_SLEEP   "L4RCONFIG_TIMER_SLEEP"
 #define L4RCONFIG_TIMER_TICK    "L4RCONFIG_TIMER_TICK"
 
 /* DEFINE INTERFACE POINTER! */
 Lua4RSInterface* L4R::L4RConfig = NULL;
 
 p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
-    RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, CONFIG_TYPE_L4R_PLUGIN, 0, rph)
+    RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, CONFIG_TYPE_L4R_PLUGIN, 0, rph),
+    _lastRun( time(0) ),
+    _initTime( time(0) ),
+    _startUpEventTriggered( false )
 {
+    // setup defaults
+    _secondsToStarUpEvent = 5;
+    _tickIntervalInSeconds = 1;
 }
 
 // helper
@@ -65,9 +71,8 @@ bool p3Lua4RS::saveList(bool& cleanup, std::list<RsItem*>& lst)
 
     RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet;
 
-    vitem->tlvkvs.pairs.push_back(push_uint_value(L4RCONFIG_TIMER_STARTUP, _secondsToStarUpEvent));
-    vitem->tlvkvs.pairs.push_back(push_uint_value(L4RCONFIG_TIMER_SLEEP,   _sleepPeriodInMilliseconds));
-    vitem->tlvkvs.pairs.push_back(push_uint_value(L4RCONFIG_TIMER_TICK,    _tickIntervalInSeconds));
+    vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_STARTUP, _secondsToStarUpEvent));
+    vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_TICK,    _tickIntervalInSeconds));
 
     lst.push_back(vitem);
 
@@ -83,11 +88,9 @@ bool p3Lua4RS::loadList(std::list<RsItem*>& load)
         if(vitem != NULL)
             for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
                 if(kit->key ==      L4RCONFIG_TIMER_STARTUP)
-                    _secondsToStarUpEvent       = pop_uint_value(kit->value);
-                else if(kit->key == L4RCONFIG_TIMER_SLEEP)
-                    _sleepPeriodInMilliseconds  = pop_uint_value(kit->value);
+                    _secondsToStarUpEvent       = pop_int_value(kit->value);
                 else if(kit->key == L4RCONFIG_TIMER_TICK)
-                    _tickIntervalInSeconds      = pop_uint_value(kit->value);
+                    _tickIntervalInSeconds      = pop_int_value(kit->value);
                 else
                     std::cerr << "[Lua] L4RConfig::loadList : unknown key: " << kit->key << std::endl;
 
@@ -107,7 +110,32 @@ RsSerialiser *p3Lua4RS::setupSerialiser()
 
 int p3Lua4RS::tick()
 {
-    //std::cout << "[Lua] p3Lua4RS::tick" << std::endl;
+    // start up event
+    if(!_startUpEventTriggered && (_initTime + _secondsToStarUpEvent) <= (uint)time(0))
+    {
+        LuaEvent e;
+        e.eventId = L4R_STARTUP;
+        e.timeStamp = QDateTime::currentDateTime();
+
+        if(LuaCore::getInstance()->processEvent(e))
+            // startup event wasn't blocked by core
+            _startUpEventTriggered = true;
+    }
+
+    // tick each X second
+    if(_lastRun + _tickIntervalInSeconds <= (uint)time(0) && _startUpEventTriggered)
+    {
+        LuaEvent e;
+        e.eventId = L4R_TIMERTICK;
+        e.timeStamp = QDateTime::currentDateTime();
+        // remove ms
+        e.timeStamp.setTime(QTime(e.timeStamp.time().hour(), e.timeStamp.time().minute(), e.timeStamp.time().second()));
+
+        LuaCore::getInstance()->processEvent(e);
+
+        _lastRun = time(0);
+    }
+
     return 0;
 }
 
@@ -119,17 +147,6 @@ uint p3Lua4RS::getTickIntervalInSeconds() const
 void p3Lua4RS::setTickIntervalInSeconds(const uint& value)
 {
     _tickIntervalInSeconds = value;
-    IndicateConfigChanged();
-}
-
-uint p3Lua4RS::getSleepPeriodInMilliseconds() const
-{
-    return _sleepPeriodInMilliseconds;
-}
-
-void p3Lua4RS::setSleepPeriodInMilliseconds(const uint& value)
-{
-    _sleepPeriodInMilliseconds = value;
     IndicateConfigChanged();
 }
 

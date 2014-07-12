@@ -10,8 +10,6 @@
 #include "LuaList.h"
 #include "gui/Lua4RSWidget.h"
 #include "Lua4RSNotify.h"
-#include "Lua4RSTickThread.h"
-
 
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"
@@ -24,7 +22,6 @@ LuaCore::LuaCore() :
     _peers      (NULL),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
-    _thread     (new Lua4RSTickThread()),
     _shutDownImminent (false)
 {
     /*
@@ -34,9 +31,6 @@ LuaCore::LuaCore() :
      */
     L = luaL_newstate();
     luaL_openlibs(L);
-
-    // start tick thread (after everything else is setup)
-    _thread->start();
 }
 
 LuaCore::~LuaCore()
@@ -44,9 +38,6 @@ LuaCore::~LuaCore()
     // disbale output - gui might be gone by now!
     _ui->disableOutput();
     _shutDownImminent = true;
-
-    // stop thread and wait for shutdown
-    _thread->join();
 
     // send shotdown event
     {

@@ -1,8 +1,6 @@
 #ifndef P3LUA4RS_H
 #define P3LUA4RS_H
 
-//#include <QObject>
-
 #include <plugins/rspqiservice.h>
 
 #include "interface/Lua4RSInterface.h"
@@ -10,10 +8,8 @@
 const uint16_t RS_SERVICE_TYPE_L4R_PLUGIN   = 0x754c;
 const uint32_t CONFIG_TYPE_L4R_PLUGIN 		= 0x754c3461;
 
-class p3Lua4RS : /*public QObject,*/ public RsPQIService, public Lua4RSInterface
+class p3Lua4RS : public RsPQIService, public Lua4RSInterface
 {
-//    Q_OBJECT
-
 public:
     p3Lua4RS(RsPluginHandler* rph);
 
@@ -31,19 +27,16 @@ public:
 public:
     virtual uint getTickIntervalInSeconds() const;
     virtual void setTickIntervalInSeconds(const uint &value);
-    virtual uint getSleepPeriodInMilliseconds() const;
-    virtual void setSleepPeriodInMilliseconds(const uint &value);
     virtual uint getSecondsToStarUpEvent() const;
     virtual void setSecondsToStarUpEvent(const uint &value);
 
 private:
     // tick thread
-    uint _sleepPeriodInMilliseconds;
-    uint _secondsToStarUpEvent;
-    uint _tickIntervalInSeconds;
-
-//signals:
-//    void configChanged();
+    uint        _secondsToStarUpEvent;
+    uint        _tickIntervalInSeconds;
+    time_t      _lastRun;
+    time_t      _initTime;
+    bool        _startUpEventTriggered;
 };
 
 #endif // P3LUA4RS_H

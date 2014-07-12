@@ -17,7 +17,6 @@ win32 {
 HEADERS +=  \
     Lua4RSPlugin.h \
     Lua4RSNotify.h \
-    Lua4RSTickThread.h \
     gui/Lua4RSWidget.h \
     gui/Lua4RSConfig.h \
     Lua/LuaCore.h \
@@ -39,7 +38,6 @@ HEADERS +=  \
 SOURCES +=  \
     Lua4RSPlugin.cpp \
     Lua4RSNotify.cpp \
-    Lua4RSTickThread.cpp \
     gui/Lua4RSWidget.cpp \
     gui/Lua4RSConfig.cpp \
     Lua/LuaCore.cpp \
