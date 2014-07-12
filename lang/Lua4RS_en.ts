@@ -14,18 +14,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="54"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="38"/>
+        <source>This lets you choose after how many seconds the startup event is triggered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSConfig.ui" line="57"/>
         <source>tick interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="67"/>
-        <location filename="../gui/Lua4RSConfig.ui" line="109"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="70"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="115"/>
         <source>s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="96"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="83"/>
+        <source>this lets you choose after how many seconds a tick event is triggered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSConfig.ui" line="102"/>
         <source>startup event</source>
         <translation type="unfinished"></translation>
     </message>

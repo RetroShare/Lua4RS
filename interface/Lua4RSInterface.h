@@ -1,7 +1,11 @@
 #ifndef LUA4RSINTERFACE_H
 #define LUA4RSINTERFACE_H
 
-#include <stdlib.h>
+#ifdef _WIN32
+    typedef unsigned int    uint;
+#else
+    #include <stdlib.h>
+#endif
 
 class Lua4RSInterface;
 

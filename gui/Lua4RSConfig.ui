@@ -34,6 +34,9 @@
       <height>23</height>
      </rect>
     </property>
+    <property name="whatsThis">
+     <string>This lets you choose after how many seconds the startup event is triggered</string>
+    </property>
     <property name="minimum">
      <number>1</number>
     </property>
@@ -75,6 +78,9 @@
       <width>61</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="whatsThis">
+     <string>this lets you choose after how many seconds a tick event is triggered</string>
     </property>
     <property name="minimum">
      <number>1</number>
