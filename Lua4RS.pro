@@ -31,7 +31,10 @@ HEADERS +=  \
     Lua/Trigger/LuaTriggerStartup.h \
     Lua/Trigger/LuaTriggerEvent.h \
     Lua/Trigger/LuaTriggerShutdown.h \
-    Lua/Trigger/LuaTriggerOnce.h
+    Lua/Trigger/LuaTriggerOnce.h \
+    Lua4RSConfig.h \
+    service/p3Lua4RS.h \
+    interface/Lua4RSInterface.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
@@ -50,10 +53,13 @@ SOURCES +=  \
     Lua/Trigger/LuaTriggerStartup.cpp \
     Lua/Trigger/LuaTriggerEvent.cpp \
     Lua/Trigger/LuaTriggerShutdown.cpp \
-    Lua/Trigger/LuaTriggerOnce.cpp
+    Lua/Trigger/LuaTriggerOnce.cpp \
+    Lua4RSConfig.cpp \
+    service/p3Lua4RS.cpp
 
 FORMS += \
-    Lua4RSWidget.ui
+    Lua4RSWidget.ui \
+    Lua4RSConfig.ui
 
 TARGET = Lua4RS
 

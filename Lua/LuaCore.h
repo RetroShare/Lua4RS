@@ -40,11 +40,11 @@ public:
     static LuaCore* getInstance();
     static void shutDown();
 
-    bool sane() { return _ui != NULL && _peers != NULL; }
+    bool sane();
 
     void setupRsFunctionsAndTw(QTreeWidget* tw);
 
-    void processEvent(const LuaEvent& e);
+    bool processEvent(const LuaEvent& e);
 
     // invoke lua
     void runLuaByString(const QString& code);

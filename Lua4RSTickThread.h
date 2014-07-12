@@ -6,7 +6,9 @@
 #include <retroshare/rsplugin.h>
 #include <util/rsthreads.h>
 
-class Lua4RSTickThread : public RsThread
+#include "Lua4RSConfig.h"
+
+class Lua4RSTickThread :  public RsThread
 {
 public:
     Lua4RSTickThread();
@@ -24,6 +26,7 @@ private:
     time_t _initTime;
     bool _startUpEventTriggered;
     uint32_t _counter;
+
 };
 
 #endif // LUA4RSTICKTHREAD_H

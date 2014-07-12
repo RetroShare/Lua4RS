@@ -97,6 +97,11 @@ void LuaCore::shutDown()
     _instance = NULL;
 }
 
+bool LuaCore::sane()
+{
+    return _ui != NULL && _peers != NULL;
+}
+
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 {
     int top;
@@ -173,18 +178,18 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QT
     pushTable(L, tableTop, luaFuncName, f);
 }
 
-void LuaCore::processEvent(const LuaEvent& e)
+bool LuaCore::processEvent(const LuaEvent& e)
 {
     // to catch to early events
     if(!sane())
     {
         std::cerr << "[Lua] LuaCore not ready - event " << e.eventId  << std::endl;
-        return;
+        return false;
     }
 
     // block everythign except onShutdown when RS is exiting
     if(_shutDownImminent && e.eventId != L4R_SHUTDOWN)
-        return;
+        return false;
 
     // do some magic here
     std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
@@ -193,6 +198,7 @@ void LuaCore::processEvent(const LuaEvent& e)
         if((*it)->isTriggered(e))
             runLuaByEvent((*it), e);
     }
+    return true;
 }
 
 // invoke lua

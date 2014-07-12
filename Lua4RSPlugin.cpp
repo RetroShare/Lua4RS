@@ -4,13 +4,15 @@
 #include <retroshare/rsplugin.h>
 #include <util/rsversion.h>
 
+#include "Lua4RSConfig.h"
 #include "Lua4RSNotify.h"
 #include "Lua4RSPlugin.h"
 #include "Lua4RSWidget.h"
+#include "interface/Lua4RSInterface.h"
 #include "Lua/LuaCore.h"
+#include "service/p3Lua4RS.h"
 
 #define LUA_ICON_LINK ":/images/lua_logo.png"
-
 
 extern "C" {
 #ifdef WIN32
@@ -49,6 +51,7 @@ Lua4RSPlugin::Lua4RSPlugin()
     _notify = NULL;
     _peers = NULL;
     _pluginHandler = NULL;
+    _service = NULL;
 }
 
 void Lua4RSPlugin::stop()
@@ -126,6 +129,27 @@ QTranslator* Lua4RSPlugin::qt_translator(QApplication* /*app*/, const QString& l
     return NULL;
 }
 
+ConfigPage *Lua4RSPlugin::qt_config_page() const
+{
+    return new Lua4RSConfig();
+}
+
+RsPQIService *Lua4RSPlugin::rs_pqi_service() const
+{
+    if(_service == NULL)
+    {
+        _service = new p3Lua4RS(_pluginHandler);
+        L4R::L4RConfig = _service;
+    }
+
+    return _service;
+}
+
+uint16_t Lua4RSPlugin::rs_service_id() const
+{
+    return RS_SERVICE_TYPE_L4R_PLUGIN;
+}
+
 void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 {
     _pluginHandler = pgHandler;
@@ -133,7 +157,7 @@ void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 
 std::string Lua4RSPlugin::getShortPluginDescription() const
 {
-    return "This plugin let you script RS with Lua.";
+    return QObject::tr("This plugin let you script RS with Lua.").toStdString();
 }
 
 std::string Lua4RSPlugin::getPluginName() const
