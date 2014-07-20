@@ -8,7 +8,7 @@ for i = 1, #grpList do
 	grpInfo = grpList[i]
 	
 	-- print group name
-	rs.print(grpInfo["name"])
+	rs.print(grpInfo["name"] .. " (ID: " .. grpInfo["id"] .. ")")
 		
 	-- check if there is any peer in the group
 	if #grpInfo["peerIds"] > 0 then
@@ -18,7 +18,7 @@ for i = 1, #grpList do
 		-- print their names
 		for j = 1, #peerIds do
 			id = peerIds[j]
-			rs.print(" - " .. peers.getPeerName(id) .. " (" .. id .. ")")
+			rs.print(" - " .. peers.getPeerName(id) .. " (ID: " .. id .. ")")
 		end
 	end
 end
