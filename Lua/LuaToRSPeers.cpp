@@ -65,6 +65,8 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
+        luaL_checktype(L, 1, LUA_TSTRING);
+
         const std::string sslid = lua_tostring(L, 1);
         const bool online = LuaCore::getInstance()->peers()->isOnline(sslid);
         lua_pushboolean(L, online);
@@ -76,6 +78,8 @@ extern "C" {
     {
         if( getArgCount(L) != 1)
             return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string sslid = lua_tostring(L, 1);
         const bool online = LuaCore::getInstance()->peers()->isFriend(sslid);
@@ -89,6 +93,8 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
+        luaL_checktype(L, 1, LUA_TSTRING);
+
         const std::string gpgid = lua_tostring(L, 1);
         const bool online = LuaCore::getInstance()->peers()->isGPGAccepted(gpgid);
         lua_pushboolean(L, online);
@@ -100,6 +106,8 @@ extern "C" {
     {
         if( getArgCount(L) != 1)
             return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string gpgId = lua_tostring(L, 1);
         const std::string name = LuaCore::getInstance()->peers()->getGPGName(gpgId);
@@ -113,6 +121,8 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
+        luaL_checktype(L, 1, LUA_TSTRING);
+
         const std::string id = lua_tostring(L, 1);
         const std::string name = LuaCore::getInstance()->peers()->getPeerName(id);
         lua_pushstring(L, name.c_str());
@@ -124,6 +134,8 @@ extern "C" {
     {
         if( getArgCount(L) != 1)
             return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string id = lua_tostring(L, 1);
         RsPeerDetails details;
@@ -185,6 +197,8 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
+        luaL_checktype(L, 1, LUA_TSTRING);
+
         const std::string id = lua_tostring(L, 1);
         const std::string gpgId = LuaCore::getInstance()->peers()->getGPGId(id);
         lua_pushstring(L, gpgId.c_str());
@@ -224,6 +238,8 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
+        luaL_checktype(L, 1, LUA_TSTRING);
+
         const std::string grpId = lua_tostring(L, 1);
         rsPeers->removeGroup(grpId);
         return 0;
@@ -234,6 +250,8 @@ extern "C" {
     {
         if( getArgCount(L) != 1)
             return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string grpId = lua_tostring(L, 1);
         RsGroupInfo grpInfo;
@@ -301,6 +319,10 @@ extern "C" {
     {
         if( getArgCount(L) != 3)
             return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
+        luaL_checktype(L, 2, LUA_TSTRING);
+        luaL_checktype(L, 3, LUA_TBOOLEAN);
 
         const std::string grpId = lua_tostring(L, 1);
         const std::string peerId = lua_tostring(L, 2);
