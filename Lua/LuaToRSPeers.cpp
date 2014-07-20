@@ -194,6 +194,29 @@ extern "C" {
 
     // groups
     // virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
+    int peers_addGroup(lua_State* L)
+    {
+        if( getArgCount(L) != 1)
+            return 0;
+
+        lua_settop(L, 1);
+        luaL_checktype(L, 1, LUA_TTABLE);
+
+        // move table to stack
+        lua_getfield(L, 1, "flag");
+        lua_getfield(L, 1, "id");
+        lua_getfield(L, 1, "name");
+        lua_getfield(L, 1, "peerIds");
+
+        RsGroupInfo grpInfo;
+        grpInfo.flag = lua_tointeger(L, -4);
+        grpInfo.id = lua_tostring(L, -3);
+        grpInfo.name = lua_tostring(L, -2);
+        // irgnore peerIds for now
+
+        rsPeers->addGroup(grpInfo);
+        return 0;
+    }
     // virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
     // virtual bool    removeGroup(const std::string &groupId) = 0;
     int peers_removeGroup(lua_State* L)
@@ -202,9 +225,8 @@ extern "C" {
             return 0;
 
         const std::string grpId = lua_tostring(L, 1);
-        const bool rc = rsPeers->removeGroup(grpId);
-        lua_pushboolean(L, rc);
-        return 1;
+        rsPeers->removeGroup(grpId);
+        return 0;
     }
 
     // virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
@@ -216,22 +238,10 @@ extern "C" {
         const std::string grpId = lua_tostring(L, 1);
         RsGroupInfo grpInfo;
         rsPeers->getGroupInfo(grpId, grpInfo);
-        /*
-        lua_pushinteger(L, grpInfo.flag);
-        lua_pushstring(L, grpInfo.id);
-        lua_pushstring(L, grpInfo.name);
+
         lua_newtable(L);
         int t1 = lua_gettop(L);
-        uint i = 1;
-        foreach (std::string peerId, grpInfo.peerIds) {
-            pushArray(L, t1, i, peerId);
-            ++i;
-        }
-        return 4;
-        */
-        lua_newtable(L);
-        int t1 = lua_gettop(L);
-        pushTable(L, t1, "falg", grpInfo.flag);
+        pushTable(L, t1, "flag", grpInfo.flag);
         pushTable(L, t1, "id", grpInfo.id);
         pushTable(L, t1, "name", grpInfo.name);
 
@@ -295,9 +305,8 @@ extern "C" {
         const std::string grpId = lua_tostring(L, 1);
         const std::string peerId = lua_tostring(L, 2);
         const bool assign = lua_toboolean(L, 3);
-        const bool rc = rsPeers->assignPeerToGroup(grpId, peerId, assign);
-        lua_pushboolean(L, rc);
-        return 1;
+        rsPeers->assignPeerToGroup(grpId, peerId, assign);
+        return 0;
     }
     // virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
 

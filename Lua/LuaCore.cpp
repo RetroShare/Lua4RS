@@ -149,6 +149,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGId,          "getGPGId()",       QObject::tr("returns the PGP id for a given SSL/PGP id"));
 
     //groups
+    addFunctionToLuaAndTw(top, namespc, peers, peers_addGroup,           "addGroup()",           QObject::tr("creates a new group"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_removeGroup,       "removeGroup()",        QObject::tr("removes the group with the given groupd id"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getGroupInfo,      "getGroupInfo()",       QObject::tr("returns group info for a given group id"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getGroupInfoList,  "getGroupInfoList()",   QObject::tr("returns an array with all groups and their group infos"));
