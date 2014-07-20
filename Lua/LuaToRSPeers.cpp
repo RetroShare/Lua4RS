@@ -151,7 +151,7 @@ extern "C" {
         {
             lua_newtable(L);
             int t2 = lua_gettop(L);
-            int i = 0;
+            int i = 1;
             for(std::list<std::string>::iterator it = details.ipAddressList.begin(); it != details.ipAddressList.end(); ++it, i++)
                 pushArray(L, t2, i, it->c_str());
 
@@ -190,6 +190,117 @@ extern "C" {
         lua_pushstring(L, gpgId.c_str());
         return 1;
     }
+
+
+    // groups
+    // virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
+    // virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+    // virtual bool    removeGroup(const std::string &groupId) = 0;
+    int peers_removeGroup(lua_State* L)
+    {
+        if( getArgCount(L) != 1)
+            return 0;
+
+        const std::string grpId = lua_tostring(L, 1);
+        const bool rc = rsPeers->removeGroup(grpId);
+        lua_pushboolean(L, rc);
+        return 1;
+    }
+
+    // virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+    int peers_getGroupInfo(lua_State* L)
+    {
+        if( getArgCount(L) != 1)
+            return 0;
+
+        const std::string grpId = lua_tostring(L, 1);
+        RsGroupInfo grpInfo;
+        rsPeers->getGroupInfo(grpId, grpInfo);
+        /*
+        lua_pushinteger(L, grpInfo.flag);
+        lua_pushstring(L, grpInfo.id);
+        lua_pushstring(L, grpInfo.name);
+        lua_newtable(L);
+        int t1 = lua_gettop(L);
+        uint i = 1;
+        foreach (std::string peerId, grpInfo.peerIds) {
+            pushArray(L, t1, i, peerId);
+            ++i;
+        }
+        return 4;
+        */
+        lua_newtable(L);
+        int t1 = lua_gettop(L);
+        pushTable(L, t1, "falg", grpInfo.flag);
+        pushTable(L, t1, "id", grpInfo.id);
+        pushTable(L, t1, "name", grpInfo.name);
+
+        lua_pushstring(L, "peerIds");
+        {
+            lua_newtable(L);
+            int t2 = lua_gettop(L);
+            int i = 1;
+            foreach (std::string peerId, grpInfo.peerIds) {
+                pushArray(L, t2, i, peerId);
+                ++i;
+            }
+        }
+        lua_settable(L, t1);
+        return 1;
+    }
+
+    // virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
+    int peers_getGroupInfoList(lua_State* L)
+    {
+        std::list<RsGroupInfo> groupInfoList;
+        rsPeers->getGroupInfoList(groupInfoList);
+
+        lua_newtable(L);
+        int t1 = lua_gettop(L);
+        uint i = 1;
+        foreach (RsGroupInfo grpInfo, groupInfoList) {
+            lua_pushinteger(L, i);
+            {
+                lua_newtable(L);
+                int t2 = lua_gettop(L);
+                pushTable(L, t2, "falg", grpInfo.flag);
+                pushTable(L, t2, "id", grpInfo.id);
+                pushTable(L, t2, "name", grpInfo.name);
+
+                lua_pushstring(L, "peerIds");
+                {
+                    lua_newtable(L);
+                    int t3 = lua_gettop(L);
+                    int j = 1;
+                    foreach (std::string peerId, grpInfo.peerIds) {
+                        pushArray(L, t3, j, peerId);
+                        ++j;
+                    }
+                }
+                lua_settable(L, t2);
+            }
+            lua_settable(L, t1);
+            ++i;
+        }
+        return 1;
+    }
+
+    // groupId == "" && assign == false -> remove from all groups
+    // virtual bool    assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign) = 0;
+    int peers_assignPeerToGroup(lua_State* L)
+    {
+        if( getArgCount(L) != 3)
+            return 0;
+
+        const std::string grpId = lua_tostring(L, 1);
+        const std::string peerId = lua_tostring(L, 2);
+        const bool assign = lua_toboolean(L, 3);
+        const bool rc = rsPeers->assignPeerToGroup(grpId, peerId, assign);
+        lua_pushboolean(L, rc);
+        return 1;
+    }
+    // virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
+
 }
 
 /// TODO
@@ -252,17 +363,6 @@ virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 
 virtual	bool signGPGCertificate(const std::string &gpg_id)                   	= 0;
 virtual	bool trustGPGCertificate(const std::string &gpg_id, uint32_t trustlvl) 	= 0;
-
-
-virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
-virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
-virtual bool    removeGroup(const std::string &groupId) = 0;
-virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
-virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
-// groupId == "" && assign == false -> remove from all groups
-virtual bool    assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign) = 0;
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
-
 
 
 // Given
