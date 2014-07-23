@@ -55,8 +55,6 @@ public:
     // getter & setter
     Lua4RSWidget* getUI();
     void setUi(Lua4RSWidget* ui);
-    RsPeers *peers() const;
-    void setPeers(RsPeers *peers);
     Lua4RSNotify *notify() const;
     LuaList* codeList() const;
 
@@ -76,7 +74,6 @@ private:
     lua_State* L;
 
     RsMutex _mutex;
-    RsPeers* _peers;
 
     LuaList* _luaList;
     Lua4RSNotify* _notify;

@@ -87,7 +87,6 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
     // setup other stuff
     LuaCore* lc = LuaCore::getInstance();
-    lc->setPeers(_peers);
     lc->setUi(dynamic_cast<Lua4RSWidget*>(qt_page()));
     _notify->registerNotifyClient(lc->notify());
 }

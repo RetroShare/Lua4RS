@@ -19,18 +19,25 @@ LuaCore* LuaCore::_instance;
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
     _mutex      ("Lua4RS"),
-    _peers      (NULL),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
     _shutDownImminent (false)
 {
     /*
      * Notes:
-     *  - Lua files are loaded when _peers is set
      *  - RS functions get registered to Lua when GUI is initialized
      */
     L = luaL_newstate();
     luaL_openlibs(L);
+
+    _path = RsInit::RsConfigDirectory() + "/" + rsPeers->getOwnId() + "/" + _folderName + "/";
+
+    // load codes
+    _luaList->setFilePath(_path);
+    if(_luaList->loadAll())
+        std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
+    else
+        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
 }
 
 LuaCore::~LuaCore()
@@ -61,19 +68,6 @@ LuaCore::~LuaCore()
     delete _luaList;
 }
 
-void LuaCore::setPeers(RsPeers* peers)
-{
-    _peers = peers;
-    _path = RsInit::RsConfigDirectory() + "/" + _peers->getOwnId() + "/" + _folderName + "/";
-
-    // load codes
-    _luaList->setFilePath(_path);
-    if(_luaList->loadAll())
-        std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
-    else
-        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
-}
-
 LuaCore* LuaCore::getInstance()
 {
     if (_instance == NULL)
@@ -90,7 +84,7 @@ void LuaCore::shutDown()
 
 bool LuaCore::sane()
 {
-    return _ui != NULL && _peers != NULL;
+    return _ui != NULL;
 }
 
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
@@ -238,28 +232,6 @@ void LuaCore::runLuaByName(const QString& name)
     runLuaByString(lc->getCode());
 }
 
-/*
-void LuaCore::runLuaByNameWithParams(const QString& name, parameterMap paramMap)
-{
-    std::string code = "";
-
-    // set parameters
-    for(std::map<std::string, std::string>::iterator it = paramMap.begin(); it != paramMap.end(); ++it)
-        code += it->first + " = " + it->second + "\n";
-
-    // get code
-    LuaContainer* lc = NULL;
-    if(!_luaList->itemByName(name, lc))
-    {
-        std::cerr << "[Lua] can't find script " << name << std::endl;
-        return;
-    }
-    code += lc->getCode().toStdString();
-
-    runLuaByString(code);
-}
-*/
-
 void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& /*event*/)
 {
     // do some magic with parameters from event
@@ -291,11 +263,6 @@ Lua4RSNotify* LuaCore::notify() const
 LuaList* LuaCore::codeList() const
 {
     return _luaList;
-}
-
-RsPeers* LuaCore::peers() const
-{
-    return _peers;
 }
 
 void LuaCore::setUi(Lua4RSWidget *ui)
