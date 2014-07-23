@@ -7,7 +7,6 @@
 
 #include <QObject>
 
-#include <retroshare/rsplugin.h>
 #include <util/rsthreads.h> // for RsMutex
 
 #include "LuaEvent.h"

@@ -1,6 +1,6 @@
 #include "ui_Lua4RSConfig.h"
 #include "Lua4RSConfig.h"
-#include "interface/Lua4RSInterface.h"
+#include "interface/L4RInterface.h"
 
 Lua4RSConfig::Lua4RSConfig(QWidget *parent) :
     ConfigPage(parent),
