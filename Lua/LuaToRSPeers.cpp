@@ -214,25 +214,45 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
-        lua_settop(L, 1);
         luaL_checktype(L, 1, LUA_TTABLE);
 
-        // move table to stack
-        lua_getfield(L, 1, "flag");
-        lua_getfield(L, 1, "id");
-        lua_getfield(L, 1, "name");
-        lua_getfield(L, 1, "peerIds");
-
         RsGroupInfo grpInfo;
-        grpInfo.flag = luaL_checkinteger(L, -4);
-        grpInfo.id = luaL_checkstring(L, -3);
-        grpInfo.name = luaL_checkstring(L, -2);
+        lua_getfield(L, 1, "flag");
+        grpInfo.flag = luaL_checkinteger(L, -1);
+        lua_getfield(L, 1, "id");
+        grpInfo.id = luaL_checkstring(L, -1);
+        lua_getfield(L, 1, "name");
+        grpInfo.name = luaL_checkstring(L, -1);
         // irgnore peerIds for now
 
         rsPeers->addGroup(grpInfo);
         return 0;
     }
+
     // virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+    int peers_editGroup(lua_State* L)
+    {
+        if( getArgCount(L) != 2)
+            return 0;
+
+        luaL_checktype(L, 1, LUA_TSTRING);
+        luaL_checktype(L, 2, LUA_TTABLE);
+
+        const std::string grpId = luaL_checkstring(L, 1);
+
+        RsGroupInfo grpInfo;
+        lua_getfield(L, 2, "flag");
+        grpInfo.flag = luaL_checkinteger(L, -1);
+        lua_getfield(L, 2, "id");
+        grpInfo.id = luaL_checkstring(L, -1);
+        lua_getfield(L, 2, "name");
+        grpInfo.name = luaL_checkstring(L, -1);
+        // irgnore peerIds for now
+
+        rsPeers->editGroup(grpId, grpInfo);
+        return 0;
+    }
+
     // virtual bool    removeGroup(const std::string &groupId) = 0;
     int peers_removeGroup(lua_State* L)
     {
