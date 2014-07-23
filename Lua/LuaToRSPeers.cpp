@@ -13,7 +13,7 @@ extern "C" {
     // virtual std::string getOwnId()
     int peers_getOwnId(lua_State* L)
     {
-        std::string pgpID = LuaCore::getInstance()->peers()->getOwnId();
+        std::string pgpID = rsPeers->getOwnId();
         lua_pushstring(L, pgpID.c_str());
         return 1;
     }
@@ -22,7 +22,8 @@ extern "C" {
     int peers_getOnlineList(lua_State* L)
     {
         std::list<std::string> ids;
-        LuaCore::getInstance()->peers()->getOnlineList(ids);
+        if(!rsPeers->getOnlineList(ids))
+            return 0;
 
         lua_newtable(L);
         int top = lua_gettop(L);
@@ -37,7 +38,8 @@ extern "C" {
     int peers_getFriendList(lua_State* L)
     {
         std::list<std::string> ids;
-        LuaCore::getInstance()->peers()->getFriendList(ids);
+        if(!rsPeers->getFriendList(ids))
+            return 0;
 
         lua_newtable(L);
         int top = lua_gettop(L);
@@ -53,7 +55,8 @@ extern "C" {
     int peers_getPeerCount(lua_State* L)
     {
         unsigned int online, all;
-        LuaCore::getInstance()->peers()->getPeerCount(&all, &online, false);
+        if(!rsPeers->getPeerCount(&all, &online, false))
+            return 0;
         lua_pushinteger(L, all);
         lua_pushinteger(L, online);
         return 2;
@@ -68,7 +71,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string sslid = luaL_checkstring(L, 1);
-        const bool online = LuaCore::getInstance()->peers()->isOnline(sslid);
+        const bool online = rsPeers->isOnline(sslid);
         lua_pushboolean(L, online);
         return 1;
     }
@@ -82,7 +85,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string sslid = luaL_checkstring(L, 1);
-        const bool online = LuaCore::getInstance()->peers()->isFriend(sslid);
+        const bool online = rsPeers->isFriend(sslid);
         lua_pushboolean(L, online);
         return 1;
     }
@@ -96,7 +99,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string gpgid = luaL_checkstring(L, 1);
-        const bool online = LuaCore::getInstance()->peers()->isGPGAccepted(gpgid);
+        const bool online = rsPeers->isGPGAccepted(gpgid);
         lua_pushboolean(L, online);
         return 1;
     }
@@ -110,7 +113,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string gpgId = luaL_checkstring(L, 1);
-        const std::string name = LuaCore::getInstance()->peers()->getGPGName(gpgId);
+        const std::string name = rsPeers->getGPGName(gpgId);
         lua_pushstring(L, name.c_str());
         return 1;
     }
@@ -124,7 +127,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string id = luaL_checkstring(L, 1);
-        const std::string name = LuaCore::getInstance()->peers()->getPeerName(id);
+        const std::string name = rsPeers->getPeerName(id);
         lua_pushstring(L, name.c_str());
         return 1;
     }
@@ -139,9 +142,7 @@ extern "C" {
 
         const std::string id = luaL_checkstring(L, 1);
         RsPeerDetails details;
-        bool r = LuaCore::getInstance()->peers()->getPeerDetails(id, details);
-
-        if(!r)
+        if(!rsPeers->getPeerDetails(id, details))
             return 0;
 
         lua_newtable(L);
@@ -186,7 +187,7 @@ extern "C" {
     // virtual std::string getGPGOwnId()
     int peers_getGPGOwnId(lua_State* L)
     {
-        const std::string gpgID = LuaCore::getInstance()->peers()->getGPGOwnId();
+        const std::string gpgID = rsPeers->getGPGOwnId();
         lua_pushstring(L, gpgID.c_str());
         return 1;
     }
@@ -200,7 +201,7 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string id = luaL_checkstring(L, 1);
-        const std::string gpgId = LuaCore::getInstance()->peers()->getGPGId(id);
+        const std::string gpgId = rsPeers->getGPGId(id);
         lua_pushstring(L, gpgId.c_str());
         return 1;
     }
@@ -255,7 +256,8 @@ extern "C" {
 
         const std::string grpId = luaL_checkstring(L, 1);
         RsGroupInfo grpInfo;
-        rsPeers->getGroupInfo(grpId, grpInfo);
+        if(!rsPeers->getGroupInfo(grpId, grpInfo))
+            return 0;
 
         lua_newtable(L);
         int t1 = lua_gettop(L);
@@ -281,7 +283,8 @@ extern "C" {
     int peers_getGroupInfoList(lua_State* L)
     {
         std::list<RsGroupInfo> groupInfoList;
-        rsPeers->getGroupInfoList(groupInfoList);
+        if(!rsPeers->getGroupInfoList(groupInfoList))
+            return 0;
 
         lua_newtable(L);
         int t1 = lua_gettop(L);
