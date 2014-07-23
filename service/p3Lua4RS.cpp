@@ -10,7 +10,7 @@
 #define L4RCONFIG_TIMER_TICK    "L4RCONFIG_TIMER_TICK"
 
 /* DEFINE INTERFACE POINTER! */
-Lua4RSInterface* L4R::L4RConfig = NULL;
+L4RInterface* L4R::L4RConfig = NULL;
 
 p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
     RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, CONFIG_TYPE_L4R_PLUGIN, 0, rph),

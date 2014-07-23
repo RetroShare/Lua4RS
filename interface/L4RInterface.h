@@ -7,16 +7,16 @@
     #include <stdlib.h>
 #endif
 
-class Lua4RSInterface;
+class L4RInterface;
 
 namespace L4R {
-    extern Lua4RSInterface* L4RConfig;
+    extern L4RInterface* L4RConfig;
 }
 
-class Lua4RSInterface
+class L4RInterface
 {
 public:
-    virtual ~Lua4RSInterface() {}
+    virtual ~L4RInterface() {}
 
     // config
     virtual uint getTickIntervalInSeconds() const = 0;

@@ -3,12 +3,12 @@
 
 #include <plugins/rspqiservice.h>
 
-#include "interface/Lua4RSInterface.h"
+#include "interface/L4RInterface.h"
 
 const uint16_t RS_SERVICE_TYPE_L4R_PLUGIN   = 0x754c;
 const uint32_t CONFIG_TYPE_L4R_PLUGIN 		= 0x754c3461;
 
-class p3Lua4RS : public RsPQIService, public Lua4RSInterface
+class p3Lua4RS : public RsPQIService, public L4RInterface
 {
 public:
     p3Lua4RS(RsPluginHandler* rph);

@@ -8,7 +8,7 @@
 #include "Lua4RSNotify.h"
 #include "Lua4RSPlugin.h"
 #include "gui/Lua4RSWidget.h"
-#include "interface/Lua4RSInterface.h"
+#include "interface/L4RInterface.h"
 #include "Lua/LuaCore.h"
 #include "service/p3Lua4RS.h"
 
