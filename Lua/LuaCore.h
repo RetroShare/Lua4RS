@@ -37,8 +37,7 @@ public:
     LuaCore();
     ~LuaCore();
 
-    static LuaCore* getInstance();
-    static void shutDown();
+    void shutDown();
 
     bool sane();
 
@@ -65,8 +64,6 @@ public:
 private:
     void reportLuaErrors(lua_State *L, int status);
     void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint);
-
-    static LuaCore* _instance;
 
     const std::string _folderName;
     std::string _path;

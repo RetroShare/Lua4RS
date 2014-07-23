@@ -3,6 +3,7 @@
 #include "Lua4RSNotify.h"
 #include "Lua/LuaCore.h"
 #include "Lua/LuaEvent.h"
+#include "interface/L4RInterface.h"
 
 Lua4RSNotify::Lua4RSNotify()
 {
@@ -16,7 +17,7 @@ void Lua4RSNotify::notifyListPreChange              (int list, int type)
     e.dataParm->setValue("intlist", list);
     e.dataParm->setValue("inttype", type);
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyListChange                 (int list, int type)
@@ -27,7 +28,7 @@ void Lua4RSNotify::notifyListChange                 (int list, int type)
     e.dataParm->setValue("intlist", list);
     e.dataParm->setValue("inttype", type);
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t event_type, const std::string& nickname, const std::string& any_string)
@@ -41,7 +42,7 @@ void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t
     e.dataParm->setValue("strnickname", QString::fromStdString(nickname));
     e.dataParm->setValue("stranyString", QString::fromStdString(any_string));
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyCustomState                (const std::string& peer_id, const std::string& status_string)
@@ -52,7 +53,7 @@ void Lua4RSNotify::notifyCustomState                (const std::string& peer_id,
     e.dataParm->setValue("strpeerId", QString::fromStdString(peer_id));
     e.dataParm->setValue("strstatusString", QString::fromStdString(status_string));
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyHashingInfo                (uint32_t type, const std::string& fileinfo)
@@ -63,7 +64,7 @@ void Lua4RSNotify::notifyHashingInfo                (uint32_t type, const std::s
     e.dataParm->setValue("u32type", type);
     e.dataParm->setValue("strfileInfo", QString::fromStdString(fileinfo));
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDiskFull                   (uint32_t location, uint32_t size_limit /* in MB */)
@@ -74,7 +75,7 @@ void Lua4RSNotify::notifyDiskFull                   (uint32_t location, uint32_t
     e.dataParm->setValue("u23location", location);
     e.dataParm->setValue("u32sizeLimit", size_limit);
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyPeerStatusChanged          (const std::string& peer_id, uint32_t status)
@@ -92,7 +93,7 @@ void Lua4RSNotify::notifyPeerStatusChanged          (const std::string& peer_id,
     e.dataParm->setValue("strpeerId", QString::fromStdString(peer_id));
     e.dataParm->setValue("u32status", status);
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyPeerStatusChangedSummary   ()
@@ -101,7 +102,7 @@ void Lua4RSNotify::notifyPeerStatusChangedSummary   ()
     e.eventId = L4R_FRIEND_STATUS_CHANGED_MANY;
     e.timeStamp = QDateTime::currentDateTime();
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDiscInfoChanged            ()
@@ -110,7 +111,7 @@ void Lua4RSNotify::notifyDiscInfoChanged            ()
     e.eventId = L4R_INFO_DISCOVERY_UPDATE;
     e.timeStamp = QDateTime::currentDateTime();
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }
 
 void Lua4RSNotify::notifyDownloadComplete           (const std::string& fileHash)
@@ -120,5 +121,5 @@ void Lua4RSNotify::notifyDownloadComplete           (const std::string& fileHash
     e.timeStamp = QDateTime::currentDateTime();
     e.dataParm->setValue("strfileHash", QString::fromStdString(fileHash));
 
-    LuaCore::getInstance()->processEvent(e);
+    L4R::L4RConfig->getCore()->processEvent(e);
 }

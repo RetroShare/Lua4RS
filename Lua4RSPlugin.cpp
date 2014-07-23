@@ -56,20 +56,7 @@ Lua4RSPlugin::Lua4RSPlugin()
 
 void Lua4RSPlugin::stop()
 {
-    LuaCore::shutDown();
-
-    // this code causes Segmentation fault on shutdown ....
-    /*
-    delete _icon;
-    _icon = NULL;
-    delete _mainpage;
-    _mainpage = NULL;
-
-    // from RS
-    _notify = NULL;
-    _peers = NULL;
-    _pluginHandler = NULL;
-    */
+    L4R::L4RConfig->getCore()->shutDown();
 }
 
 void Lua4RSPlugin::getPluginVersion(int& major, int& minor, int& svn_rev) const
@@ -85,8 +72,8 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     _peers = interfaces.mPeers;
     _notify = interfaces.mNotify;
 
-    // setup other stuff
-    LuaCore* lc = LuaCore::getInstance();
+    // setup other stuff - pqi service is nor running yet -> don't use interface pointer
+    LuaCore* lc = dynamic_cast<p3Lua4RS*>(rs_pqi_service())->getCore();
     lc->setUi(dynamic_cast<Lua4RSWidget*>(qt_page()));
     _notify->registerNotifyClient(lc->notify());
 }

@@ -25,10 +25,11 @@ public:
 
     // Lua4RSInterface interface
 public:
+    LuaCore *getCore();
     virtual uint getTickIntervalInSeconds() const;
     virtual void setTickIntervalInSeconds(const uint &value);
     virtual uint getSecondsToStarUpEvent() const;
-    virtual void setSecondsToStarUpEvent(const uint &value);
+    virtual void setSecondsToStarUpEvent(const uint &value);    
 
 private:
     // tick thread
@@ -37,6 +38,7 @@ private:
     time_t      _lastRun;
     time_t      _initTime;
     bool        _startUpEventTriggered;
+    LuaCore*    _luaCore;
 };
 
 #endif // P3LUA4RS_H

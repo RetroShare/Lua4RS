@@ -1,5 +1,5 @@
-#include "LuaCore.h"
 #include "LuaToRS.h"
+#include "interface/L4RInterface.h"
 
 extern "C" {
 #include "lua.h"
@@ -97,7 +97,7 @@ extern "C" {
             for ( int n=1; n<=argc; ++n )
             {
                 const std::string s(lua_tostring(L, n));
-                emit LuaCore::getInstance()->emitAppendOutput(QString::fromStdString(s));
+                emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromStdString(s));
             }
 
         return 0;
@@ -105,7 +105,7 @@ extern "C" {
 
     int rs_clear(lua_State* /*L*/)
     {
-        emit LuaCore::getInstance()->emitClearOutput();
+        emit L4R::L4RConfig->getCore()->emitClearOutput();
         return 0;
     }
 }

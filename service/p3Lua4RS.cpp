@@ -16,7 +16,8 @@ p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
     RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, CONFIG_TYPE_L4R_PLUGIN, 0, rph),
     _lastRun( time(0) ),
     _initTime( time(0) ),
-    _startUpEventTriggered( false )
+    _startUpEventTriggered( false ),
+    _luaCore(new LuaCore())
 {
     // setup defaults
     _secondsToStarUpEvent = 5;
@@ -117,7 +118,7 @@ int p3Lua4RS::tick()
         e.eventId = L4R_STARTUP;
         e.timeStamp = QDateTime::currentDateTime();
 
-        if(LuaCore::getInstance()->processEvent(e))
+        if(_luaCore->processEvent(e))
             // startup event wasn't blocked by core
             _startUpEventTriggered = true;
     }
@@ -131,12 +132,17 @@ int p3Lua4RS::tick()
         // remove ms
         e.timeStamp.setTime(QTime(e.timeStamp.time().hour(), e.timeStamp.time().minute(), e.timeStamp.time().second()));
 
-        LuaCore::getInstance()->processEvent(e);
+        _luaCore->processEvent(e);
 
         _lastRun = time(0);
     }
 
     return 0;
+}
+
+LuaCore *p3Lua4RS::getCore()
+{
+    return _luaCore;
 }
 
 uint p3Lua4RS::getTickIntervalInSeconds() const

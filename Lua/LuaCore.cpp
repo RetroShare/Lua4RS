@@ -14,8 +14,6 @@
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"
 
-LuaCore* LuaCore::_instance;
-
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
     _mutex      ("Lua4RS"),
@@ -41,6 +39,10 @@ LuaCore::LuaCore() :
 }
 
 LuaCore::~LuaCore()
+{
+}
+
+void LuaCore::shutDown()
 {
     // disbale output - gui might be gone by now!
     _ui->disableOutput();
@@ -68,23 +70,9 @@ LuaCore::~LuaCore()
     delete _luaList;
 }
 
-LuaCore* LuaCore::getInstance()
-{
-    if (_instance == NULL)
-        _instance = new LuaCore();
-
-    return _instance;
-}
-
-void LuaCore::shutDown()
-{
-    delete _instance;
-    _instance = NULL;
-}
-
 bool LuaCore::sane()
 {
-    return _ui != NULL;
+    return _ui != NULL && !_shutDownImminent;
 }
 
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)

@@ -10,6 +10,7 @@
 #include "Lua4RSWidget.h"
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
+#include "interface/L4RInterface.h"
 
 #define ALL_SCRIPTS_COLUMN_ENABLE 4
 
@@ -21,7 +22,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _lua = LuaCore::getInstance();
+    _lua = L4R::L4RConfig->getCore();
 
     setLuaCodes(_lua->codeList());
 
@@ -133,16 +134,14 @@ LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromRow(const int row)
 
     // get container by name
     LuaContainer* container;
-    if(LuaCore::getInstance()->codeList()->itemByName(name->text(), container))
+    if(_lua->codeList()->itemByName(name->text(), container))
     {
         std::cout << " got it!" << std::endl;
         return container;
     }
-    else
-    {
-        std::cout << " failed!" << std::endl;
-        return NULL;
-    }
+    // else
+    std::cout << " failed!" << std::endl;
+    return NULL;
 }
 
 void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
