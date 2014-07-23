@@ -1,3 +1,5 @@
+#include <retroshare/rspeers.h>
+
 #include "LuaCore.h"
 #include "LuaToRS.h"
 
@@ -6,7 +8,6 @@ extern "C" {
 #include "lualib.h"
 #include "lauxlib.h"
 }
-
 
 extern "C" {
 

@@ -13,6 +13,7 @@
 
 #include "LuaToRS.cpp"
 #include "LuaToRSPeers.cpp"
+#include "LuaToRSServerConfig.cpp"
 
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
@@ -139,6 +140,19 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, peers, peers_assignPeerToGroup, "assignPeerToGroup()",  QObject::tr("returns the PGP id for a given SSL/PGP id"));
 
     lua_setglobal(L, "peers");
+
+    // server config
+    namespc = "config.";
+    QTreeWidgetItem *config = new QTreeWidgetItem(tw);
+    config->setText(0, QString::fromStdString(namespc));
+    config->setText(1, QString::fromStdString(namespc));
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, namespc, config, config_getOperatingMode,    "getOperatingMode()",   QObject::tr("returns the current operation mode as int and string"));
+    addFunctionToLuaAndTw(top, namespc, config, config_setOperatingMode,    "setOperatingMode()",   QObject::tr("sets the openration mode (takes int or string)"));
+
+    lua_setglobal(L, "config");
 }
 
 void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint)
