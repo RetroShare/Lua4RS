@@ -93,6 +93,43 @@ extern "C" {
         rsConfig->setOperatingMode(opMode);
         return 0;
     }
+
+    // download / upload speed
+    //virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
+    int config_setMaxDataRates(lua_State* L)
+    {
+        if( getArgCount(L) != 2)
+            return 0;
+
+        luaL_checktype(L, 1, LUA_TNUMBER);
+        luaL_checktype(L, 2, LUA_TNUMBER);
+
+        int kbDown = luaL_checkinteger(L, 1);
+        int kbUp = luaL_checkinteger(L, 2);
+
+        rsConfig->SetMaxDataRates(kbDown, kbUp);
+        return 0;
+    }
+
+    //virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
+    int config_getMaxDataRates(lua_State* L)
+    {
+        int kbDown, kbUp;
+        rsConfig->GetMaxDataRates(kbDown, kbUp);
+        lua_pushinteger(L, kbDown);
+        lua_pushinteger(L, kbUp);
+        return 2;
+    }
+
+    //virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
+    int config_getCurrentDataRates(lua_State* L)
+    {
+        float kbDown, kbUp;
+        rsConfig->GetCurrentDataRates(kbDown, kbUp);
+        lua_pushnumber(L, kbDown);
+        lua_pushnumber(L, kbUp);
+        return 2;
+    }
 }
 
 
@@ -111,10 +148,3 @@ extern "C" {
 
 //virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
 //virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
-
-
-
-//	/* Data Rate Control - to be moved here */
-//virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
-//virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
-//virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;

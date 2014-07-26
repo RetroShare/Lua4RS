@@ -152,6 +152,10 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, config, config_getOperatingMode,    "getOperatingMode()",   QObject::tr("returns the current operation mode as int and string"));
     addFunctionToLuaAndTw(top, namespc, config, config_setOperatingMode,    "setOperatingMode()",   QObject::tr("sets the openration mode (takes int or string)"));
 
+    addFunctionToLuaAndTw(top, namespc, config, config_setMaxDataRates,     "setMaxDataRates()",    QObject::tr("sets max down-/upload bandwidth in kB"));
+    addFunctionToLuaAndTw(top, namespc, config, config_getMaxDataRates,     "getMaxDataRates()",    QObject::tr("gets max down-/upload bandwidth in kB"));
+    addFunctionToLuaAndTw(top, namespc, config, config_getCurrentDataRates, "getCurrentDataRates()",QObject::tr("gets current down-/upload bandwidth in kB"));
+
     lua_setglobal(L, "config");
 }
 
