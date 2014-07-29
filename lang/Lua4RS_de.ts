@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_US">
+<TS version="2.1" language="de_DE">
 <context>
     <name>Lua4RSConfig</name>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="26"/>
         <source>tick options</source>
-        <translation type="unfinished"></translation>
+        <translation>Tickoptionen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="38"/>
@@ -21,13 +21,14 @@
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="57"/>
         <source>tick interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Tickintervall</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="70"/>
         <location filename="../gui/Lua4RSConfig.ui" line="115"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Sekunde</translatorcomment>
+        <translation>s</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="83"/>
@@ -37,7 +38,7 @@
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="102"/>
         <source>startup event</source>
-        <translation type="unfinished"></translation>
+        <translation>Startup Event</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSConfig.h" line="32"/>
@@ -50,49 +51,49 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="133"/>
         <source>Lua4RS</source>
-        <translation type="unfinished"></translation>
+        <translation>Lua4RS</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="254"/>
         <source>All My Scripts</source>
-        <translation type="unfinished"></translation>
+        <translation>Meine Scripte</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="297"/>
         <source>by sehraf &amp; far*call</source>
-        <translation type="unfinished"></translation>
+        <translation>von sehraf &amp; far*call</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="408"/>
         <location filename="../gui/Lua4RSWidget.ui" line="885"/>
         <source>Scriptname</source>
-        <translation type="unfinished"></translation>
+        <translation>Scriptname</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="416"/>
         <location filename="../gui/Lua4RSWidget.ui" line="944"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschreibung</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="424"/>
         <source>Last Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Ausführung</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="432"/>
         <source>Trigger</source>
-        <translation type="unfinished"></translation>
+        <translation>Auslöser</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="440"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="497"/>
@@ -102,7 +103,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="500"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="531"/>
@@ -112,7 +113,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="534"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="565"/>
@@ -122,7 +123,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="568"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="596"/>
@@ -132,12 +133,12 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="599"/>
         <source>Load from disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="676"/>
         <source>Activation</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktivierung</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="695"/>
@@ -147,7 +148,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="698"/>
         <source>Enable script</source>
-        <translation type="unfinished"></translation>
+        <translation>Script aktvieren</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="720"/>
@@ -157,7 +158,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="723"/>
         <source>... from</source>
-        <translation type="unfinished"></translation>
+        <translation>... von</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="744"/>
@@ -173,7 +174,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="788"/>
         <source>to</source>
-        <translation type="unfinished"></translation>
+        <translation>bis</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="812"/>
@@ -193,7 +194,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1044"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Code</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1132"/>
@@ -203,7 +204,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1135"/>
         <source>Run</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausführen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1160"/>
@@ -213,7 +214,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1163"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1204"/>
@@ -228,7 +229,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1277"/>
         <source>RS Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>RS Funktionen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1306"/>
@@ -243,17 +244,17 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1395"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Einfügen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1484"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1529"/>
         <source>By Timer</source>
-        <translation type="unfinished"></translation>
+        <translation>nach Zeit</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1532"/>
@@ -268,32 +269,32 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1585"/>
         <source>Run every</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausführung alle</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1685"/>
         <source>Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekunden</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1690"/>
         <source>Minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Minuten</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1695"/>
         <source>Hours</source>
-        <translation type="unfinished"></translation>
+        <translation>Stunden</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1700"/>
         <source>Days</source>
-        <translation type="unfinished"></translation>
+        <translation>Tage</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1705"/>
         <source>Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Wochen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1722"/>
@@ -308,7 +309,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1774"/>
         <source>Run once at</source>
-        <translation type="unfinished"></translation>
+        <translation>Einmalig um</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1817"/>
@@ -323,17 +324,17 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1884"/>
         <source>Run at Startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausfurung beim Start</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1942"/>
         <source>Run at Shutdown</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausführung beim Beenden</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1983"/>
         <source>By Event</source>
-        <translation type="unfinished"></translation>
+        <translation>nach Event</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="1986"/>
@@ -403,7 +404,7 @@
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="2164"/>
         <source>Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Log</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="40"/>
@@ -414,52 +415,53 @@
         <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
         <source>The following problem(s) was/were found:
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Die folgenden Probleme wurden gefunden:
+</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="314"/>
         <source>script name is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>der Scriptname ist leer</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="320"/>
         <source>runOnce value lies in the past</source>
-        <translation type="unfinished"></translation>
+        <translation>die einmalige Ausführung liegt in der Vergangenheit</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="333"/>
         <source>runOnce value lies outside of constraint</source>
-        <translation type="unfinished"></translation>
+        <translation>die einmalige Ausführung liegt nicht innerhalb des Zeitfensters</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="339"/>
         <source>run every value is below 0</source>
-        <translation type="unfinished"></translation>
+        <translation>der &quot;Ausführung alle&quot;-Wert ist kleiner 0</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="350"/>
         <source>Error(s) while checking</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Überprüfen</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="396"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="397"/>
         <source>an error occured while saving</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Fehler trat beim Speichern auf</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="474"/>
         <source>Continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortfahren?</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.cpp" line="475"/>
         <source>You have a Lua script opened. Save it before closing it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Lua Script ist geöffnet. Soll es vor dem Schließen gespeichert werden?</translation>
     </message>
 </context>
 <context>
@@ -467,12 +469,12 @@
     <message>
         <location filename="../Lua/LuaCore.cpp" line="106"/>
         <source>clears the output</source>
-        <translation type="unfinished"></translation>
+        <translation>Löscht die Ausgabe</translation>
     </message>
     <message>
         <location filename="../Lua/LuaCore.cpp" line="107"/>
         <source>prints to output</source>
-        <translation type="unfinished"></translation>
+        <translation>schreibt etwas in die Ausgabe</translation>
     </message>
     <message>
         <location filename="../Lua/LuaCore.cpp" line="119"/>

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>lang/Lua4RS_en.qm</file>
+        <file>lang/Lua4RS_de.qm</file>
+    </qresource>
+</RCC>

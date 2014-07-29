@@ -74,14 +74,15 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 
     // setup other stuff - pqi service is nor running yet -> don't use interface pointer
     LuaCore* lc = dynamic_cast<p3Lua4RS*>(rs_pqi_service())->getCore();
-    lc->setUi(dynamic_cast<Lua4RSWidget*>(qt_page()));
     _notify->registerNotifyClient(lc->notify());
 }
 
 MainPage* Lua4RSPlugin::qt_page() const
 {
-    if(_mainpage == NULL)
+    if(_mainpage == NULL) {
         _mainpage = new Lua4RSWidget();
+        L4R::L4RConfig->getCore()->setUi(dynamic_cast<Lua4RSWidget*>(_mainpage));
+    }
 
     return _mainpage ;
 }

@@ -63,9 +63,11 @@ FORMS += \
 TARGET = Lua4RS
 
 RESOURCES +=  \
-    Lua4RS_images.qrc
+    Lua4RS_images.qrc \
+    Lua4RS_lang.qrc
 
 TRANSLATIONS += \
-    lang/Lua4RS_en.ts
+    lang/Lua4RS_en.ts \
+    lang/Lua4RS_de.ts
 
 XUP.QT_VERSION = Qt System (4.8.1)
