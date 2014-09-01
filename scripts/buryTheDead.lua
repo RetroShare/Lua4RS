@@ -44,46 +44,31 @@ function checkGroup()
 	return false
 end
 
--- removes all peers from group
-function clearGroup()
-	done = false
+function contains(a, array)
+	for i = 1, #array do
+		if array[i] == a then
+			return true
+		end
+	end
+	return false
+end
 
-	-- get group(s)
+function getGroupId()
 	grpList = peers.getGroupInfoList()
 	for i = 1, #grpList do
 		if grpList[i]["name"] == groupName then
-			done = true
-			-- got it. now remove every single peer
-			for p = 1, #grpList[i]["peerIds"] do
-				rs.print("removing peer " ..  peers.getPeerName(grpList[i]["peerIds"][p]))
-				peers.assignPeerToGroup(grpList[i]["id"], grpList[i]["peerIds"][p], false)				
-			end
+			return grpList[i]["id"]
 		end 
-	end
-
-	if done == false then
-		rs.print("couldn't find group " .. groupName)
 	end
 end
 
--- adds offline peers to 
-function addToGroup()
-	grpInfo = nil
-	-- find group
-	grpList = peers.getGroupInfoList()
-	for i = 1, #grpList do
-		if grpList[i]["name"] == groupName then
-			-- got it. now add peers
-			grpInfo = grpList[i]
-			break;
-		end 
-	end
+-- function to combine everything
+function run()
+	-- create group if needed
+	if checkGroup() ~= true then addGroup() end
 
-	if grpInfo == nil then
-		rs.print("couldn't find group " .. groupName)
-		return
-	end
-
+	grpInfo = peers.getGroupInfo( getGroupId() )
+	
 	-- get infos
 	now = os.time()
 	friends = peers.getFriendList()
@@ -100,24 +85,15 @@ function addToGroup()
 		days = math.ceil(days)
 
 		-- peer offline for too long?
-		if(days >= limit) then
+		if days >= limit then
 			rs.print("burying " .. details["name"] .. " (offline for " .. days .. " days)")
 			peers.assignPeerToGroup(grpInfo["id"], id, true)
+		else
+			if contains(id, grpInfo["peerIds"]) then
+				peers.assignPeerToGroup(grpInfo["id"], id, false)
+			end
 		end
 	end
-end
-
--- function to combine everything
-function run()
-	-- create group if needed
-	if checkGroup() ~= true then addGroup() end
-
-	-- remove all peers from group
-	rs.print("clearing group ... ")
-	clearGroup()
-
-	-- now add offline peers
-	addToGroup()
 end
 
 
