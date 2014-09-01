@@ -12,6 +12,7 @@
 #include "Lua4RSNotify.h"
 
 #include "LuaToRS.cpp"
+#include "LuaToRSDiscovery.cpp"
 #include "LuaToRSPeers.cpp"
 #include "LuaToRSServerConfig.cpp"
 
@@ -97,7 +98,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 
     // rs namespace
     namespc = "rs.";
-    QTreeWidgetItem *rs = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* rs = new QTreeWidgetItem(tw);
     rs->setText(0, QString::fromStdString(namespc));
     rs->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
@@ -110,7 +111,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 
     // peers namespace
     namespc = "peers.";
-    QTreeWidgetItem *peers = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* peers = new QTreeWidgetItem(tw);
     peers->setText(0, QString::fromStdString(namespc));
     peers->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
@@ -143,7 +144,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 
     // server config
     namespc = "config.";
-    QTreeWidgetItem *config = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* config = new QTreeWidgetItem(tw);
     config->setText(0, QString::fromStdString(namespc));
     config->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
@@ -157,6 +158,21 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, config, config_getCurrentDataRates, "getCurrentDataRates()",QObject::tr("gets current down-/upload bandwidth in kB"));
 
     lua_setglobal(L, "config");
+
+    // discovery
+    namespc = "disc.";
+    QTreeWidgetItem* discovery = new QTreeWidgetItem(tw);
+    discovery->setText(0, QString::fromStdString(namespc));
+    discovery->setText(1, QString::fromStdString(namespc));
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscFriends,     "getDiscFriends()",     QObject::tr("gets discovery infos for a SSLID"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscGPGFriends,  "getDiscGPGFriends()",  QObject::tr("gets discovery infos for a PGPID"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscVersions,    "getDiscVersions()",    QObject::tr("gets table of friends with thier rs version"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getWaitingDiscCount,"getWaitingDiscCount()",QObject::tr("gets current pending discovery packets (down und up)"));
+
+    lua_setglobal(L, "disc");
 }
 
 void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint)

@@ -54,7 +54,8 @@ SOURCES +=  \
     Lua/Trigger/LuaTriggerShutdown.cpp \
     Lua/Trigger/LuaTriggerOnce.cpp \
     service/p3Lua4RS.cpp \
-    Lua/LuaToRSServerConfig.cpp
+    Lua/LuaToRSServerConfig.cpp \
+    Lua/LuaToRSDiscovery.cpp
 
 FORMS += \
     gui/Lua4RSWidget.ui \

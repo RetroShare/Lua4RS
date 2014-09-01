@@ -9,7 +9,6 @@ extern "C" {
 #include "lauxlib.h"
 }
 
-
 extern "C" {
     //	/* Operating Mode */
     //virtual uint32_t getOperatingMode() = 0;
