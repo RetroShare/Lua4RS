@@ -25,9 +25,20 @@ rs.clear()
 -- rs.print("waiting discovery down=" .. down .. " up=" .. up)
 
 versions = disc.getDiscVersions()
+
+-- get own revision
+sslid = peers.getOwnId()
+own = getVersionNumber(versions[sslid])
+	
 for k, v in pairs(versions) do
 	rev = getVersionNumber(v)
-	if rev ~= 0 then
+	if rev ~= nil and rev ~= 0  and k ~= sslid then
 		rs.print(getName(k) .. " is using rev: " .. rev)
+		
+		-- check for old revs
+		diff = own - rev
+		if diff > 500 then 
+			rs.print("---> old!")
+		end
 	end
 end
