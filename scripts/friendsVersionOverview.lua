@@ -24,21 +24,11 @@ rs.clear()
 -- down, up = disc.getWaitingDiscCount()
 -- rs.print("waiting discovery down=" .. down .. " up=" .. up)
 
-versions = disc.getDiscVersions()
-
--- get own revision
-sslid = peers.getOwnId()
-own = getVersionNumber(versions[sslid])
-	
-for k, v in pairs(versions) do
-	rev = getVersionNumber(v)
-	if rev ~= nil and rev ~= 0  and k ~= sslid then
-		rs.print(getName(k) .. " is using rev: " .. rev)
-		
-		-- check for old revs
-		diff = own - rev
-		if diff > 500 then 
-			rs.print("---> old!")
-		end
+friends = peers.getFriendList()
+for i = 1 , #friends do
+	f = friends[i]
+	rev = disc.getPeerVersion(f)
+	if rev ~= nil then
+		rs.print(getName(f) .. " is using rev: " .. rev)
 	end
 end
