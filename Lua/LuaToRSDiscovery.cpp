@@ -11,63 +11,56 @@ extern "C" {
 }
 
 extern "C" {
-    //virtual bool	getDiscFriends(std::string id, std::list<std::string>& friends) = 0;
-    int disc_getDiscFriends(lua_State* L) {
-        if( getArgCount(L) != 1)
-            return 0;
-
+    //virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
+    int disc_getDiscFriends(lua_State* L)
+    {
         luaL_checktype(L, 1, LUA_TSTRING);
 
-        const std::string id = luaL_checkstring(L, 1);
-        std::list<std::string> friends;
+        const RsPeerId id = RsPeerId(luaL_checkstring(L, 1));
+        std::list<RsPeerId> friends;
         rsDisc->getDiscFriends(id, friends);
 
         lua_newtable(L);
         int top = lua_gettop(L);
 
-        std::list<std::string>::iterator it = friends.begin();
+        std::list<RsPeerId>::iterator it = friends.begin();
         for (size_t i = 1; it != friends.end(); i++, ++it)
-            pushArray(L, top, i, it->c_str());
+            pushArray(L, top, i, it->toStdString());
 
         return 1;
     }
 
-    //virtual bool	getDiscGPGFriends(std::string id, std::list<std::string>& gpg_friends) = 0;
-    int disc_getDiscGPGFriends(lua_State* L) {
-        if( getArgCount(L) != 1)
-            return 0;
+    //virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
+    int disc_getDiscPgpFriends(lua_State* L)
+    {
 
         luaL_checktype(L, 1, LUA_TSTRING);
 
-        const std::string id = luaL_checkstring(L, 1);
-        std::list<std::string> gpg_friends;
-        rsDisc->getDiscGPGFriends(id, gpg_friends);
+        const RsPgpId id = RsPgpId(luaL_checkstring(L, 1));
+        std::list<RsPgpId> pgp_friends;
+        rsDisc->getDiscPgpFriends(id, pgp_friends);
 
         lua_newtable(L);
         int top = lua_gettop(L);
 
-        std::list<std::string>::iterator it = gpg_friends.begin();
-        for (size_t i = 1; it != gpg_friends.end(); i++, ++it)
-            pushArray(L, top, i, it->c_str());
+        std::list<RsPgpId>::iterator it = pgp_friends.begin();
+        for (size_t i = 1; it != pgp_friends.end(); i++, ++it)
+            pushArray(L, top, i, it->toStdString());
 
         return 1;
     }
 
-    //virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions) = 0;
-    int disc_getDiscVersions(lua_State* L)
+    //virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
+    int disc_getPeerVersion(lua_State* L)
     {
-        std::map<std::string, std::string> versions;
-        if(!rsDisc->getDiscVersions(versions))
+        luaL_checktype(L, 1, LUA_TSTRING);
+
+        const RsPeerId id = RsPeerId(luaL_checkstring(L, 1));
+        std::string version;
+        if(!rsDisc->getPeerVersion(id, version))
             return 0;
 
-        lua_newtable(L);
-        int top = lua_gettop(L);
-
-        std::map<std::string, std::string>::iterator it = versions.begin();
-        for (it = versions.begin(); it != versions.end(); ++it) {
-            std::cout << "[Lua] getDiscVersions: adding " << it->first << " (" << it->second << ")" << std::endl;
-            pushTable(L, top, it->first, it->second);
-        }
+        lua_pushstring(L, version.c_str());
 
         return 1;
     }

@@ -13,7 +13,7 @@
 L4RInterface* L4R::L4RConfig = NULL;
 
 p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
-    RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, CONFIG_TYPE_L4R_PLUGIN, 0, rph),
+    RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, 0, rph),
     _lastRun( time(0) ),
     _initTime( time(0) ),
     _startUpEventTriggered( false ),
@@ -165,4 +165,20 @@ void p3Lua4RS::setSecondsToStarUpEvent(const uint& value)
 {
     _secondsToStarUpEvent = value;
     IndicateConfigChanged();
+}
+
+RsServiceInfo p3Lua4RS::getServiceInfo()
+{
+    const std::string L4R_APP_NAME = "Lua4RS";
+    const uint16_t L4R_APP_MAJOR_VERSION  =       1;
+    const uint16_t L4R_APP_MINOR_VERSION  =       0;
+    const uint16_t L4R_MIN_MAJOR_VERSION  =       1;
+    const uint16_t L4R_MIN_MINOR_VERSION  =       0;
+
+    return RsServiceInfo(RS_SERVICE_TYPE_L4R_PLUGIN,
+                         L4R_APP_NAME,
+                         L4R_APP_MAJOR_VERSION,
+                         L4R_APP_MINOR_VERSION,
+                         L4R_MIN_MAJOR_VERSION,
+                         L4R_MIN_MINOR_VERSION);
 }

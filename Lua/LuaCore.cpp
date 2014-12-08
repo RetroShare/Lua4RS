@@ -4,7 +4,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include <retroshare/rsinit.h>  // needed for config dir
+#include <rsserver/rsaccounts.h>
 
 #include "LuaCore.h"
 #include "LuaList.h"
@@ -30,7 +30,7 @@ LuaCore::LuaCore() :
     L = luaL_newstate();
     luaL_openlibs(L);
 
-    _path = RsInit::RsConfigDirectory() + "/" + rsPeers->getOwnId() + "/" + _folderName + "/";
+    _path = rsAccounts->PathAccountDirectory() + "/" + _folderName + "/";
 
     // load codes
     _luaList->setFilePath(_path);
@@ -117,7 +117,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getOwnId,          "getOwnId()",       QObject::tr("returns own SSL id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getOwnId,          "getOwnId()",       QObject::tr("returns own SSL id (peer id)"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getOnlineList,     "getOnlineList()",  QObject::tr("returns list of online friends (SSL id)"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getFriendList,     "getFriendList()",  QObject::tr("returns list of all friends (SSL id)"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerCount,      "getPeerCount()",   QObject::tr("returns number of all friends and online friends"));
@@ -168,8 +168,8 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     top = lua_gettop(L);
 
     addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscFriends,     "getDiscFriends()",     QObject::tr("gets discovery infos for a SSLID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscGPGFriends,  "getDiscGPGFriends()",  QObject::tr("gets discovery infos for a PGPID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscVersions,    "getDiscVersions()",    QObject::tr("gets table of friends with thier rs version"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscPgpFriends,  "getDiscPgpFriends()",  QObject::tr("gets discovery infos for a PGPID"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getPeerVersion,     "getPeerVersion()",     QObject::tr("gets RS version from a given peer"));
     addFunctionToLuaAndTw(top, namespc, discovery, disc_getWaitingDiscCount,"getWaitingDiscCount()",QObject::tr("gets current pending discovery packets (down und up)"));
 
     lua_setglobal(L, "disc");
