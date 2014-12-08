@@ -29,6 +29,7 @@ for i = 1 , #friends do
 	f = friends[i]
 	rev = disc.getPeerVersion(f)
 	if rev ~= nil then
+		rev = getVersionNumber(rev)
 		rs.print(getName(f) .. " is using rev: " .. rev)
 	end
 end
