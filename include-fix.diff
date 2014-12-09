@@ -1,0 +1,85 @@
+diff --git a/Lua/LuaCore.h b/Lua/LuaCore.h
+index 33b7fb3..2670985 100644
+--- a/Lua/LuaCore.h
++++ b/Lua/LuaCore.h
+@@ -12,9 +12,9 @@
+ #include "LuaEvent.h"
+ 
+ extern "C" {
+-#include "lua.h"
+-#include "lualib.h"
+-#include "lauxlib.h"
++#include <lua.h>
++#include <lualib.h>
++#include <lauxlib.h>
+ }
+ 
+ typedef std::map<std::string, std::string>  parameterMap;
+diff --git a/Lua/LuaToRS.cpp b/Lua/LuaToRS.cpp
+index f3e4a94..90bfedf 100644
+--- a/Lua/LuaToRS.cpp
++++ b/Lua/LuaToRS.cpp
+@@ -2,9 +2,9 @@
+ #include "interface/L4RInterface.h"
+ 
+ extern "C" {
+-#include "lua.h"
+-#include "lualib.h"
+-#include "lauxlib.h"
++#include <lua.h>
++#include <lualib.h>
++#include <lauxlib.h>
+ }
+ 
+ // helper
+diff --git a/Lua/LuaToRSDiscovery.cpp b/Lua/LuaToRSDiscovery.cpp
+index c89f791..a29a555 100644
+--- a/Lua/LuaToRSDiscovery.cpp
++++ b/Lua/LuaToRSDiscovery.cpp
+@@ -5,9 +5,9 @@
+ #include "LuaToRS.h"
+ 
+ extern "C" {
+-#include "lua.h"
+-#include "lualib.h"
+-#include "lauxlib.h"
++#include <lua.h>
++#include <lualib.h>
++#include <lauxlib.h>
+ }
+ 
+ extern "C" {
+diff --git a/Lua/LuaToRSPeers.cpp b/Lua/LuaToRSPeers.cpp
+index 44482a5..834b9f9 100644
+--- a/Lua/LuaToRSPeers.cpp
++++ b/Lua/LuaToRSPeers.cpp
+@@ -4,9 +4,9 @@
+ #include "LuaToRS.h"
+ 
+ extern "C" {
+-#include "lua.h"
+-#include "lualib.h"
+-#include "lauxlib.h"
++#include <lua.h>
++#include <lualib.h>
++#include <lauxlib.h>
+ }
+ 
+ extern "C" {
+diff --git a/Lua/LuaToRSServerConfig.cpp b/Lua/LuaToRSServerConfig.cpp
+index 182a1c4..1447ac8 100644
+--- a/Lua/LuaToRSServerConfig.cpp
++++ b/Lua/LuaToRSServerConfig.cpp
+@@ -4,9 +4,9 @@
+ #include "LuaToRS.h"
+ 
+ extern "C" {
+-#include "lua.h"
+-#include "lualib.h"
+-#include "lauxlib.h"
++#include <lua.h>
++#include <lualib.h>
++#include <lauxlib.h>
+ }
+ 
+ extern "C" {

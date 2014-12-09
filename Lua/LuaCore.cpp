@@ -239,10 +239,6 @@ void LuaCore::runLuaByString(const QString& code)
 
 void LuaCore::runLuaByName(const QString& name)
 {
-    /*
-    parameterMap m;
-    runLuaByNameWithParams(name, m);
-    */
     // get code
     LuaContainer* lc = NULL;
     if(!_luaList->itemByName(name, lc))
