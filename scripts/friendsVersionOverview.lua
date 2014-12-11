@@ -9,10 +9,15 @@ function getVersionNumber( s )
 		e = e + 2 
 	end
 
-	-- revision starts at e  and is usually 4 characters long
+	-- revision starts at e and is usually 4 characters long
 	rev = s:sub(e, e + 3)
 
-	return tonumber(rev)
+	-- check for sane revision
+	if tonumber(rev) == nil then
+		return rev, false
+	else
+		return rev, true
+	end
 end
 
 function getName( id )
@@ -25,11 +30,22 @@ rs.clear()
 -- rs.print("waiting discovery down=" .. down .. " up=" .. up)
 
 friends = peers.getFriendList()
+revList = {}
 for i = 1 , #friends do
 	f = friends[i]
-	rev = disc.getPeerVersion(f)
-	if rev ~= nil then
-		rev = getVersionNumber(rev)
-		rs.print(getName(f) .. " is using rev: " .. rev)
+	revStr = disc.getPeerVersion(f)
+	if revStr ~= nil then
+		revNum, sane = getVersionNumber(revStr)
+		if sane then
+			table.insert(revList, revNum .. " - " .. getName(f))
+		else
+			rs.print(getName(f) .. " is using " .. revStr)
+		end
 	end
+end
+
+rs.print("--------------------")
+table.sort(revList)
+for key, value in pairs(revList) do
+	rs.print(value)
 end
