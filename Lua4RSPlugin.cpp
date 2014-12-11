@@ -14,6 +14,13 @@
 
 #define LUA_ICON_LINK ":/images/lua_logo.png"
 
+#if LUA_VERSION_NUM < 502
+    #error "###############################################"
+    #error "# You need at least Lua 5.2 for this plugin   #"
+    #error "# See contrib/get_lua5.2.3.sh                 #"
+    #error "###############################################"
+#endif
+
 extern "C" {
 #ifdef WIN32
     __declspec(dllexport)
