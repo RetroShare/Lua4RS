@@ -76,7 +76,7 @@ for i = 1 , #friends do
 end
 
 rs.print("--------------------")
-rs.print(numFriends .. " peers are connected (that send a revision string)")
+rs.print(numFriends .. " discovery entries were found")
 for key, value in pairsByKeys(revListNum) do
 	rs.print(key .. ": " .. value .. " time(s)")
 end
