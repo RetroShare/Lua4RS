@@ -14,7 +14,16 @@ function getVersionNumber( s )
 
 	-- check for sane revision
 	if tonumber(rev) == nil then
-		return rev, false
+		-- the revision string might be '0.6.0.xxxx'
+		e = e + 6
+		rev = s:sub(e, e + 3)
+
+		-- check for sane revision
+		if tonumber(rev) == nil then
+			return rev, false
+		else
+			return rev, true
+		end
 	else
 		return rev, true
 	end
@@ -24,6 +33,20 @@ function getName( id )
 	return peers.getPeerName( id )
 end
 
+function pairsByKeys (t, f)
+	local a = {}
+	for n in pairs(t) do table.insert(a, n) end
+	table.sort(a, f)
+	local i = 0      -- iterator variable
+	local iter = function ()   -- iterator function
+		i = i + 1
+		if a[i] == nil then return nil
+		else return a[i], t[a[i]]
+		end
+	end
+   return iter
+end
+
 rs.clear()
 
 -- down, up = disc.getWaitingDiscCount()
@@ -31,6 +54,7 @@ rs.clear()
 
 friends = peers.getFriendList()
 revList = {}
+revListNum = {}
 for i = 1 , #friends do
 	f = friends[i]
 	revStr = disc.getPeerVersion(f)
@@ -38,10 +62,20 @@ for i = 1 , #friends do
 		revNum, sane = getVersionNumber(revStr)
 		if sane then
 			table.insert(revList, revNum .. " - " .. getName(f))
+			if revListNum[revNum] ~= nil then
+				revListNum[revNum] = revListNum[revNum] + 1
+			else
+				revListNum[revNum] = 1
+			end
 		else
 			rs.print(getName(f) .. " is using " .. revStr)
 		end
 	end
+end
+
+rs.print("--------------------")
+for key, value in pairsByKeys(revListNum) do
+	rs.print(key .. ": " .. value .. " times")
 end
 
 rs.print("--------------------")
