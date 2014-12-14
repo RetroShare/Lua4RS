@@ -55,10 +55,12 @@ rs.clear()
 friends = peers.getFriendList()
 revList = {}
 revListNum = {}
+numFriends = 0
 for i = 1 , #friends do
 	f = friends[i]
 	revStr = disc.getPeerVersion(f)
 	if revStr ~= nil then
+		numFriends = numFriends + 1
 		revNum, sane = getVersionNumber(revStr)
 		if sane then
 			table.insert(revList, revNum .. " - " .. getName(f))
@@ -74,8 +76,9 @@ for i = 1 , #friends do
 end
 
 rs.print("--------------------")
+rs.print(numFriends .. " peers are connected (that send a revsion string)")
 for key, value in pairsByKeys(revListNum) do
-	rs.print(key .. ": " .. value .. " times")
+	rs.print(key .. ": " .. value .. " time(s)")
 end
 
 rs.print("--------------------")
