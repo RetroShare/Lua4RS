@@ -2,6 +2,11 @@
 
 CONFIG += qt resources uic qrc
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT += widgets
+}
+
 HEADERS -= upnp/upnputil.h
 SOURCES -= upnp/upnputil.c
 
