@@ -96,8 +96,8 @@ extern "C" {
         if(argc > 0)
             for ( int n=1; n<=argc; ++n )
             {
-                const std::string s(lua_tostring(L, n));
-                emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromStdString(s));
+                const std::string s = lua_tostring(L, n);
+                emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromUtf8(s.c_str()));
             }
 
         return 0;
