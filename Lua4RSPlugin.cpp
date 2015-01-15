@@ -2,7 +2,7 @@
 #include <QTranslator>
 
 #include <retroshare/rsplugin.h>
-#include <util/rsversion.h>
+#include <retroshare/rsversion.h>
 
 #include "gui/Lua4RSConfig.h"
 #include "Lua4RSNotify.h"
@@ -39,7 +39,7 @@ extern "C" {
 #ifdef WIN32
     __declspec(dllexport)
 #endif
-    uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+    uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER;
 
     // This symbol contains the svn revision number grabbed from the executable.
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -66,11 +66,12 @@ void Lua4RSPlugin::stop()
     L4R::L4RConfig->getCore()->shutDown();
 }
 
-void Lua4RSPlugin::getPluginVersion(int& major, int& minor, int& svn_rev) const
+void Lua4RSPlugin::getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const
 {
-    major = 5;
-    minor = 5;
-    svn_rev = SVN_REVISION_NUMBER;
+    major = RS_MAJOR_VERSION;
+    minor = RS_MINOR_VERSION;
+    build = RS_BUILD_NUMBER;
+    svn_rev = RS_REVISION_NUMBER;
 }
 
 void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)

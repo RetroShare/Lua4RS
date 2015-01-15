@@ -19,7 +19,7 @@ public:
     virtual     RsPQIService*   rs_pqi_service() const;
     uint16_t    rs_service_id() const;
 
-    virtual void    getPluginVersion(int& major,int& minor,int& svn_rev) const;
+    virtual void    getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const;
     virtual void    setPlugInHandler(RsPluginHandler *pgHandler);
     virtual void    stop();
 
