@@ -50,7 +50,7 @@ private:
     void allScriptsAddRow(LuaContainer* container);
 
     // init the gui at startup and after a container switch
-    void cleanUi();
+    void clearUi();
 
     // this function will fill every form with it's corresponding values
     void luaContainerToUi(LuaContainer* container);

@@ -60,6 +60,9 @@ public:
     void addRunShutdownTrigger();
     bool getRunShutdownChecked();
 
+    // event trigger
+    void addEventTrigger(uint eventId);
+    bool getEventTriggerChecked(uint eventId);
 
 private:
     LuaCode* _code;

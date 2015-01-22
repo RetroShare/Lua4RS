@@ -18,6 +18,8 @@ public:
 
     QString classname();
 
+    uint getEventId();
+
 protected:
     uint _eventId;
 };

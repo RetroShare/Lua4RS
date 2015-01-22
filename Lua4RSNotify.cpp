@@ -1,4 +1,5 @@
 #include <retroshare/rsstatus.h>
+#include <retroshare/rsmsgs.h>
 
 #include "Lua4RSNotify.h"
 #include "Lua/LuaCore.h"
@@ -27,6 +28,17 @@ void Lua4RSNotify::notifyListChange                 (int list, int type)
     e.timeStamp = QDateTime::currentDateTime();
     e.dataParm->setValue("intlist", list);
     e.dataParm->setValue("inttype", type);
+
+    L4R::L4RConfig->getCore()->processEvent(e);
+}
+
+void Lua4RSNotify::notifyChatMessage(const ChatMessage &msg)
+{
+    LuaEvent e;
+    e.eventId = L4R_LOBBY_MESSAGERECEIVED;
+    e.timeStamp = QDateTime::currentDateTime();
+    e.dataParm->setValue("strchatid", QString::fromStdString(msg.chat_id.toStdString()));
+    e.dataParm->setValue("strmsg", QString::fromStdString(msg.msg));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }

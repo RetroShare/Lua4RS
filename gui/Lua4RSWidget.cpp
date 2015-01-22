@@ -26,7 +26,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
 
     setLuaCodes(_lua->codeList());
 
-    cleanUi();
+    clearUi();
 
     luaContainerToUi(_activeContainer);
 
@@ -173,7 +173,7 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
 }
 
 // init the gui at startup and after a container switch before the ini is loaded
-void Lua4RSWidget::cleanUi()
+void Lua4RSWidget::clearUi()
 {
     ui->cbx_enable->setChecked(false);
     ui->cbx_timeconstraint->setChecked(false);
@@ -196,15 +196,18 @@ void Lua4RSWidget::cleanUi()
     ui->dd_everyunits->setCurrentIndex(1);
 
     ui->dte_runonce->setDateTime(QDateTime::currentDateTime());
+
+    ui->cb_chatmessage->setChecked(false);
 }
 
 void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
 {
+    // clear ui and set needed fields/boxes
+    clearUi();
+
     // for settings things to default / resetting
     if(container == NULL)
     {
-        cleanUi();
-
         ///TODO there might be better ways that this - good enough for the moment
         ui->pte_luacode->setEnabled(false);
     } else
@@ -243,6 +246,11 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         if(container->getRunStartupChecked())
             ui->cb_startup->setChecked(true);
 
+        // event trigger
+        if(container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED))
+            ui->cb_chatmessage->setChecked(true);
+
+
         ///TODO rest
 
         ui->pte_luacode->setEnabled(true);
@@ -272,8 +280,10 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
         container->setConstraintFromTo(from, to);
     }
 
-    // add trigger
+    // trigger
     container->removeAllTrigger();
+
+    // add trigger
     if(ui->cb_every->isChecked())
         container->addRunEveryTrigger((uint)ui->spb_everycount->value(), (uint)ui->dd_everyunits->currentIndex());
     if(ui->cb_once->isChecked())
@@ -282,6 +292,10 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
         container->addRunShutdownTrigger();
     if(ui->cb_startup->isChecked())
         container->addRunStratupTrigger();
+
+    // add event trigger (need to make this nice someday)
+    if(ui->cb_chatmessage->isChecked())
+        container->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
 
     ///TODO rest
 
@@ -294,7 +308,7 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     _activeContainer = container;
 
     // update UI
-    cleanUi();
+    clearUi();
     luaContainerToUi(_activeContainer);
 
     if(_activeContainer != NULL)

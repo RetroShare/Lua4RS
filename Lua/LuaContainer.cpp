@@ -158,6 +158,26 @@ bool    LuaContainer::getRunShutdownChecked()
     return false;
 }
 
+void LuaContainer::addEventTrigger(uint eventId)
+{
+    std::cout << "[Lua] LuaContainer::addEventTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
+    _config->addTrigger(new LuaTriggerEvent(eventId));
+}
+
+bool LuaContainer::getEventTriggerChecked(uint eventId)
+{
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+        if((*it)->classname() == "LuaTriggerEvent")
+        {
+            LuaTriggerEvent *e = dynamic_cast<LuaTriggerEvent*>(*it);
+            if(e != NULL && e->getEventId() == eventId)
+                return true;
+        }
+    }
+    return false;
+}
+
 
 
 

@@ -51,3 +51,8 @@ QString LuaTriggerEvent::classname()
 {
     return _classname;
 }
+
+uint LuaTriggerEvent::getEventId()
+{
+    return _eventId;
+}

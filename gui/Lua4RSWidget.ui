@@ -1987,7 +1987,7 @@
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_15">
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_16" stretch="0,0,0,0">
+              <layout class="QVBoxLayout" name="verticalLayout_16" stretch="0,0,0,0,0">
                <property name="spacing">
                 <number>1</number>
                </property>
@@ -2139,6 +2139,13 @@
                 <widget class="Line" name="line_6">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="cb_chatmessage">
+                 <property name="text">
+                  <string>Chat Message</string>
                  </property>
                 </widget>
                </item>
