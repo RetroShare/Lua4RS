@@ -86,10 +86,13 @@ function run()
 
 		-- peer offline for too long?
 		if days >= limit then
-			rs.print("burying " .. details["name"] .. " (offline for " .. days .. " days)")
-			peers.assignPeerToGroup(grpInfo["id"], id, true)
+			if contains(id, grpInfo["peerIds"]) then
+				rs.print("burying " .. details["name"] .. " (offline for " .. days .. " days)")
+				peers.assignPeerToGroup(grpInfo["id"], id, true)
+			end
 		else
 			if contains(id, grpInfo["peerIds"]) then
+				rs.print("unearthing " .. details["name"])
 				peers.assignPeerToGroup(grpInfo["id"], id, false)
 			end
 		end

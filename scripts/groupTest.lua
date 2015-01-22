@@ -18,7 +18,7 @@ for i = 1, #grpList do
 		-- print their names
 		for j = 1, #peerIds do
 			id = peerIds[j]
-			rs.print(" - " .. peers.getGPGName(id) .. " (ID: " .. id .. ")")
+			rs.print(" - " .. peers.getPeerName(id) .. " (ID: " .. id .. ")")
 		end
 	end
 end
