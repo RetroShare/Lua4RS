@@ -37,6 +37,7 @@ void Lua4RSNotify::notifyChatMessage(const ChatMessage &msg)
     LuaEvent e;
     e.eventId = L4R_LOBBY_MESSAGERECEIVED;
     e.timeStamp = QDateTime::currentDateTime();
+    // todo strip html
     e.dataParm->setValue("strchatid", QString::fromStdString(msg.chat_id.toStdString()));
     e.dataParm->setValue("strmsg", QString::fromStdString(msg.msg));
 
@@ -84,7 +85,7 @@ void Lua4RSNotify::notifyDiskFull                   (uint32_t location, uint32_t
     LuaEvent e;
     e.eventId = L4R_INFO_DISK_FULL;
     e.timeStamp = QDateTime::currentDateTime();
-    e.dataParm->setValue("u23location", location);
+    e.dataParm->setValue("u32location", location);
     e.dataParm->setValue("u32sizeLimit", size_limit);
 
     L4R::L4RConfig->getCore()->processEvent(e);

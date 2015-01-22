@@ -60,7 +60,8 @@ SOURCES +=  \
     Lua/Trigger/LuaTriggerOnce.cpp \
     service/p3Lua4RS.cpp \
     Lua/LuaToRSServerConfig.cpp \
-    Lua/LuaToRSDiscovery.cpp
+    Lua/LuaToRSDiscovery.cpp \
+    Lua/LuaToRSChat.cpp
 
 FORMS += \
     gui/Lua4RSWidget.ui \

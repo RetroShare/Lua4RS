@@ -75,6 +75,7 @@ private:
     Lua4RSNotify* _notify;
     Lua4RSWidget* _ui;
 
+    bool _processingEvent;
     // disable trigger on shutdown
     bool _shutDownImminent;
 

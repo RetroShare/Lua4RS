@@ -12,6 +12,7 @@
 #include "Lua4RSNotify.h"
 
 #include "LuaToRS.cpp"
+#include "LuaToRSChat.cpp"
 #include "LuaToRSDiscovery.cpp"
 #include "LuaToRSPeers.cpp"
 #include "LuaToRSServerConfig.cpp"
@@ -21,6 +22,7 @@ LuaCore::LuaCore() :
     _mutex      ("Lua4RS"),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
+    _processingEvent(false),
     _shutDownImminent (false)
 {
     /*
@@ -173,6 +175,18 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, discovery, disc_getWaitingDiscCount,"getWaitingDiscCount()",QObject::tr("gets current pending discovery packets (down und up)"));
 
     lua_setglobal(L, "disc");
+
+    // chat
+    namespc = "chat.";
+    QTreeWidgetItem* chat = new QTreeWidgetItem(tw);
+    chat->setText(0, QString::fromStdString(namespc));
+    chat->setText(1, QString::fromStdString(namespc));
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, namespc, chat, chat_sendChat, "sendChat()", QObject::tr("send a chat message (ChatId, msg)"));
+
+    lua_setglobal(L, "chat");
 }
 
 void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint)
@@ -206,6 +220,10 @@ bool LuaCore::processEvent(const LuaEvent& e)
     if(_shutDownImminent && e.eventId != L4R_SHUTDOWN)
         return false;
 
+    // exit if we are already executing code for a previous event
+    if(_processingEvent)
+        return false;
+    _processingEvent = true;
     // do some magic here
     std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
     for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
@@ -213,6 +231,7 @@ bool LuaCore::processEvent(const LuaEvent& e)
         if((*it)->isTriggered(e))
             runLuaByEvent((*it), e);
     }
+    _processingEvent = false;
     return true;
 }
 
@@ -250,10 +269,51 @@ void LuaCore::runLuaByName(const QString& name)
     runLuaByString(lc->getCode());
 }
 
-void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& /*event*/)
+void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
 {
-    // do some magic with parameters from event
+//    std::cout << "[Lua] runByEvent " << std::endl;
 
+    {
+        RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
+
+        // clear old parameter
+        lua_pushnil(L);
+        lua_setglobal(L, "args");
+
+        // set parameter
+        lua_newtable(L);
+        int top = lua_gettop(L);
+
+        QStringList keys = event.dataParm->allKeys();
+        for(QStringList::ConstIterator it = keys.begin(); it != keys.end(); it++)
+        {
+            QString key = *it;
+            QString type = key.mid(0, 3);
+//            std::cout << "[Lua] runByEvent adding type " << type.toStdString() << " key is " << key.toStdString() << std::endl;
+            if(!(type == "str" || type == "int"  || type == "u32" || type != "u64"))
+                continue;
+
+            QString name = key.mid(3);
+            QVariant value = event.dataParm->value(key);
+
+//            std::cout << "[Lua] runByEvent adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
+
+            lua_pushfstring(L, name.toStdString().c_str());
+            if(type == "str")
+                lua_pushfstring(L, value.toString().toStdString().c_str());
+            else if(type == "int")
+                lua_pushinteger(L, value.toInt());
+            else if(type == "u32")
+                lua_pushunsigned(L, value.toUInt());
+            else if(type == "u64")
+                lua_pushunsigned(L, value.toULongLong());
+
+            lua_settable(L, top);
+        }
+
+        lua_setglobal(L, "args");
+
+    }
     emit appendLog(QObject::tr("triggered script: ") + container->getName());
     runLuaByString(container->getCode());
 }
