@@ -220,7 +220,7 @@ bool LuaCore::processEvent(const LuaEvent& e)
     if(_shutDownImminent && e.eventId != L4R_SHUTDOWN)
         return false;
 
-    // exit if we are already executing code for a previous event
+    // exit when we are already executing code for a previous event
     if(_processingEvent)
         return false;
     _processingEvent = true;
@@ -271,14 +271,11 @@ void LuaCore::runLuaByName(const QString& name)
 
 void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
 {
-//    std::cout << "[Lua] runByEvent " << std::endl;
-
     {
         RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
 
         // clear old parameter
-        lua_pushnil(L);
-        lua_setglobal(L, "args");
+        luaL_dostring(L, "args = nil");
 
         // set parameter
         lua_newtable(L);

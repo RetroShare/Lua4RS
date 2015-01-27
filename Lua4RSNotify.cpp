@@ -10,6 +10,50 @@ Lua4RSNotify::Lua4RSNotify()
 {
 }
 
+///TODO find a better place
+static void replaceAll(std::string& str, const std::string& from, const std::string& to)
+{
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
+
+static std::string& stripHTMLTags(std::string& s)
+{
+    // Remove all special HTML characters
+    bool done = false;
+    while(!done)
+    {
+        // Look for start of tag:
+        size_t leftPos = s.find('<');
+        if(leftPos != std::string::npos)
+        {
+            // See if tag close is in this line:
+            size_t rightPos = s.find('>', leftPos);
+            if(rightPos == std::string::npos)
+            {
+                done = true;
+                s.erase(leftPos);
+            }
+            else
+                s.erase(leftPos, rightPos - leftPos + 1);
+        }
+        else
+            done = true;
+    }
+
+    replaceAll(s, "&lt;", "<");
+    replaceAll(s, "&gt;", ">");
+    replaceAll(s, "&amp;", "&");
+    replaceAll(s, "&nbsp;", " ");
+
+    return s;
+}
+
 void Lua4RSNotify::notifyListPreChange              (int list, int type)
 {
     LuaEvent e;
@@ -37,9 +81,27 @@ void Lua4RSNotify::notifyChatMessage(const ChatMessage &msg)
     LuaEvent e;
     e.eventId = L4R_LOBBY_MESSAGERECEIVED;
     e.timeStamp = QDateTime::currentDateTime();
-    // todo strip html
-    e.dataParm->setValue("strchatid", QString::fromStdString(msg.chat_id.toStdString()));
-    e.dataParm->setValue("strmsg", QString::fromStdString(msg.msg));
+    e.dataParm->setValue("strchatid", QString::fromUtf8(msg.chat_id.toStdString().c_str()));
+    std::string msg2 = msg.msg;
+    msg2 = stripHTMLTags(msg2);
+
+    // PANIC: unprotected error in call to Lua API (invalid option '%1' to 'lua_pushfstring')
+    ///TODO proper fix
+    if(     msg2.find('%0') != std::string::npos ||
+            msg2.find('%1') != std::string::npos ||
+            msg2.find('%2') != std::string::npos ||
+            msg2.find('%3') != std::string::npos ||
+            msg2.find('%4') != std::string::npos ||
+            msg2.find('%5') != std::string::npos ||
+            msg2.find('%6') != std::string::npos ||
+            msg2.find('%7') != std::string::npos ||
+            msg2.find('%8') != std::string::npos ||
+            msg2.find('%9') != std::string::npos) {
+        std::cerr << "[Lua] Lua4RSNotify::notifyChatMessage : found harmful string aborting" << std::endl;
+        return;
+    }
+    e.dataParm->setValue("strmsg", QString::fromUtf8(msg2.c_str()));
+    e.dataParm->setValue("strnick", QString::fromUtf8(msg.lobby_peer_nickname.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
@@ -52,8 +114,8 @@ void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t
     e.timeStamp = QDateTime::currentDateTime();
     e.dataParm->setValue("u64lobbyId", v);
     e.dataParm->setValue("u32eventType", event_type);
-    e.dataParm->setValue("strnickname", QString::fromStdString(nickname));
-    e.dataParm->setValue("stranyString", QString::fromStdString(any_string));
+    e.dataParm->setValue("strnickname", QString::fromUtf8(nickname.c_str()));
+    e.dataParm->setValue("stranyString", QString::fromUtf8(any_string.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
@@ -63,8 +125,8 @@ void Lua4RSNotify::notifyCustomState                (const std::string& peer_id,
     LuaEvent e;
     e.eventId = L4R_FRIEND_CUSTOM_STATE;
     e.timeStamp = QDateTime::currentDateTime();
-    e.dataParm->setValue("strpeerId", QString::fromStdString(peer_id));
-    e.dataParm->setValue("strstatusString", QString::fromStdString(status_string));
+    e.dataParm->setValue("strpeerId", QString::fromUtf8(peer_id.c_str()));
+    e.dataParm->setValue("strstatusString", QString::fromUtf8(status_string.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
@@ -75,7 +137,7 @@ void Lua4RSNotify::notifyHashingInfo                (uint32_t type, const std::s
     e.eventId = L4R_FILE_HASHING_DONE;
     e.timeStamp = QDateTime::currentDateTime();
     e.dataParm->setValue("u32type", type);
-    e.dataParm->setValue("strfileInfo", QString::fromStdString(fileinfo));
+    e.dataParm->setValue("strfileInfo", QString::fromUtf8(fileinfo.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
@@ -103,7 +165,7 @@ void Lua4RSNotify::notifyPeerStatusChanged          (const std::string& peer_id,
         e.eventId = L4R_FRIEND_STATUS_CHANGED;
 
     e.timeStamp = QDateTime::currentDateTime();
-    e.dataParm->setValue("strpeerId", QString::fromStdString(peer_id));
+    e.dataParm->setValue("strpeerId", QString::fromUtf8(peer_id.c_str()));
     e.dataParm->setValue("u32status", status);
 
     L4R::L4RConfig->getCore()->processEvent(e);
@@ -132,7 +194,7 @@ void Lua4RSNotify::notifyDownloadComplete           (const std::string& fileHash
     LuaEvent e;
     e.eventId = L4R_FILE_DOWNLOADFINISHED;
     e.timeStamp = QDateTime::currentDateTime();
-    e.dataParm->setValue("strfileHash", QString::fromStdString(fileHash));
+    e.dataParm->setValue("strfileHash", QString::fromUtf8(fileHash.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
