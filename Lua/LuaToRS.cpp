@@ -108,4 +108,28 @@ extern "C" {
         emit L4R::L4RConfig->getCore()->emitClearOutput();
         return 0;
     }
+
+    // temporary placed here
+#include <retroshare/rsfiles.h>
+
+    // virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
+    int file_fileRequest(lua_State *L)
+    {
+        int argc = getArgCount(L);
+        luaL_checktype(L, 1, LUA_TSTRING);
+        luaL_checktype(L, 2, LUA_TSTRING);
+        if(argc >= 3)
+            luaL_checktype(L, 3, LUA_TNUMBER);
+
+        const std::string fileName = luaL_checkstring(L, 1);
+        const RsFileHash fileHash = RsFileHash(luaL_checkstring(L, 2));
+        const u_int64_t fileSize = argc >= 3 ? luaL_checkinteger(L, 3) : 0;
+
+        std::list<RsPeerId> srcIds;
+        const bool ok = rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
+
+        lua_pushboolean(L, (int)ok);
+        return 1;
+    }
+
 }

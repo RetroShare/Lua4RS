@@ -17,6 +17,8 @@
 #include "LuaToRSPeers.cpp"
 #include "LuaToRSServerConfig.cpp"
 
+#include "helper.h"
+
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
     _mutex      ("Lua4RS"),
@@ -187,6 +189,18 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, chat, chat_sendChat, "sendChat()", QObject::tr("send a chat message (ChatId, msg)"));
 
     lua_setglobal(L, "chat");
+
+    // files
+    namespc = "files.";
+    QTreeWidgetItem* files = new QTreeWidgetItem(tw);
+    files->setText(0, QString::fromStdString(namespc));
+    files->setText(1, QString::fromStdString(namespc));
+    lua_newtable(L);
+    top = lua_gettop(L);
+
+    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest, "fileRequest()", QObject::tr("request a download (params: *name*, *hash* (, *size)"));
+
+    lua_setglobal(L, "files");
 }
 
 void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint)
@@ -286,18 +300,23 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
         {
             QString key = *it;
             QString type = key.mid(0, 3);
-//            std::cout << "[Lua] runByEvent adding type " << type.toStdString() << " key is " << key.toStdString() << std::endl;
+            //std::cout << "[Lua] runByEvent adding type " << type.toStdString() << " key is " << key.toStdString() << std::endl;
             if(!(type == "str" || type == "int"  || type == "u32" || type != "u64"))
                 continue;
 
             QString name = key.mid(3);
             QVariant value = event.dataParm->value(key);
 
-//            std::cout << "[Lua] runByEvent adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
+            //std::cout << "[Lua] runByEvent adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
 
             lua_pushfstring(L, name.toStdString().c_str());
-            if(type == "str")
-                lua_pushfstring(L, value.toString().toStdString().c_str());
+            if(type == "str") {
+                // PANIC: unprotected error in call to Lua API (invalid option '%1' to 'lua_pushfstring')
+                ///TODO proper fix
+                std::string s = value.toString().toStdString();
+                replaceAll(s, "%", "");
+                lua_pushfstring(L, s.c_str());
+            }
             else if(type == "int")
                 lua_pushinteger(L, value.toInt());
             else if(type == "u32")

@@ -38,7 +38,8 @@ HEADERS +=  \
     Lua/Trigger/LuaTriggerShutdown.h \
     Lua/Trigger/LuaTriggerOnce.h \
     service/p3Lua4RS.h \
-    interface/L4RInterface.h
+    interface/L4RInterface.h \
+    helper.h
 
 SOURCES +=  \
     Lua4RSPlugin.cpp \
