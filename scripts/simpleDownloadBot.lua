@@ -1,4 +1,3 @@
-rs.clear()
 -- peer IDs (SSL)
 allowedIds = {}
 
@@ -42,9 +41,6 @@ if inTable(allowedIds, chatid) then
 			chat.sendChat(chatid, "usage: !download *file name* *file hash* *file size*")
 		else
 			chat.sendChat(chatid, "processing request ...")
-			rs.print(name)
-			rs.print(hash)
-			rs.print(size)
 			ok = files.fileRequest(name, hash, tonumber(size))
 			if ok then
 				chat.sendChat(chatid, "... success!")
