@@ -198,7 +198,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest, "fileRequest()", QObject::tr("request a download (params: *name*, *hash* (, *size)"));
+    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest, "fileRequest()", QObject::tr("request a download (params: *name*, *hash*, *size*"));
 
     lua_setglobal(L, "files");
 }

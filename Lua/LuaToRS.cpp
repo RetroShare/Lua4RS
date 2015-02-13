@@ -118,12 +118,11 @@ extern "C" {
         int argc = getArgCount(L);
         luaL_checktype(L, 1, LUA_TSTRING);
         luaL_checktype(L, 2, LUA_TSTRING);
-        if(argc >= 3)
-            luaL_checktype(L, 3, LUA_TNUMBER);
+        luaL_checktype(L, 3, LUA_TNUMBER);
 
         const std::string fileName = luaL_checkstring(L, 1);
         const RsFileHash fileHash = RsFileHash(luaL_checkstring(L, 2));
-        const u_int64_t fileSize = argc >= 3 ? luaL_checkinteger(L, 3) : 0;
+        const u_int64_t fileSize = luaL_checknumber(L, 3);
 
         std::list<RsPeerId> srcIds;
         const bool ok = rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
