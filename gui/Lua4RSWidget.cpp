@@ -217,15 +217,13 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         ui->le_scriptdesc->setText(container->getDesc());
         ui->pte_luacode->setPlainText(container->getCode());
 
-
         ui->cbx_enable->setChecked(container->getEnabled());
         ui->cbx_timeconstraint->setChecked(container->getConstraintEnabled());
-        {
-            QTime from, to;
-            container->getConstraintFromTo(from, to);
-            ui->tied_timefrom->setTime(from);
-            ui->tied_timeto->setTime(to);
-        }
+
+        QTime from, to;
+        container->getConstraintFromTo(from, to);
+        ui->tied_timefrom->setTime(from);
+        ui->tied_timeto->setTime(to);
 
         // trigger
         uint amount, unit;
@@ -273,12 +271,11 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     // enable, constraint
     container->setEnabled(ui->cbx_enable->isChecked());
     container->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
-    {
-        QTime from, to;
-        from = ui->tied_timefrom->time();
-        to = ui->tied_timeto->time();
-        container->setConstraintFromTo(from, to);
-    }
+
+    QTime from, to;
+    from = ui->tied_timefrom->time();
+    to = ui->tied_timeto->time();
+    container->setConstraintFromTo(from, to);
 
     // trigger
     container->removeAllTrigger();
@@ -308,7 +305,7 @@ void Lua4RSWidget::switchContainer(LuaContainer* container)
     _activeContainer = container;
 
     // update UI
-    clearUi();
+    // clearUi(); // no need for this since luaContainerToUi() calls clearUi()
     luaContainerToUi(_activeContainer);
 
     if(_activeContainer != NULL)
