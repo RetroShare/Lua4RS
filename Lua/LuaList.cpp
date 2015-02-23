@@ -299,7 +299,7 @@ bool LuaList::save(LuaContainer* container)
     QString luaFileName, settingsFileName;
     getFileNames(container->getName(), luaFileName, settingsFileName);
 
-    // safe code
+    // save code
     {
         std::ofstream file;
         file.open(luaFileName.toLocal8Bit().data(), std::ios::trunc);

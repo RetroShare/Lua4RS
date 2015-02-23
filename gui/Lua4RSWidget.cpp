@@ -18,7 +18,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
     MainPage(parent),
     ui(new Ui::Lua4RSWidget),
     _activeContainer(NULL),
-    _disableOutput( false )
+    _disableOutput(false)
 {
     ui->setupUi(this);
 
@@ -102,7 +102,7 @@ void Lua4RSWidget::appendOutput(const QString& s)
 
 void Lua4RSWidget::appendLog(const std::string& s)
 {
-    appendLog(QString::fromStdString(s));
+    appendLog(QString::fromUtf8(s.c_str()));
 }
 
 void Lua4RSWidget::appendLog(const QString& s)
@@ -686,7 +686,6 @@ void Lua4RSWidget::on_rb_runonevent_toggled(bool /*checked*/)
 
 void Lua4RSWidget::on_dd_events_currentIndexChanged(int /*index*/)
 {
-
 }
 
 
