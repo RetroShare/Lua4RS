@@ -122,7 +122,7 @@ extern "C" {
 
         const std::string fileName = luaL_checkstring(L, 1);
         const RsFileHash fileHash = RsFileHash(luaL_checkstring(L, 2));
-        const u_int64_t fileSize = luaL_checknumber(L, 3);
+        const uint64_t fileSize = luaL_checknumber(L, 3);
 
         std::list<RsPeerId> srcIds;
         const bool ok = rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
