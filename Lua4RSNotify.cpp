@@ -1,3 +1,4 @@
+#include <retroshare/rsidentity.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsmsgs.h>
 
@@ -43,7 +44,11 @@ void Lua4RSNotify::notifyChatMessage(const ChatMessage &msg)
     std::string msg2 = msg.msg;
     msg2 = stripHTMLTags(msg2);
     e.dataParm->setValue("strmsg", QString::fromUtf8(msg2.c_str()));
-    e.dataParm->setValue("strnick", QString::fromUtf8(msg.lobby_peer_nickname.c_str()));
+    RsGxsId gxsid = msg.lobby_peer_gxs_id;
+    RsIdentityDetails gxsIdDetails;
+    rsIdentity->getIdDetails(gxsid, gxsIdDetails);
+    e.dataParm->setValue("strgxsid", QString::fromUtf8(gxsid.toStdString().c_str()));
+    e.dataParm->setValue("strnick", QString::fromUtf8(gxsIdDetails.mNickname.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
