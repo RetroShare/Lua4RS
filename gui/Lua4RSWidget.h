@@ -72,8 +72,8 @@ private slots:
     void on_pb_deletescript_clicked();
     void on_pb_load_clicked();
     void on_pb_save_clicked();
-    void on_cbx_enable_toggled(bool checked);
-    void on_cbx_timeconstraint_toggled(bool checked);
+    void on_cbx_enable_clicked(bool checked);
+    void on_cbx_timeconstraint_clicked(bool checked);
     void on_tied_timefrom_editingFinished();
     void on_tied_timeto_editingFinished();
     void on_tw_allscripts_cellClicked(int row, int column);

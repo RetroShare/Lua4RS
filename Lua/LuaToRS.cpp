@@ -115,7 +115,7 @@ extern "C" {
     // virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
     int file_fileRequest(lua_State *L)
     {
-        int argc = getArgCount(L);
+        //int argc = getArgCount(L);
         luaL_checktype(L, 1, LUA_TSTRING);
         luaL_checktype(L, 2, LUA_TSTRING);
         luaL_checktype(L, 3, LUA_TNUMBER);

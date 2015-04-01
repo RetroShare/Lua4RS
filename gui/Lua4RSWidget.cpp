@@ -524,8 +524,8 @@ void Lua4RSWidget::on_pb_save_clicked()
     saveScript();
 }
 
-// "Enabled Script" toggled :
-void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
+// "Enabled Script" clicked :
+void Lua4RSWidget::on_cbx_enable_clicked(bool checked)
 {
     if(_activeContainer == NULL)
         return;
@@ -551,9 +551,9 @@ void Lua4RSWidget::on_cbx_enable_toggled(bool checked)
 // Execution Constraint
 //------------------------------------------------------------------------------
 
-// "...between" toggled : Constraint enabled/disabled has changed
+// "...between" clicked : Constraint enabled/disabled has changed
 // note: think about disabling constraint from and to timeedits if unchecked
-void Lua4RSWidget::on_cbx_timeconstraint_toggled(bool checked)
+void Lua4RSWidget::on_cbx_timeconstraint_clicked(bool checked)
 {
     if(_activeContainer == NULL)
     {

@@ -239,7 +239,7 @@ bool LuaCore::processEvent(const LuaEvent& e)
         return false;
     _processingEvent = true;
     // do some magic here
-    std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
+    // std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
     for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
     {
         if((*it)->isTriggered(e))
