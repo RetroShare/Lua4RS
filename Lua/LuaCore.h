@@ -38,8 +38,6 @@ public:
 
     void shutDown();
 
-    bool sane();
-
     void setupRsFunctionsAndTw(QTreeWidget* tw);
 
     bool processEvent(const LuaEvent& e);
