@@ -31,7 +31,7 @@ void pushTable(lua_State* L, int tableTop, const std::string& name, uint value)
         return;
 
     lua_pushstring(L, name.c_str());
-    lua_pushunsigned(L, value);
+    lua_pushinteger(L, value);
     lua_settable(L, tableTop);
 }
 
@@ -72,7 +72,7 @@ void pushArray(lua_State* L, int tableTop, int index, uint value)
         return;
 
     lua_pushinteger(L, index);
-    lua_pushunsigned(L, value);
+    lua_pushinteger(L, value);
     lua_settable(L, tableTop);
 }
 

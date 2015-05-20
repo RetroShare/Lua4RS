@@ -315,9 +315,9 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
             else if(type == "int")
                 lua_pushinteger(L, value.toInt());
             else if(type == "u32")
-                lua_pushunsigned(L, value.toUInt());
+                lua_pushinteger(L, value.toUInt());
             else if(type == "u64")
-                lua_pushunsigned(L, value.toULongLong());
+                lua_pushinteger(L, value.toULongLong());
 
             lua_settable(L, top);
         }
