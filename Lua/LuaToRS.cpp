@@ -92,14 +92,16 @@ extern "C" {
     int rs_print(lua_State* L)
     {
         int argc = getArgCount(L);
-
+        std::string output = "";
         if(argc > 0)
-            for ( int n=1; n<=argc; ++n )
-            {
+            for (int n = 1; n <= argc; ++n ) {
                 const std::string s = lua_tostring(L, n);
-                emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromUtf8(s.c_str()));
+                output += s;
+                if(n < argc)
+                    output += '\t';
             }
 
+        emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromUtf8(output.c_str()));
         return 0;
     }
 
