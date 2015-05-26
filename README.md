@@ -11,8 +11,8 @@ http://retroshare.sourceforge.net/
 This plugin let you interact with RetroShare. It exposes most RetroShare functions to Lua and provides a trigger system. You can write scripts that react to events (from RetroShare) like _a friends comes online_ or _received a new mail_. With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.
 
 ##Requirements##
-* RetroShare v0.5
+* RetroShare v0.6 (use the 0.5 tag for RetroShare 0.5)
 * Lua 5.2 
 
 ##How to build##
-Simply run "qmake" (or "qmake-qt4") and "make". Then place libLua4RS.so in your extension folder.
+Simply run "qmake" (or "qmake-qt4") and "make". Then place libLua4RS.so/Lua4RS.dll in your extension folder.
