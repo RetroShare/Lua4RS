@@ -11,7 +11,8 @@ HEADERS -= upnp/upnputil.h
 SOURCES -= upnp/upnputil.c
 
 linux-* {
-    LIBS += -llua
+    LIBS += -llua5.2
+    INCLUDEPATH += /usr/include/lua5.2
 }
 
 win32 {
