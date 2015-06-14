@@ -29,6 +29,8 @@ public:
     virtual std::string getPluginName() const;
     virtual void        setInterfaces(RsPlugInInterfaces& interfaces);
 
+    virtual void getLibraries(std::list<RsLibraryInfo> &libraries);
+
 protected:
 
 private:

@@ -85,6 +85,11 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     _notify->registerNotifyClient(lc->notify());
 }
 
+void Lua4RSPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
+{
+    libraries.push_back(RsLibraryInfo("Lua", LUA_RELEASE));
+}
+
 MainPage* Lua4RSPlugin::qt_page() const
 {
     if(_mainpage == NULL) {

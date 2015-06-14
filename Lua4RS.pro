@@ -11,8 +11,15 @@ HEADERS -= upnp/upnputil.h
 SOURCES -= upnp/upnputil.c
 
 linux-* {
-    LIBS += -llua5.2
-    INCLUDEPATH += /usr/include/lua5.2
+    # try using Lua5.2 (for *ubuntu)
+    lua52 = $$system(pkg-config --exists lua5.2 && echo ok)
+    isEmpty(lua52) {
+        # use generic lua else
+        LIBS += -llua
+    } else {
+        LIBS += -llua5.2
+        INCLUDEPATH += /usr/include/lua5.2
+    }
 }
 
 win32 {
