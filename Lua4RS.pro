@@ -23,8 +23,8 @@ linux-* {
 }
 
 win32 {
-    LIBS += -llua52
-    INCLUDEPATH += ../../../lua-5.2.3/src
+    LIBS += -llua53
+    INCLUDEPATH += ../../../lua-5.3.0/src
 }
 
 HEADERS +=  \
