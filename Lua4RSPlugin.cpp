@@ -25,11 +25,9 @@ extern "C" {
 #ifdef WIN32
     __declspec(dllexport)
 #endif
-    void *RETROSHARE_PLUGIN_provide()
+    RsPlugin *RETROSHARE_PLUGIN_provide()
     {
-        static Lua4RSPlugin *p = new Lua4RSPlugin() ;
-
-        return (void*)p ;
+        return new Lua4RSPlugin();
     }
 
     // This symbol contains the svn revision number grabbed from the executable.
