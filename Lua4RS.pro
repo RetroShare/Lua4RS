@@ -32,6 +32,7 @@ HEADERS +=  \
     Lua4RSNotify.h \
     gui/Lua4RSWidget.h \
     gui/Lua4RSConfig.h \
+    gui/Lua4RSTextEdit.h \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
     Lua/LuaCode.h \
@@ -54,6 +55,7 @@ SOURCES +=  \
     Lua4RSNotify.cpp \
     gui/Lua4RSWidget.cpp \
     gui/Lua4RSConfig.cpp \
+    gui/Lua4RSTextEdit.cpp \
     Lua/LuaCore.cpp \
     Lua/LuaToRS.cpp \
     Lua/LuaToRSPeers.cpp \

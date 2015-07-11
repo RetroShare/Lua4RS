@@ -162,7 +162,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
+         <iconset>
           <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
         </property>
         <property name="checkable">
@@ -1065,7 +1065,7 @@
               <number>1</number>
              </property>
              <item>
-              <widget class="QPlainTextEdit" name="pte_luacode">
+              <widget class="Lua4RSTextEdit" name="pte_luacode">
                <property name="font">
                 <font>
                  <family>DejaVu Sans Mono</family>
@@ -2218,9 +2218,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Lua4RSTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>gui/Lua4RSTextEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../Lua4RS_images.qrc"/>
-  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
  </resources>
  <connections/>
 </ui>
