@@ -30,11 +30,12 @@ protected:
 		QRegExp pattern;
 		QTextCharFormat format;
 	};
-	QVector<HighlightingRule> highlightingRules;
+	QVector<HighlightingRule> _highlightingRules;
 
-	QRegExp commentStartExpression;
-	QRegExp commentEndExpression;
-	QTextCharFormat multiLineCommentFormat;
+	QRegExp _commentStartExpression;
+	QRegExp _commentEndExpression;
+	QTextCharFormat _multiLineCommentFormat;
+	HighlightingRule _singleLineComment;
 };
 
 #endif // LUA4RSTEXTEDIT_H
