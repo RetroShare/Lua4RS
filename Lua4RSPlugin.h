@@ -15,6 +15,8 @@ public:
     virtual QIcon*          qt_icon() const;
     virtual QTranslator*    qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
     virtual ConfigPage*     qt_config_page() const;
+    virtual QDialog         *qt_about_page() const;
+
 
     virtual     RsPQIService*   rs_pqi_service() const;
     uint16_t    rs_service_id() const;

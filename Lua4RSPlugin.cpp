@@ -1,5 +1,9 @@
 #include <QIcon>
 #include <QTranslator>
+#include <QApplication>
+#include <QString>
+#include <QMessageBox>
+#include <QIcon>
 
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
@@ -132,6 +136,28 @@ ConfigPage *Lua4RSPlugin::qt_config_page() const
     return new Lua4RSConfig();
 }
 
+QDialog *Lua4RSPlugin::qt_about_page() const
+{
+    static QMessageBox *about_dialog = NULL;
+
+    if(about_dialog == NULL)
+    {
+        about_dialog = new QMessageBox();
+
+        QString text;
+        text += QObject::tr("<h3>RetroShare Lua4RS plugin</h3><br/>  * Contributors: sehraf, far*call<br/>");
+        text += QObject::tr("<br/>The Lua4Rs plugin lets you interact with RetroShare.<br/>");
+        text += QObject::tr("<br/>It exposes most RetroShare functions to Lua and provides a trigger system.<br/>");
+        text += QObject::tr("<br/>You can write scripts that react to events (from RetroShare) <br/>");
+        text += QObject::tr("<br/>like a friend comes online or you received a new message plus lots more.<br/>");
+        text += QObject::tr("<br/>With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.<br/>");
+        about_dialog->setText(text);
+        about_dialog->setStandardButtons(QMessageBox::Ok);
+    }
+    return about_dialog;
+    
+}
+
 RsPQIService *Lua4RSPlugin::rs_pqi_service() const
 {
     if(_service == NULL)
@@ -139,8 +165,12 @@ RsPQIService *Lua4RSPlugin::rs_pqi_service() const
         _service = new p3Lua4RS(_pluginHandler);
         L4R::L4RConfig = _service;
     }
-
     return _service;
+}
+
+std::string Lua4RSPlugin::getShortPluginDescription() const
+{
+    return QApplication::translate("Lua4RS", "This plugin provides Lua scripting capabilities to RetroShare.").toUtf8().constData();
 }
 
 uint16_t Lua4RSPlugin::rs_service_id() const
@@ -153,12 +183,8 @@ void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
     _pluginHandler = pgHandler;
 }
 
-std::string Lua4RSPlugin::getShortPluginDescription() const
-{
-    return QObject::tr("This plugin let you script RS with Lua.").toStdString();
-}
-
 std::string Lua4RSPlugin::getPluginName() const
 {
-    return "Lua4RS";
+    return QApplication::translate("Lua4RSPlugin", "Lua4RS").toUtf8().constData();
 }
+
