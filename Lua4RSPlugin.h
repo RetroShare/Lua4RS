@@ -11,14 +11,14 @@ class Lua4RSPlugin : public RsPlugin
 public:
     Lua4RSPlugin();
 
-    virtual MainPage*       qt_page() const;
-    virtual QIcon*          qt_icon() const;
-    virtual QTranslator*    qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;
-    virtual ConfigPage*     qt_config_page() const;
+    virtual MainPage        *qt_page() const;
+    virtual QIcon           *qt_icon() const;
+    virtual QTranslator     *qt_translator(QApplication *app, const QString &languageCode, const QString &externalDir) const;
+    virtual ConfigPage      *qt_config_page() const;
     virtual QDialog         *qt_about_page() const;
 
 
-    virtual     RsPQIService*   rs_pqi_service() const;
+    virtual     RsPQIService    *rs_pqi_service() const;
     uint16_t    rs_service_id() const;
 
     virtual void    getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const;
@@ -36,12 +36,12 @@ public:
 protected:
 
 private:
-    mutable QIcon*              _icon ;
-    mutable MainPage*           _mainpage ;
-    mutable RsNotify*           _notify;
-    mutable RsPluginHandler *   _pluginHandler;
-    mutable RsPeers*            _peers;
-    mutable p3Lua4RS*           _service;
+    mutable QIcon           *_icon ;
+    mutable MainPage        *_mainpage ;
+    mutable RsNotify        *_notify;
+    mutable RsPluginHandler *_pluginHandler;
+    mutable RsPeers         *_peers;
+    mutable p3Lua4RS        *_service;
 };
 
 #endif // LUA4RSPLUGIN_H

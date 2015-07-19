@@ -72,7 +72,8 @@ SOURCES +=  \
     service/p3Lua4RS.cpp \
     Lua/LuaToRSServerConfig.cpp \
     Lua/LuaToRSDiscovery.cpp \
-    Lua/LuaToRSChat.cpp
+    Lua/LuaToRSChat.cpp \
+    helper.cpp
 
 FORMS += \
     gui/Lua4RSWidget.ui \

@@ -185,6 +185,6 @@ void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 
 std::string Lua4RSPlugin::getPluginName() const
 {
-    return QApplication::translate("Lua4RSPlugin", "Lua4RS").toUtf8().constData();
+    return QApplication::translate("Lua4RS", "Lua4RS").toUtf8().constData();
 }
 
