@@ -51,16 +51,11 @@ QLuaSyntaxHighlighter::QLuaSyntaxHighlighter(QTextDocument *document) :
 		_highlightingRules.append(rule);
 	}
 
-	// quotations
-	QTextCharFormat quotationFormat;
-	quotationFormat.setForeground(Qt::darkYellow);
-	rule.pattern = QRegExp("\".*\"");
-	rule.pattern.setMinimal(true);
-	rule.format = quotationFormat;
-	_highlightingRules.append(rule);
-	rule.pattern = QRegExp("'.*'");
-	rule.pattern.setMinimal(true);
-	rule.format = quotationFormat;
+	// numbers
+	QTextCharFormat numberFormat;
+	numberFormat.setForeground(Qt::magenta);
+	rule.pattern = QRegExp("[0-9]+");
+	rule.format = numberFormat;
 	_highlightingRules.append(rule);
 
 	// functions
@@ -73,15 +68,20 @@ QLuaSyntaxHighlighter::QLuaSyntaxHighlighter(QTextDocument *document) :
 	// namespaces
 	QTextCharFormat namespaceFormat;
 	namespaceFormat.setForeground(Qt::darkMagenta);
-	rule.pattern = QRegExp("\\b[A-Za-z0-9_]+(?=\\.)");
+	rule.pattern = QRegExp("\\b(?=(.*[a-z]))[A-Za-z0-9_]+(?=\\.)");
 	rule.format = namespaceFormat;
 	_highlightingRules.append(rule);
 
-	// numbers
-	QTextCharFormat numberFormat;
-	numberFormat.setForeground(Qt::magenta);
-	rule.pattern = QRegExp("[0-9]+");
-	rule.format = numberFormat;
+	// quotations - add at the end! (but before comments)
+	QTextCharFormat quotationFormat;
+	quotationFormat.setForeground(Qt::darkYellow);
+	rule.pattern = QRegExp("\".*\"");
+	rule.pattern.setMinimal(true);
+	rule.format = quotationFormat;
+	_highlightingRules.append(rule);
+	rule.pattern = QRegExp("'.*'");
+	rule.pattern.setMinimal(true);
+	rule.format = quotationFormat;
 	_highlightingRules.append(rule);
 
 	// comments - add at the end!
