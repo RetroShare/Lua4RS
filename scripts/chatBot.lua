@@ -50,8 +50,7 @@ matchingTable = {
 
 botPrefix = "[Lua4RS]"
 
--- list all matching rules 
-rulesCommandEnabled = true
+-- list all matching rules (set to nill to disable)
 rulesCommandMatch = "!rules"
 
 -- edit end
@@ -88,7 +87,7 @@ if string.len(msg) <= 150 then
 	end
 
 	-- !rules command
-	if rulesCommandEnabled then
+	if rulesCommandMatch ~= nill then
 		if msg == rulesCommandMatch then
 			response = botPrefix .. ": rules known: "
 			for matchName, matchValue in pairs(matchingTable) do
