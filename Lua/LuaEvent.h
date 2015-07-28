@@ -6,8 +6,14 @@
 
 //------------------------------------------------------------------------------
 struct LuaEvent {
+#if QT_VERSION >= 0x050000
+    // with Qt5 qsettings need an application name + organization name to work
+    LuaEvent() : dataParm(new QSettings("Lua4RS", "Lua4RS")) {}
+#else
     LuaEvent() : dataParm(new QSettings()) {}
-    ~LuaEvent() { delete dataParm; }
+#endif
+    // clear settings just in case Qt want to store them permanently somewhere
+    ~LuaEvent() { dataParm->clear(); delete dataParm; }
 
     uint        eventId;
     QDateTime   timeStamp;
