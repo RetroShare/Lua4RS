@@ -9,7 +9,7 @@ structue:
 		}
 	},
 
-	matchName: is just used for the log
+	matchName: the name of the matching rule
 	enabled: is this rule active?
 	only: match to whole message (only = true) or only check if the message contains one match (onyl = false)
 	response: what to respond
@@ -27,7 +27,7 @@ matchingTable = {
 		}
 	},
 	["pong"] = {
-		["enabled"] = false,	["only"] = true, ["response"] = "ping",
+		["enabled"] = false, ["only"] = true, ["response"] = "ping",
 		["matches"] = {
 			[1] = "pong",
 			[2] = "PONG",
@@ -50,6 +50,10 @@ matchingTable = {
 
 botPrefix = "[Lua4RS]"
 
+-- list all matching rules 
+rulesCommandEnabled = true
+rulesCommandMatch = "!rules"
+
 -- edit end
 
 msg = args.msg
@@ -61,6 +65,7 @@ rs.print("got message from lobby " .. chatid .. " user: " .. args.nick .. " msg:
 -- rs.print("msg is " .. string.len(msg) .. " char(s) long")
 
 if string.len(msg) <= 150 then
+	-- check for matches
 	for matchName, matchValue in pairs(matchingTable) do
 		if matchValue["enabled"] then
 			-- triggered?
@@ -79,6 +84,20 @@ if string.len(msg) <= 150 then
 				rs.print("rule " .. matchName .. " triggered")
 				chat.sendChat(chatid, botPrefix .. ": " .. matchValue["response"])
 			end
+		end
+	end
+
+	-- !rules command
+	if rulesCommandEnabled then
+		if msg == rulesCommandMatch then
+			response = botPrefix .. ": rules known: "
+			for matchName, matchValue in pairs(matchingTable) do
+				response = response .. matchName
+				if not matchValue["enabled"] then response = response .. "(disabled)" end
+				response = response .. ", "
+			end
+			response = string.sub(response, 1, -3)
+			chat.sendChat(chatid, response)
 		end
 	end
 end
