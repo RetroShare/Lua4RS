@@ -48,7 +48,7 @@ matchingTable = {
 	},
 }
 
-botPrefix = "[Lua4RS]"
+botPrefix = "[Lua4RS]: "
 
 -- list all matching rules (set to nill to disable)
 rulesCommandMatch = "!rules"
@@ -81,7 +81,7 @@ if string.len(msg) <= 150 then
 			if triggered then
 				-- respond!
 				rs.print("rule " .. matchName .. " triggered")
-				chat.sendChat(chatid, botPrefix .. ": " .. matchValue["response"])
+				chat.sendChat(chatid, botPrefix .. matchValue["response"])
 			end
 		end
 	end
@@ -89,7 +89,7 @@ if string.len(msg) <= 150 then
 	-- !rules command
 	if rulesCommandMatch ~= nill then
 		if msg == rulesCommandMatch then
-			response = botPrefix .. ": rules known: "
+			response = botPrefix .. "rules known: "
 			for matchName, matchValue in pairs(matchingTable) do
 				response = response .. matchName
 				if not matchValue["enabled"] then response = response .. "(disabled)" end
