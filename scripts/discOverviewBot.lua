@@ -1,32 +1,12 @@
 function getVersionNumber( s ) 
 	b, e = string.find(s, "Revision")
 
-	-- check for ':'
-	x = s:sub(e + 1, e + 1)
-	if x == ":" then 
-		e = e + 3
-	else
-		e = e + 2 
-	end
+	e = e + 2
 
-	-- revision starts at e and is usually 4 characters long
-	rev = s:sub(e, e + 3)
+	-- revision starts at e and is up to 8 characters long
+	rev = s:sub(e, e + 7)
 
-	-- check for sane revision
-	if tonumber(rev) == nil then
-		-- the revision string might be '0.6.0.xxxx'
-		e = e + 6
-		rev = s:sub(e, e + 3)
-
-		-- check for sane revision
-		if tonumber(rev) == nil then
-			return rev, false
-		else
-			return rev, true
-		end
-	else
-		return rev, true
-	end
+	return rev, true
 end
 
 function getName( id )
@@ -54,7 +34,7 @@ chatid = args.chatid
 -- rs.print("msg is " .. string.len(msg) .. " char(s) long")
 
 
-if string.len(msg) <= 150 then
+if msg ~= nil and  string.len(msg) <= 150 then
 	if msg == "!versions" then
 		friends = peers.getFriendList()
 		revList = {}
@@ -77,9 +57,10 @@ if string.len(msg) <= 150 then
 			end
 		end
 
-		chat.sendChat(chatid, numFriends .. " discovery entries were found")
+		toSend = numFriends .. " discovery entries were found"
 		for key, value in pairsByKeys(revListNum) do
-			chat.sendChat(chatid, key .. ": " .. value .. " time(s)")
+			toSend = toSend .. "<br>" .. key .. ": " .. value .. " time(s)"
 		end
+		chat.sendChat(chatid, toSend)
 	end
 end
