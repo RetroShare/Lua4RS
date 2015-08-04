@@ -106,7 +106,7 @@ if string.len(msg) <= 150 then
 	end
 
 	-- !rules command
-	if rulesCommandMatch ~= nill then
+	if rulesCommandMatch ~= nil then
 		if msg == rulesCommandMatch then
 			response = botPrefix .. "rules known: "
 			for matchName, matchValue in pairs(matchingTable) do
