@@ -53,6 +53,7 @@ public:
     void setUi(Lua4RSWidget* ui);
     Lua4RSNotify *notify() const;
     LuaList* codeList() const;
+    std::string getPath() const;
 
     // signals
     void emitAppendOutput(const QString& s);

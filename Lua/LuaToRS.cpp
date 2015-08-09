@@ -112,6 +112,12 @@ extern "C" {
         return 0;
     }
 
+    int rs_luaFolder(lua_State *L)
+    {
+        lua_pushstring(L, L4R::L4RConfig->getCore()->getPath().c_str());
+        return 1;
+    }
+
     // temporary placed here
 #include <retroshare/rsfiles.h>
 

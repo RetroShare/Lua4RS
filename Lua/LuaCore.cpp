@@ -103,8 +103,9 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, rs, rs_clear,   "clear()",  QObject::tr("clears the output"));
-    addFunctionToLuaAndTw(top, namespc, rs, rs_print,   "print()",  QObject::tr("prints to output"));
+    addFunctionToLuaAndTw(top, namespc, rs, rs_clear,       "clear()",      QObject::tr("clears the output"));
+    addFunctionToLuaAndTw(top, namespc, rs, rs_print,       "print()",      QObject::tr("prints to output"));
+    addFunctionToLuaAndTw(top, namespc, rs, rs_luaFolder,   "luaFolder()",  QObject::tr("path to Lua4RS folder"));
 
     lua_setglobal(L, "rs");
 
@@ -352,6 +353,11 @@ Lua4RSNotify* LuaCore::notify() const
 LuaList* LuaCore::codeList() const
 {
     return _luaList;
+}
+
+std::string LuaCore::getPath() const
+{
+    return _path;
 }
 
 void LuaCore::setUi(Lua4RSWidget *ui)
