@@ -35,8 +35,8 @@ bool LuaContainer::isTriggered(const LuaEvent& event)
 // getter / setter
 
 QString LuaContainer::getCode()                         { return _code->code(); }
+void    LuaContainer::setCode(const std::string& code)  { setCode(QString::fromUtf8(code.c_str())); }
 void    LuaContainer::setCode(const QString& code)      { _code->setCode(code); }
-void    LuaContainer::setCode(const std::string& code)  { setCode(QString::fromStdString(code)); }
 
 QString LuaContainer::getDesc()                         { return _config->getDescription(); }
 void    LuaContainer::setDesc(const std::string& desc)  { setDesc(QString::fromStdString(desc)); }
