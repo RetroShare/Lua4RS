@@ -9,7 +9,20 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 linux-* {
     CONFIG += link_pkgconfig
-    PKGCONFIG *= lua
+    # Test for Lua5.2
+    lua52 = $$system(pkg-config --exists lua5.2 && echo ok)
+    isEmpty(lua52) {
+        # Test for Lua5.3
+        lua53 = $$system(pkg-config --exists lua5.3 && echo ok)
+        isEmpty(lua53) {
+            PKGCONFIG *= lua
+        } else {
+            PKGCONFIG *= lua5.3
+        }
+    } else {
+        PKGCONFIG *= lua5.2
+    }
+
 }
 
 win32 {
