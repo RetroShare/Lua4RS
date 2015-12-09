@@ -61,7 +61,11 @@ if msg ~= nil and  string.len(msg) <= 150 then
 				local revHash, sane = getVersionNumber(revStr)
 				if sane then
 					local revNum = "r" .. getCommitNumber(revHash)
-					revListHash[revNum] = "g" .. revHash
+					if revNum ~= "r0" then
+						revListHash[revNum] = "g" .. revHash
+					else
+						revListHash[revNum] = "none"
+					end
 					table.insert(revList, revNum .. " - " .. getName(f))
 					if revListNum[revNum] ~= nil then
 						revListNum[revNum] = revListNum[revNum] + 1
