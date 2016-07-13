@@ -205,7 +205,7 @@ extern "C" {
         lua_getfield(L, 1, "flag");
         grpInfo.flag = luaL_checkinteger(L, -1);
         lua_getfield(L, 1, "id");
-        grpInfo.id = luaL_checkstring(L, -1);
+        grpInfo.id = RsNodeGroupId(luaL_checkstring(L, -1));
         lua_getfield(L, 1, "name");
         grpInfo.name = luaL_checkstring(L, -1);
         // irgnore peerIds for now
@@ -220,13 +220,13 @@ extern "C" {
         luaL_checktype(L, 1, LUA_TSTRING);
         luaL_checktype(L, 2, LUA_TTABLE);
 
-        const std::string grpId = luaL_checkstring(L, 1);
+        const RsNodeGroupId grpId = RsNodeGroupId(luaL_checkstring(L, 1));
 
         RsGroupInfo grpInfo;
         lua_getfield(L, 2, "flag");
         grpInfo.flag = luaL_checkinteger(L, -1);
         lua_getfield(L, 2, "id");
-        grpInfo.id = luaL_checkstring(L, -1);
+        grpInfo.id = RsNodeGroupId(luaL_checkstring(L, -1));
         lua_getfield(L, 2, "name");
         grpInfo.name = luaL_checkstring(L, -1);
         // irgnore peerIds for now
@@ -240,7 +240,7 @@ extern "C" {
     {
         luaL_checktype(L, 1, LUA_TSTRING);
 
-        const std::string grpId = luaL_checkstring(L, 1);
+        const RsNodeGroupId grpId = RsNodeGroupId(luaL_checkstring(L, 1));
         rsPeers->removeGroup(grpId);
         return 0;
     }
@@ -251,7 +251,7 @@ extern "C" {
 
         luaL_checktype(L, 1, LUA_TSTRING);
 
-        const std::string grpId = luaL_checkstring(L, 1);
+        const RsNodeGroupId grpId = RsNodeGroupId(luaL_checkstring(L, 1));
         RsGroupInfo grpInfo;
         if(!rsPeers->getGroupInfo(grpId, grpInfo))
             return 0;
@@ -259,7 +259,7 @@ extern "C" {
         lua_newtable(L);
         int t1 = lua_gettop(L);
         pushTable(L, t1, "flag", grpInfo.flag);
-        pushTable(L, t1, "id", grpInfo.id);
+        pushTable(L, t1, "id", grpInfo.id.toStdString());
         pushTable(L, t1, "name", grpInfo.name);
 
         lua_pushstring(L, "peerIds");
@@ -292,7 +292,7 @@ extern "C" {
                 lua_newtable(L);
                 int t2 = lua_gettop(L);
                 pushTable(L, t2, "falg", grpInfo.flag);
-                pushTable(L, t2, "id", grpInfo.id);
+                pushTable(L, t2, "id", grpInfo.id.toStdString());
                 pushTable(L, t2, "name", grpInfo.name);
 
                 lua_pushstring(L, "peerIds");
@@ -321,7 +321,7 @@ extern "C" {
         luaL_checktype(L, 2, LUA_TSTRING);
         luaL_checktype(L, 3, LUA_TBOOLEAN);
 
-        const std::string grpId = luaL_checkstring(L, 1);
+        const RsNodeGroupId grpId = RsNodeGroupId(luaL_checkstring(L, 1));
         const RsPgpId peerId = RsPgpId(luaL_checkstring(L, 2));
         const bool assign = lua_toboolean(L, 3);
         rsPeers->assignPeerToGroup(grpId, peerId, assign);
