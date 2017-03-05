@@ -83,17 +83,18 @@ bool p3Lua4RS::saveList(bool& cleanup, std::list<RsItem*>& lst)
 bool p3Lua4RS::loadList(std::list<RsItem*>& load)
 {
     std::cout << "[Lua] p3Lua4RS::loadList" << std::endl;
-    for(std::list<RsItem*>::const_iterator it = load.begin(); it!=load.end(); ++it)
-    {
+    for(std::list<RsItem*>::const_iterator it = load.begin(); it!=load.end(); ++it) {
         RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it);
-        if(vitem != NULL)
-            for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
+        if(vitem != NULL) {
+            for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
                 if(kit->key ==      L4RCONFIG_TIMER_STARTUP)
                     _secondsToStarUpEvent       = pop_int_value(kit->value);
                 else if(kit->key == L4RCONFIG_TIMER_TICK)
                     _tickIntervalInSeconds      = pop_int_value(kit->value);
                 else
                     std::cerr << "[Lua] L4RConfig::loadList : unknown key: " << kit->key << std::endl;
+	    }
+	}
 
         delete vitem;
     }

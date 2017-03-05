@@ -54,7 +54,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
       </ul> \
     ");
 
-    registerHelpButton(ui->helpButton, help_str);
+    registerHelpButton(ui->helpButton, help_str, "Lua4RSWidget");
 
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"), ui->pte_luacode);
     QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_pb_save_clicked()));
