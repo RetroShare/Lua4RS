@@ -424,7 +424,7 @@ bool Lua4RSWidget::saveScript(bool showErrorMsg)
 // "Run" clicked : execute the script in the editor control
 void Lua4RSWidget::on_pb_run_clicked()
 {
-    appendLog(QString("running: ") + ui->le_scriptname->text());
+    appendLog(QObject::tr("running (by click): ") + ui->le_scriptname->text());
 
     QString code = ui->pte_luacode->toPlainText();
 

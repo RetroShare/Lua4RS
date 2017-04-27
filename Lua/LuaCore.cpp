@@ -326,7 +326,7 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
         lua_setglobal(L, "args");
 
     }
-    emit appendLog(QObject::tr("triggered script: ") + container->getName());
+    emit appendLog(QObject::tr("running (by event): ") + container->getName());
     runLuaByString(container->getCode());
 }
 
