@@ -83,7 +83,7 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     _notify = interfaces.mNotify;
 
     // setup other stuff - pqi service is nor running yet -> don't use interface pointer
-    LuaCore* lc = dynamic_cast<p3Lua4RS*>(rs_pqi_service())->getCore();
+    LuaCore* lc = dynamic_cast<p3Lua4RS*>(p3_service())->getCore();
     _notify->registerNotifyClient(lc->notify());
 }
 
@@ -158,14 +158,14 @@ QDialog *Lua4RSPlugin::qt_about_page() const
     
 }
 
-RsPQIService *Lua4RSPlugin::rs_pqi_service() const
+p3Service *Lua4RSPlugin::p3_service() const
 {
     if(_service == NULL)
     {
         _service = new p3Lua4RS(_pluginHandler);
         L4R::L4RConfig = _service;
     }
-    return _service;
+    return (p3Service *)_service;
 }
 
 std::string Lua4RSPlugin::getShortPluginDescription() const
