@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <serialiser/rsconfigitems.h>
+#include <rsitems/rsconfigitems.h>
 
 #include "p3Lua4RS.h"
 #include "Lua/LuaCore.h"
