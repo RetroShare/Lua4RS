@@ -53,7 +53,7 @@ void Lua4RSNotify::notifyChatMessage(const ChatMessage &msg)
     L4R::L4RConfig->getCore()->processEvent(e);
 }
 
-void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t event_type, const std::string& nickname, const std::string& any_string)
+void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t event_type, const RsGxsId& nickname, const std::string& any_string)
 {
     QVariant v = QVariant::fromValue<uint64_t>(lobby_id);
     LuaEvent e;
@@ -61,7 +61,7 @@ void Lua4RSNotify::notifyChatLobbyEvent             (uint64_t lobby_id, uint32_t
     e.timeStamp = QDateTime::currentDateTime();
     e.dataParm->setValue("u64lobbyId", v);
     e.dataParm->setValue("u32eventType", event_type);
-    e.dataParm->setValue("strnickname", QString::fromUtf8(nickname.c_str()));
+    e.dataParm->setValue("strnickname", QString::fromUtf8(nickname.toStdString().c_str()));
     e.dataParm->setValue("stranyString", QString::fromUtf8(any_string.c_str()));
 
     L4R::L4RConfig->getCore()->processEvent(e);
