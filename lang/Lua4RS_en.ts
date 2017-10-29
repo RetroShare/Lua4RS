@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US">
 <context>
+    <name>Lua4RS</name>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="174"/>
+        <source>This plugin provides Lua scripting capabilities to RetroShare.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="184"/>
+        <source>Lua4RS</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Lua4RSConfig</name>
     <message>
         <location filename="../gui/Lua4RSConfig.ui" line="14"/>
@@ -14,28 +27,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="38"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="73"/>
         <source>This lets you choose after how many seconds the startup event is triggered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="57"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="46"/>
         <source>tick interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="70"/>
-        <location filename="../gui/Lua4RSConfig.ui" line="115"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="39"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="53"/>
         <source>s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="83"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="60"/>
         <source>this lets you choose after how many seconds a tick event is triggered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSConfig.ui" line="102"/>
+        <location filename="../gui/Lua4RSConfig.ui" line="32"/>
         <source>startup event</source>
         <translation type="unfinished"></translation>
     </message>
@@ -85,12 +98,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="432"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="440"/>
         <source>Trigger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="440"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="432"/>
         <source>Enabled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -401,63 +414,68 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="2164"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="2148"/>
+        <source>Chat Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.ui" line="2171"/>
         <source>Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="40"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="44"/>
         <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Lua4RS&lt;/h1&gt;       &lt;p&gt;With Lua4RS you get three things with one Plugin: &lt;/p&gt;       &lt;ul&gt;         &lt;li&gt;You can write, save, load and run Lua programs within RetroShare.&lt;/li&gt;         &lt;li&gt;You can use Lua programs like macros (think of macros in LibreOffice)             to control and automate many features of RetroShare. &lt;/li&gt;         &lt;li&gt;You can execute your Lua programs either by timer control (think of             cron or at) or by certain RetroShare events (e.g. &lt;i&gt;a friend comes             online&lt;/i&gt; or &lt;i&gt;a chat message is received&lt;/i&gt; and many more).&lt;/li&gt;       &lt;/ul&gt;     </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="347"/>
         <source>The following problem(s) was/were found:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="314"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="351"/>
         <source>script name is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="320"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="357"/>
         <source>runOnce value lies in the past</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="333"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="370"/>
         <source>runOnce value lies outside of constraint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="339"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="376"/>
         <source>run every value is below 0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="350"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="387"/>
         <source>Error(s) while checking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="396"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="433"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="397"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="434"/>
         <source>an error occured while saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="474"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="517"/>
         <source>Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="475"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="518"/>
         <source>You have a Lua script opened. Save it before closing it?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -475,124 +493,194 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="119"/>
-        <source>returns own SSL id</source>
+        <location filename="../Lua/LuaCore.cpp" line="108"/>
+        <source>path to Lua4RS folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Lua/LuaCore.cpp" line="120"/>
-        <source>returns list of online friends (SSL id)</source>
+        <source>returns own SSL id (peer id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Lua/LuaCore.cpp" line="121"/>
-        <source>returns list of all friends (SSL id)</source>
+        <source>returns list of online friends (SSL id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../Lua/LuaCore.cpp" line="122"/>
+        <source>returns list of all friends (SSL id)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="123"/>
         <source>returns number of all friends and online friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="124"/>
+        <location filename="../Lua/LuaCore.cpp" line="125"/>
         <source>returns if a peer is a friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="125"/>
+        <location filename="../Lua/LuaCore.cpp" line="126"/>
         <source>returns is a PGP key is accepted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="126"/>
+        <location filename="../Lua/LuaCore.cpp" line="127"/>
         <source>returns if a peer is online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="127"/>
+        <location filename="../Lua/LuaCore.cpp" line="128"/>
         <source>returns the PGP name for a given PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="128"/>
+        <location filename="../Lua/LuaCore.cpp" line="129"/>
         <source>returns the name for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="129"/>
+        <location filename="../Lua/LuaCore.cpp" line="130"/>
         <source>returns peer details as a table for a given SSL id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="131"/>
+        <location filename="../Lua/LuaCore.cpp" line="132"/>
         <source>returns own PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="132"/>
-        <location filename="../Lua/LuaCore.cpp" line="140"/>
+        <location filename="../Lua/LuaCore.cpp" line="133"/>
+        <location filename="../Lua/LuaCore.cpp" line="141"/>
         <source>returns the PGP id for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="135"/>
+        <location filename="../Lua/LuaCore.cpp" line="136"/>
         <source>creates a new group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="136"/>
+        <location filename="../Lua/LuaCore.cpp" line="137"/>
         <source>edits an existing group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="137"/>
+        <location filename="../Lua/LuaCore.cpp" line="138"/>
         <source>removes the group with the given groupd id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="138"/>
+        <location filename="../Lua/LuaCore.cpp" line="139"/>
         <source>returns group info for a given group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="139"/>
+        <location filename="../Lua/LuaCore.cpp" line="140"/>
         <source>returns an array with all groups and their group infos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="152"/>
+        <location filename="../Lua/LuaCore.cpp" line="153"/>
         <source>returns the current operation mode as int and string</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="153"/>
+        <location filename="../Lua/LuaCore.cpp" line="154"/>
         <source>sets the openration mode (takes int or string)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="155"/>
+        <location filename="../Lua/LuaCore.cpp" line="156"/>
         <source>sets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="156"/>
+        <location filename="../Lua/LuaCore.cpp" line="157"/>
         <source>gets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="157"/>
+        <location filename="../Lua/LuaCore.cpp" line="158"/>
         <source>gets current down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="245"/>
-        <source>triggered script: </source>
+        <location filename="../Lua/LuaCore.cpp" line="170"/>
+        <source>gets discovery infos for a SSLID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="150"/>
-        <source>This plugin let you script RS with Lua.</source>
+        <location filename="../Lua/LuaCore.cpp" line="171"/>
+        <source>gets discovery infos for a PGPID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="172"/>
+        <source>gets RS version from a given peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="173"/>
+        <source>gets current pending discovery packets (down und up)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="185"/>
+        <source>send a chat message (ChatId, msg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="197"/>
+        <source>request a download (params: *name*, *hash*, *size*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaCore.cpp" line="329"/>
+        <source>running (by event): </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua/LuaContainer.cpp" line="203"/>
+        <source>none</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="159"/>
+        <source>&lt;h3&gt;RetroShare Lua4RS plugin&lt;/h3&gt;&lt;br/&gt;  * Contributors: sehraf, far*call&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="160"/>
+        <source>&lt;br/&gt;The Lua4Rs plugin lets you interact with RetroShare.&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="161"/>
+        <source>&lt;br/&gt;It exposes most RetroShare functions to Lua and provides a trigger system.&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="162"/>
+        <source>&lt;br/&gt;You can write scripts that react to events (from RetroShare) &lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="163"/>
+        <source>&lt;br/&gt;like a friend comes online or you received a new message plus lots more.&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Lua4RSPlugin.cpp" line="164"/>
+        <source>&lt;br/&gt;With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="454"/>
+        <source>running (by click): </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
