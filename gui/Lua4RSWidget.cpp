@@ -168,8 +168,8 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     ui->tw_allscripts->setItem(rows, 0, name);
     ui->tw_allscripts->setItem(rows, 1, desc);
     ui->tw_allscripts->setItem(rows, 2, lastRun);
-    ui->tw_allscripts->setItem(rows, 3, trigger);
-    ui->tw_allscripts->setItem(rows, 4, enabled);
+    ui->tw_allscripts->setItem(rows, 3, enabled);
+    ui->tw_allscripts->setItem(rows, 4, trigger);
 }
 
 void Lua4RSWidget::allScriptsUpdate(QString lastLoadedName)
