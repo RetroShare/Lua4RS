@@ -66,6 +66,12 @@ Lua4RSPlugin::Lua4RSPlugin()
 void Lua4RSPlugin::stop()
 {
     L4R::L4RConfig->getCore()->shutDown();
+    _service->fullstop();
+}
+
+p3Config *Lua4RSPlugin::p3_config() const
+{
+    return (p3Config *)_service;
 }
 
 void Lua4RSPlugin::getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const
@@ -82,9 +88,14 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     _peers = interfaces.mPeers;
     _notify = interfaces.mNotify;
 
-    // setup other stuff - pqi service is nor running yet -> don't use interface pointer
-    LuaCore* lc = dynamic_cast<p3Lua4RS*>(p3_service())->getCore();
-    _notify->registerNotifyClient(lc->notify());
+    if(_service == NULL)
+    {
+        _service = new p3Lua4RS();
+        L4R::L4RConfig = _service;
+    }
+
+    // setup other stuff
+    _notify->registerNotifyClient(L4R::L4RConfig->getCore()->notify());
 }
 
 void Lua4RSPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
@@ -158,24 +169,9 @@ QDialog *Lua4RSPlugin::qt_about_page() const
     
 }
 
-p3Service *Lua4RSPlugin::p3_service() const
-{
-    if(_service == NULL)
-    {
-        _service = new p3Lua4RS(_pluginHandler);
-        L4R::L4RConfig = _service;
-    }
-    return (p3Service *)_service;
-}
-
 std::string Lua4RSPlugin::getShortPluginDescription() const
 {
     return QApplication::translate("Lua4RS", "This plugin provides Lua scripting capabilities to RetroShare.").toUtf8().constData();
-}
-
-uint16_t Lua4RSPlugin::rs_service_id() const
-{
-    return RS_SERVICE_TYPE_L4R_PLUGIN;
 }
 
 void Lua4RSPlugin::setPlugInHandler(RsPluginHandler *pgHandler)

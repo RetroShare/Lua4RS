@@ -12,8 +12,8 @@
 /* DEFINE INTERFACE POINTER! */
 L4RInterface* L4R::L4RConfig = NULL;
 
-p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
-    RsPQIService(RS_SERVICE_TYPE_L4R_PLUGIN, 0, rph),
+p3Lua4RS::p3Lua4RS() :
+    RsTickingThread(), p3Config(),
     _lastRun( time(0) ),
     _initTime( time(0) ),
     _startUpEventTriggered( false ),
@@ -22,6 +22,8 @@ p3Lua4RS::p3Lua4RS(RsPluginHandler* rph) :
     // setup defaults
     _secondsToStarUpEvent = 5;
     _tickIntervalInSeconds = 1;
+
+    start("Lua4RS");
 }
 
 // helper
@@ -83,6 +85,7 @@ bool p3Lua4RS::saveList(bool& cleanup, std::list<RsItem*>& lst)
 bool p3Lua4RS::loadList(std::list<RsItem*>& load)
 {
     std::cout << "[Lua] p3Lua4RS::loadList" << std::endl;
+
     for(std::list<RsItem*>::const_iterator it = load.begin(); it!=load.end(); ++it) {
         RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it);
         if(vitem != NULL) {
@@ -110,7 +113,7 @@ RsSerialiser *p3Lua4RS::setupSerialiser()
     return rsSerialiser ;
 }
 
-int p3Lua4RS::tick()
+void p3Lua4RS::data_tick()
 {
     // start up event
     if(!_startUpEventTriggered && (_initTime + _secondsToStarUpEvent) <= (uint)time(0))
@@ -137,8 +140,6 @@ int p3Lua4RS::tick()
 
         _lastRun = time(0);
     }
-
-    return 0;
 }
 
 LuaCore *p3Lua4RS::getCore()
@@ -166,20 +167,4 @@ void p3Lua4RS::setSecondsToStarUpEvent(const uint& value)
 {
     _secondsToStarUpEvent = value;
     IndicateConfigChanged();
-}
-
-RsServiceInfo p3Lua4RS::getServiceInfo()
-{
-    const std::string L4R_APP_NAME = "Lua4RS";
-    const uint16_t L4R_APP_MAJOR_VERSION  =       1;
-    const uint16_t L4R_APP_MINOR_VERSION  =       0;
-    const uint16_t L4R_MIN_MAJOR_VERSION  =       1;
-    const uint16_t L4R_MIN_MINOR_VERSION  =       0;
-
-    return RsServiceInfo(RS_SERVICE_TYPE_L4R_PLUGIN,
-                         L4R_APP_NAME,
-                         L4R_APP_MAJOR_VERSION,
-                         L4R_APP_MINOR_VERSION,
-                         L4R_MIN_MAJOR_VERSION,
-                         L4R_MIN_MINOR_VERSION);
 }

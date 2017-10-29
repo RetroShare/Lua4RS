@@ -17,13 +17,11 @@ public:
     ConfigPage      *qt_config_page() const;
     QDialog         *qt_about_page() const;
 
-    p3Service   *p3_service() const;
-    uint16_t    rs_service_id() const;
-
     void    getPluginVersion(int &major, int &minor, int &build, int &svn_rev) const;
     void    setPlugInHandler(RsPluginHandler *pgHandler);
     void    stop();
 
+    p3Config *p3_config() const;
     std::string configurationFileName() const { return "Lua4RS.cfg"; }
 
     std::string getShortPluginDescription() const;
