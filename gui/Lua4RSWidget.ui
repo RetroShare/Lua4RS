@@ -408,7 +408,7 @@
              <string>Scriptname</string>
             </property>
             <property name="textAlignment">
-             <set>AlignLeft|AlignVCenter</set>
+             <set>AlignLeading|AlignVCenter</set>
             </property>
            </column>
            <column>
@@ -416,7 +416,7 @@
              <string>Description</string>
             </property>
             <property name="textAlignment">
-             <set>AlignLeft|AlignVCenter</set>
+             <set>AlignLeading|AlignVCenter</set>
             </property>
            </column>
            <column>
@@ -424,15 +424,7 @@
              <string>Last Run</string>
             </property>
             <property name="textAlignment">
-             <set>AlignLeft|AlignVCenter</set>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Trigger</string>
-            </property>
-            <property name="textAlignment">
-             <set>AlignLeft|AlignVCenter</set>
+             <set>AlignLeading|AlignVCenter</set>
             </property>
            </column>
            <column>
@@ -440,7 +432,15 @@
              <string>Enabled</string>
             </property>
             <property name="textAlignment">
-             <set>AlignLeft|AlignVCenter</set>
+             <set>AlignLeading|AlignVCenter</set>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Trigger</string>
+            </property>
+            <property name="textAlignment">
+             <set>AlignLeading|AlignVCenter</set>
             </property>
            </column>
           </widget>
