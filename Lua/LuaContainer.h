@@ -64,6 +64,8 @@ public:
     void addEventTrigger(uint eventId);
     bool getEventTriggerChecked(uint eventId);
 
+    QString getTriggerNames();
+
 private:
     LuaCode* _code;
     LuaConfig* _config ;

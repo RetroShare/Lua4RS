@@ -162,7 +162,7 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     name->setText(container->getName());
     desc->setText(container->getDesc());
     lastRun->setText(container->getLastTriggered().toString());
-    trigger->setText("TODO");
+    trigger->setText(container->getTriggerNames());
     enabled->setCheckState(container->getEnabled() ? Qt::Checked : Qt::Unchecked);
 
     ui->tw_allscripts->setItem(rows, 0, name);
@@ -170,6 +170,28 @@ void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
     ui->tw_allscripts->setItem(rows, 2, lastRun);
     ui->tw_allscripts->setItem(rows, 3, trigger);
     ui->tw_allscripts->setItem(rows, 4, enabled);
+}
+
+void Lua4RSWidget::allScriptsUpdate(QString lastLoadedName)
+{
+    LuaList* list = _lua->codeList();
+
+    list->loadAll();
+    // _activeContainer is invalid from now on!
+    _activeContainer = NULL;
+
+    setLuaCodes(list);
+
+    if(lastLoadedName == "")
+        // no file was opened - we are done
+        return;
+
+    LuaContainer* lc;
+    if(list->itemByName(lastLoadedName, lc))
+        switchContainer(lc);
+    else
+        // couldn't find the file one was working one ...
+        switchContainer(NULL);
 }
 
 // init the gui at startup and after a container switch before the ini is loaded
@@ -413,6 +435,11 @@ bool Lua4RSWidget::saveScript(bool showErrorMsg)
         mbox.setStandardButtons( QMessageBox::Ok );
         mbox.exec();
     }
+
+    // now update the script list
+    if (rc)
+        allScriptsUpdate(_activeContainer->getName());
+
     return rc;
 }
 
@@ -478,6 +505,7 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
 void Lua4RSWidget::on_pb_load_clicked()
 {
     QString name = "";
+
     if(_activeContainer != NULL)
     {
         // a file was opened -> save its name
@@ -498,24 +526,7 @@ void Lua4RSWidget::on_pb_load_clicked()
             saveScript();
     }
 
-    LuaList* list = _lua->codeList();
-
-    list->loadAll();
-    // _activeContainer is invalid from now on!
-    _activeContainer = NULL;
-
-    setLuaCodes(list);
-
-    if(name == "")
-        // no file was opened - were are done
-        return;
-
-    LuaContainer* lc;
-    if(list->itemByName(name, lc))
-        switchContainer(lc);
-    else
-        // couldn't find the file one was working one ...
-        switchContainer(NULL);
+    allScriptsUpdate(name);
 }
 
 // "Save" clicked : save the contents of the editor control to a file on disk
@@ -620,7 +631,6 @@ void Lua4RSWidget::on_spb_everycount_editingFinished()
     return;
 }
 
-
 // "Run Every" : amount of timer units has changed
 // note: if changed, rb_runevery should be selected
 void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
@@ -632,7 +642,7 @@ void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
     unit = TIME_UNITS[index];
     interval = amount * unit;
 
-    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" ); // just to see
+    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
 }
 
 // "RunEvery" : unit of timer units has changed
@@ -675,7 +685,6 @@ void Lua4RSWidget::on_cb_shutdown_toggled(bool checked)
 {
     ui->cb_shutdown->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
 }
-#undef ACTIVE_COLOR
 
 //------------------------------------------------------------------------------
 // Tabpage "By Event"
@@ -688,6 +697,10 @@ void Lua4RSWidget::on_dd_events_currentIndexChanged(int /*index*/)
 {
 }
 
+void Lua4RSWidget::on_cb_chatmessage_toggled(bool checked)
+{
+    ui->cb_chatmessage->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
+}
 
 //------------------------------------------------------------------------------
 // hints
@@ -711,3 +724,5 @@ void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int /*co
 
     ui->pte_luacode->insertPlainText(hint);
 }
+
+#undef ACTIVE_COLOR

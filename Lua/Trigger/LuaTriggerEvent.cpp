@@ -2,22 +2,18 @@
 
 LuaTriggerEvent::LuaTriggerEvent()
 {
-    _classname = "LuaTriggerEvent";
+    _classname = LUA_TRIGGER_EVENT;
 }
 
 LuaTriggerEvent::LuaTriggerEvent(uint eventId)
 {
-    _classname = "LuaTriggerEvent";
+    _classname = LUA_TRIGGER_EVENT;
     _eventId = eventId;
 }
-
-
 
 LuaTriggerEvent::~LuaTriggerEvent()
 {
 }
-
-
 
 bool LuaTriggerEvent::isTriggered (const LuaEvent& luaevent)
 {
@@ -29,23 +25,17 @@ bool LuaTriggerEvent::isTriggered (const LuaEvent& luaevent)
     return false;
 }
 
-
-
 void LuaTriggerEvent::toSettings(QSettings &mySettings)
 {
     LuaTriggerBase::toSettings(mySettings);
     mySettings.setValue("EventId", _eventId);
 }
 
-
-
 void LuaTriggerEvent::fromSettings (const QSettings& mySettings)
 {
     LuaTriggerBase::fromSettings(mySettings);
     _eventId = mySettings.value   ("EventId", "").toUInt();
 }
-
-
 
 QString LuaTriggerEvent::classname()
 {

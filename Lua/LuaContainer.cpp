@@ -1,3 +1,5 @@
+#include <QStringList>
+
 #include "LuaContainer.h"
 #include "LuaCode.h"
 #include "LuaConfig.h"
@@ -176,6 +178,32 @@ bool LuaContainer::getEventTriggerChecked(uint eventId)
         }
     }
     return false;
+}
+
+QString LuaContainer::getTriggerNames()
+{
+    QString out;
+    QStringList names;
+
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+    {
+
+
+        // remove leading LuaTrigger""
+        names.push_back((*it)->classname().mid(10));
+    }
+
+    if (!names.empty())
+    {
+        names.sort();
+        out = names.join('|');
+    }
+    else
+    {
+        out = QObject::tr("none");
+    }
+
+    return out;
 }
 
 

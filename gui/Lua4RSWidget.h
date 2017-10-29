@@ -48,6 +48,7 @@ private:
     LuaContainer* allScriptsGetLuaContainerFromSelectedRow();
     LuaContainer* allScriptsGetLuaContainerFromRow(const int row);
     void allScriptsAddRow(LuaContainer* container);
+    void allScriptsUpdate(QString lastLoadedName);
 
     // init the gui at startup and after a container switch
     void clearUi();
@@ -90,6 +91,8 @@ private slots:
     void on_cb_shutdown_toggled(bool checked);
     void on_cb_every_toggled(bool checked);
     void on_dd_events_currentIndexChanged(int index);
+
+    void on_cb_chatmessage_toggled(bool checked);
 };
 
 #endif // LUA4RSMAINWIDGET_H
