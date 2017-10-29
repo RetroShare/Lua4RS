@@ -196,7 +196,7 @@ QString LuaContainer::getTriggerNames()
     if (!names.empty())
     {
         names.sort();
-        out = names.join('|');
+        out = names.join("|");
     }
     else
     {
