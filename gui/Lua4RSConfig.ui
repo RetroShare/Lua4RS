@@ -18,103 +18,69 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>221</width>
-     <height>81</height>
+     <width>180</width>
+     <height>93</height>
     </rect>
    </property>
    <property name="title">
     <string>tick options</string>
    </property>
-   <widget class="QSpinBox" name="sb_starupEvent">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>61</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string>This lets you choose after how many seconds the startup event is triggered</string>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>120</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="l_tickInterval">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>tick interval</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="l_tickIntervalUnit">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>50</y>
-      <width>21</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>s</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="sb_tickInterval">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>50</y>
-      <width>61</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="whatsThis">
-     <string>this lets you choose after how many seconds a tick event is triggered</string>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>60</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="l_startupEvent">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>startup event</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="l_startupEventUnit">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>20</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>s</string>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="l_startupEvent">
+      <property name="text">
+       <string>startup event</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="l_startupEventUnit">
+      <property name="text">
+       <string>s</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="l_tickInterval">
+      <property name="text">
+       <string>tick interval</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QLabel" name="l_tickIntervalUnit">
+      <property name="text">
+       <string>s</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QSpinBox" name="sb_tickInterval">
+      <property name="whatsThis">
+       <string>this lets you choose after how many seconds a tick event is triggered</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>60</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QSpinBox" name="sb_starupEvent">
+      <property name="whatsThis">
+       <string>This lets you choose after how many seconds the startup event is triggered</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>120</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

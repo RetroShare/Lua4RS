@@ -33,6 +33,10 @@ public:
 
 private:
     Ui::Lua4RSConfig *ui;
+
+private slots:
+    void startUpChanged(int);
+    void tickIntervalChanged(int);
 };
 
 #endif // LUA4RSCONFIG_H
