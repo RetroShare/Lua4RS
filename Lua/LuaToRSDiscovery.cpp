@@ -33,7 +33,6 @@ extern "C" {
     //virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
     int disc_getDiscPgpFriends(lua_State* L)
     {
-
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const RsPgpId id = RsPgpId(luaL_checkstring(L, 1));
@@ -69,9 +68,11 @@ extern "C" {
     int disc_getWaitingDiscCount(lua_State* L)
     {
         unsigned int sendCount, recvCount;
+
         rsDisc->getWaitingDiscCount(&sendCount, &recvCount);
         lua_pushnumber(L, recvCount);
         lua_pushnumber(L, sendCount);
+
         return 2;
     }
 }

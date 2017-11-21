@@ -30,6 +30,8 @@ struct LuaEvent {
  * - std::list<TurtleFileInfo>  : tfi
  */
 
+typedef std::list<LuaEvent *> LuaEventList;
+
 //------------------------------------------------------------------------------
 //  Fundamental Events from the Plugin
 //------------------------------------------------------------------------------

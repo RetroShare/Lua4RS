@@ -145,3 +145,22 @@ void Lua4RSNotify::notifyDownloadComplete           (const std::string& fileHash
 
     L4R::L4RConfig->getCore()->processEvent(e);
 }
+
+void Lua4RSNotify::notifyTurtleSearchResult         (uint32_t search_id, const std::list<TurtleFileInfo>& files)
+{
+    LuaEventList lel;
+    foreach (const TurtleFileInfo& file, files) {
+        LuaEvent *e = new LuaEvent();
+
+        e->eventId = L4R_FILE_SEARCHRESULT;
+        e->timeStamp = QDateTime::currentDateTime();
+        e->dataParm->setValue("u64searchId", search_id);
+        e->dataParm->setValue("strhash", QString::fromStdString(file.hash.toStdString()));
+        e->dataParm->setValue("strname", QString::fromUtf8((file.name.c_str())));
+        e->dataParm->setValue("u64size", quint64(file.size));
+
+        lel.push_back(e);
+    }
+
+    L4R::L4RConfig->getCore()->processEvent(lel);
+}

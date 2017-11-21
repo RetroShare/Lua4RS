@@ -22,6 +22,8 @@ public:
     void notifyPeerStatusChangedSummary   ();
     void notifyDiscInfoChanged            ();
     void notifyDownloadComplete           (const std::string& /* fileHash  */);
+
+    void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */);
 };
 
 #endif // LUA4RSNOTIFY_H

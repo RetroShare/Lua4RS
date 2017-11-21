@@ -76,6 +76,7 @@ SOURCES +=  \
     Lua/LuaToRSServerConfig.cpp \
     Lua/LuaToRSDiscovery.cpp \
     Lua/LuaToRSChat.cpp \
+    Lua/LuaToRSFile.cpp \
     helper.cpp
 
 FORMS += \

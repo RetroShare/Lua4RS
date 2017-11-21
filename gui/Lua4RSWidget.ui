@@ -1987,7 +1987,7 @@
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_15">
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_16" stretch="0,0,0,0,0">
+              <layout class="QVBoxLayout" name="verticalLayout_16" stretch="0,0,0,0,0,0">
                <property name="spacing">
                 <number>1</number>
                </property>
@@ -2146,6 +2146,13 @@
                 <widget class="QCheckBox" name="cb_chatmessage">
                  <property name="text">
                   <string>Chat Message</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="cb_turtleSearchResult">
+                 <property name="text">
+                  <string>Turtle Search Result(s)</string>
                  </property>
                 </widget>
                </item>

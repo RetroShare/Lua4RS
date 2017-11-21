@@ -12,6 +12,7 @@
 #include "Lua4RSNotify.h"
 
 #include "LuaToRS.cpp"
+#include "LuaToRSFile.cpp"
 #include "LuaToRSChat.cpp"
 #include "LuaToRSDiscovery.cpp"
 #include "LuaToRSPeers.cpp"
@@ -194,7 +195,8 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest, "fileRequest()", QObject::tr("request a download (params: *name*, *hash*, *size*"));
+    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest,  "fileRequest()",  QObject::tr("request a download (params: *name*, *hash*, *size*"));
+    addFunctionToLuaAndTw(top, namespc, files, file_turtleSearch, "turtleSearch()", QObject::tr("starts a search for given keywords"));
 
     lua_setglobal(L, "files");
 }
@@ -234,6 +236,7 @@ bool LuaCore::processEvent(const LuaEvent& e)
     if(_processingEvent)
         return false;
     _processingEvent = true;
+
     // do some magic here
     // std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
     for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
@@ -243,6 +246,23 @@ bool LuaCore::processEvent(const LuaEvent& e)
     }
     _processingEvent = false;
     return true;
+}
+
+bool LuaCore::processEvent(LuaEventList &lel) {
+    bool ret = true;
+
+    foreach (const LuaEvent *e, lel) {
+        ret &= processEvent(*e);
+    }
+
+    // clear all events
+    while (!lel.empty()) {
+        LuaEvent *e = lel.front();
+        lel.pop_front();
+        delete e;
+    }
+
+    return ret;
 }
 
 // invoke lua
@@ -279,6 +299,83 @@ void LuaCore::runLuaByName(const QString& name)
     runLuaByString(lc->getCode());
 }
 
+void addSettingsEntryToLua(lua_State *L, int top, const QString &type, const QVariant& value, const QString &name)
+{
+//    std::cout << "[Lua] runByEvent/addSettingsEntry adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
+
+    lua_pushfstring(L, name.toStdString().c_str());
+    if(type == "str") {
+        // PANIC: unprotected error in call to Lua API (invalid option '%1' to 'lua_pushfstring')
+        ///TODO proper fix
+        std::string s = value.toString().toStdString();
+        replaceAll(s, "%", "");
+        lua_pushfstring(L, s.c_str());
+    }
+    else if(type == "int")
+        lua_pushinteger(L, value.toInt());
+    else if(type == "u32")
+        lua_pushinteger(L, value.toUInt());
+    else if(type == "u64")
+        lua_pushinteger(L, value.toULongLong());
+
+    lua_settable(L, top);
+}
+
+void addSettingsToLua(lua_State  *L, int top, QSettings *settings, int8_t skipLvl)
+{
+    QStringList keys = settings->allKeys();
+    for(QStringList::ConstIterator it = keys.begin(); it != keys.end(); it++)
+    {
+        QString key = *it;
+
+        /*
+        while (skipLvl-- && key.contains('/'))
+            key = key.mid(key.indexOf('/') + 1);
+        */
+
+        QString type = key.mid(0, 3);
+//        std::cout << "[Lua] runByEvent/addSettingsToLua adding type " << type.toStdString() << " key is " << key.toStdString() << " (was " << it->toStdString() << ")" << std::endl;
+        if(!(type == "str" || type == "int"  || type == "u32" || type == "u64" /*|| type == "arr" */))
+            continue;
+
+        QString name = key.mid(3);
+        QVariant value = settings->value(key);
+
+        /*
+        if (type == "arr") {
+            lua_pushfstring(L, name.toStdString().c_str());
+
+            // add array table
+            lua_newtable(L);
+            int top2 = lua_gettop(L);
+            int index, num = settings->beginReadArray(key);
+
+            for (index = 0; index < num; ++index) {
+                // add array index
+                lua_pushinteger(L, index);
+                settings->setArrayIndex(index);
+
+                // add value table
+                lua_newtable(L);
+                int top3 = lua_gettop(L);
+
+                // values
+                addSettingsToLua(L, top3, settings, 2);
+
+                // end array table
+                lua_settable(L, top2);
+            }
+
+            // end args table
+            lua_settable(L, top);
+            settings->endArray();
+        }
+        else
+        */
+            addSettingsEntryToLua(L, top, type, value, name);
+    }
+}
+
 void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
 {
     {
@@ -291,37 +388,7 @@ void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
         lua_newtable(L);
         int top = lua_gettop(L);
 
-        QStringList keys = event.dataParm->allKeys();
-        for(QStringList::ConstIterator it = keys.begin(); it != keys.end(); it++)
-        {
-            QString key = *it;
-            QString type = key.mid(0, 3);
-            //std::cout << "[Lua] runByEvent adding type " << type.toStdString() << " key is " << key.toStdString() << std::endl;
-            if(!(type == "str" || type == "int"  || type == "u32" || type != "u64"))
-                continue;
-
-            QString name = key.mid(3);
-            QVariant value = event.dataParm->value(key);
-
-            //std::cout << "[Lua] runByEvent adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
-
-            lua_pushfstring(L, name.toStdString().c_str());
-            if(type == "str") {
-                // PANIC: unprotected error in call to Lua API (invalid option '%1' to 'lua_pushfstring')
-                ///TODO proper fix
-                std::string s = value.toString().toStdString();
-                replaceAll(s, "%", "");
-                lua_pushfstring(L, s.c_str());
-            }
-            else if(type == "int")
-                lua_pushinteger(L, value.toInt());
-            else if(type == "u32")
-                lua_pushinteger(L, value.toUInt());
-            else if(type == "u64")
-                lua_pushinteger(L, value.toULongLong());
-
-            lua_settable(L, top);
-        }
+        addSettingsToLua(L, top, event.dataParm, 0);
 
         lua_setglobal(L, "args");
 

@@ -270,6 +270,8 @@ void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
         if(container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED))
             ui->cb_chatmessage->setChecked(true);
 
+        if(container->getEventTriggerChecked(L4R_FILE_SEARCHRESULT))
+            ui->cb_turtleSearchResult->setChecked(true);
 
         ///TODO rest
 
@@ -315,6 +317,9 @@ bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
     // add event trigger (need to make this nice someday)
     if(ui->cb_chatmessage->isChecked())
         container->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
+
+    if(ui->cb_turtleSearchResult->isChecked())
+        container->addEventTrigger(L4R_FILE_SEARCHRESULT);
 
     ///TODO rest
 
