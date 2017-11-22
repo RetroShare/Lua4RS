@@ -140,6 +140,8 @@ void p3Lua4RS::data_tick()
 
         _lastRun = time(0);
     }
+
+    usleep(250);
 }
 
 LuaCore *p3Lua4RS::getCore()
