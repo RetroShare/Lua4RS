@@ -12,6 +12,7 @@ struct LuaEvent {
 #else
     LuaEvent() : dataParm(new QSettings()) {}
 #endif
+
     // clear settings just in case Qt want to store them permanently somewhere
     ~LuaEvent() { dataParm->clear(); delete dataParm; }
 

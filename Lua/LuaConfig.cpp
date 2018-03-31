@@ -28,7 +28,7 @@ LuaConfig::~LuaConfig()
 }
 
 // Test all triggers if one or more are triggered by <luaevent>
-bool LuaConfig::isTriggered(const LuaEvent& luaevent)
+bool LuaConfig::isTriggered(const LuaEvent &luaevent)
 {
     // is the script enabled at all?
     if(isScriptEnabled())

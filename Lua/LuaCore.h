@@ -40,8 +40,9 @@ public:
 
     void setupRsFunctionsAndTw(QTreeWidget* tw);
 
-    bool processEvent(const LuaEvent& e);
-    bool processEvent(LuaEventList &lel);
+    void processEvent(LuaEvent *e);
+    void processEvent(LuaEventList &lel);
+    bool processEventQueue();
 
     // invoke lua
     void runLuaByString(const QString& code);
@@ -76,6 +77,7 @@ private:
     Lua4RSWidget* _ui;
 
     bool _processingEvent;
+    LuaEventList _eventList;
     // disable trigger on shutdown
     bool _shutDownImminent;
 

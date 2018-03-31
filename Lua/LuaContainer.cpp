@@ -29,7 +29,7 @@ LuaContainer::~LuaContainer()
     delete _config;
 }
 
-bool LuaContainer::isTriggered(const LuaEvent& event)
+bool LuaContainer::isTriggered(const LuaEvent &event)
 {
     return _config->isTriggered(event);
 }

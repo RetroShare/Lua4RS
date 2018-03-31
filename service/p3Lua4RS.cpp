@@ -115,33 +115,42 @@ RsSerialiser *p3Lua4RS::setupSerialiser()
 
 void p3Lua4RS::data_tick()
 {
+    bool foundWork = false;
+
     // start up event
     if(!_startUpEventTriggered && (_initTime + _secondsToStarUpEvent) <= (uint)time(0))
     {
-        LuaEvent e;
-        e.eventId = L4R_STARTUP;
-        e.timeStamp = QDateTime::currentDateTime();
+        struct LuaEvent *e = new LuaEvent();
+        e->eventId = L4R_STARTUP;
+        e->timeStamp = QDateTime::currentDateTime();
 
-        if(_luaCore->processEvent(e))
-            // startup event wasn't blocked by core
-            _startUpEventTriggered = true;
+        _luaCore->processEvent(e);
+
+        _startUpEventTriggered = true;
+        foundWork |= true;
     }
 
     // tick each X second
     if(_lastRun + _tickIntervalInSeconds <= (uint)time(0))
     {
-        LuaEvent e;
-        e.eventId = L4R_TIMERTICK;
-        e.timeStamp = QDateTime::currentDateTime();
+        struct LuaEvent *e = new LuaEvent();
+        e->eventId = L4R_TIMERTICK;
+        e->timeStamp = QDateTime::currentDateTime();
         // remove ms
-        e.timeStamp.setTime(QTime(e.timeStamp.time().hour(), e.timeStamp.time().minute(), e.timeStamp.time().second()));
+        e->timeStamp.setTime(QTime(e->timeStamp.time().hour(), e->timeStamp.time().minute(), e->timeStamp.time().second()));
 
         _luaCore->processEvent(e);
 
         _lastRun = time(0);
+
+        foundWork |= true;
     }
 
-    usleep(250);
+    // event queue
+    foundWork |= _luaCore->processEventQueue();
+
+    if (!foundWork)
+        usleep(250);
 }
 
 LuaCore *p3Lua4RS::getCore()

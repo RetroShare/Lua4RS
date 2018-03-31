@@ -57,9 +57,9 @@ void LuaCore::shutDown()
 
     // send shotdown event
     {
-        LuaEvent e;
-        e.eventId = L4R_SHUTDOWN;
-        e.timeStamp = QDateTime::currentDateTime();
+        struct LuaEvent *e = new LuaEvent();
+        e->eventId = L4R_SHUTDOWN;
+        e->timeStamp = QDateTime::currentDateTime();
 
         processEvent(e);
     }
@@ -219,50 +219,70 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QT
     pushTable(L, tableTop, luaFuncName, f);
 }
 
-bool LuaCore::processEvent(const LuaEvent& e)
+void LuaCore::processEvent(LuaEvent *e)
 {
+    {
+        RsStackMutex mtx(_mutex);
+        _eventList.push_back(e);
+    }
+}
+
+void LuaCore::processEvent(LuaEventList &lel) {
+    {
+        RsStackMutex mtx(_mutex);
+        _eventList.insert(_eventList.end(), lel.begin(), lel.end());
+    }
+}
+
+bool LuaCore::processEventQueue()
+{
+    if (_eventList.empty())
+        return false;
+
     // to catch to early events
     if(_ui == NULL)
     {
-        std::cerr << "[Lua] LuaCore not ready - event " << e.eventId  << std::endl;
+        std::cerr << "[Lua] LuaCore not ready" << std::endl;
         return false;
     }
 
+    struct LuaEvent *e;
+    {
+        RsStackMutex mtx(_mutex);
+        e = _eventList.front();
+        _eventList.pop_front();
+    }
+
     // block everythign except onShutdown when RS is exiting
-    if(_shutDownImminent && e.eventId != L4R_SHUTDOWN)
+    if(_shutDownImminent && e->eventId != L4R_SHUTDOWN)
+        // event is already removed from list and thus dropped completly
         return false;
 
     // exit when we are already executing code for a previous event
-    if(_processingEvent)
+    if(_processingEvent) {
+        // add event again for later processing
+        // this case should not happen since there is only one thread executing events
+        {
+            RsStackMutex mtx(_mutex);
+            _eventList.push_front(e);
+        }
         return false;
+    }
     _processingEvent = true;
 
     // do some magic here
     // std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
     for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
     {
-        if((*it)->isTriggered(e))
-            runLuaByEvent((*it), e);
+        if((*it)->isTriggered(*e))
+            runLuaByEvent((*it), *e);
     }
     _processingEvent = false;
+
+    delete e;
+    e = NULL;
+
     return true;
-}
-
-bool LuaCore::processEvent(LuaEventList &lel) {
-    bool ret = true;
-
-    foreach (const LuaEvent *e, lel) {
-        ret &= processEvent(*e);
-    }
-
-    // clear all events
-    while (!lel.empty()) {
-        LuaEvent *e = lel.front();
-        lel.pop_front();
-        delete e;
-    }
-
-    return ret;
 }
 
 // invoke lua
