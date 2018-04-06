@@ -23,6 +23,7 @@
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
     _mutex      ("Lua4RS"),
+    _mutexRunLua("Lua4RS Lua"),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
     _processingEvent(false),
@@ -301,7 +302,10 @@ void LuaCore::runLuaByString(const QString& code)
     code2 = code.toUtf8().constData();
 #endif
 
-    RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
+    // Since the executed Lua code might trigger a RS event which then leads to an event within Lua4RS we can end in a dead lock.
+    // Adding the new event within Lua4RS will try to lock the mutex - which is impossible since we are holding it here already.
+    // --> use separared mutex for executing Lua
+    RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
     int ret = luaL_dostring(L, code2.c_str());
     reportLuaErrors(L, ret);
 }
@@ -399,7 +403,7 @@ void addSettingsToLua(lua_State  *L, int top, QSettings *settings, int8_t skipLv
 void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
 {
     {
-        RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
+	RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
 
         // clear old parameter
         luaL_dostring(L, "args = nil");

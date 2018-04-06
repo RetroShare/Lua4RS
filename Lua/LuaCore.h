@@ -71,6 +71,7 @@ private:
     lua_State* L;
 
     RsMutex _mutex;
+    RsMutex _mutexRunLua;
 
     LuaList* _luaList;
     Lua4RSNotify* _notify;
