@@ -356,6 +356,7 @@ void addSettingsToLua(lua_State  *L, int top, QSettings *settings, int8_t skipLv
         while (skipLvl-- && key.contains('/'))
             key = key.mid(key.indexOf('/') + 1);
         */
+	(void) skipLvl;
 
         QString type = key.mid(0, 3);
 //        std::cout << "[Lua] runByEvent/addSettingsToLua adding type " << type.toStdString() << " key is " << key.toStdString() << " (was " << it->toStdString() << ")" << std::endl;
