@@ -115,17 +115,40 @@ local function pairsByKeys (tbl, func)
     return iter
 end
 
-function getCommitNumber( hash )
+function getCommitNumber(hash, tag)
 	local handle = io.popen("cd ~/Projects/RetroShare; git describe --tags " .. hash)
-	-- local handle = io.popen("cd /tmp/RetroShare; git describe " .. hash)
 	local result = handle:read("*a")
 	handle:close()
 	-- rs.print(result)
 	-- rs.print(tostring(""..string.find(result, ".+-.+-(.+)-.+")))
+
+	-- get #commits since tag
+	local num = 0
 	for i in string.gmatch(result, ".+-?.+-(.+)-.+") do
-		return i
+		num = i
+		break
 	end
-	return 0
+
+	-- get tag
+	local refTag = ""
+	for i in string.gmatch(result, "(.+)-.+-.+") do
+		refTag = i
+		break
+	end
+
+	-- rs.print("got number " .. num .. " at tag " .. refTag .. "/" .. tag)
+
+	-- when we have a commit count return it
+	if num ~= 0 then
+		-- does the tag match?
+		if refTag == tag then
+			return num, true, ""
+		end
+		-- if not add the tag
+		return num, false, refTag
+	end
+
+	return 0, false, ""
 end
 
 function getCurrentGitTag()
@@ -147,14 +170,14 @@ chatid = args.chatid
 -- rs.print("got message from lobby " .. chatid .. " user: " .. args.nick .. " msg: " .. msg)
 -- rs.print("msg is " .. string.len(msg) .. " char(s) long")
 
-
 if msg ~= nil and  string.len(msg) <= 150 then
 	if msg == "!versions" then
 		local friends = peers.getFriendList()
-		local revList = {}
 		local revListNum = {}
 		local revListHash = {}
+		local refListMatchingTag = {}
 		local numFriends = 0
+		local tag = getCurrentGitTag()
 
 		for i = 1 , #friends do
 			local f = friends[i]
@@ -164,19 +187,26 @@ if msg ~= nil and  string.len(msg) <= 150 then
 				numFriends = numFriends + 1
 				local revHash, sane = getVersionNumber(revStr)
 				if sane then
-					local revNum = "" .. getCommitNumber(revHash)
+					local revNum, matchingTag, refTag = getCommitNumber(revHash, tag)
+					revNum = "" .. revNum
 					if revNum ~= "0" then
 						revListHash[revNum] = "g" .. revHash
+						if matchingTag then
+							refListMatchingTag[revNum] = nil
+						else
+							refListMatchingTag[revNum] = refTag
+						end
 					else
 						if revHash == "01234567" then
 							revNum = "001"
 							revListHash[revNum] = "not set (01234567)"
 						else
 							revNum = "000"
-							revListHash[revNum] = "unkown (nonuniform version string)"
+							revListHash[revNum] = "unknown"
+							rs.print("unknown rev: " .. revHash)
 						end
+						refListMatchingTag[revNum] = nil
 					end
-					table.insert(revList, revNum .. " - " .. getName(f))
 					if revListNum[revNum] ~= nil then
 						revListNum[revNum] = revListNum[revNum] + 1
 					else
@@ -186,9 +216,10 @@ if msg ~= nil and  string.len(msg) <= 150 then
 			end
 		end
 
-		toSend = numFriends .. " discovery entries were found"
-		toSend = toSend .. "<br>current tag: <b>" .. getCurrentGitTag() .. "</b> - showing #commits since tag"
+		toSend = numFriends .. " discovery entries were found. Showing #commits since tag:"
+		toSend = toSend .. "<hr>current tag: <b>" .. tag .. "</b>"
 		-- build shiny table
+		-- add latest tag entries
 		toSend = toSend .. "<table>"
 			toSend = toSend .. "<tr>"
 				toSend = toSend .. "<th>#commits</th>"
@@ -196,14 +227,41 @@ if msg ~= nil and  string.len(msg) <= 150 then
 				toSend = toSend .. "<th>times seen</th>"
 			toSend = toSend .. "<tr>"
 		for key, value in pairsByKeys(revListNum) do
+			if refListMatchingTag[key] == nil then
+				toSend = toSend .. "<tr>"
+					-- add revision with leading 'r'
+					toSend = toSend .. "<td>r" .. key .. "</td>"
+					-- add git hash (leading 'g' is already inclded)
+					toSend = toSend .. "<td>" .. revListHash[key] .. "</td>"
+					-- add number of occurrences
+					toSend = toSend .. "<td>" .. value .. "</td>"
+				toSend = toSend .. "</tr>"
+			end
+		end
+		toSend = toSend .. "</table>"
+
+		-- add other tags
+		toSend = toSend .. "<hr>other tags:"
+		toSend = toSend .. "<table>"
 			toSend = toSend .. "<tr>"
-				-- add revision with leading 'r'
-				toSend = toSend .. "<td>r" .. key .. "</td>"
-				-- add git hash (leading 'g' is already inclded)
-				toSend = toSend .. "<td>" .. revListHash[key] .. "</td>"
-				-- add number of occurrences
-				toSend = toSend .. "<td>" .. value .. "</td>"
-			toSend = toSend .. "</tr>"
+				toSend = toSend .. "<th>#commits</th>"
+				toSend = toSend .. "<th>reference tag</th>"
+				toSend = toSend .. "<th>&nbsp;git hash</th>"
+				toSend = toSend .. "<th>times seen</th>"
+			toSend = toSend .. "<tr>"
+		for key, value in pairsByKeys(revListNum) do
+			if refListMatchingTag[key] ~= nil then
+				toSend = toSend .. "<tr>"
+					-- add revision with leading 'r'
+					toSend = toSend .. "<td>r" .. key .. "</td>"
+					-- add reference tag
+					toSend = toSend .. "<td>" ..  refListMatchingTag[key] .. "</td>"
+					-- add git hash (leading 'g' is already inclded)
+					toSend = toSend .. "<td>" .. revListHash[key] .. "</td>"
+					-- add number of occurrences
+					toSend = toSend .. "<td>" .. value .. "</td>"
+				toSend = toSend .. "</tr>"
+			end
 		end
 		toSend = toSend .. "</table>"
 		chat.sendChat(chatid, toSend)
