@@ -7,8 +7,15 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets
 }
 
+# when rapidjson is mainstream on all distribs, we will not need the sources anymore
+# in the meantime, they are part of the RS directory so that it is always possible to find them
+
+INCLUDEPATH += ../../rapidjson-1.1.0
+
+
 linux-* {
     CONFIG += link_pkgconfig
+
     # Test for Lua5.2
     lua52 = $$system(pkg-config --exists lua5.2 && echo ok)
     isEmpty(lua52) {
@@ -22,7 +29,6 @@ linux-* {
     } else {
         PKGCONFIG *= lua5.2
     }
-
 }
 
 win32 {
