@@ -44,4 +44,52 @@ extern "C" {
         lua_pushboolean(L, (int)ok);
         return 1;
     }
+
+    //virtual void    setDownloadDirectory(std::string path) = 0;
+    int file_setDownloadDirectory(lua_State *L)
+    {
+        //int argc = getArgCount(L);
+        luaL_checktype(L, 1, LUA_TSTRING);
+
+        const std::string path = luaL_checkstring(L, 1);
+
+        rsFiles->setDownloadDirectory(path);
+
+        return 0;
+    }
+
+    //virtual void    setPartialsDirectory(std::string path) = 0;
+    int file_setPartialsDirectory(lua_State *L)
+    {
+        //int argc = getArgCount(L);
+        luaL_checktype(L, 1, LUA_TSTRING);
+
+        const std::string path = luaL_checkstring(L, 1);
+
+        rsFiles->setPartialsDirectory(path);
+
+        return 0;
+    }
+
+    //virtual std::string getDownloadDirectory() = 0;
+    int file_getDownloadDirectory(lua_State *L)
+    {
+        //int argc = getArgCount(L);
+
+        const std::string path = rsFiles->getDownloadDirectory();
+
+        lua_pushstring(L, path.c_str());
+        return 1;
+    }
+
+    //virtual std::string getPartialsDirectory() = 0;
+    int file_getPartialsDirectory(lua_State *L)
+    {
+        //int argc = getArgCount(L);
+
+        const std::string path = rsFiles->getPartialsDirectory();
+
+        lua_pushstring(L, path.c_str());
+        return 1;
+    }
 }
