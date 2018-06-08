@@ -150,7 +150,7 @@ void p3Lua4RS::data_tick()
     foundWork |= _luaCore->processEventQueue();
 
     if (!foundWork)
-        usleep(250);
+        usleep(250 * 1000);
 }
 
 LuaCore *p3Lua4RS::getCore()
