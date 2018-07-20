@@ -199,7 +199,7 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, files, file_fileRequest,  "fileRequest()",					QObject::tr("request a download (params: name, hash, size"));
     addFunctionToLuaAndTw(top, namespc, files, file_getDownloadDirectory, "getDownloadDirectory()", QObject::tr("get download folder path"));
     addFunctionToLuaAndTw(top, namespc, files, file_getPartialsDirectory, "getPartialsDirectory()", QObject::tr("get partial folder path"));
-    addFunctionToLuaAndTw(top, namespc, files, file_turtleSearch, "turtleSearch()",					QObject::tr("starts a search for given keywords"));
+//    addFunctionToLuaAndTw(top, namespc, files, file_turtleSearch, "turtleSearch()",					QObject::tr("starts a search for given keywords"));
     addFunctionToLuaAndTw(top, namespc, files, file_setDownloadDirectory, "setDownloadDirectory()", QObject::tr("set download folder path (params: path)"));
     addFunctionToLuaAndTw(top, namespc, files, file_setPartialsDirectory, "setPartialsDirectory()", QObject::tr("set partial folder path (params: path)"));
 
