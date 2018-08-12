@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QIcon>
 
-#include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
 
 #include "gui/Lua4RSConfig.h"

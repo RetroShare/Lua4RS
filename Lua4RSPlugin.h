@@ -2,7 +2,6 @@
 #define LUA4RSPLUGIN_H
 
 #include <retroshare/rsplugin.h>
-#include <retroshare-gui/mainpage.h>
 
 class p3Lua4RS;
 

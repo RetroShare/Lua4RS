@@ -15,18 +15,17 @@ extern "C" {
     //virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
     //virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
     // only words for now
-/*
+
     int file_turtleSearch(lua_State *L)
     {
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string words = luaL_checkstring(L, 1);
-        TurtleRequestId id = rsTurtle->turtleSearch(words);
+        TurtleRequestId id = rsFiles->turtleSearch(words);
 
         lua_pushnumber(L, id);
         return 1;
     }
-*/
 
     // virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
     int file_fileRequest(lua_State *L)
