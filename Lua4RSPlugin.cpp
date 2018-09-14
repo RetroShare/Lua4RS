@@ -40,7 +40,7 @@ extern "C" {
 #ifdef WIN32
     __declspec(dllexport)
 #endif
-    uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER;
+    uint32_t RETROSHARE_PLUGIN_revision = 1;
 
     // This symbol contains the svn revision number grabbed from the executable.
     // It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -77,8 +77,8 @@ void Lua4RSPlugin::getPluginVersion(int &major, int &minor, int &build, int &svn
 {
     major = RS_MAJOR_VERSION;
     minor = RS_MINOR_VERSION;
-    build = RS_BUILD_NUMBER;
-    svn_rev = RS_REVISION_NUMBER;
+    build = RS_MINI_VERSION;
+    svn_rev = 0;
 }
 
 void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
