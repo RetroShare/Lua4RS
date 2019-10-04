@@ -67,9 +67,9 @@ extern "C" {
     //virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
     int disc_getWaitingDiscCount(lua_State* L)
     {
-        unsigned int sendCount, recvCount;
+        size_t sendCount, recvCount;
 
-        rsDisc->getWaitingDiscCount(&sendCount, &recvCount);
+        rsDisc->getWaitingDiscCount(sendCount, recvCount);
         lua_pushnumber(L, recvCount);
         lua_pushnumber(L, sendCount);
 
