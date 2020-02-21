@@ -113,7 +113,7 @@ RsSerialiser *p3Lua4RS::setupSerialiser()
     return rsSerialiser ;
 }
 
-void p3Lua4RS::data_tick()
+void p3Lua4RS::threadTick()
 {
     bool foundWork = false;
 

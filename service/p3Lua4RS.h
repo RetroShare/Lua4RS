@@ -18,7 +18,7 @@ protected:
 
     // RsTickingThread interface
 public:
-    void data_tick();
+    void threadTick();
 
     // Lua4RSInterface interface
 public:
