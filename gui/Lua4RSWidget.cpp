@@ -1,733 +1,475 @@
-#include <assert.h>
-
-#include <QMessageBox>
-#include <QModelIndex>
-#include <QShortcut>
-#include <QTreeWidgetItem>
-#include <QWidget>
-
-#include "ui_Lua4RSWidget.h"
 #include "Lua4RSWidget.h"
+#include "FunctionBrowser.h"
+#include "ui_Lua4RSWidget.h"
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
+#include "Lua/BundledScripts.h"
 #include "interface/L4RInterface.h"
 
-#define ALL_SCRIPTS_COLUMN_ENABLE 4
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileInfo>
+#include <QFontDatabase>
+#include <QHeaderView>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMenu>
+#include <QPainter>
+#include <QPixmap>
+#include <QIcon>
+#include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QRegularExpression>
+#include <QShortcut>
+#include <QSignalBlocker>
+#include <QTimer>
+#include <QUrl>
 
-Lua4RSWidget::Lua4RSWidget(QWidget *parent) :
-    MainPage(parent),
-    ui(new Ui::Lua4RSWidget),
-    _activeContainer(NULL),
-    _disableOutput(false)
+namespace {
+class ScriptTableItem : public QTableWidgetItem
+{
+public:
+    ScriptTableItem(const QString& text, bool enabled, const QString& name)
+        : QTableWidgetItem(text), _enabled(enabled), _name(name) {}
+
+    bool operator<(const QTableWidgetItem& other) const override
+    {
+        const auto& script = static_cast<const ScriptTableItem&>(other);
+        if(_enabled != script._enabled)
+        {
+            // Keep enabled scripts first even when the user reverses the sort.
+            const bool descending = tableWidget() &&
+                tableWidget()->horizontalHeader()->sortIndicatorOrder() == Qt::DescendingOrder;
+            return descending ? !_enabled : _enabled;
+        }
+        return QString::localeAwareCompare(_name, script._name) < 0;
+    }
+
+private:
+    bool _enabled;
+    QString _name;
+};
+}
+
+Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
+    MainPage(parent), ui(new Ui::Lua4RSWidget),
+    _lua(L4R::L4RConfig->getCore()), _network(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
-
-    _lua = L4R::L4RConfig->getCore();
-
-    setLuaCodes(_lua->codeList());
-
-    clearUi();
-
-    luaContainerToUi(_activeContainer);
-
-    // Fill Hints TreeWidget with main items
+    connect(_lua, &LuaCore::manualRunFinished, this, [this](bool success) {
+        _running = false;
+        ui->runStatus->setText(success ? tr("Finished. Results appear in Output.") : tr("Script failed - see Output."));
+        updateEditorState();
+    }, Qt::QueuedConnection);
+    ui->workspaceSplitter->setSizes({210, 720, 290});
+    ui->editorSplitter->setSizes({500, 190});
+    ui->workspaceSplitter->setStretchFactor(1, 1);
+    ui->editorSplitter->setStretchFactor(0, 1);
+    ui->tw_allscripts->verticalHeader()->hide();
+    ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->tw_allscripts->setSortingEnabled(true);
+    ui->tw_allscripts->sortItems(0);
+    ui->pte_luacode->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    ui->tb_output->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
+    ui->tb_output->setMaximumBlockCount(5000);
+    ui->tb_log->setMaximumBlockCount(2000);
     _lua->setupRsFunctionsAndTw(ui->tw_hints);
+    ui->tw_hints->hideColumn(1);
+    ui->tw_hints->header()->hide();
+    if(ui->tw_hints->topLevelItemCount()) ui->tw_hints->topLevelItem(0)->setExpanded(true);
 
-    // f*c: Set header resize mode of tw_allscripts to content dependant
-#if QT_VERSION < 0x050000
-    ui->tw_allscripts->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-#else
-    ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-#endif
+    ui->le_apiurl->setText(qEnvironmentVariable("RETROSHARE_API_URL", "http://127.0.0.1:9092"));
+    ui->le_apiuser->setText(qEnvironmentVariable("RETROSHARE_API_USER"));
+    ui->le_apipassword->setText(qEnvironmentVariable("RETROSHARE_API_PASSWORD"));
+    connect(ui->pb_apitest, &QPushButton::clicked, this, &Lua4RSWidget::testApiConnection);
+    connect(ui->pb_apiexample, &QPushButton::clicked, this, &Lua4RSWidget::newApiExample);
+    for(auto field : {ui->le_apiurl, ui->le_apiuser, ui->le_apipassword})
+        connect(field, &QLineEdit::textChanged, this, [this]() { ui->apiStatus->setText(tr("Settings changed — click Apply & test connection.")); });
+    connect(ui->pb_folder, &QPushButton::clicked, this, [this]() {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(_lua->getPath())));
+    });
+    connect(ui->pb_clearoutput, &QPushButton::clicked, this, &Lua4RSWidget::clearOutput);
+    connect(ui->le_scriptfilter, &QLineEdit::textChanged, this, &Lua4RSWidget::filterScripts);
+    connect(ui->tw_allscripts, &QTableWidget::currentCellChanged, this,
+            [this](int row, int column, int, int) { openScript(row, column); });
+    connect(ui->le_functionfilter, &QLineEdit::textChanged, this, &Lua4RSWidget::filterFunctions);
+    auto examples = new QMenu(ui->pb_example);
+    examples->addAction(tr("Hello world — no setup needed"), this, [this]() {
+        createScript("-- Click Run or press F5.\nprint(\"Hello from Lua4RS!\")\n", tr("My first Lua script"));
+    });
+    examples->addAction(tr("List friends with the JSON API"), this, &Lua4RSWidget::newApiExample);
+    auto bundled = examples->addMenu(tr("Bundled scripts"));
+    for(const QString& name : BundledScripts::names())
+        bundled->addAction(name, this, [this, name]() {
+            QFile source(":/lua4rs/examples/" + name);
+            if(!source.open(QIODevice::ReadOnly))
+            {
+                QMessageBox::warning(this, tr("Example unavailable"), source.errorString());
+                return;
+            }
+            createScript(QString::fromUtf8(source.readAll()), tr("Example: %1").arg(name));
+        });
+    ui->pb_example->setMenu(examples);
 
-    // Help Button
-    QString help_str = tr(
-    "<h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Lua4RS</h1> \
-      <p>With Lua4RS you get three things with one Plugin: </p> \
-      <ul> \
-        <li>You can write, save, load and run Lua programs within RetroShare.</li> \
-        <li>You can use Lua programs like macros (think of macros in LibreOffice) \
-            to control and automate many features of RetroShare. </li> \
-        <li>You can execute your Lua programs either by timer control (think of \
-            cron or at) or by certain RetroShare events (e.g. <i>a friend comes \
-            online</i> or <i>a chat message is received</i> and many more).</li> \
-      </ul> \
-    ");
+    connect(ui->le_scriptname, &QLineEdit::textChanged, this, &Lua4RSWidget::markDirty);
+    connect(ui->le_scriptdesc, &QLineEdit::textChanged, this, &Lua4RSWidget::markDirty);
+    connect(ui->pte_luacode, &QPlainTextEdit::textChanged, this, &Lua4RSWidget::markDirty);
+    for(auto box : ui->automationTab->findChildren<QCheckBox*>())
+        connect(box, &QCheckBox::toggled, this, [this]() { markDirty(); updateEditorState(); });
+    connect(ui->spb_everycount, QOverload<int>::of(&QSpinBox::valueChanged), this, &Lua4RSWidget::markDirty);
+    connect(ui->dd_everyunits, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Lua4RSWidget::markDirty);
+    for(auto field : ui->automationTab->findChildren<QDateTimeEdit*>())
+        connect(field, &QDateTimeEdit::dateTimeChanged, this, &Lua4RSWidget::markDirty);
 
-    registerHelpButton(ui->helpButton, help_str, "Lua4RSWidget");
-
-    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+S"), ui->pte_luacode);
-    QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_pb_save_clicked()));
+    auto save = new QShortcut(QKeySequence::Save, this);
+    connect(save, &QShortcut::activated, this, &Lua4RSWidget::on_pb_save_clicked);
+    auto run = new QShortcut(QKeySequence(Qt::Key_F5), this);
+    connect(run, &QShortcut::activated, this, &Lua4RSWidget::on_pb_run_clicked);
+    auto fresh = new QShortcut(QKeySequence::New, this);
+    connect(fresh, &QShortcut::activated, this, &Lua4RSWidget::on_pb_newscript_clicked);
+    registerHelpButton(ui->helpButton, tr(
+        "<h2>Start with a simple script</h2><ol>"
+        "<li>Choose <b>Example → Hello world</b>.</li>"
+        "<li>Click <b>Run</b> (F5). Read the result in <b>Output</b>.</li>"
+        "<li>Give your script a name and click <b>Save</b> (Ctrl+S).</li></ol>"
+        "<p>Use <b>Automation</b> only if you want scheduled or event-driven runs. Save to apply them.</p>"
+        "<p>For JSON API scripts, enable the API in RetroShare, enter its authorized credentials in the right panel, "
+        "and click <b>Apply &amp; test connection</b>. Then choose <b>New API example</b>.</p>"
+        "<p>Use <code>print(...)</code> or <code>rs.print(...)</code> for output. "
+        "Continuous JSON API subscriptions run in the separate command-line runner.</p>"), "Lua4RSWidget");
+    refreshScripts();
+    loadScript(nullptr);
 }
 
 Lua4RSWidget::~Lua4RSWidget()
 {
+    _lua->setUi(nullptr);
+    if(_draft) delete _activeContainer;
     delete ui;
 }
 
-void Lua4RSWidget::disableOutput()
-{
-    _disableOutput = true;
-}
-
-void Lua4RSWidget::setLuaCodes(LuaList* list)
-{
-    ui->tw_allscripts->setRowCount(0);
-
-    // disable sorting (better performance)
-    ui->tw_allscripts->setSortingEnabled(false);
-    LuaContainerList::const_iterator it;
-    for(it = list->begin(); it != list->end(); ++it)
-        allScriptsAddRow(*it);
-
-    ui->tw_allscripts->setSortingEnabled(true);
-}
-
-void Lua4RSWidget::clearOutput()
-{
-    if(!_disableOutput)
-        ui->tb_output->clear();
-}
-
-void Lua4RSWidget::appendOutput(const std::string& s)
-{
-    appendOutput(QString::fromStdString(s));
-}
-
+void Lua4RSWidget::disableOutput() { _disableOutput = true; }
+void Lua4RSWidget::clearOutput() { if(!_disableOutput) ui->tb_output->clear(); }
+void Lua4RSWidget::appendOutput(const std::string& s) { appendOutput(QString::fromUtf8(s.c_str())); }
 void Lua4RSWidget::appendOutput(const QString& s)
 {
-    if(!_disableOutput)
-        ui->tb_output->appendPlainText(s);
+    if(!_disableOutput) { ui->tb_output->appendPlainText(s); ui->outputTabs->setCurrentWidget(ui->outputTab); }
 }
-
-void Lua4RSWidget::appendLog(const std::string& s)
-{
-    appendLog(QString::fromUtf8(s.c_str()));
-}
-
+void Lua4RSWidget::appendLog(const std::string& s) { appendLog(QString::fromUtf8(s.c_str())); }
 void Lua4RSWidget::appendLog(const QString& s)
 {
-    if(!_disableOutput)
-        ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss") + QString(" > ") + s);
+    if(_disableOutput) return;
+    ui->tb_log->appendPlainText(QDateTime::currentDateTime().toString("HH:mm:ss") + "  " + s);
+    if(s.startsWith("Lua error:")) { appendOutput(s); ui->runStatus->setText(tr("Script failed — see Output.")); }
 }
 
-/* #############################################################
- * # helper
- * #############################################################
- */
-
-LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromSelectedRow()
+void Lua4RSWidget::refreshScripts()
 {
-    // get corresponding LuaContainer
-    QModelIndexList rows = ui->tw_allscripts->selectionModel()->selectedRows();
-    if(rows.count() != 1)
-        return NULL;
-
-    return allScriptsGetLuaContainerFromRow(rows[0].row());
-}
-
-LuaContainer* Lua4RSWidget::allScriptsGetLuaContainerFromRow(const int row)
-{
-    if(row < 0)
-        return NULL;
-
-    // get script name
-    QTableWidgetItem* name = ui->tw_allscripts->item(row, 0);
-
-    std::cout << "[Lua] Lua4RSWidget::allScriptsGetLuaContainerFromRow : trying to load LuaContaienr for " << name->text().toStdString() << " ...";
-
-    // get container by name
-    LuaContainer* container;
-    if(_lua->codeList()->itemByName(name->text(), container))
+    std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    const QSignalBlocker blocker(ui->tw_allscripts);
+    ui->tw_allscripts->setSortingEnabled(false);
+    ui->tw_allscripts->setRowCount(0);
+    for(auto container : *_lua->codeList())
     {
-        std::cout << " got it!" << std::endl;
-        return container;
-    }
-    // else
-    std::cout << " failed!" << std::endl;
-    return NULL;
-}
-
-void Lua4RSWidget::allScriptsAddRow(LuaContainer* container)
-{
-    int rows = ui->tw_allscripts->rowCount();
-    ui->tw_allscripts->setRowCount(rows + 1);
-
-    QTableWidgetItem* name = new QTableWidgetItem();
-    QTableWidgetItem* desc = new QTableWidgetItem();
-    QTableWidgetItem* lastRun = new QTableWidgetItem();
-    QTableWidgetItem* trigger = new QTableWidgetItem();
-    QTableWidgetItem* enabled = new QTableWidgetItem();
-
-    name->setText(container->getName());
-    desc->setText(container->getDesc());
-    lastRun->setText(container->getLastTriggered().toString());
-    trigger->setText(container->getTriggerNames());
-    enabled->setCheckState(container->getEnabled() ? Qt::Checked : Qt::Unchecked);
-
-    ui->tw_allscripts->setItem(rows, 0, name);
-    ui->tw_allscripts->setItem(rows, 1, desc);
-    ui->tw_allscripts->setItem(rows, 2, lastRun);
-    ui->tw_allscripts->setItem(rows, 3, enabled);
-    ui->tw_allscripts->setItem(rows, 4, trigger);
-}
-
-void Lua4RSWidget::allScriptsUpdate(QString lastLoadedName)
-{
-    LuaList* list = _lua->codeList();
-
-    list->loadAll();
-    // _activeContainer is invalid from now on!
-    _activeContainer = NULL;
-
-    setLuaCodes(list);
-
-    if(lastLoadedName == "")
-        // no file was opened - we are done
-        return;
-
-    LuaContainer* lc;
-    if(list->itemByName(lastLoadedName, lc))
-        switchContainer(lc);
-    else
-        // couldn't find the file one was working one ...
-        switchContainer(NULL);
-}
-
-// init the gui at startup and after a container switch before the ini is loaded
-void Lua4RSWidget::clearUi()
-{
-    ui->cbx_enable->setChecked(false);
-    ui->cbx_timeconstraint->setChecked(false);
-    ui->tied_timefrom->setTime(QTime(0,0,0));
-    ui->tied_timeto->setTime(QTime(0,0,0));
-
-    ui->le_scriptname->clear();
-    ui->le_scriptdesc->clear();
-    ui->pte_luacode->clear();
-
-    ui->cb_every->setChecked(false);
-    ui->cb_once->setChecked(false);
-    ui->cb_startup->setChecked(false);
-    ui->cb_shutdown->setChecked(false);
-
-    ui->rb_runonevent->setChecked(false);
-    ui->dd_events->setCurrentIndex(0);
-
-    ui->spb_everycount->setValue(5);
-    ui->dd_everyunits->setCurrentIndex(1);
-
-    ui->dte_runonce->setDateTime(QDateTime::currentDateTime());
-
-    ui->cb_chatmessage->setChecked(false);
-}
-
-void Lua4RSWidget::luaContainerToUi(LuaContainer* container)
-{
-    // clear ui and set needed fields/boxes
-    clearUi();
-
-    // for settings things to default / resetting
-    if(container == NULL)
-    {
-        ///TODO there might be better ways that this - good enough for the moment
-        ui->pte_luacode->setEnabled(false);
-    } else
-    {
-        // name, desc, code
-        ui->le_scriptname->setText(container->getName());
-        ui->le_scriptdesc->setText(container->getDesc());
-        ui->pte_luacode->setPlainText(container->getCode());
-
-        ui->cbx_enable->setChecked(container->getEnabled());
-        ui->cbx_timeconstraint->setChecked(container->getConstraintEnabled());
-
-        QTime from, to;
-        container->getConstraintFromTo(from, to);
-        ui->tied_timefrom->setTime(from);
-        ui->tied_timeto->setTime(to);
-
-        // trigger
-        uint amount, unit;
-        if(container->getRunEveryChecked(amount, unit))
+        const int row = ui->tw_allscripts->rowCount();
+        ui->tw_allscripts->insertRow(row);
+        const bool enabled = container->getEnabled();
+        auto name = new ScriptTableItem(container->getName(), enabled, container->getName());
+        name->setToolTip(container->getDesc() + "\n" + container->getTriggerNames() + "\n" +
+                         tr("Last run: %1").arg(container->getLastTriggered().isValid() ? container->getLastTriggered().toString() : tr("Never")));
+        ui->tw_allscripts->setItem(row, 0, name);
+        auto status = new ScriptTableItem(enabled ? tr("On") : tr("Off"), enabled, container->getName());
+        const qreal ratio = ui->tw_allscripts->devicePixelRatioF();
+        QPixmap dot(qRound(16 * ratio), qRound(16 * ratio));
+        dot.setDevicePixelRatio(ratio);
+        dot.fill(Qt::transparent);
         {
-            ui->cb_every->setChecked(true);
-            ui->spb_everycount->setValue(amount);
-            ui->dd_everyunits->setCurrentIndex(unit);
+            QPainter painter(&dot);
+            painter.setRenderHint(QPainter::Antialiasing);
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(enabled ? QColor("#218b46") : QColor("#808080"));
+            painter.drawEllipse(QRectF(3, 3, 10, 10));
         }
-        QDateTime dt;
-        if(container->getRunOnceChecked(dt))
-        {
-            ui->cb_once->setChecked(true);
-            ui->dte_runonce->setDateTime(dt);
-        }
-        if(container->getRunShutdownChecked())
-            ui->cb_shutdown->setChecked(true);
-        if(container->getRunStartupChecked())
-            ui->cb_startup->setChecked(true);
-
-        // event trigger
-        if(container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED))
-            ui->cb_chatmessage->setChecked(true);
-
-        if(container->getEventTriggerChecked(L4R_FILE_SEARCHRESULT))
-            ui->cb_turtleSearchResult->setChecked(true);
-
-        ///TODO rest
-
-        ui->pte_luacode->setEnabled(true);
+        QIcon icon;
+        // Keep the status colour when the row is selected.
+        icon.addPixmap(dot, QIcon::Normal);
+        icon.addPixmap(dot, QIcon::Selected);
+        status->setIcon(icon);
+        status->setToolTip(enabled ? tr("Automation enabled") : tr("Automation disabled"));
+        ui->tw_allscripts->setItem(row, 1, status);
     }
+    ui->tw_allscripts->setSortingEnabled(true);
+    filterScripts(ui->le_scriptfilter->text());
+    selectActiveScript();
 }
 
-bool Lua4RSWidget::uiToLuaContainer(LuaContainer* container)
+void Lua4RSWidget::selectActiveScript()
 {
-    if(!saneValues())
-    {
-        std::cerr << "[Lua] Lua4RSWidget::uiToLuaContainer : wrong values detected - aborting" << std::endl;
-        return false;
-    }
+    const QSignalBlocker blocker(ui->tw_allscripts);
+    ui->tw_allscripts->clearSelection();
+    ui->tw_allscripts->setCurrentCell(-1, -1);
+    if(!_activeContainer || _draft) return;
+    for(int row = 0; row < ui->tw_allscripts->rowCount(); ++row)
+        if(ui->tw_allscripts->item(row, 0)->text() == _activeContainer->getName())
+        { ui->tw_allscripts->selectRow(row); break; }
+}
 
-    // name, desc, code
-    container->setName(ui->le_scriptname->text());
-    container->setDesc(ui->le_scriptdesc->text());
-    container->setCode(ui->pte_luacode->toPlainText());
+void Lua4RSWidget::loadScript(LuaContainer* container)
+{
+    std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    _loading = true;
+    _activeContainer = container;
+    ui->le_scriptname->setText(container ? container->getName() : QString());
+    ui->le_scriptdesc->setText(container ? container->getDesc() : QString());
+    ui->pte_luacode->setPlainText(container ? container->getCode() : QString());
+    ui->cbx_enable->setChecked(container && container->getEnabled());
+    ui->cbx_timeconstraint->setChecked(container && container->getConstraintEnabled());
+    QTime from(0,0), to(0,0);
+    if(container) container->getConstraintFromTo(from, to);
+    ui->tied_timefrom->setTime(from); ui->tied_timeto->setTime(to);
+    uint amount = 5, unit = 1;
+    const bool every = container && container->getRunEveryChecked(amount, unit);
+    ui->cb_every->setChecked(every);
+    ui->spb_everycount->setValue(amount);
+    ui->dd_everyunits->setCurrentIndex(unit < 5 ? unit : 1);
+    QDateTime when = QDateTime::currentDateTime().addSecs(3600);
+    ui->cb_once->setChecked(container && container->getRunOnceChecked(when));
+    ui->dte_runonce->setDateTime(when);
+    ui->cb_startup->setChecked(container && container->getRunStartupChecked());
+    ui->cb_shutdown->setChecked(container && container->getRunShutdownChecked());
+    ui->cb_chatmessage->setChecked(container && container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED));
+    ui->cb_turtleSearchResult->setChecked(container && container->getEventTriggerChecked(L4R_FILE_SEARCHRESULT));
+    _dirty = false;
+    _loading = false;
+    ui->editorTabs->setCurrentWidget(ui->codeTab);
+    ui->runStatus->setText(container ? tr("Ready — F5 runs the code shown above.") : tr("Choose a script. Write Lua. Run and see the result."));
+    updateEditorState();
+    selectActiveScript();
+}
 
-    // enable, constraint
-    container->setEnabled(ui->cbx_enable->isChecked());
-    container->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
+void Lua4RSWidget::updateEditorState()
+{
+    const bool active = _activeContainer && !_running;
+    ui->le_scriptname->setEnabled(active);
+    ui->le_scriptdesc->setEnabled(active);
+    ui->editorTabs->setEnabled(active);
+    ui->pb_run->setEnabled(active);
+    ui->pb_save->setEnabled(active && _dirty);
+    ui->pb_save->setText(_dirty ? tr("Save *") : tr("Save"));
+    ui->pb_deletescript->setEnabled(active && !_draft);
+    const bool automatic = active && ui->cbx_enable->isChecked();
+    for(auto box : ui->automationTab->findChildren<QCheckBox*>())
+        if(box != ui->cbx_enable) box->setEnabled(automatic);
+    ui->spb_everycount->setEnabled(automatic && ui->cb_every->isChecked());
+    ui->dd_everyunits->setEnabled(automatic && ui->cb_every->isChecked());
+    ui->dte_runonce->setEnabled(automatic && ui->cb_once->isChecked());
+    ui->tied_timefrom->setEnabled(automatic && ui->cbx_timeconstraint->isChecked());
+    ui->tied_timeto->setEnabled(automatic && ui->cbx_timeconstraint->isChecked());
+}
 
-    QTime from, to;
-    from = ui->tied_timefrom->time();
-    to = ui->tied_timeto->time();
-    container->setConstraintFromTo(from, to);
+void Lua4RSWidget::markDirty()
+{
+    if(_loading || !_activeContainer) return;
+    _dirty = true;
+    ui->runStatus->setText(tr("Unsaved changes — Run uses the editor; automatic runs use the saved script."));
+    updateEditorState();
+}
 
-    // trigger
-    container->removeAllTrigger();
-
-    // add trigger
-    if(ui->cb_every->isChecked())
-        container->addRunEveryTrigger((uint)ui->spb_everycount->value(), (uint)ui->dd_everyunits->currentIndex());
-    if(ui->cb_once->isChecked())
-        container->addRunOnceTrigger(ui->dte_runonce->dateTime());
-    if(ui->cb_shutdown->isChecked())
-        container->addRunShutdownTrigger();
-    if(ui->cb_startup->isChecked())
-        container->addRunStratupTrigger();
-
-    // add event trigger (need to make this nice someday)
-    if(ui->cb_chatmessage->isChecked())
-        container->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
-
-    if(ui->cb_turtleSearchResult->isChecked())
-        container->addEventTrigger(L4R_FILE_SEARCHRESULT);
-
-    ///TODO rest
-
+bool Lua4RSWidget::maybeSave()
+{
+    if(!_dirty) return true;
+    const auto choice = QMessageBox::question(this, tr("Unsaved script"),
+        tr("Save changes to %1?").arg(ui->le_scriptname->text()),
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel, QMessageBox::Save);
+    if(choice == QMessageBox::Cancel) return false;
+    if(choice == QMessageBox::Save) return saveScript();
+    if(_draft) { delete _activeContainer; _activeContainer = nullptr; _draft = false; }
+    loadScript(_activeContainer);
     return true;
 }
 
-void Lua4RSWidget::switchContainer(LuaContainer* container)
+void Lua4RSWidget::createScript(const QString& code, const QString& description)
 {
-    // remember conatiner
-    _activeContainer = container;
-
-    // update UI
-    // clearUi(); // no need for this since luaContainerToUi() calls clearUi()
-    luaContainerToUi(_activeContainer);
-
-    if(_activeContainer != NULL)
-        std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to " << _activeContainer->getName().toStdString() << std::endl;
-    else
-        std::cout << "[Lua] Lua4RSWidget::switchContainer : switched to NULL "<< std::endl;
+    if(!maybeSave()) return;
+    auto draft = _lua->codeList()->createItem();
+    draft->setCode(code); draft->setDesc(description); draft->setEnabled(false);
+    _draft = true;
+    loadScript(draft);
+    markDirty();
+    ui->le_scriptname->setFocus(); ui->le_scriptname->selectAll();
 }
 
-void saneValuesHelper(const QString& msg, QString& allMsgs)
+bool Lua4RSWidget::saveScript()
 {
-    std::cerr << "[Lua] Lua4RSWidget::saneValues : " << msg.toStdString() << std::endl;
-    allMsgs += "- " + msg + '\n';
+    if(!_activeContainer) return true;
+    QString name = ui->le_scriptname->text().trimmed();
+    if(!name.endsWith(".lua")) name += ".lua";
+    LuaContainer* duplicate = nullptr;
+    if(name == ".lua" || name.contains('/') || name.contains('\\') || name.contains(':') ||
+       name.contains("..") || name.contains(QRegularExpression("[<>\"|?*]")) ||
+       (_lua->codeList()->itemByName(name, duplicate) && duplicate != _activeContainer))
+    {
+        QMessageBox::warning(this, tr("Choose a script name"), tr("Use a unique filename, such as my-script.lua, without folders or special filename characters."));
+        return false;
+    }
+    if(ui->cbx_enable->isChecked() && ui->cb_once->isChecked() && ui->dte_runonce->dateTime() <= QDateTime::currentDateTime())
+    { QMessageBox::warning(this, tr("Check the schedule"), tr("Choose a future time for the one-time run.")); return false; }
+    if(ui->cbx_enable->isChecked() && ui->cbx_timeconstraint->isChecked())
+    {
+        const QTime from = ui->tied_timefrom->time(), to = ui->tied_timeto->time();
+        const QTime once = ui->dte_runonce->time();
+        if(from >= to || (ui->cb_once->isChecked() && (once < from || once > to)))
+        { QMessageBox::warning(this, tr("Check the time window"), tr("Choose an end time after the start time. A one-time run must fall inside that window.")); return false; }
+    }
+    const quint64 units[] = {1, 60, 3600, 86400, 604800};
+    if(quint64(ui->spb_everycount->value()) * units[ui->dd_everyunits->currentIndex()] > 0xffffffffULL)
+    { QMessageBox::warning(this, tr("Check the interval"), tr("Choose a shorter repeat interval.")); return false; }
+    std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    const QString oldName = _activeContainer->getName();
+    _activeContainer->setName(name);
+    _activeContainer->setDesc(ui->le_scriptdesc->text());
+    _activeContainer->setCode(ui->pte_luacode->toPlainText());
+    _activeContainer->setEnabled(ui->cbx_enable->isChecked());
+    _activeContainer->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
+    _activeContainer->setConstraintFromTo(ui->tied_timefrom->time(), ui->tied_timeto->time());
+    _activeContainer->removeAllTrigger();
+    if(ui->cb_every->isChecked()) _activeContainer->addRunEveryTrigger(ui->spb_everycount->value(), ui->dd_everyunits->currentIndex());
+    if(ui->cb_once->isChecked()) _activeContainer->addRunOnceTrigger(ui->dte_runonce->dateTime());
+    if(ui->cb_startup->isChecked()) _activeContainer->addRunStratupTrigger();
+    if(ui->cb_shutdown->isChecked()) _activeContainer->addRunShutdownTrigger();
+    if(ui->cb_chatmessage->isChecked()) _activeContainer->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
+    if(ui->cb_turtleSearchResult->isChecked()) _activeContainer->addEventTrigger(L4R_FILE_SEARCHRESULT);
+    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; }
+    else if(oldName != name) _lua->codeList()->rename(oldName, name);
+    QDir().mkpath(QString::fromStdString(_lua->getPath()));
+    const bool saved = _lua->codeList()->saveAll();
+    scriptsLock.unlock();
+    if(!saved)
+    { QMessageBox::warning(this, tr("Could not save"), tr("The script could not be fully saved. Check write access to the scripts folder and try again.")); return false; }
+    _dirty = false;
+    { const QSignalBlocker blocker(ui->le_scriptname); ui->le_scriptname->setText(name); }
+    refreshScripts(); updateEditorState();
+    ui->runStatus->setText(tr("Saved %1").arg(name));
+    return true;
 }
 
-bool Lua4RSWidget::saneValues()
-{
-    QString msg = tr("The following problem(s) was/were found:\n");
-    bool ret = true;
-    if(ui->le_scriptname->text().isEmpty())
-    {
-        saneValuesHelper(tr("script name is empty"), msg);
-        ret = false;
-    }
-
-    if(ui->cb_once->isChecked() && ui->dte_runonce->dateTime() < QDateTime::currentDateTime())
-    {
-        saneValuesHelper(tr("runOnce value lies in the past"), msg);
-        ret = false;
-    }
-
-    if(ui->cbx_timeconstraint->isChecked() && ui->cb_once->isChecked() && ((    // contraint enabled + run once
-            ui->tied_timefrom->time() < ui->tied_timeto->time() &&              // from < to e.g. from 09:00 to 15:00
-                (ui->dte_runonce->time() < ui->tied_timefrom->time() || ui->dte_runonce->time() > ui->tied_timeto->time())      // run once is outside of time window
-            ) || (
-            ui->tied_timefrom->time() > ui->tied_timeto->time() &&              // from > to e.g. from 23:00 to 06:00
-                (ui->dte_runonce->time() <= ui->tied_timefrom->time() && ui->dte_runonce->time() >= ui->tied_timeto->time())    // run once is outside of time window
-            // !(ui->dte_runonce->time() >  ui->tied_timefrom->time() || ui->dte_runonce->time() <  ui->tied_timeto->time())    equivalent - maybe easier to understand
-            )))
-    {
-        saneValuesHelper(tr("runOnce value lies outside of constraint"), msg);
-        ret = false;
-    }
-
-    if(ui->spb_everycount->value() < 0)
-    {
-        saneValuesHelper(tr("run every value is below 0"), msg);
-        ret = false;
-    }
-
-    ///TODO check rest
-
-    if(!ret)
-    {
-        // show errors to user
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Warning);
-        mbox.setText(tr("Error(s) while checking"));
-        mbox.setInformativeText(msg);
-        mbox.setStandardButtons(QMessageBox::Ok);
-        mbox.exec();
-    }
-
-    return ret;
-}
-
-void Lua4RSWidget::newScript()
-{
-    _activeContainer = _lua->codeList()->createItem();
-    // add new container to list
-    _lua->codeList()->addItem(_activeContainer);
-
-    // update all scripts
-    setLuaCodes(_lua->codeList());
-
-    // update ui
-    luaContainerToUi(_activeContainer);
-}
-
-bool Lua4RSWidget::saveScript(bool showErrorMsg)
-{
-    if(_activeContainer == NULL)
-        return true;
-
-    // check for rename
-    {
-        QString oldName = _activeContainer->getName();
-        // get values from ui
-        if(!uiToLuaContainer(_activeContainer))
-            return false;
-
-        if(_activeContainer->getName() != oldName)
-        {
-            std::cout << "[Lua] Lua4RSWidget::on_pb_save_clicked() : renaming " << oldName.toStdString() << " to " << _activeContainer->getName().toStdString() << std::endl;
-            _lua->codeList()->rename(oldName, _activeContainer->getName());
-        }
-    }
-
-    bool rc = _lua->codeList()->saveAll();
-    if(!rc && showErrorMsg)
-    {
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Warning);
-        mbox.setText(tr("Error"));
-        mbox.setInformativeText(tr("an error occured while saving"));
-        mbox.setStandardButtons( QMessageBox::Ok );
-        mbox.exec();
-    }
-
-    // now update the script list
-    if (rc)
-        allScriptsUpdate(_activeContainer->getName());
-
-    return rc;
-}
-
-/* #############################################################
- * # slots
- * #############################################################
- */
-
-// "Run" clicked : execute the script in the editor control
-void Lua4RSWidget::on_pb_run_clicked()
-{
-    appendLog(QObject::tr("running (by click): ") + ui->le_scriptname->text());
-
-    QString code = ui->pte_luacode->toPlainText();
-
-    _lua->runLuaByString(code);
-
-}
-
-// "New" clicked : create a new empty script
-void Lua4RSWidget::on_pb_newscript_clicked()
-{
-    newScript();
-}
-
-// "Edit" clicked : edit the script selected in AllMyScripts
-void Lua4RSWidget::on_pb_editscript_clicked()
-{
-    // get corresponding LuaContainer
-    LuaContainer* container = allScriptsGetLuaContainerFromSelectedRow();
-
-    if(container == NULL)
-    {
-        std::cerr << "[Lua] Lua4RSWidget::on_pb_editscript_clicked : got NULL" << std::endl;
-        return;
-    }
-    switchContainer(container);
-}
-
-// "Delete" clicked : delete the script selected in AllMyScripts
-void Lua4RSWidget::on_pb_deletescript_clicked()
-{
-    LuaContainer* container = allScriptsGetLuaContainerFromSelectedRow();
-    if(container == NULL)
-        return;
-
-    // update UI when necessary
-    if(_activeContainer == container)
-    {
-        _activeContainer = NULL;
-        luaContainerToUi(_activeContainer);
-    }
-
-    _lua->codeList()->removeItemAndDelete(container);
-    // container is deleted now
-    container = NULL;
-
-    // update all scripts
-    setLuaCodes(_lua->codeList());
-}
-
-// "Load" clicked : load a scriptfile from disk into the editor control
+void Lua4RSWidget::on_pb_newscript_clicked() { createScript("-- Write your Lua code here.\n", QString()); }
+void Lua4RSWidget::on_pb_save_clicked() { saveScript(); }
 void Lua4RSWidget::on_pb_load_clicked()
 {
-    QString name = "";
-
-    if(_activeContainer != NULL)
-    {
-        // a file was opened -> save its name
-        name = _activeContainer->getName();
-
-        // ask for confirmation
-        QMessageBox mbox;
-        mbox.setIcon(QMessageBox::Information);
-        mbox.setText(tr("Continue?"));
-        mbox.setInformativeText(tr("You have a Lua script opened. Save it before closing it?"));
-        mbox.setStandardButtons( QMessageBox::Save | QMessageBox::Discard | QMessageBox::Abort);
-
-        int ret = mbox.exec();
-        if(ret == QMessageBox::Abort)
-            return;
-
-        if(ret == QMessageBox::Save)
-            saveScript();
-    }
-
-    allScriptsUpdate(name);
+    if(!maybeSave()) return;
+    std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    const QString name = _activeContainer ? _activeContainer->getName() : QString();
+    _activeContainer = nullptr;
+    _lua->codeList()->loadAll();
+    LuaContainer* selected = nullptr;
+    _lua->codeList()->itemByName(name, selected);
+    loadScript(selected); refreshScripts();
 }
-
-// "Save" clicked : save the contents of the editor control to a file on disk
-void Lua4RSWidget::on_pb_save_clicked()
+void Lua4RSWidget::openScript(int row, int)
 {
-    saveScript();
+    if(row < 0 || !ui->tw_allscripts->item(row, 0)) return;
+    const QString name = ui->tw_allscripts->item(row, 0)->text();
+    if(_activeContainer && !_draft && _activeContainer->getName() == name) return;
+    if(!maybeSave()) { selectActiveScript(); return; }
+    LuaContainer* selected = nullptr;
+    if(_lua->codeList()->itemByName(name, selected)) { _draft = false; loadScript(selected); }
 }
-
-// "Enabled Script" clicked :
-void Lua4RSWidget::on_cbx_enable_clicked(bool checked)
+void Lua4RSWidget::on_pb_deletescript_clicked()
 {
-    if(_activeContainer == NULL)
-        return;
-
-    _activeContainer->setEnabled(checked);
-
-    // update all scripts
-    LuaContainer* lc;
-    for(int i = 0; i < ui->tw_allscripts->rowCount(); ++i)
+    if(!_activeContainer || _draft) return;
+    if(QMessageBox::question(this, tr("Delete script"), tr("Delete %1 from disk? This also discards any editor changes.").arg(_activeContainer->getName()),
+       QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Yes) return;
+    std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    auto removed = _activeContainer;
+    loadScript(nullptr);
+    const bool deleted = _lua->codeList()->removeItemAndDelete(removed);
+    scriptsLock.unlock();
+    if(!deleted)
+        QMessageBox::warning(this, tr("Could not delete file"), tr("The script was removed from this list, but its file could not be deleted. Check the scripts folder."));
+    refreshScripts();
+}
+void Lua4RSWidget::on_pb_run_clicked()
+{
+    if(!_activeContainer || _running) return;
+    _running = true; updateEditorState();
+    ui->outputTabs->setCurrentWidget(ui->outputTab);
+    ui->runStatus->setText(tr("Running…"));
+    appendLog(tr("Run: %1").arg(ui->le_scriptname->text()));
+    if(!_lua->queueManualRun(ui->pte_luacode->toPlainText()))
     {
-        lc = allScriptsGetLuaContainerFromRow(i);
-        if(lc == _activeContainer)
-        {
-            QTableWidgetItem* enabled = ui->tw_allscripts->item(i, ALL_SCRIPTS_COLUMN_ENABLE);
-            enabled->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-            break;
-        }
+        _running = false;
+        ui->runStatus->setText(tr("Cannot run: Lua is busy or shutting down."));
+        updateEditorState();
     }
 }
-
-
-//------------------------------------------------------------------------------
-// Execution Constraint
-//------------------------------------------------------------------------------
-
-// "...between" clicked : Constraint enabled/disabled has changed
-// note: think about disabling constraint from and to timeedits if unchecked
-void Lua4RSWidget::on_cbx_timeconstraint_clicked(bool checked)
+void Lua4RSWidget::newApiExample()
 {
-    if(_activeContainer == NULL)
+    createScript("-- Apply your connection settings in the JSON API panel first.\n"
+                 "local result, err = jsonapi.call(\"/rsPeers/getFriendList\")\n"
+                 "assert(result, err)\n"
+                 "assert(result.retval, \"RetroShare could not list friends\")\n"
+                 "print(\"Friends: \" .. #result.sslIds)\n"
+                 "for _, peer in ipairs(result.sslIds) do\n    print(peer)\nend\n", tr("List friends through the JSON API"));
+}
+void Lua4RSWidget::filterScripts(const QString& query)
+{
+    for(int row = 0; row < ui->tw_allscripts->rowCount(); ++row)
+        ui->tw_allscripts->setRowHidden(row, !ui->tw_allscripts->item(row, 0)->text().contains(query, Qt::CaseInsensitive));
+}
+void Lua4RSWidget::filterFunctions(const QString& query)
+{
+    for(int i = 0; i < ui->tw_hints->topLevelItemCount(); ++i)
     {
-        std::cerr << "[Lua] Lua4RSWidget::on_cbx_timeconstraint_toggled : got no activeContainer" << std::endl;
-        return;
-    }
-    _activeContainer->setConstraintEnabled(checked);
-}
-
-// from : Constraint "from"-time has changed
-// note: dont forget to check if from < to!
-void Lua4RSWidget::on_tied_timefrom_editingFinished()
-{
-}
-
-// to : Constraint "to"-time has changed
-// note: dont forget to check if from < to!
-void Lua4RSWidget::on_tied_timeto_editingFinished()
-{
-}
-
-//------------------------------------------------------------------------------
-// All Scripts
-//------------------------------------------------------------------------------
-
-void Lua4RSWidget::on_tw_allscripts_cellClicked(int row, int column)
-{
-    if(column == ALL_SCRIPTS_COLUMN_ENABLE) // 4 = enabled
-    {
-        LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
-        QTableWidgetItem* cell = ui->tw_allscripts->item(row, column);
-
-        container->setEnabled(cell->checkState() == Qt::Checked ? true : false);
-
-        if(container == _activeContainer)
-            // update ui->cbx_enable
-            ui->cbx_enable->setChecked(_activeContainer->getEnabled());
+        FunctionBrowser::filter(ui->tw_hints->topLevelItem(i), query);
     }
 }
-
-void Lua4RSWidget::on_tw_allscripts_cellDoubleClicked(int row, int /*column*/)
-{
-    if(row < 0)
-        return;
-
-    // save then load
-    saveScript();
-
-    // get container
-    LuaContainer* container = allScriptsGetLuaContainerFromRow(row);
-    if(container == NULL)
-    {
-        std::cerr << "[Lua] Lua4RSWidget::on_tw_allscripts_doubleClicked : got NULL" << std::endl;
-        return;
-    }
-    switchContainer(container);
-}
-
-//------------------------------------------------------------------------------
-// Tabpage "By Timer"
-//------------------------------------------------------------------------------
-void Lua4RSWidget::on_spb_everycount_editingFinished()
-{
-    return;
-}
-
-// "Run Every" : amount of timer units has changed
-// note: if changed, rb_runevery should be selected
-void Lua4RSWidget::on_dd_everyunits_currentIndexChanged(int index)
-{
-    uint TIME_UNITS[5] = {1, 60, 3600, 86400, 604800};
-    uint unit,amount,interval;
-
-    amount = ui->spb_everycount->value();
-    unit = TIME_UNITS[index];
-    interval = amount * unit;
-
-    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
-}
-
-// "RunEvery" : unit of timer units has changed
-// note: if changed, rb_runevery should be selected
-void Lua4RSWidget::on_spb_everycount_valueChanged(int arg1)
-{
-    uint TIME_UNITS[5] = {1, 60, 3600, 86400, 604800};
-    uint unit,amount,interval;
-
-    amount = arg1;
-    unit = TIME_UNITS[ui->dd_everyunits->currentIndex()];
-    interval = amount * unit;
-
-    ui->l_runeveryhelper->setText( QString::number(interval) + " secs" );
-}
-
-// hack for color
-#define ACTIVE_COLOR "background:lightgreen;"
-
-// Run Every was selected
-void Lua4RSWidget::on_cb_every_toggled(bool checked)
-{
-    ui->cb_every->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
-}
-
-// Run Once was selected
-void Lua4RSWidget::on_cb_once_toggled(bool checked)
-{
-    ui->cb_once->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
-}
-
-// Run at startup was selected
-void Lua4RSWidget::on_cb_startup_toggled(bool checked)
-{
-    ui->cb_startup->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
-}
-
-// Run at shutdown was selected
-void Lua4RSWidget::on_cb_shutdown_toggled(bool checked)
-{
-    ui->cb_shutdown->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
-}
-
-//------------------------------------------------------------------------------
-// Tabpage "By Event"
-//------------------------------------------------------------------------------
-void Lua4RSWidget::on_rb_runonevent_toggled(bool /*checked*/)
-{
-}
-
-void Lua4RSWidget::on_dd_events_currentIndexChanged(int /*index*/)
-{
-}
-
-void Lua4RSWidget::on_cb_chatmessage_toggled(bool checked)
-{
-    ui->cb_chatmessage->setStyleSheet(checked ? ACTIVE_COLOR : "background:transparent;");
-}
-
-//------------------------------------------------------------------------------
-// hints
-//------------------------------------------------------------------------------
 void Lua4RSWidget::on_pb_pastehint_released()
 {
-    QList<QTreeWidgetItem*> items = ui->tw_hints->selectedItems();
-    if(items.empty() || items.size() != 1 || !ui->pte_luacode->isEnabled())
-        return;
-
-    ui->pte_luacode->insertPlainText(items.at(0)->text(1));
+    auto selected = ui->tw_hints->currentItem();
+    if(selected) on_tw_hints_itemDoubleClicked(selected, 0);
 }
-
-void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
+void Lua4RSWidget::on_tw_hints_itemDoubleClicked(QTreeWidgetItem* item, int)
 {
-    QString hint = item->text(1);
-
-    // when you want to expant a namespace, you double click it --> don't append hint on a double click on a namespace
-    if(hint.endsWith('.') || !ui->pte_luacode->isEnabled())
-        return;
-
-    ui->pte_luacode->insertPlainText(hint);
+    if(!_activeContainer || !item || item->childCount() || item->text(1).isEmpty()) return;
+    ui->editorTabs->setCurrentWidget(ui->codeTab);
+    ui->pte_luacode->insertPlainText(item->text(1)); ui->pte_luacode->setFocus();
 }
 
-#undef ACTIVE_COLOR
+void Lua4RSWidget::testApiConnection()
+{
+    const QUrl origin(ui->le_apiurl->text().trimmed());
+    if(!origin.isValid() || (origin.scheme() != "http" && origin.scheme() != "https") || origin.host().isEmpty() ||
+       !origin.userInfo().isEmpty() || origin.hasQuery() || origin.hasFragment() || (!origin.path().isEmpty() && origin.path() != "/") || ui->le_apiuser->text().contains(':'))
+    { ui->apiStatus->setText(tr("Enter an HTTP(S) server address without a path, and a username without a colon.")); return; }
+    QString error;
+    if(!_lua->configureJsonApi(origin.toString(), ui->le_apiuser->text(), ui->le_apipassword->text(), error))
+    { ui->apiStatus->setText(error); return; }
+    QUrl endpoint(origin); endpoint.setPath("/rsPeers/getFriendList");
+    QNetworkRequest request(endpoint);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+    request.setRawHeader("Authorization", "Basic " + (ui->le_apiuser->text() + ':' + ui->le_apipassword->text()).toUtf8().toBase64());
+    auto reply = _network->post(request, "{}");
+    auto timer = new QTimer(reply); timer->setSingleShot(true);
+    connect(timer, &QTimer::timeout, reply, [reply]() { reply->setProperty("timedOut", true); reply->abort(); });
+    timer->start(5000);
+    ui->pb_apitest->setEnabled(false);
+    for(auto field : {ui->le_apiurl, ui->le_apiuser, ui->le_apipassword}) field->setEnabled(false);
+    ui->apiStatus->setText(tr("Settings applied. Testing connection…"));
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        const QJsonDocument result = QJsonDocument::fromJson(reply->readAll());
+        if(reply->property("timedOut").toBool()) ui->apiStatus->setText(tr("Connection timed out. Check that the JSON API is enabled and the address is correct."));
+        else if(status == 401 || status == 403) ui->apiStatus->setText(tr("Credentials rejected. Authorize this API user in RetroShare, then try again."));
+        else if(reply->error() != QNetworkReply::NoError) ui->apiStatus->setText(tr("Could not connect: %1").arg(reply->errorString()));
+        else if(status != 200 || !result.isObject() || !result.object().value("retval").toBool()) ui->apiStatus->setText(tr("Server replied, but the friend-list request failed (HTTP %1).").arg(status));
+        else ui->apiStatus->setText(tr("Connected. Choose New API example, then Run."));
+        ui->pb_apitest->setEnabled(true);
+        for(auto field : {ui->le_apiurl, ui->le_apiuser, ui->le_apipassword}) field->setEnabled(true);
+        reply->deleteLater();
+    });
+}

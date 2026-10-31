@@ -8,7 +8,14 @@
 
 #include "LuaCore.h"
 #include "LuaList.h"
+#include "LuaJsonApi.h"
+#include "LuaExecutionGuard.h"
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include "BundledScripts.h"
 #include "gui/Lua4RSWidget.h"
+#include "gui/FunctionBrowser.h"
 #include "Lua4RSNotify.h"
 
 #include "LuaToRS.cpp"
@@ -20,26 +27,51 @@
 
 #include "helper.h"
 
+namespace {
+int printToOutput(lua_State* state)
+{
+    auto core = static_cast<LuaCore*>(lua_touserdata(state, lua_upvalueindex(1)));
+    QStringList parts;
+    const int count = lua_gettop(state);
+    for(int i = 1; i <= count; ++i)
+    {
+        size_t length = 0;
+        const char* text = luaL_tolstring(state, i, &length);
+        parts.append(QString::fromUtf8(text, static_cast<int>(length)));
+        lua_pop(state, 1);
+    }
+    core->emitAppendOutput(parts.join('\t'));
+    return 0;
+}
+}
+
 LuaCore::LuaCore() :
     _folderName ("Lua4RS"),
     _mutex      ("Lua4RS"),
     _mutexRunLua("Lua4RS Lua"),
     _luaList    (new LuaList()),
     _notify     (new Lua4RSNotify()),
-    _processingEvent(false),
-    _shutDownImminent (false)
+    _ui         (nullptr)
 {
     /*
      * Notes:
      *  - RS functions get registered to Lua when GUI is initialized
      */
     L = luaL_newstate();
+    if(!L) throw std::runtime_error("Cannot allocate Lua state");
     luaL_openlibs(L);
+    registerLuaJsonApi(L);
+    lua_pushlightuserdata(L, this);
+    lua_pushcclosure(L, printToOutput, 1);
+    lua_setglobal(L, "print");
 
     _path = RsAccounts::AccountDirectory() + "/" + _folderName + "/";
 
     // load codes
     _luaList->setFilePath(_path);
+    QString exampleError;
+    if(!BundledScripts::install(QString::fromStdString(_path), exampleError))
+        std::cerr << "[Lua] " << exampleError.toStdString() << std::endl;
     if(_luaList->loadAll())
         std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
     else
@@ -48,34 +80,44 @@ LuaCore::LuaCore() :
 
 LuaCore::~LuaCore()
 {
-}
-
-void LuaCore::shutDown()
-{
-    // disbale output - gui might be gone by now!
-    _ui->disableOutput();
-    _shutDownImminent = true;
-
-    // send shotdown event
-    {
-        struct LuaEvent *e = new LuaEvent();
-        e->eventId = L4R_SHUTDOWN;
-        e->timeStamp = QDateTime::currentDateTime();
-
-        processEvent(e);
-    }
-
-    // save lua scripts
-    if(_luaList->saveAll())
-        std::cout << "[Lua] saved " << _luaList->size() << " Lua script(s)" << std::endl;
-    else
-        std::cout << "[Lua] error occured while saving Lua scripts" << std::endl;
-
-    // close lua (after threads is stopped)
-    lua_close(L);
-
+    shutDown();
     delete _notify;
     delete _luaList;
+}
+
+void LuaCore::requestStop()
+{
+    _shutDownImminent = true;
+    _cancel = true;
+    _notify->stop();
+}
+
+// Caller must stop/join the service thread before entering this function.
+void LuaCore::shutDown()
+{
+    if(!L) return;
+    requestStop();
+    {
+        RsStackMutex lock(_mutex);
+        _events.clear();
+        _manualCode.clear();
+        _manualPending = false;
+    }
+    _cancel = false; // Give shutdown handlers the same bounded execution budget.
+    LuaEvent event;
+    event.eventId = L4R_SHUTDOWN;
+    event.timeStamp = QDateTime::currentDateTime();
+    if(_ready) dispatchEvent(event);
+    _cancel = true;
+    {
+        std::lock_guard<std::recursive_mutex> lock(_scriptsMutex);
+        if(!_luaList->saveAll())
+            std::cerr << "[Lua] Could not save all scripts during shutdown" << std::endl;
+    }
+    RsStackMutex lock(_mutexRunLua);
+    lua_close(L);
+    L = nullptr;
+    // Keep containers alive until destruction: the GUI may still refer to them.
 }
 
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
@@ -95,25 +137,44 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     tw->setColumnWidth(1,0);
 
     // we need to mess around with lua
-    RsStackMutex mtx(_mutex);   /******* LOCKED MUTEX *****/
+    RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
+
+    FunctionBrowser::addJsonEndpoints(tw);
+    QTreeWidgetItem* json = new QTreeWidgetItem(tw);
+    json->setText(0, "JSON API client helpers");
+    json->setToolTip(0, QObject::tr("Connection and JSON utilities. subscribe is standalone-only; use Automation triggers in the GUI."));
+    const QStringList jsonFunctions = {
+        "configure({url = \"http://127.0.0.1:9092\", username = \"YOUR_USER\", password = \"YOUR_PASSWORD\"})", "call(\"/rsPeers/getFriendList\", {})",
+        "encode({})", "decode(\"{}\")", "array()", "null"
+    };
+    for(const QString& function : jsonFunctions)
+    {
+        QTreeWidgetItem* item = new QTreeWidgetItem(json);
+        item->setText(0, function);
+        item->setText(1, "jsonapi." + function);
+        item->setToolTip(0, QObject::tr("RetroShare JSON API client. See JSON_API.md for connection settings and examples."));
+    }
+
+    auto native = new QTreeWidgetItem(tw, {QObject::tr("Native Lua helpers (GUI only)")});
+    native->setToolTip(0, QObject::tr("Direct plugin bindings; no JSON API connection required. Replace placeholder arguments before running."));
 
     // rs namespace
     namespc = "rs.";
-    QTreeWidgetItem* rs = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* rs = new QTreeWidgetItem(native);
     rs->setText(0, QString::fromStdString(namespc));
     rs->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
     addFunctionToLuaAndTw(top, namespc, rs, rs_clear,       "clear()",      QObject::tr("clears the output"));
-    addFunctionToLuaAndTw(top, namespc, rs, rs_print,       "print()",      QObject::tr("prints to output"));
+    addFunctionToLuaAndTw(top, namespc, rs, rs_print,       "print(\"message\")",      QObject::tr("prints to output"));
     addFunctionToLuaAndTw(top, namespc, rs, rs_luaFolder,   "luaFolder()",  QObject::tr("path to Lua4RS folder"));
 
     lua_setglobal(L, "rs");
 
     // peers namespace
     namespc = "peers.";
-    QTreeWidgetItem* peers = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* peers = new QTreeWidgetItem(native);
     peers->setText(0, QString::fromStdString(namespc));
     peers->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
@@ -124,38 +185,38 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
     addFunctionToLuaAndTw(top, namespc, peers, peers_getFriendList,     "getFriendList()",  QObject::tr("returns list of all friends (SSL id)"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerCount,      "getPeerCount()",   QObject::tr("returns number of all friends and online friends"));
 
-    addFunctionToLuaAndTw(top, namespc, peers, peers_isFriend,          "isFriend()",       QObject::tr("returns if a peer is a friend"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_isGPGAccepted,     "isGPGAccepted()",  QObject::tr("returns is a PGP key is accepted"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_isOnline,          "isOnline()",       QObject::tr("returns if a peer is online"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGName,        "getGPGName()",     QObject::tr("returns the PGP name for a given PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerName,       "getPeerName()",    QObject::tr("returns the name for a given SSL/PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerDetails,    "getPeerDetails()", QObject::tr("returns peer details as a table for a given SSL id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isFriend,          "isFriend(\"SSL_ID\")",       QObject::tr("returns if a peer is a friend"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isGPGAccepted,     "isGPGAccepted(\"PGP_ID\")",  QObject::tr("returns is a PGP key is accepted"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_isOnline,          "isOnline(\"SSL_ID\")",       QObject::tr("returns if a peer is online"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGName,        "getGPGName(\"PGP_ID\")",     QObject::tr("returns the PGP name for a given PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerName,       "getPeerName(\"SSL_ID\")",    QObject::tr("returns the name for a given SSL/PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getPeerDetails,    "getPeerDetails(\"SSL_ID\")", QObject::tr("returns peer details as a table for a given SSL id"));
 
     addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGOwnId,       "getGPGOwnId()",    QObject::tr("returns own PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGId,          "getGPGId()",       QObject::tr("returns the PGP id for a given SSL/PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGPGId,          "getGPGId(\"SSL_ID\")",       QObject::tr("returns the PGP id for a given SSL/PGP id"));
 
     //groups
-    addFunctionToLuaAndTw(top, namespc, peers, peers_addGroup,          "addGroup()",           QObject::tr("creates a new group"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_editGroup,         "editGroup()",          QObject::tr("edits an existing group"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_removeGroup,       "removeGroup()",        QObject::tr("removes the group with the given groupd id"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_getGroupInfo,      "getGroupInfo()",       QObject::tr("returns group info for a given group id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_addGroup,          "addGroup({flag = 0, id = \"\", name = \"Group name\"})",           QObject::tr("creates a new group"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_editGroup,         "editGroup(\"GROUP_ID\", {flag = 0, id = \"GROUP_ID\", name = \"Group name\"})",          QObject::tr("edits an existing group"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_removeGroup,       "removeGroup(\"GROUP_ID\")",        QObject::tr("removes the group with the given groupd id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_getGroupInfo,      "getGroupInfo(\"GROUP_ID\")",       QObject::tr("returns group info for a given group id"));
     addFunctionToLuaAndTw(top, namespc, peers, peers_getGroupInfoList,  "getGroupInfoList()",   QObject::tr("returns an array with all groups and their group infos"));
-    addFunctionToLuaAndTw(top, namespc, peers, peers_assignPeerToGroup, "assignPeerToGroup()",  QObject::tr("returns the PGP id for a given SSL/PGP id"));
+    addFunctionToLuaAndTw(top, namespc, peers, peers_assignPeerToGroup, "assignPeerToGroup(\"GROUP_ID\", \"PGP_ID\", true)",  QObject::tr("Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing"));
 
     lua_setglobal(L, "peers");
 
     // server config
     namespc = "config.";
-    QTreeWidgetItem* config = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* config = new QTreeWidgetItem(native);
     config->setText(0, QString::fromStdString(namespc));
     config->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
     addFunctionToLuaAndTw(top, namespc, config, config_getOperatingMode,    "getOperatingMode()",   QObject::tr("returns the current operation mode as int and string"));
-    addFunctionToLuaAndTw(top, namespc, config, config_setOperatingMode,    "setOperatingMode()",   QObject::tr("sets the openration mode (takes int or string)"));
+    addFunctionToLuaAndTw(top, namespc, config, config_setOperatingMode,    "setOperatingMode(\"full\")",   QObject::tr("sets the openration mode (takes int or string)"));
 
-    addFunctionToLuaAndTw(top, namespc, config, config_setMaxDataRates,     "setMaxDataRates()",    QObject::tr("sets max down-/upload bandwidth in kB"));
+    addFunctionToLuaAndTw(top, namespc, config, config_setMaxDataRates,     "setMaxDataRates(1000, 100)",    QObject::tr("sets max down-/upload bandwidth in kB"));
     addFunctionToLuaAndTw(top, namespc, config, config_getMaxDataRates,     "getMaxDataRates()",    QObject::tr("gets max down-/upload bandwidth in kB"));
     addFunctionToLuaAndTw(top, namespc, config, config_getCurrentDataRates, "getCurrentDataRates()",QObject::tr("gets current down-/upload bandwidth in kB"));
 
@@ -163,45 +224,45 @@ void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 
     // discovery
     namespc = "disc.";
-    QTreeWidgetItem* discovery = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* discovery = new QTreeWidgetItem(native);
     discovery->setText(0, QString::fromStdString(namespc));
     discovery->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscFriends,     "getDiscFriends()",     QObject::tr("gets discovery infos for a SSLID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscPgpFriends,  "getDiscPgpFriends()",  QObject::tr("gets discovery infos for a PGPID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, disc_getPeerVersion,     "getPeerVersion()",     QObject::tr("gets RS version from a given peer"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscFriends,     "getDiscFriends(\"SSL_ID\")",     QObject::tr("gets discovery infos for a SSLID"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getDiscPgpFriends,  "getDiscPgpFriends(\"PGP_ID\")",  QObject::tr("gets discovery infos for a PGPID"));
+    addFunctionToLuaAndTw(top, namespc, discovery, disc_getPeerVersion,     "getPeerVersion(\"SSL_ID\")",     QObject::tr("gets RS version from a given peer"));
     addFunctionToLuaAndTw(top, namespc, discovery, disc_getWaitingDiscCount,"getWaitingDiscCount()",QObject::tr("gets current pending discovery packets (down und up)"));
 
     lua_setglobal(L, "disc");
 
     // chat
     namespc = "chat.";
-    QTreeWidgetItem* chat = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* chat = new QTreeWidgetItem(native);
     chat->setText(0, QString::fromStdString(namespc));
     chat->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, chat, chat_sendChat, "sendChat()", QObject::tr("send a chat message (ChatId, msg)"));
+    addFunctionToLuaAndTw(top, namespc, chat, chat_sendChat, "sendChat(\"CHAT_ID\", \"message\")", QObject::tr("send a chat message (ChatId, msg)"));
 
     lua_setglobal(L, "chat");
 
     // files
     namespc = "files.";
-    QTreeWidgetItem* files = new QTreeWidgetItem(tw);
+    QTreeWidgetItem* files = new QTreeWidgetItem(native);
     files->setText(0, QString::fromStdString(namespc));
     files->setText(1, QString::fromStdString(namespc));
     lua_newtable(L);
     top = lua_gettop(L);
 
-    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest,  "fileRequest()",					QObject::tr("request a download (params: name, hash, size"));
+    addFunctionToLuaAndTw(top, namespc, files, file_fileRequest,  "fileRequest(\"filename\", \"FILE_HASH\", 0)",					QObject::tr("Request a download (name, hash, size in bytes); replace the example size"));
     addFunctionToLuaAndTw(top, namespc, files, file_getDownloadDirectory, "getDownloadDirectory()", QObject::tr("get download folder path"));
     addFunctionToLuaAndTw(top, namespc, files, file_getPartialsDirectory, "getPartialsDirectory()", QObject::tr("get partial folder path"));
-    addFunctionToLuaAndTw(top, namespc, files, file_turtleSearch, "turtleSearch()",					QObject::tr("starts a search for given keywords"));
-    addFunctionToLuaAndTw(top, namespc, files, file_setDownloadDirectory, "setDownloadDirectory()", QObject::tr("set download folder path (params: path)"));
-    addFunctionToLuaAndTw(top, namespc, files, file_setPartialsDirectory, "setPartialsDirectory()", QObject::tr("set partial folder path (params: path)"));
+    addFunctionToLuaAndTw(top, namespc, files, file_turtleSearch, "turtleSearch(\"search words\")",					QObject::tr("starts a search for given keywords"));
+    addFunctionToLuaAndTw(top, namespc, files, file_setDownloadDirectory, "setDownloadDirectory(\"PATH\")", QObject::tr("set download folder path (params: path)"));
+    addFunctionToLuaAndTw(top, namespc, files, file_setPartialsDirectory, "setPartialsDirectory(\"PATH\")", QObject::tr("set partial folder path (params: path)"));
 
     lua_setglobal(L, "files");
 }
@@ -226,118 +287,140 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QT
 
 void LuaCore::processEvent(LuaEvent *e)
 {
+    std::unique_ptr<LuaEvent> event(e);
+    if(!event) return;
+    RsStackMutex lock(_mutex);
+    // Drop new arrivals when overloaded. Ownership is released on every path.
+    if(!_shutDownImminent) _events.push(std::move(event));
+}
+
+void LuaCore::processEvent(LuaEventList &events)
+{
+    while(!events.empty())
     {
-        RsStackMutex mtx(_mutex);
-        _eventList.push_back(e);
+        auto event = events.front();
+        events.pop_front();
+        processEvent(event);
     }
 }
 
-void LuaCore::processEvent(LuaEventList &lel) {
-    {
-        RsStackMutex mtx(_mutex);
-        _eventList.insert(_eventList.end(), lel.begin(), lel.end());
-    }
+bool LuaCore::queueManualRun(const QString& code)
+{
+    RsStackMutex lock(_mutex);
+    if(_shutDownImminent || _manualPending || !_ready) return false;
+    _manualCode = code;
+    _manualPending = true;
+    return true;
 }
 
 bool LuaCore::processEventQueue()
 {
-    if (_eventList.empty())
-        return false;
-
-    // to catch to early events
-    if(_ui == NULL)
+    std::unique_ptr<LuaEvent> event;
+    QString manualCode;
+    bool manual = false;
     {
-        std::cerr << "[Lua] LuaCore not ready" << std::endl;
-        return false;
-    }
-
-    struct LuaEvent *e;
-    {
-        RsStackMutex mtx(_mutex);
-        e = _eventList.front();
-        _eventList.pop_front();
-    }
-
-    // block everythign except onShutdown when RS is exiting
-    if(_shutDownImminent && e->eventId != L4R_SHUTDOWN)
-        // event is already removed from list and thus dropped completly
-        return false;
-
-    // exit when we are already executing code for a previous event
-    if(_processingEvent) {
-        // add event again for later processing
-        // this case should not happen since there is only one thread executing events
+        RsStackMutex lock(_mutex);
+        if(_shutDownImminent || !_ready) return false;
+        if(_manualPending)
         {
-            RsStackMutex mtx(_mutex);
-            _eventList.push_front(e);
+            manual = true;
+            manualCode.swap(_manualCode);
+            _manualPending = false;
         }
-        return false;
+        else if(_events.size())
+        {
+            event = _events.pop();
+        }
+        else return false;
     }
-    _processingEvent = true;
-
-    // do some magic here
-    // std::cout << "[Lua] processing event : " << e.eventId  << std::endl;
-    for(LuaContainerList::const_iterator it = _luaList->begin(); it != _luaList->end(); ++it)
-    {
-        if((*it)->isTriggered(*e))
-            runLuaByEvent((*it), *e);
-    }
-    _processingEvent = false;
-
-    delete e;
-    e = NULL;
-
+    if(manual) emit manualRunFinished(runLuaByString(manualCode));
+    else dispatchEvent(*event);
     return true;
 }
 
-// invoke lua
-void LuaCore::runLuaByString(const QString& code)
+void LuaCore::dispatchEvent(const LuaEvent& event)
 {
-    if(_ui == NULL)
+    // Snapshot under the same lock used by the editor; never retain raw script
+    // pointers while Lua runs or while the user can save/delete a script.
+    std::vector<std::pair<QString, QString>> scripts;
     {
-        std::cerr << "[Lua] runLuaByString: ERROR: _ui is NULL -> aborting Lua execution" << std::endl;
-        return;
+        std::lock_guard<std::recursive_mutex> lock(_scriptsMutex);
+        for(auto container : *_luaList)
+            if(container->isTriggered(event))
+                scripts.emplace_back(container->getName(), container->getCode());
     }
+    for(const auto& script : scripts)
+    {
+        if(_cancel) break;
+        emit appendLog(QObject::tr("running (by event): ") + script.first);
+        runLuaByEvent(script.second, event);
+    }
+}
 
-    std::string code2;
-#ifdef _WIN32
-    code2 = code.toLocal8Bit().constData();
-#else
-    code2 = code.toUtf8().constData();
-#endif
+bool LuaCore::executeLocked(const QString& code)
+{
+    if(!L || !_ready || _cancel) return false;
+    const QByteArray bytes = code.toUtf8();
+    LuaExecutionGuard guard(L, _cancel);
+    int result = luaL_loadbuffer(L, bytes.constData(), bytes.size(), "script");
+    if(result == LUA_OK) result = lua_pcall(L, 0, 0, 0);
+    reportLuaErrors(L, result);
+    return result == LUA_OK;
+}
 
-    // Since the executed Lua code might trigger a RS event which then leads to an event within Lua4RS we can end in a dead lock.
-    // Adding the new event within Lua4RS will try to lock the mutex - which is impossible since we are holding it here already.
-    // --> use separared mutex for executing Lua
-    RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
-    int ret = luaL_dostring(L, code2.c_str());
-    reportLuaErrors(L, ret);
+bool LuaCore::runLuaByString(const QString& code)
+{
+    RsStackMutex lock(_mutexRunLua);
+    return executeLocked(code);
+}
+
+bool LuaCore::configureJsonApi(const QString& url, const QString& username,
+                             const QString& password, QString& error)
+{
+    if(!_mutexRunLua.trylock()) { error = "A script is running. Try again when it finishes."; return false; }
+    std::lock_guard<RsMutex> lock(_mutexRunLua, std::adopt_lock);
+    if(!L || _shutDownImminent) { error = "Lua is shutting down"; return false; }
+    LuaExecutionGuard guard(L, _cancel);
+    const int top = lua_gettop(L);
+    lua_getglobal(L, "jsonapi");
+    if(!lua_istable(L, -1))
+    { lua_settop(L, top); error = QObject::tr("The jsonapi table was replaced by a script. Restart the plugin to restore it."); return false; }
+    lua_getfield(L, -1, "configure");
+    lua_newtable(L);
+    const auto field = [this](const char* key, const QString& value) {
+        const QByteArray bytes = value.toUtf8();
+        lua_pushlstring(L, bytes.constData(), bytes.size()); lua_setfield(L, -2, key);
+    };
+    field("url", url); field("username", username); field("password", password);
+    lua_pushinteger(L, 10000); lua_setfield(L, -2, "timeout_ms");
+    const int result = lua_pcall(L, 1, 2, 0);
+    const bool success = result == LUA_OK && lua_toboolean(L, -2);
+    if(!success) error = QObject::tr("Could not apply JSON API settings. Restore jsonapi.configure if your script changed it.");
+    lua_settop(L, top);
+    return success;
 }
 
 void LuaCore::runLuaByName(const QString& name)
 {
-    // get code
-    LuaContainer* lc = NULL;
-    if(!_luaList->itemByName(name, lc))
+    QString code;
     {
-        std::cerr << "[Lua] can't find script " << name.toStdString() << std::endl;
-        return;
+        std::lock_guard<std::recursive_mutex> lock(_scriptsMutex);
+        LuaContainer* container = nullptr;
+        if(!_luaList->itemByName(name, container)) return;
+        code = container->getCode();
     }
-
-    runLuaByString(lc->getCode());
+    runLuaByString(code);
 }
 
 void addSettingsEntryToLua(lua_State *L, int top, const QString &type, const QVariant& value, const QString &name)
 {
 //    std::cout << "[Lua] runByEvent/addSettingsEntry adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
 
-    lua_pushfstring(L, name.toStdString().c_str());
+    const QByteArray key = name.toUtf8();
+    lua_pushlstring(L, key.constData(), key.size());
     if(type == "str") {
-        // PANIC: unprotected error in call to Lua API (invalid option '%1' to 'lua_pushfstring')
-        ///TODO proper fix
-        std::string s = value.toString().toStdString();
-        replaceAll(s, "%", "");
-        lua_pushfstring(L, s.c_str());
+        const QByteArray text = value.toString().toUtf8();
+        lua_pushlstring(L, text.constData(), text.size());
     }
     else if(type == "int")
         lua_pushinteger(L, value.toInt());
@@ -349,7 +432,7 @@ void addSettingsEntryToLua(lua_State *L, int top, const QString &type, const QVa
     lua_settable(L, top);
 }
 
-void addSettingsToLua(lua_State  *L, int top, QSettings *settings, int8_t skipLvl)
+void addSettingsToLua(lua_State  *L, int top, LuaEventParameters *settings, int8_t skipLvl)
 {
     QStringList keys = settings->allKeys();
     for(QStringList::ConstIterator it = keys.begin(); it != keys.end(); it++)
@@ -405,32 +488,21 @@ void addSettingsToLua(lua_State  *L, int top, QSettings *settings, int8_t skipLv
     }
 }
 
-void LuaCore::runLuaByEvent(LuaContainer* container, const LuaEvent& event)
+void LuaCore::runLuaByEvent(const QString& code, const LuaEvent& event)
 {
-    {
-	RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
-
-        // clear old parameter
-        luaL_dostring(L, "args = nil");
-
-        // set parameter
-        lua_newtable(L);
-        int top = lua_gettop(L);
-
-        addSettingsToLua(L, top, event.dataParm, 0);
-
-        lua_setglobal(L, "args");
-
-    }
-    emit appendLog(QObject::tr("running (by event): ") + container->getName());
-    runLuaByString(container->getCode());
+    RsStackMutex lock(_mutexRunLua);
+    if(!L || _cancel) return;
+    lua_newtable(L);
+    addSettingsToLua(L, lua_gettop(L), event.dataParm, 0);
+    lua_setglobal(L, "args");
+    executeLocked(code);
 }
 
 void LuaCore::reportLuaErrors(lua_State *L, int status)
 {
     std::string s;
     if ( status!=0 ) {
-        s = lua_tostring(L, -1);
+        s = LuaExecutionGuard::errorText(L);
         std::cerr << "-- " << s << std::endl;
 
         s = "Lua error: " + s;
@@ -458,7 +530,10 @@ std::string LuaCore::getPath() const
 
 void LuaCore::setUi(Lua4RSWidget *ui)
 {
+    if(_ui) QObject::disconnect(this, nullptr, _ui, nullptr);
     _ui = ui;
+    if(ui) _ready = true;
+    if(!ui) return;
 
     QObject::connect(this, SIGNAL(appendLog(QString)), _ui, SLOT(appendLog(QString)));
     QObject::connect(this, SIGNAL(appendOutput(QString)), _ui, SLOT(appendOutput(QString)));
@@ -474,5 +549,20 @@ Lua4RSWidget* LuaCore::getUI()
 }
 
 // emit
-void LuaCore::emitAppendOutput(const QString &s)    { emit appendOutput(s); }
+void LuaCore::emitAppendOutput(const QString &s)
+{
+    // Rate-limit signals across runs, not just document size after delivery.
+    const auto now = std::chrono::steady_clock::now();
+    if(now - _outputWindow >= std::chrono::seconds(1))
+    {
+        _outputWindow = now;
+        _outputRemaining = 64 * 1024;
+        _outputMessages = 200;
+    }
+    if(!_outputRemaining || !_outputMessages) return;
+    --_outputMessages;
+    const int length = qMin<int>(s.size(), static_cast<int>(_outputRemaining));
+    _outputRemaining -= qMin<size_t>(_outputRemaining, size_t(length) + 1);
+    emit appendOutput(s.left(length));
+}
 void LuaCore::emitClearOutput()                     { emit clearOutput(); }

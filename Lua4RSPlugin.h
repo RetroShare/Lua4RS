@@ -34,7 +34,6 @@ protected:
 private:
     mutable QIcon           *_icon ;
     mutable MainPage        *_mainpage ;
-    mutable RsNotify        *_notify;
     mutable RsPluginHandler *_pluginHandler;
     mutable RsPeers         *_peers;
     mutable p3Lua4RS        *_service;

@@ -67,12 +67,21 @@ rulesCommandMatch = "!rules"
 
 -- edit end
 
-msg = args.msg
-chatid = args.chatid
+if type(args) ~= "table" or type(args.msg) ~= "string" or
+   type(args.chatid) ~= "string" or not args.chatid:match("^L%x+$") then
+    rs.print("Chatbot: waiting for a lobby message. Enable the chat-message trigger and Save; do not use Run to test it.")
+    return
+end
+
+local msg = args.msg:match("^%s*(.-)%s*$")
+local chatid = args.chatid
+local nickname = args.nick or "unknown"
+-- Do not react to our own bot replies.
+if msg:sub(1, #botPrefix) == botPrefix then return end
 
 if msg ~= nil then
 
-rs.print("got message from lobby " .. chatid .. " user: " .. args.nick .. " msg: " .. msg)
+rs.print("got message from lobby " .. chatid .. " user: " .. nickname .. " msg: " .. msg)
 -- rs.print("msg is " .. string.len(msg) .. " char(s) long")
 
 if string.len(msg) <= 150 then
@@ -88,10 +97,12 @@ if string.len(msg) <= 150 then
 			matches = matchValue["matches"]
 			for i = 1, #matches do
 				-- check for match
+				local pattern = matches[i]
+				if not matchValue["case"] then pattern = string.lower(pattern) end
 				if matchValue["only"] then
-					if msgCopy == matches[i] then triggered = true end
+					if msgCopy == pattern then triggered = true end
 				else
-					if string.find(msgCopy, matches[i]) ~= nil then triggered = true end
+					if string.find(msgCopy, pattern, 1, true) ~= nil then triggered = true end
 				end
 			end
 
@@ -99,8 +110,10 @@ if string.len(msg) <= 150 then
 				-- respond!
 				rs.print("rule " .. matchName .. " triggered")
 				response = matchValue["response"]
-				response, _ = string.gsub(response, "__nick__", args.nick)
-				chat.sendChat(chatid, botPrefix .. response)
+				response, _ = string.gsub(response, "__nick__", function() return nickname end)
+				if not chat.sendChat(chatid, botPrefix .. response) then
+                    rs.print("Chatbot: sending the reply failed for " .. chatid)
+                end
 			end
 		end
 	end

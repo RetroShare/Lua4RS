@@ -1,88 +1,55 @@
-function getVersionNumber( s ) 
-	b, e = string.find(s, "Revision")
+-- Show versions reported by discovery, including modern and legacy peers.
+local function getVersionNumber(version)
+    if type(version) ~= "string" then return "unknown", false end
+    version = version:match("^%s*(.-)%s*$")
+    if version == "" then return "unknown", false end
 
-	-- check for ':'
-	x = s:sub(e + 1, e + 1)
-	if x == ":" then 
-		e = e + 3
-	else
-		e = e + 2 
-	end
+    -- Older peers advertised an SVN revision, sometimes as 0.6.0.1234.
+    local revision = version:match("Revision%s*:?%s*([%d%.]+)")
+    if revision then
+        local number = revision:match("^%d+%.%d+%.%d+%.(%d+)$")
+                    or revision:match("^(%d+)$")
+        if number then return "Revision " .. number, true end
+    end
 
-	-- revision starts at e and is usually 4 characters long
-	rev = s:sub(e, e + 3)
-
-	-- check for sane revision
-	if tonumber(rev) == nil then
-		-- the revision string might be '0.6.0.xxxx'
-		e = e + 6
-		rev = s:sub(e, e + 3)
-
-		-- check for sane revision
-		if tonumber(rev) == nil then
-			return rev, false
-		else
-			return rev, true
-		end
-	else
-		return rev, true
-	end
-end
-
-function getName( id )
-	return peers.getPeerName( id )
-end
-
-function pairsByKeys (t, f)
-	local a = {}
-	for n in pairs(t) do table.insert(a, n) end
-	table.sort(a, f)
-	local i = 0      -- iterator variable
-	local iter = function ()   -- iterator function
-		i = i + 1
-		if a[i] == nil then return nil
-		else return a[i], t[a[i]]
-		end
-	end
-   return iter
+    -- Current peers advertise a release version rather than an SVN revision.
+    local release = version:match("(%d+%.%d+%.%d+[%w%.%+%-]*)")
+    if release then return release, true end
+    return version, false
 end
 
 rs.clear()
-
--- down, up = disc.getWaitingDiscCount()
--- rs.print("waiting discovery down=" .. down .. " up=" .. up)
-
-friends = peers.getFriendList()
-revList = {}
-revListNum = {}
-numFriends = 0
-for i = 1 , #friends do
-	f = friends[i]
-	revStr = disc.getPeerVersion(f)
-	if revStr ~= nil then
-		numFriends = numFriends + 1
-		revNum, sane = getVersionNumber(revStr)
-		if sane then
-			table.insert(revList, revNum .. " - " .. getName(f))
-			if revListNum[revNum] ~= nil then
-				revListNum[revNum] = revListNum[revNum] + 1
-			else
-				revListNum[revNum] = 1
-			end
-		else
-			rs.print(getName(f) .. " is using " .. revStr)
-		end
-	end
+local friends = peers.getFriendList() or {}
+local versions, counts = {}, {}
+local found, unknown = 0, 0
+for _, id in ipairs(friends) do
+    local name = peers.getPeerName(id)
+    if type(name) ~= "string" or name == "" then name = tostring(id) end
+    local reported = disc.getPeerVersion(id)
+    if type(reported) == "string" and reported:match("%S") then
+        found = found + 1
+        local version, recognized = getVersionNumber(reported)
+        if recognized then
+            counts[version] = (counts[version] or 0) + 1
+            versions[#versions + 1] = version .. " - " .. name
+        else
+            rs.print(name .. " is using " .. version)
+        end
+    else
+        unknown = unknown + 1
+        rs.print(name .. ": version not available from discovery")
+    end
 end
 
 rs.print("--------------------")
-rs.print(numFriends .. " discovery entries were found")
-for key, value in pairsByKeys(revListNum) do
-	rs.print(key .. ": " .. value .. " time(s)")
+rs.print(found .. " discovery entries were found")
+if unknown > 0 then rs.print(unknown .. " friend(s) have no reported version") end
+local keys = {}
+for version in pairs(counts) do keys[#keys + 1] = version end
+table.sort(keys)
+for _, version in ipairs(keys) do
+    rs.print(version .. ": " .. counts[version] .. " time(s)")
 end
-
 rs.print("--------------------")
-table.sort(revList)
-for key, value in pairs(revList) do
-	rs.print(value)
-end
+table.sort(versions)
+for _, line in ipairs(versions) do rs.print(line) end

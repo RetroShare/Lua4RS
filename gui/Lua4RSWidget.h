@@ -3,96 +3,59 @@
 
 #include <retroshare-gui/mainpage.h>
 
-namespace Ui {
-class Lua4RSWidget;
-}
-
-class QModelIndex;
-class QTableWidgetItem;
-class QTreeWidgetItem;
-
-
+namespace Ui { class Lua4RSWidget; }
 class LuaCore;
 class LuaContainer;
-class LuaList;
+class QTreeWidgetItem;
+class QNetworkAccessManager;
 
 class Lua4RSWidget : public MainPage
 {
     Q_OBJECT
-
 public:
-    explicit Lua4RSWidget(QWidget *parent = 0);
+    explicit Lua4RSWidget(QWidget* parent = nullptr);
     ~Lua4RSWidget();
-
     void disableOutput();
 
 public slots:
     void clearOutput();
-    void appendOutput(const std::string &s);
-    void appendOutput(const QString &s);
-
-    void appendLog(const std::string &s);
-    void appendLog(const QString &s);
+    void appendOutput(const std::string& text);
+    void appendOutput(const QString& text);
+    void appendLog(const std::string& text);
+    void appendLog(const QString& text);
 
 private:
-    void setLuaCodes(LuaList* list);
-    void switchContainer(LuaContainer* container);
+    void refreshScripts();
+    void selectActiveScript();
+    void loadScript(LuaContainer* container);
+    void createScript(const QString& code, const QString& description);
+    bool saveScript();
+    bool maybeSave();
+    void markDirty();
+    void updateEditorState();
+    void filterScripts(const QString& query);
+    void filterFunctions(const QString& query);
+    void testApiConnection();
+    void newApiExample();
 
-    void newScript();
-    bool saveScript(bool showErrorMsg = true);
-
-    // checks whether things entered in GUI are sane (like name is not empry)
-    bool saneValues();
-
-    // all scripts helper
-    LuaContainer* allScriptsGetLuaContainerFromSelectedRow();
-    LuaContainer* allScriptsGetLuaContainerFromRow(const int row);
-    void allScriptsAddRow(LuaContainer* container);
-    void allScriptsUpdate(QString lastLoadedName);
-
-    // init the gui at startup and after a container switch
-    void clearUi();
-
-    // this function will fill every form with it's corresponding values
-    void luaContainerToUi(LuaContainer* container);
-    // or the other way round
-    bool uiToLuaContainer(LuaContainer* container);
-
-    Ui::Lua4RSWidget *ui;
+    Ui::Lua4RSWidget* ui;
     LuaCore* _lua;
-
-    LuaContainer* _activeContainer;
-
-    // needed for shutdown process (when gui is gone but things may still be running)
-    bool _disableOutput;
+    LuaContainer* _activeContainer = nullptr;
+    QNetworkAccessManager* _network;
+    bool _disableOutput = false;
+    bool _loading = false;
+    bool _dirty = false;
+    bool _draft = false;
+    bool _running = false;
 
 private slots:
     void on_pb_run_clicked();
     void on_pb_newscript_clicked();
-    void on_pb_editscript_clicked();
     void on_pb_deletescript_clicked();
     void on_pb_load_clicked();
     void on_pb_save_clicked();
-    void on_cbx_enable_clicked(bool checked);
-    void on_cbx_timeconstraint_clicked(bool checked);
-    void on_tied_timefrom_editingFinished();
-    void on_tied_timeto_editingFinished();
-    void on_tw_allscripts_cellClicked(int row, int column);
-    void on_tw_allscripts_cellDoubleClicked(int row, int column);
-    void on_dd_everyunits_currentIndexChanged(int index);
-    void on_spb_everycount_editingFinished();
+    void openScript(int row, int column);
     void on_pb_pastehint_released();
-    void on_tw_hints_itemDoubleClicked(QTreeWidgetItem *item, int column);
-    void on_spb_everycount_valueChanged(int arg1);
-
-    void on_rb_runonevent_toggled(bool checked);
-    void on_cb_once_toggled(bool checked);
-    void on_cb_startup_toggled(bool checked);
-    void on_cb_shutdown_toggled(bool checked);
-    void on_cb_every_toggled(bool checked);
-    void on_dd_events_currentIndexChanged(int index);
-
-    void on_cb_chatmessage_toggled(bool checked);
+    void on_tw_hints_itemDoubleClicked(QTreeWidgetItem* item, int column);
 };
-
-#endif // LUA4RSMAINWIDGET_H
+#endif

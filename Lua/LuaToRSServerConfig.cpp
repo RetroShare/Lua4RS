@@ -14,22 +14,22 @@ extern "C" {
     //virtual uint32_t getOperatingMode() = 0;
     int config_getOperatingMode(lua_State* L)
     {
-        const uint32_t opMode = rsConfig->getOperatingMode();
-        lua_pushinteger(L, opMode);
+        const RsOpMode opMode = rsConfig->getOperatingMode();
+        lua_pushinteger(L, static_cast<lua_Integer>(opMode));
 
         std::string opModeS = "";
         switch (opMode) {
-        case RS_OPMODE_FULL:
+        case RsOpMode::FULL:
             opModeS = "full";
             break;
-        case RS_OPMODE_NOTURTLE:
+        case RsOpMode::NOTURTLE:
             opModeS = "noturtle";
             break;
-        case RS_OPMODE_MINIMAL:
+        case RsOpMode::MINIMAL:
             opModeS = "minimal";
             break;
-        case RS_OPMODE_GAMING:
-            opModeS = "gamig";
+        case RsOpMode::GAMING:
+            opModeS = "gaming";
             break;
         default:
             // return without the string
@@ -46,7 +46,7 @@ extern "C" {
         if( getArgCount(L) != 1)
             return 0;
 
-        uint32_t opMode = 0;
+        RsOpMode opMode = static_cast<RsOpMode>(0);
         // check for int first! a int can easyly be converted to a string (lua_isstring() returned true even for numbers)
         if(lua_isnumber(L, 1))
         {
@@ -54,16 +54,16 @@ extern "C" {
             //std::cout << "[Lua] config_setOperatingMode got int: " << opModeI << std::endl;
             switch (opModeI) {
             case 1:
-                opMode = RS_OPMODE_FULL;
+                opMode = RsOpMode::FULL;
                 break;
             case 2:
-                opMode = RS_OPMODE_NOTURTLE;
+                opMode = RsOpMode::NOTURTLE;
                 break;
             case 3:
-                opMode = RS_OPMODE_GAMING;
+                opMode = RsOpMode::GAMING;
                 break;
             case 4:
-                opMode = RS_OPMODE_MINIMAL;
+                opMode = RsOpMode::MINIMAL;
                 break;
             default:
                 // opMode = 0
@@ -74,18 +74,18 @@ extern "C" {
             //std::cout << "[Lua] config_setOperatingMode got string: " << opModeS << std::endl;
 
             if(opModeS == "full")
-                opMode = RS_OPMODE_FULL;
+                opMode = RsOpMode::FULL;
             else if (opModeS == "noturtle")
-                opMode = RS_OPMODE_NOTURTLE;
+                opMode = RsOpMode::NOTURTLE;
             else if (opModeS == "minimal")
-                opMode = RS_OPMODE_MINIMAL;
+                opMode = RsOpMode::MINIMAL;
             else if (opModeS == "gaming")
-                opMode = RS_OPMODE_GAMING;
+                opMode = RsOpMode::GAMING;
             // else opMode = 0
         }
 
         //std::cout << "[Lua] config_setOperatingMode opMode: " << opMode << std::endl;
-        if(opMode == 0)
+        if(opMode == static_cast<RsOpMode>(0))
             // somthing went wrong
             return 0;
 

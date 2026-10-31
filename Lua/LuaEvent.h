@@ -2,23 +2,41 @@
 #define LUAEVENT_H
 
 #include <QDateTime>
-#include <QSettings>
+#include <QVariant>
+#include <QMap>
+#include <QStringList>
+#include <list>
+#include <deque>
+#include <memory>
+
+// Each queued event owns its parameters; never share persistent QSettings.
+class LuaEventParameters
+{
+public:
+    void setValue(const QString& key, const QVariant& value) { values.insert(key, value); }
+    QVariant value(const QString& key) const { return values.value(key); }
+    QStringList allKeys() const { return values.keys(); }
+    size_t estimatedBytes() const
+    {
+        size_t bytes = 128;
+        for(auto it = values.cbegin(); it != values.cend(); ++it)
+            bytes += 128 + size_t(it.key().size()) * 2 + size_t(it.value().toString().size()) * 2;
+        return bytes;
+    }
+private:
+    QMap<QString, QVariant> values;
+};
 
 //------------------------------------------------------------------------------
 struct LuaEvent {
-#if QT_VERSION >= 0x050000
-    // with Qt5 qsettings need an application name + organization name to work
-    LuaEvent() : dataParm(new QSettings("Lua4RS", "Lua4RS")) {}
-#else
-    LuaEvent() : dataParm(new QSettings()) {}
-#endif
-
-    // clear settings just in case Qt want to store them permanently somewhere
-    ~LuaEvent() { dataParm->clear(); delete dataParm; }
+    LuaEvent() : dataParm(new LuaEventParameters()) {}
+    ~LuaEvent() { delete dataParm; }
+    LuaEvent(const LuaEvent&) = delete;
+    LuaEvent& operator=(const LuaEvent&) = delete;
 
     uint        eventId;
     QDateTime   timeStamp;
-    QSettings*  dataParm;
+    LuaEventParameters* dataParm;
 };
 /*
  * 3 chars to identify type
@@ -32,6 +50,35 @@ struct LuaEvent {
  */
 
 typedef std::list<LuaEvent *> LuaEventList;
+
+// Access is serialized by LuaCore's queue mutex. Rejected and pending events
+// are automatically destroyed, including their parameter maps.
+class LuaEventQueue
+{
+public:
+    bool push(std::unique_ptr<LuaEvent> event)
+    {
+        if(!event) return false;
+        const size_t bytes = event->dataParm->estimatedBytes();
+        if(_events.size() >= 1024 || bytes > 8 * 1024 * 1024 - _bytes) return false;
+        _events.push_back(std::move(event));
+        _bytes += bytes;
+        return true;
+    }
+    std::unique_ptr<LuaEvent> pop()
+    {
+        if(_events.empty()) return {};
+        auto event = std::move(_events.front());
+        _events.pop_front();
+        _bytes -= event->dataParm->estimatedBytes();
+        return event;
+    }
+    void clear() { _events.clear(); _bytes = 0; }
+    size_t size() const { return _events.size(); }
+private:
+    std::deque<std::unique_ptr<LuaEvent>> _events;
+    size_t _bytes = 0;
+};
 
 //------------------------------------------------------------------------------
 //  Fundamental Events from the Plugin

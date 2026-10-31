@@ -2,4 +2,22 @@
     <qresource prefix="/">
         <file>images/lua_logo.png</file>
     </qresource>
+    <qresource prefix="/lua4rs/examples">
+        <file alias="autoPermissions.lua">scripts/autoPermissions.lua</file>
+        <file alias="resetPermissions.lua">scripts/resetPermissions.lua</file>
+        <file alias="chatWrapper.lua">scripts/chatWrapper.lua</file>
+        <file alias="login.lua">scripts/login.lua</file>
+        <file alias="buryTheDead.lua">scripts/buryTheDead.lua</file>
+        <file alias="chatBot.lua">scripts/chatBot.lua</file>
+        <file alias="chatTest.lua">scripts/chatTest.lua</file>
+        <file alias="discOverviewBot.lua">scripts/discOverviewBot.lua</file>
+        <file alias="fileSearch.lua">scripts/fileSearch.lua</file>
+        <file alias="friendsVersionOverview.lua">scripts/friendsVersionOverview.lua</file>
+        <file alias="groupTest.lua">scripts/groupTest.lua</file>
+        <file alias="ipOverview.lua">scripts/ipOverview.lua</file>
+        <file alias="jsonapi-friends.lua">scripts/jsonapi-friends.lua</file>
+        <file alias="offlineChecker.lua">scripts/offlineChecker.lua</file>
+        <file alias="simpleDownloadBot.lua">scripts/simpleDownloadBot.lua</file>
+        <file alias="speedControl.lua">scripts/speedControl.lua</file>
+    </qresource>
 </RCC>

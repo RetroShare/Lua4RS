@@ -1,269 +1,66 @@
-function getVersionNumber( s ) 
-	b, e = string.find(s, "Revision")
+-- Enable Automation > A chat message arrives, then Save.
+-- Type !versions in a lobby to summarize versions reported by your friends.
+-- Current RetroShare shares release versions, not enough data for Git commit counts.
 
-	if not b then return false end
-
-	e = e + 2
-
-	-- revision starts at e and is up to 8 characters long
-	rev = s:sub(e, e + 7)
-
-	return rev, true
+local output = type(rs) == "table" and rs.print or print
+if type(args) ~= "table" or type(args.msg) ~= "string" then
+    output("Discovery bot: waiting for !versions in chat. Enable the chat-message trigger and Save.")
+    return
+end
+local command = args.msg:match("^%s*(.-)%s*$"):lower()
+if command ~= "!versions" then return end
+local chatid = args.chatid
+if type(chatid) ~= "string" or not (chatid:match("^L%x+$") or
+    chatid:match("^[PD]%x+$") or chatid == "B") then
+    output("Discovery bot: missing or invalid chat ID; cannot reply.")
+    return
 end
 
-function getName( id )
-	return peers.getPeerName( id )
+local function versionLabel(version)
+    if type(version) ~= "string" then return nil end
+    version = version:match("^%s*(.-)%s*$")
+    if version == "" then return nil end
+    local revision = version:match("Revision%s*:?%s*([%w%.%+%-]+)")
+    if revision then return "Revision " .. revision end
+    local release = version:match("(%d+%.%d+%.%d+[%w%.%+%-]*)")
+    return release or version
+end
+local function escape(text)
+    return (text:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+                :gsub('"', "&quot;"):gsub("'", "&#39;"))
 end
 
---------------------------------------
--- Insert value of any type into array
---------------------------------------
-local function arrayInsert( ary, val, idx )
-    -- Needed because table.insert has issues
-    -- An "array" is a table indexed by sequential
-    -- positive integers (no empty slots)
-    local lastUsed = #ary + 1
-    local nextAvail = lastUsed + 1
-
-    -- Determine correct index value
-    local index = tonumber(idx) -- Don't use idx after this line!
-    if (index == nil) or (index > nextAvail) then
-        index = nextAvail
-    elseif (index < 1) then
-        index = 1
-    end
-
-    -- Insert the value
-    if ary[index] == nil then
-        ary[index] = val
+local friends = peers.getFriendList()
+if type(friends) ~= "table" then
+    output("Discovery bot: could not load the friend list.")
+    return
+end
+local counts, known, unknown = {}, 0, 0
+for _, id in ipairs(friends) do
+    local version = versionLabel(disc.getPeerVersion(id))
+    if version then
+        counts[version] = (counts[version] or 0) + 1
+        known = known + 1
     else
-        -- TBD: Should we try to allow for skipped indices?
-        for j = nextAvail,index,-1 do
-            ary[j] = ary[j-1]
-        end
-        ary[index] = val
+        unknown = unknown + 1
     end
 end
-
---------------------------------
--- Compare two items of any type
---------------------------------
-local function compareAnyTypes( op1, op2 ) -- Return the comparison result
-    -- Inspired by http://lua-users.org/wiki/SortedIteration
-    local type1, type2 = type(op1),     type(op2)
-    local num1,  num2  = tonumber(op1), tonumber(op2)
-    
-    if ( num1 ~= nil) and (num2 ~= nil) then  -- Number or numeric string
-        return  num1 < num2                     -- Numeric compare
-    elseif type1 ~= type2 then                -- Different types
-        return type1 < type2                    -- String compare of type name
-    -- From here on, types are known to match (need only single compare)
-    elseif type1 == "string"  then            -- Non-numeric string
-        return op1 < op2                        -- Default compare
-    elseif type1 == "boolean" then
-        return op1                              -- No compare needed!
-         -- Handled above: number, string, boolean
-    else -- What's left:   function, table, thread, userdata
-        return tostring(op1) < tostring(op2)  -- String representation
-    end
+local keys = {}
+for version in pairs(counts) do keys[#keys + 1] = version end
+table.sort(keys)
+local rows = {
+    "<p><b>Friend version overview</b><br/>" .. known .. " discovery entries from " .. #friends .. " friend locations.</p>",
+    "<table><tr><th>Reported version</th><th>Locations</th></tr>"
+}
+for _, version in ipairs(keys) do
+    rows[#rows + 1] = "<tr><td>" .. escape(version) .. "</td><td>" .. counts[version] .. "</td></tr>"
 end
-
--------------------------------------------
--- Iterate over a table in sorted key order
--------------------------------------------
-local function pairsByKeys (tbl, func)
-    -- Inspired by http://www.lua.org/pil/19.3.html
-    -- and http://lua-users.org/wiki/SortedIteration
-
-    if func == nil then
-        func = compareAnyTypes
-    end
-
-    -- Build a sorted array of the keys from the passed table
-    -- Use an insertion sort, since table.sort fails on non-numeric keys
-    local ary = {}
-    local lastUsed = 0
-    for key --[[, val--]] in pairs(tbl) do
-        if (lastUsed == 0) then
-            ary[1] = key
-        else
-            local done = false
-            for j=1,lastUsed do  -- Do an insertion sort
-                if (func(key, ary[j]) == true) then
-                    arrayInsert( ary, key, j )
-                    done = true
-                    break
-                end
-            end
-            if (done == false) then
-                ary[lastUsed + 1] = key
-            end
-        end
-        lastUsed = lastUsed + 1
-    end
-
-    -- Define (and return) the iterator function
-    local i = 0                -- iterator variable
-    local iter = function ()   -- iterator function
-        i = i + 1
-        if ary[i] == nil then
-            return nil
-        else
-            return ary[i], tbl[ary[i]]
-        end
-    end
-    return iter
-end
-
-function getCommitNumber(hash, tag)
-	local handle = io.popen("cd ~/Projects/RetroShare; git describe --tags " .. hash)
-	local result = handle:read("*a")
-	handle:close()
-	-- rs.print(result)
-	-- rs.print(tostring(""..string.find(result, ".+-.+-(.+)-.+")))
-
-	-- get #commits since tag
-	local num = 0
-	for i in string.gmatch(result, ".+-?.+-(.+)-.+") do
-		num = i
-		break
-	end
-
-	-- get tag
-	local refTag = ""
-	for i in string.gmatch(result, "(.+)-.+-.+") do
-		refTag = i
-		break
-	end
-
-	-- rs.print("got number " .. num .. " at tag " .. refTag .. "/" .. tag)
-
-	-- when we have a commit count return it
-	if num ~= 0 then
-		-- does the tag match?
-		if refTag == tag then
-			return num, true, ""
-		end
-		-- if not add the tag
-		return num, false, refTag
-	end
-
-	return 0, false, ""
-end
-
-function getCurrentGitTag()
-	local handle = io.popen("cd ~/Projects/RetroShare; git describe --tags")
-	-- local handle = io.popen("cd /tmp/RetroShare; git describe")
-	local result = handle:read("*a")
-	handle:close()
-	-- rs.print(result)
-	-- rs.print(tostring(""..string.find(result, ".+-.+-(.+)-.+")))
-	for i in string.gmatch(result, "(.+-?.+)-.+-.+") do
-		return i
-	end
-	return 0
-end
-
-msg = args.msg
-chatid = args.chatid
-
--- rs.print("got message from lobby " .. chatid .. " user: " .. args.nick .. " msg: " .. msg)
--- rs.print("msg is " .. string.len(msg) .. " char(s) long")
-
-if msg ~= nil and  string.len(msg) <= 150 then
-	if msg == "!versions" then
-		local friends = peers.getFriendList()
-		local revListNum = {}
-		local revListHash = {}
-		local refListMatchingTag = {}
-		local numFriends = 0
-		local tag = getCurrentGitTag()
-
-		for i = 1 , #friends do
-			local f = friends[i]
-			local revStr = disc.getPeerVersion(f)
-
-			if revStr ~= nil then
-				numFriends = numFriends + 1
-				local revHash, sane = getVersionNumber(revStr)
-				if sane then
-					local revNum, matchingTag, refTag = getCommitNumber(revHash, tag)
-					revNum = "" .. revNum
-					if revNum ~= "0" then
-						revListHash[revNum] = "g" .. revHash
-						if matchingTag then
-							refListMatchingTag[revNum] = nil
-						else
-							refListMatchingTag[revNum] = refTag
-						end
-					else
-						if revHash == "01234567" then
-							revNum = "001"
-							revListHash[revNum] = "not set (01234567)"
-						else
-							revNum = "000"
-							revListHash[revNum] = "unknown"
-							rs.print("unknown rev: " .. revHash)
-						end
-						refListMatchingTag[revNum] = nil
-					end
-					if revListNum[revNum] ~= nil then
-						revListNum[revNum] = revListNum[revNum] + 1
-					else
-						revListNum[revNum] = 1
-					end
-				end
-			end
-		end
-
-		toSend = numFriends .. " discovery entries were found. Showing #commits since tag:"
-		toSend = toSend .. "<hr>current tag: <b>" .. tag .. "</b>"
-		-- build shiny table
-		-- add latest tag entries
-		toSend = toSend .. "<table>"
-			toSend = toSend .. "<tr>"
-				toSend = toSend .. "<th>#commits</th>"
-				toSend = toSend .. "<th>&nbsp;git hash</th>"
-				toSend = toSend .. "<th>times seen</th>"
-			toSend = toSend .. "<tr>"
-		for key, value in pairsByKeys(revListNum) do
-			if refListMatchingTag[key] == nil then
-				toSend = toSend .. "<tr>"
-					-- add revision with leading 'r'
-					toSend = toSend .. "<td>r" .. key .. "</td>"
-					-- add git hash (leading 'g' is already inclded)
-					toSend = toSend .. "<td>" .. revListHash[key] .. "</td>"
-					-- add number of occurrences
-					toSend = toSend .. "<td>" .. value .. "</td>"
-				toSend = toSend .. "</tr>"
-			end
-		end
-		toSend = toSend .. "</table>"
-
-		-- add other tags
-		toSend = toSend .. "<hr>other tags:"
-		toSend = toSend .. "<table>"
-			toSend = toSend .. "<tr>"
-				toSend = toSend .. "<th>#commits</th>"
-				toSend = toSend .. "<th>reference tag</th>"
-				toSend = toSend .. "<th>&nbsp;git hash</th>"
-				toSend = toSend .. "<th>times seen</th>"
-			toSend = toSend .. "<tr>"
-		for key, value in pairsByKeys(revListNum) do
-			if refListMatchingTag[key] ~= nil then
-				toSend = toSend .. "<tr>"
-					-- add revision with leading 'r'
-					toSend = toSend .. "<td>r" .. key .. "</td>"
-					-- add reference tag
-					toSend = toSend .. "<td>" ..  refListMatchingTag[key] .. "</td>"
-					-- add git hash (leading 'g' is already inclded)
-					toSend = toSend .. "<td>" .. revListHash[key] .. "</td>"
-					-- add number of occurrences
-					toSend = toSend .. "<td>" .. value .. "</td>"
-				toSend = toSend .. "</tr>"
-			end
-		end
-		toSend = toSend .. "</table>"
-		chat.sendChat(chatid, toSend)
-	end
+rows[#rows + 1] = "</table>"
+if unknown > 0 then rows[#rows + 1] = "<p>" .. unknown .. " location(s) have no reported version.</p>" end
+if known == 0 then rows[#rows + 1] = "<p>No version information is available yet.</p>" end
+local message = table.concat(rows)
+if not chat.sendChat(chatid, message) then
+    output("Discovery bot: sending the version overview failed for " .. chatid)
+else
+    output("Discovery bot: sent version overview (" .. known .. " known, " .. unknown .. " unknown).")
 end

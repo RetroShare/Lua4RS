@@ -1,4 +1,5 @@
 #include "LuaTriggerTimerInterval.h"
+#include <limits>
 
 #define INI_KEY_TRIGGER_TIMER_AMOUNT    "TimerAmount"
 #define INI_KEY_TRIGGER_TIMER_UNIT      "TimerUnit"
@@ -24,7 +25,7 @@ LuaTriggerTimerInterval::~LuaTriggerTimerInterval() {}
 
 bool LuaTriggerTimerInterval::isTriggered (const LuaEvent& luaevent)
 {
-    if (luaevent.eventId == L4R_TIMERTICK)
+    if (_timerInterval != 0 && luaevent.eventId == L4R_TIMERTICK)
     {
         // if _lastRun was never set before,
         // then we need some very old datetime first
@@ -77,7 +78,11 @@ void LuaTriggerTimerInterval::calculateInterval()
 {
     //                  sec, min, hour, day, week
     uint timeUnits[5] = {1, 60, 3600, 86400, 604800};
-    _timerInterval = _timerAmount * timeUnits[_timerUnit];;
+    _timerInterval = 0; // Invalid persisted schedules stay inactive.
+    if(_timerUnit >= 5 || _timerAmount == 0 ||
+       _timerAmount > std::numeric_limits<uint>::max() / timeUnits[_timerUnit])
+        return;
+    _timerInterval = _timerAmount * timeUnits[_timerUnit];
 }
 
 

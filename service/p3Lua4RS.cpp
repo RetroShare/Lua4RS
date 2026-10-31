@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 #include <rsitems/rsconfigitems.h>
 
@@ -26,6 +27,13 @@ p3Lua4RS::p3Lua4RS() :
     start("Lua4RS");
 }
 
+p3Lua4RS::~p3Lua4RS()
+{
+    _luaCore->requestStop();
+    fullstop();
+    delete _luaCore;
+}
+
 // helper
 RsTlvKeyValue push_int_value(const std::string& key, int value)
 {
@@ -49,7 +57,7 @@ int pop_int_value(const std::string& s)
 {
     std::istringstream is(s) ;
 
-    int val ;
+    int val = 0;
     is >> val ;
 
     return val ;
@@ -59,7 +67,7 @@ uint pop_uint_value(const std::string& s)
 {
     std::istringstream is(s) ;
 
-    uint val ;
+    uint val = 0;
     is >> val ;
 
     return val ;
@@ -91,9 +99,9 @@ bool p3Lua4RS::loadList(std::list<RsItem*>& load)
         if(vitem != NULL) {
             for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
                 if(kit->key ==      L4RCONFIG_TIMER_STARTUP)
-                    _secondsToStarUpEvent       = pop_int_value(kit->value);
+                    _secondsToStarUpEvent = std::max(0, pop_int_value(kit->value));
                 else if(kit->key == L4RCONFIG_TIMER_TICK)
-                    _tickIntervalInSeconds      = pop_int_value(kit->value);
+                    _tickIntervalInSeconds = std::max(1, pop_int_value(kit->value));
                 else
                     std::cerr << "[Lua] L4RConfig::loadList : unknown key: " << kit->key << std::endl;
 	    }
@@ -165,7 +173,7 @@ uint p3Lua4RS::getTickIntervalInSeconds() const
 
 void p3Lua4RS::setTickIntervalInSeconds(const uint& value)
 {
-    _tickIntervalInSeconds = value;
+    _tickIntervalInSeconds = std::max(1u, value);
     IndicateConfigChanged();
 }
 

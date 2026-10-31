@@ -1,4 +1,4 @@
-#include <retroshare/rsmsgs.h>
+#include <retroshare/rschats.h>
 
 #include "LuaCore.h"
 #include "LuaToRS.h"
@@ -17,7 +17,7 @@ extern "C" {
         const std::string s = luaL_checkstring(L, 1);
         const ChatId id = ChatId(s);
         const std::string msg = luaL_checkstring(L, 2);
-        const bool ret = rsMsgs->sendChat(id, msg);
+        const bool ret = rsChats->sendChat(id, msg);
         lua_pushboolean(L, ret);
         return 1;
     }

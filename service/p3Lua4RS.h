@@ -2,6 +2,7 @@
 #define P3LUA4RS_H
 
 #include <plugins/rspqiservice.h>
+#include <atomic>
 
 #include "interface/L4RInterface.h"
 
@@ -9,6 +10,7 @@ class p3Lua4RS : public L4RInterface, public RsTickingThread, public p3Config
 {
 public:
     p3Lua4RS();
+    ~p3Lua4RS();
 
     // p3Config interface
 protected:
@@ -30,8 +32,8 @@ public:
 
 private:
     // tick thread
-    uint        _secondsToStarUpEvent;
-    uint        _tickIntervalInSeconds;
+    std::atomic<uint> _secondsToStarUpEvent;
+    std::atomic<uint> _tickIntervalInSeconds;
     time_t      _lastRun;
     time_t      _initTime;
     bool        _startUpEventTriggered;
