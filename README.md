@@ -3,6 +3,13 @@ Lua4RS
 
 A RetroShare plugin to automate and script things on RetroShare using the Lua language.
 
+> **Transparency note: this revival is vibe-coded.** All changes since the
+> project was picked up again (Lua 5.4/5.5 support, sandbox, approvals, MCP
+> endpoint, see the commit history from `b179395` on) were written by an AI
+> coding agent (Claude), directed, reviewed and tested by the maintainer.
+> No judgement either way: we just want you to know how the code came to be,
+> so you can review it accordingly.
+
 What is RetroShare?
 -------------------
 RetroShare is a secure decentralised communication platform.
@@ -10,45 +17,167 @@ https://github.com/RetroShare
 
 What is Lua4RS?
 ---------------
-This plugin let you interact with RetroShare. It exposes most RetroShare functions to Lua and provides a trigger system. You can write scripts that react to events (from RetroShare) like _a friends comes online_ or _received a new mail_. With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.
+This plugin lets you interact with RetroShare from Lua. It exposes RetroShare
+functions to Lua and provides a trigger system: scripts can run on a timer, at
+startup/shutdown or when something happens in RetroShare, like _a friend comes
+online_ or _a chat message arrives_.
+
+Lua4RS can also be driven by a coding agent such as Claude Code over **MCP**
+(Model Context Protocol): the agent reads, writes and tests scripts, which then
+run on their own inside RetroShare. Everything an agent writes runs in a
+read-only sandbox until you approve it. See [MCP](#mcp-let-a-coding-agent-write-scripts).
 
 <img width="1263" height="754" alt="image" src="https://github.com/user-attachments/assets/d7ca0467-6b32-43c0-b2ed-1bf2250390a5" />
 
 
 Requirements
 ------------
-* RetroShare v0.6
-* Lua 5.5
+* RetroShare (current master), built with Qt 5 or 6
+* Lua 5.4 or 5.5
+* For the MCP endpoint: RetroShare built with the JSON API (`CONFIG+=rs_jsonapi`)
 
 ### MSYS2:
 
 `pacman -S mingw-w64-x86_64-lua`
 
 ### Ubuntu:
-`sudo apt install lua5.5`
+`sudo apt install liblua5.4-dev` (or `liblua5.5-dev` where available)
 
 ### Arch Linux:
-`sudo pacman -S lua`
+`sudo pacman -S lua54` (or `lua` for 5.5)
 
-# Build & install
-------------
+Build & install
+---------------
 
-put/clone `Lua4RS` to `RetroShare/plugins/` recommend
+Put/clone `Lua4RS` into `RetroShare/plugins/` and build it with the same qmake
+options as RetroShare itself. Pass every option as its own argument:
 
 	cd ${YOUR_DIR}/RetroShare/plugins/Lua4RS/
-	qmake
-	make 
+	qmake CONFIG+=release CONFIG+=rs_jsonapi
+	make
 
-Then place libLua4RS.so/Lua4RS.dll in your extension folder.
+Then place `libLua4RS.so`/`Lua4RS.dll` in your extension folder
+(e.g. `~/.retroshare/extensions6/`).
 
-## Execution and resource limits
+Build options:
 
-Manual runs execute on the plugin worker so the editor stays responsive.
-Each plugin script has a five-second cooperative Lua execution deadline.
-JSON API requests respect the remaining deadline and shutdown cancellation.
-Native functions outside the JSON API may still block; this is not a sandbox
-for untrusted scripts, and Lua hooks are not a hard process-level timeout.
-The standalone JSON API runner keeps its existing execution behavior.
+| Option | Meaning |
+|---|---|
+| `LUA_VERSION=5.5` | Use Lua 5.5 instead of the default 5.4 (see `lua.pri`) |
+| `LUA_PKGCONFIG=lua5.4` | pkg-config name, if autodetection fails |
+| `CONFIG+=rs_jsonapi` | Build the MCP endpoint (needs restbed headers from the RetroShare build) |
+| `RESTBED_INCLUDE_PATH=...` | Where restbed's headers are, if not `<build>/supportlibs/restbed/include` |
+
+qmake prints which Lua it uses and whether the MCP endpoint is built.
+
+
+Access levels and approvals
+---------------------------
+
+Every script runs with one of three access levels:
+
+| Level | What the script can do |
+|---|---|
+| `sandbox-readonly` | Lua sandbox plus RetroShare functions that only read. Default for everything not approved. |
+| `sandbox-write` | Sandbox plus functions that change RetroShare (send chat, add groups, start downloads, ...). |
+| `trusted` | Full Lua (`io`, `os`, `require`) and `jsonapi.call`. For scripts you wrote or checked yourself. |
+
+Every native binding is tagged `read` or `write` (see the tooltips in the
+function browser); a central check refuses write calls below `sandbox-write`.
+
+**Approvals are tied to the exact code.** An approval stores the level and the
+SHA-256 of the code in RetroShare's own signed and encrypted config, never in a
+file next to the script. If the code changes, no matter who changed it (the
+agent, an editor, the shell), the script runs as `sandbox-readonly` until it is
+approved again.
+
+* **Approve…** (next to Save, or a click on the warning icon in the script
+  list) shows a diff against the approved version and lets you choose the
+  level. The approved copy (`<name>.approved`) is checked against the stored
+  hash; if it was tampered with, the dialog warns and shows the whole script.
+* Saving in the editor keeps the level only if the saved version was approved
+  before. Scripts you create in the editor are trusted.
+* The bundled examples are trusted as long as they are unchanged.
+* On first start, scripts from older versions are listed once and stay
+  sandboxed unless you approve them.
+* The **Access** column shows each script's level; a warning icon marks scripts
+  that lost a higher level because they changed.
+
+### The sandbox
+
+Sandboxed scripts get a fresh environment of safe functions (no `io`, `require`,
+`load`, `debug`, no bytecode, no `__gc`, only `os.time/date/clock/difftime`).
+Each script keeps its globals between runs; they are dropped when the script is
+renamed or deleted. Limits per run: 5 seconds and 32 MB of memory growth.
+
+Known gap: Lua pattern functions (`string.find/match/gsub`) and long native
+calls run in C and are not interrupted by the time limit.
+
+
+MCP: let a coding agent write scripts
+-------------------------------------
+
+Lua4RS mounts an MCP endpoint into RetroShare's JSON API server
+(`http://127.0.0.1:9092/lua4rs/mcp` by default). It uses the JSON API's port,
+but not its users:
+
+* The endpoint has **its own token**. It is not a JSON API token and grants
+  nothing outside the endpoint, so an agent never gets direct API access.
+* Requests with a non-local `Origin` are rejected; no CORS headers are sent,
+  so web pages cannot call it.
+
+**Set up**
+
+1. Enable the JSON API in RetroShare: *Settings → JSON API*.
+2. In Lua4RS, tab **MCP**: tick *Enable MCP endpoint*. The status shows
+   *Listening on …* (right after RetroShare starts this can take ~10 s: the
+   JSON API is restarted to publish the endpoint).
+3. *Copy command* and run it, e.g. for Claude Code:
+
+   ```sh
+   claude mcp add --transport http lua4rs http://127.0.0.1:9092/lua4rs/mcp --header "Authorization: Bearer <token>"
+   ```
+
+**Tools**
+
+| Tool | Purpose |
+|---|---|
+| `get_environment` | Lua version, limits, access levels, what the sandbox provides |
+| `list_functions`, `describe_function` | Native bindings with read/write tag and an example |
+| `list_events` | Events scripts can react to and the fields of `args` |
+| `list_scripts`, `read_script` | Scripts with access level, approval state, triggers, hash |
+| `write_script`, `edit_script` | Create/replace a script, or replace one exact piece of text |
+| `delete_script` | Delete a script that was never approved |
+| `run_script` | Run a saved script or ad-hoc code once, returns its output |
+| `get_logs` | Recent output, errors and run notices |
+| `set_triggers` | Timer, once, startup/shutdown, events, time window |
+
+**Rules**
+
+* Only you approve scripts, in the GUI. Changing an approved script removes the
+  approval (the old version stays in `<name>.approved`).
+* The agent can only delete scripts that were never approved.
+* Ad-hoc code and runs with simulated event data always run `sandbox-readonly`,
+  so a test of a chat bot cannot send real messages.
+* `expected_hash` protects against overwriting changes made in between; if you
+  have unsaved changes to a script the agent changes, the editor asks.
+* Timers set by the agent run at most every 10 seconds; scripts are limited to
+  64 KB.
+* Script output and event data can contain text from other people (chat
+  messages, nicknames). The agent is told to treat it as data, never as
+  instructions.
+
+The protocol is MCP Streamable HTTP with JSON responses only (no SSE, no
+sessions). The JSON API has a single worker, so a long `run_script` (up to the
+5 s limit) blocks other JSON API requests meanwhile.
+
+
+Execution and resource limits
+-----------------------------
+
+Scripts run on the plugin's worker thread, so the editor stays responsive.
+Each run has a five-second cooperative Lua execution deadline; JSON API
+requests respect the remaining deadline and shutdown cancellation.
 
 The event queue holds at most 1,024 events and approximately 8 MiB of parameter
 data. New arrivals are dropped when either limit is reached. Output is limited
@@ -62,4 +191,19 @@ Shutdown cancels the active run and joins the worker before running shutdown
 handlers and releasing the Lua state. Each shutdown handler has the same
 execution deadline.
 
-See [tests/README.md](tests/README.md) for the safety regression checks.
+
+Tests
+-----
+
+None of these need a running RetroShare, except the MCP smoke test.
+
+| Test | Build / run |
+|---|---|
+| Sandbox (via the standalone runner) | build `jsonapi-runner`, then `tests/sandbox/run.sh <path-to-lua4rs-jsonapi>` |
+| Approvals and diff | `qmake tests/truststore/truststore.pro && make && ./tst_truststore` |
+| Per-script environments | `qmake tests/env/env.pro && make && ./tst_env` (add `LUA_VERSION=5.5` to test 5.5) |
+| MCP protocol, HTTP rules, settings | `qmake tests/mcp/mcp.pro && make && ./tst_mcp` |
+| MCP endpoint of a running instance | `tests/mcp/smoke.sh <token> [url]` |
+
+See [JSON_API.md](JSON_API.md) for the `jsonapi` Lua namespace and the
+standalone runner.
