@@ -28,6 +28,30 @@ post 200 "get_environment"  '{"jsonrpc":"2.0","id":3,"method":"tools/call","para
 post 200 "list_scripts"     '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"list_scripts","arguments":{}}}' -H "$auth"
 post 200 "read_script"      '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"read_script","arguments":{"name":"chatBot.lua"}}}' -H "$auth"
 
+tool() { # tool ok|error <description> <tool> <arguments-json>
+    want=$1; what=$2; name=$3; args=$4
+    body=$(curl -s -X POST "$url" -H 'Content-Type: application/json' -H "$auth" \
+        --data "{\"jsonrpc\":\"2.0\",\"id\":9,\"method\":\"tools/call\",\"params\":{\"name\":\"$name\",\"arguments\":$args}}")
+    case "$body" in
+        *'"isError":false'*) got=ok ;;
+        *'"isError":true'*) got=error ;;
+        *) got="no result" ;;
+    esac
+    if [ "$got" = "$want" ]; then echo "ok   $what ($got)"; else echo "FAIL $what: got $got, expected $want"; fail=1; fi
+    echo "$body" | head -c 300; echo; echo
+}
+
+# Write tools on a throwaway script. Leaves nothing behind if all goes well.
+s=mcp-smoke.lua
+tool ok    "write_script creates"        write_script "{\"name\":\"$s\",\"code\":\"print('a')\\nprint('b')\\n\",\"description\":\"smoke test\"}"
+tool ok    "edit_script"                 edit_script  "{\"name\":\"$s\",\"old_text\":\"print('b')\",\"new_text\":\"print('c')\"}"
+tool error "edit_script, text missing"   edit_script  "{\"name\":\"$s\",\"old_text\":\"print('zzz')\",\"new_text\":\"x\"}"
+tool error "write_script, stale hash"    write_script "{\"name\":\"$s\",\"code\":\"x\",\"expected_hash\":\"0000\"}"
+tool error "write_script, bad name"      write_script '{"name":"../evil.lua","code":"x"}'
+tool error "delete shipped example"      delete_script '{"name":"chatBot.lua"}'
+tool ok    "delete_script"               delete_script "{\"name\":\"$s\"}"
+tool error "read deleted script"         read_script  "{\"name\":\"$s\"}"
+
 # No SSE stream: GET is 405.
 status=$(curl -s -o /dev/null -w '%{http_code}' -X GET "$url" -H "$auth")
 [ "$status" = 405 ] && echo "ok   GET is 405" || { echo "FAIL GET: $status"; fail=1; }

@@ -1,8 +1,10 @@
 #include "Lua4RSTools.h"
+#include "McpGuiThread.h"
 #include "McpProtocol.h"
 
 #include <mutex>
 
+#include <QDir>
 #include <QJsonArray>
 #include <QJsonObject>
 
@@ -222,6 +224,160 @@ void addScriptReadTools(McpProtocol& p, LuaCore* core)
     };
     p.addTool(read);
 }
+
+// Shared by write_script and edit_script. produce(exists, current, code, error)
+// builds the new code. Runs on the GUI thread, which owns the script list and
+// the editor.
+using Produce = std::function<bool(bool exists, const QString& current, QString& code, QString& error)>;
+
+McpResult storeScript(LuaCore* core, const QString& name, const QString& expectedHash,
+                      bool hasDescription, const QString& description, const Produce& produce)
+{
+    if(!LuaList::isValidName(name))
+        return McpResult::fail("Invalid script name '" + name + "': use a file name like my-script.lua "
+                               "(no folders, no special characters).");
+    return mcpRunOnThreadOf(core, [=]() {
+        std::unique_lock<std::recursive_mutex> lock(core->scriptsMutex());
+        LuaContainer* c = nullptr;
+        const bool exists = core->codeList()->itemByName(name, c);
+        const QString current = exists ? c->getCode() : QString();
+        if(!expectedHash.isEmpty())
+        {
+            if(!exists) return McpResult::fail(name + " does not exist (expected_hash was given).");
+            const QString actual = QString::fromLatin1(LuaTrustStore::hash(current));
+            if(actual != expectedHash)
+                return McpResult::fail(name + " changed since you read it (sha256 is now " + actual +
+                                       "). Read it again before changing it.");
+        }
+        QString code, error;
+        if(!produce(exists, current, code, error)) return McpResult::fail(error);
+        const int bytes = code.toUtf8().size();
+        if(bytes > kMaxScriptBytes)
+            return McpResult::fail(QString("Script too large: %1 bytes, at most %2.").arg(bytes).arg(kMaxScriptBytes));
+
+        const LuaTrustStore::Status before = exists ? core->trustStore().status(name, current)
+                                                    : LuaTrustStore::Status{ LuaTrustStore::State::Unknown,
+                                                        LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly, {} };
+        if(!exists)
+        {
+            c = core->codeList()->createItem();
+            c->setName(name);
+            c->setEnabled(false);
+            c->setDesc(QString());
+            core->codeList()->addItem(c);
+            core->forgetScriptState(name); // never inherit globals of an older script of that name
+        }
+        c->setCode(code);
+        if(hasDescription) c->setDesc(description);
+        QDir().mkpath(QString::fromStdString(core->getPath()));
+        const bool saved = core->codeList()->saveAll();
+        QJsonObject info = scriptInfo(core, c);
+        lock.unlock();
+        emit core->scriptChangedExternally(name);
+
+        if(!saved) return McpResult::fail("Could not write " + name + " to disk.");
+        info.insert("created", !exists);
+        const LuaTrust now = core->trustStore().effective(name, code);
+        if(before.effective != LuaTrust::SandboxReadOnly && now == LuaTrust::SandboxReadOnly)
+            info.insert("note", QString("This script ran as %1 before. It now runs as sandbox-readonly until the "
+                                        "user approves the new version in the Lua4RS GUI.").arg(luaTrustName(before.effective)));
+        return McpResult::ok(info);
+    });
+}
+
+void addScriptWriteTools(McpProtocol& p, LuaCore* core)
+{
+    const QJsonObject nameProperty = stringProperty("Script file name ending in .lua, e.g. \"greeter.lua\"");
+    const QJsonObject hashProperty = stringProperty("sha256 from read_script/list_scripts: fail if the script changed since");
+
+    McpTool write;
+    write.name = "write_script";
+    write.description = "Create a script or replace its whole code. New scripts start with automation off "
+                        "(see set_triggers). Changing a script removes its approval: it then runs as "
+                        "sandbox-readonly until the user approves it again.";
+    write.readOnly = false;
+    write.inputSchema = schema(QJsonObject{
+        { "name", nameProperty },
+        { "code", stringProperty("Complete Lua source (at most 64 KB)") },
+        { "description", stringProperty("Short description shown in the script list") },
+        { "expected_hash", hashProperty } }, { "name", "code" });
+    write.call = [core](const QJsonObject& args) {
+        QString name, code, description, hash, error;
+        if(!McpArgs::string(args, "name", name, error) || !McpArgs::string(args, "code", code, error) ||
+           !McpArgs::optionalString(args, "description", description, error) ||
+           !McpArgs::optionalString(args, "expected_hash", hash, error)) return McpResult::fail(error);
+        return storeScript(core, name, hash, args.contains("description"), description,
+                           [code](bool, const QString&, QString& out, QString&) { out = code; return true; });
+    };
+    p.addTool(write);
+
+    McpTool edit;
+    edit.name = "edit_script";
+    edit.description = "Replace one exact piece of text in a script. old_text must occur exactly once "
+                       "(include surrounding lines to make it unique). Same approval rules as write_script.";
+    edit.readOnly = false;
+    edit.inputSchema = schema(QJsonObject{
+        { "name", nameProperty },
+        { "old_text", stringProperty("Exact text to replace, including whitespace") },
+        { "new_text", stringProperty("Replacement text") },
+        { "expected_hash", hashProperty } }, { "name", "old_text", "new_text" });
+    edit.call = [core](const QJsonObject& args) {
+        QString name, oldText, newText, hash, error;
+        if(!McpArgs::string(args, "name", name, error) || !McpArgs::string(args, "old_text", oldText, error) ||
+           !McpArgs::string(args, "new_text", newText, error) ||
+           !McpArgs::optionalString(args, "expected_hash", hash, error)) return McpResult::fail(error);
+        if(oldText.isEmpty()) return McpResult::fail("old_text must not be empty.");
+        return storeScript(core, name, hash, false, QString(),
+            [name, oldText, newText](bool exists, const QString& current, QString& out, QString& err) {
+                if(!exists) { err = "No script named " + name + ". Use write_script to create it."; return false; }
+                const int count = current.count(oldText);
+                if(count != 1)
+                {
+                    err = count == 0 ? "old_text not found in " + name + ". Read the script again; whitespace must match."
+                                     : QString("old_text occurs %1 times in %2; include more context.").arg(count).arg(name);
+                    return false;
+                }
+                out = current;
+                out.replace(current.indexOf(oldText), oldText.size(), newText);
+                return true;
+            });
+    };
+    p.addTool(edit);
+
+    McpTool remove;
+    remove.name = "delete_script";
+    remove.description = "Delete a script that was never approved (for example one you created). "
+                         "Approved scripts and the shipped examples can only be deleted by the user.";
+    remove.readOnly = false;
+    remove.destructive = true;
+    remove.inputSchema = schema(QJsonObject{ { "name", nameProperty } }, { "name" });
+    remove.call = [core](const QJsonObject& args) {
+        QString name, error;
+        if(!McpArgs::string(args, "name", name, error)) return McpResult::fail(error);
+        return mcpRunOnThreadOf(core, [core, name]() {
+            std::unique_lock<std::recursive_mutex> lock(core->scriptsMutex());
+            LuaContainer* c = nullptr;
+            if(!core->codeList()->itemByName(name, c)) return McpResult::fail("No script named " + name + ".");
+            const auto status = core->trustStore().status(name, c->getCode());
+            // Only "never approved": a changed approved script still has the
+            // user's approved version (and its .approved copy) behind it.
+            if(status.state != LuaTrustStore::State::Unknown)
+                return McpResult::fail(QString("%1 is %2 (%3). Only scripts that were never approved can be deleted "
+                                               "this way; ask the user to delete it in the Lua4RS GUI.")
+                                       .arg(name, stateName(status.state), luaTrustName(status.effective)));
+            emit core->scriptAboutToBeRemoved(name); // the editor lets go of it
+            if(!core->codeList()->itemByName(name, c)) return McpResult::fail("No script named " + name + ".");
+            core->trustStore().remove(name);
+            core->forgetScriptState(name);
+            const bool deleted = core->codeList()->removeItemAndDelete(c);
+            lock.unlock();
+            emit core->scriptChangedExternally(name);
+            if(!deleted) return McpResult::fail(name + " was removed from the list, but its file could not be deleted.");
+            return McpResult::ok(QJsonObject{ { "deleted", name } });
+        });
+    };
+    p.addTool(remove);
+}
 }
 
 std::shared_ptr<McpProtocol> createLua4RSProtocol(LuaCore* core)
@@ -230,5 +386,6 @@ std::shared_ptr<McpProtocol> createLua4RSProtocol(LuaCore* core)
     addEnvironmentTools(*p, core);
     addFunctionTools(*p, core);
     addScriptReadTools(*p, core);
+    addScriptWriteTools(*p, core);
     return p;
 }

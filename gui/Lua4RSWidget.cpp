@@ -64,6 +64,9 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     _lua(L4R::L4RConfig->getCore()), _network(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
+    // Changes by the MCP agent (emitted on this thread).
+    connect(_lua, &LuaCore::scriptAboutToBeRemoved, this, &Lua4RSWidget::onScriptRemovedExternally);
+    connect(_lua, &LuaCore::scriptChangedExternally, this, &Lua4RSWidget::onScriptChangedExternally);
     connect(_lua, &LuaCore::manualRunFinished, this, [this](bool success) {
         _running = false;
         ui->runStatus->setText(success ? tr("Finished. Results appear in Output.") : tr("Script failed - see Output."));
@@ -284,6 +287,7 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
 {
     std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     _loading = true;
+    _draftUntrusted = false;
     _activeContainer = container;
     ui->le_scriptname->setText(container ? container->getName() : QString());
     ui->le_scriptdesc->setText(container ? container->getDesc() : QString());
@@ -318,6 +322,8 @@ void Lua4RSWidget::updateAccessStatus()
     ui->runStatus->setToolTip(QString());
     if(!_activeContainer)
         ui->runStatus->setText(tr("Choose a script. Write Lua. Run and see the result."));
+    else if(_draft && _draftUntrusted)
+        ui->runStatus->setText(tr("Ready — F5 runs the code shown above.\nAccess: Read-only (based on a script the agent deleted)."));
     else if(_draft)
         ui->runStatus->setText(tr("Ready — F5 runs the code shown above.\nAccess: Trusted (new script)."));
     else
@@ -359,6 +365,50 @@ void Lua4RSWidget::approveActiveScript()
 }
 
 void Lua4RSWidget::on_pb_approve_clicked() { approveActiveScript(); }
+
+void Lua4RSWidget::onScriptRemovedExternally(const QString& name)
+{
+    if(!_activeContainer || _draft || _activeContainer->getName() != name) return;
+    if(!_dirty) { loadScript(nullptr); ui->runStatus->setText(tr("The agent deleted %1.").arg(name)); return; }
+    // Keep the user's unsaved text: it becomes a draft that is saved as a new
+    // script. It is based on agent code, so it is not trusted like a new script.
+    LuaContainer* draft = _lua->codeList()->createItem();
+    draft->setEnabled(false);
+    _activeContainer = draft;
+    _draft = true;
+    _draftUntrusted = true;
+    updateEditorState();
+    ui->runStatus->setText(tr("The agent deleted %1. Your unsaved version is kept — Save stores it as a new, unapproved script.").arg(name));
+}
+
+void Lua4RSWidget::onScriptChangedExternally(const QString& name)
+{
+    refreshScripts();
+    if(!_activeContainer || _draft || _activeContainer->getName() != name) return;
+    if(!_dirty)
+    {
+        loadScript(_activeContainer);
+        ui->runStatus->setText(tr("The agent updated %1.").arg(name) + "\n" +
+            AccessText::summary(_lua->trustStore().status(name, _activeContainer->getCode())));
+        return;
+    }
+    // Ask later: the agent's request must not wait for the user.
+    QTimer::singleShot(0, this, [this, name]() {
+        if(!_activeContainer || _draft || !_dirty || _activeContainer->getName() != name) return;
+        QMessageBox box(QMessageBox::Question, tr("Script changed by the agent"),
+            tr("The agent changed %1 while you have unsaved changes.").arg(name), QMessageBox::NoButton, this);
+        QPushButton* load = box.addButton(tr("Load the agent's version"), QMessageBox::DestructiveRole);
+        QPushButton* keep = box.addButton(tr("Keep my version"), QMessageBox::RejectRole);
+        box.setDefaultButton(keep);
+        box.setInformativeText(tr("Loading discards your changes. If you keep your version, saving it replaces the agent's version."));
+        box.exec();
+        if(box.clickedButton() == load && _activeContainer && !_draft && _activeContainer->getName() == name)
+        {
+            _dirty = false;
+            loadScript(_activeContainer);
+        }
+    });
+}
 
 void Lua4RSWidget::updateEditorState()
 {
@@ -419,8 +469,7 @@ bool Lua4RSWidget::saveScript()
     QString name = ui->le_scriptname->text().trimmed();
     if(!name.endsWith(".lua")) name += ".lua";
     LuaContainer* duplicate = nullptr;
-    if(name == ".lua" || name.contains('/') || name.contains('\\') || name.contains(':') ||
-       name.contains("..") || name.contains(QRegularExpression("[<>\"|?*]")) ||
+    if(!LuaList::isValidName(name) ||
        (_lua->codeList()->itemByName(name, duplicate) && duplicate != _activeContainer))
     {
         QMessageBox::warning(this, tr("Choose a script name"), tr("Use a unique filename, such as my-script.lua, without folders or special filename characters."));
@@ -441,7 +490,8 @@ bool Lua4RSWidget::saveScript()
     std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     const QString oldName = _activeContainer->getName();
     const QString oldCode = _activeContainer->getCode();
-    const bool createdInGui = _draft;
+    // A draft kept from a script the agent deleted is not the user's own code.
+    const bool createdInGui = _draft && !_draftUntrusted;
     _activeContainer->setName(name);
     _activeContainer->setDesc(ui->le_scriptdesc->text());
     _activeContainer->setCode(ui->pte_luacode->toPlainText());
@@ -459,7 +509,7 @@ bool Lua4RSWidget::saveScript()
     if(ui->cb_turtleSearchResult->isChecked()) _activeContainer->addEventTrigger(L4R_FILE_SEARCHRESULT);
     // A new or renamed script never inherits sandbox globals of an older
     // script that had this name.
-    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _lua->forgetScriptState(name); }
+    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _draftUntrusted = false; _lua->forgetScriptState(name); }
     else if(oldName != name)
     {
         _lua->codeList()->rename(oldName, name);
@@ -533,7 +583,8 @@ void Lua4RSWidget::on_pb_run_clicked()
     appendLog(tr("Run: %1").arg(ui->le_scriptname->text()));
     // Editor changes inherit the level of the stored version only if that is
     // approved; a script changed by someone else runs sandboxed even here.
-    const LuaTrust trust = _lua->trustStore().forEditor(_activeContainer->getName(), _activeContainer->getCode(), _draft);
+    const LuaTrust trust = _draftUntrusted ? LuaTrust::SandboxReadOnly
+        : _lua->trustStore().forEditor(_activeContainer->getName(), _activeContainer->getCode(), _draft);
     if(!_lua->queueManualRun(ui->pte_luacode->toPlainText(), _activeContainer->getName(), trust))
     {
         _running = false;

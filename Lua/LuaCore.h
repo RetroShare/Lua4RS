@@ -139,6 +139,10 @@ signals:
     void manualRunFinished(bool success);
     void appendLog(const QString& s);
     void appendOutput(const QString& s);
+    // GUI thread, for changes made by the MCP agent: before a script is
+    // deleted (drop pointers to it) and after scripts changed.
+    void scriptAboutToBeRemoved(const QString& name);
+    void scriptChangedExternally(const QString& name);
     void clearOutput();
 };
 

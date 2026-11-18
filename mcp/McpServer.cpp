@@ -51,6 +51,17 @@ McpServer::McpServer(McpSettings& settings, std::shared_ptr<McpProtocol> protoco
         _resource->set_method_handler(method, handler);
 }
 
+McpServer::~McpServer() = default;
+
+void McpServer::startWatching()
+{
+    if(_watch) return;
+    _watch.reset(new QTimer);
+    QObject::connect(_watch.get(), &QTimer::timeout, [this]() { apply(); });
+    _watch->start(2000);
+    apply();
+}
+
 std::vector<std::shared_ptr<rb::Resource>> McpServer::getResources() const
 {
     return { _resource };
@@ -86,6 +97,7 @@ void McpServer::apply()
 
 void McpServer::shutdown()
 {
+    _watch.reset();
     if(registered()) rsJsonApi->unregisterResourceProvider(*this);
 }
 
@@ -94,7 +106,7 @@ void McpServer::restartJsonApi(int attempt)
     if(!rsJsonApi) return;
     const std::error_condition err = rsJsonApi->restart();
     // RetroShare refuses restarts in quick succession; try again later.
-    if(err == RsJsonApiErrorNum::NOT_A_MACHINE_GUN && attempt < 3)
+    if(err == RsJsonApiErrorNum::NOT_A_MACHINE_GUN && attempt < 6)
         QTimer::singleShot(10000, [attempt]() { restartJsonApi(attempt + 1); });
     else if(err)
         std::cerr << "[Lua4RS] Could not restart JSON API for MCP: " << err.message() << std::endl;

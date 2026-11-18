@@ -7,6 +7,8 @@
 
 #include <QString>
 
+class QTimer;
+
 #include "jsonapi/jsonapi.h"
 
 class McpProtocol;
@@ -19,11 +21,16 @@ class McpServer : public JsonApiResourceProvider
 {
 public:
     McpServer(McpSettings& settings, std::shared_ptr<McpProtocol> protocol);
+    ~McpServer();
 
     // Register or unregister according to settings; restarts the JSON API if
     // it runs (resources are only published on start).
     void apply();
-    // Before the plugin goes away: unregister, no restart.
+    // Keep applying every few seconds: retroshare-gui creates its JSON API
+    // server only after the main window (and plugin pages) exist, and the user
+    // can switch the JSON API on later. GUI thread.
+    void startWatching();
+    // Before the plugin goes away: stop watching, unregister, no restart.
     void shutdown();
 
     bool registered() const;
@@ -41,6 +48,7 @@ private:
     McpSettings& _settings;
     std::shared_ptr<McpProtocol> _protocol;
     std::shared_ptr<rb::Resource> _resource;
+    std::unique_ptr<QTimer> _watch;
 };
 
 #endif // MCP_SERVER_H

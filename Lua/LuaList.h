@@ -15,6 +15,10 @@ public:
     LuaList();
     ~LuaList();
 
+    // File name rules for scripts (GUI and MCP): ends with .lua, no folders,
+    // no characters that are special in file names.
+    static bool isValidName(const QString& name);
+
     bool loadAll();
     bool saveAll();
     void rename(const QString& oldName, const QString& newName);

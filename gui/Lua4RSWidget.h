@@ -42,6 +42,8 @@ private:
     // Approval dialog for the saved version of the open script.
     void approveActiveScript();
     void updateAccessStatus();
+    void onScriptRemovedExternally(const QString& name);
+    void onScriptChangedExternally(const QString& name);
 
     Ui::Lua4RSWidget* ui;
     LuaCore* _lua;
@@ -51,6 +53,7 @@ private:
     bool _loading = false;
     bool _dirty = false;
     bool _draft = false;
+    bool _draftUntrusted = false; // draft kept from a script the agent deleted
     bool _running = false;
 
 private slots:

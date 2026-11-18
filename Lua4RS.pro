@@ -14,6 +14,7 @@ include(lua.pri)
 
 HEADERS +=  \
     mcp/Lua4RSTools.h \
+    mcp/McpGuiThread.h \
     mcp/McpHttp.h \
     mcp/McpProtocol.h \
     mcp/McpSettings.h \

@@ -11,6 +11,16 @@
 
 #include "LuaList.h"
 
+#include <QRegularExpression>
+
+bool LuaList::isValidName(const QString& name)
+{
+    static const QRegularExpression special("[<>\"|?*]");
+    return name.endsWith(".lua") && name != ".lua" && !name.contains('/') && !name.contains('\\') &&
+           !name.contains(':') && !name.contains("..") && !name.contains(special) &&
+           name.trimmed() == name;
+}
+
 LuaList::LuaList() :
     _filePath("")
 {

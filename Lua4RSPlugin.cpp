@@ -112,8 +112,9 @@ MainPage* Lua4RSPlugin::qt_page() const
 {
     if(_mainpage == NULL) {
 #ifdef LUA4RS_MCP
-        // GUI thread, config is loaded: mount the MCP endpoint if enabled.
-        if(_service && _service->mcpServer()) _service->mcpServer()->apply();
+        // GUI thread, config is loaded: keep the MCP endpoint mounted if enabled
+        // (the JSON API server itself is created after this page).
+        if(_service && _service->mcpServer()) _service->mcpServer()->startWatching();
 #endif
         _mainpage = new Lua4RSWidget();
         L4R::L4RConfig->getCore()->setUi(dynamic_cast<Lua4RSWidget*>(_mainpage));
