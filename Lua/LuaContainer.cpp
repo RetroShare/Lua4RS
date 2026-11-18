@@ -166,6 +166,14 @@ void LuaContainer::addEventTrigger(uint eventId)
     _config->addTrigger(new LuaTriggerEvent(eventId));
 }
 
+QList<uint> LuaContainer::getEventTriggerIds()
+{
+    QList<uint> ids;
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+        if(LuaTriggerEvent* e = dynamic_cast<LuaTriggerEvent*>(*it)) ids << e->getEventId();
+    return ids;
+}
+
 bool LuaContainer::getEventTriggerChecked(uint eventId)
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)

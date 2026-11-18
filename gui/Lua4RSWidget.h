@@ -7,6 +7,8 @@ namespace Ui { class Lua4RSWidget; }
 class LuaCore;
 class LuaContainer;
 class QTreeWidgetItem;
+class QLabel;
+class QPushButton;
 class QNetworkAccessManager;
 
 class Lua4RSWidget : public MainPage
@@ -33,6 +35,7 @@ private:
     bool maybeSave();
     void markDirty();
     void updateEditorState();
+    void updateOtherEvents();
     void filterScripts(const QString& query);
     void filterFunctions(const QString& query);
     void testApiConnection();
@@ -55,6 +58,9 @@ private:
     bool _draft = false;
     bool _draftUntrusted = false; // draft kept from a script the agent deleted
     bool _running = false;
+    QLabel* _otherEvents = nullptr;          // event triggers without a checkbox
+    QPushButton* _removeOtherEvents = nullptr;
+    bool _dropOtherEvents = false;
 
 private slots:
     void on_pb_run_clicked();

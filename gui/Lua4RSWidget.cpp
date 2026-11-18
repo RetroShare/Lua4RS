@@ -7,6 +7,7 @@
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
 #include "Lua/BundledScripts.h"
+#include "Lua/LuaEventCatalog.h"
 #include "interface/L4RInterface.h"
 
 #include <QDesktopServices>
@@ -142,6 +143,19 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     connect(ui->dd_everyunits, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Lua4RSWidget::markDirty);
     for(auto field : ui->automationTab->findChildren<QDateTimeEdit*>())
         connect(field, &QDateTimeEdit::dateTimeChanged, this, &Lua4RSWidget::markDirty);
+
+    // Event triggers set over MCP that have no checkbox above.
+    _otherEvents = new QLabel(ui->automationTab);
+    _otherEvents->setWordWrap(true);
+    _removeOtherEvents = new QPushButton(tr("Remove these triggers"), ui->automationTab);
+    ui->automationTabLayout->addWidget(_otherEvents);
+    ui->automationTabLayout->addWidget(_removeOtherEvents, 0, Qt::AlignLeft);
+    connect(_removeOtherEvents, &QPushButton::clicked, this, [this]() {
+        _dropOtherEvents = true;
+        _otherEvents->setText(tr("Other event triggers will be removed when you save."));
+        _removeOtherEvents->hide();
+        markDirty();
+    });
 
     auto save = new QShortcut(QKeySequence::Save, this);
     connect(save, &QShortcut::activated, this, &Lua4RSWidget::on_pb_save_clicked);
@@ -309,6 +323,7 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
     ui->cb_shutdown->setChecked(container && container->getRunShutdownChecked());
     ui->cb_chatmessage->setChecked(container && container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED));
     ui->cb_turtleSearchResult->setChecked(container && container->getEventTriggerChecked(L4R_FILE_SEARCHRESULT));
+    updateOtherEvents();
     _dirty = false;
     _loading = false;
     ui->editorTabs->setCurrentWidget(ui->codeTab);
@@ -410,6 +425,22 @@ void Lua4RSWidget::onScriptChangedExternally(const QString& name)
     });
 }
 
+void Lua4RSWidget::updateOtherEvents()
+{
+    _dropOtherEvents = false;
+    QStringList others;
+    if(_activeContainer)
+        for(uint id : _activeContainer->getEventTriggerIds())
+            if(id != L4R_LOBBY_MESSAGERECEIVED && id != L4R_FILE_SEARCHRESULT)
+            {
+                const LuaEventInfo* info = luaEventById(id);
+                others << (info ? QString::fromLatin1(info->name) : QString::number(id));
+            }
+    _otherEvents->setText(tr("Also runs on these events (set by the agent): %1").arg(others.join(", ")));
+    _otherEvents->setVisible(!others.isEmpty());
+    _removeOtherEvents->setVisible(!others.isEmpty());
+}
+
 void Lua4RSWidget::updateEditorState()
 {
     const bool active = _activeContainer && !_running;
@@ -500,7 +531,13 @@ bool Lua4RSWidget::saveScript()
     _activeContainer->setEnabled(ui->cbx_enable->isChecked());
     _activeContainer->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
     _activeContainer->setConstraintFromTo(ui->tied_timefrom->time(), ui->tied_timeto->time());
+    // Event triggers without a checkbox here (set over MCP) survive a GUI save.
+    QList<uint> otherEvents = _activeContainer->getEventTriggerIds();
+    otherEvents.removeAll(uint(L4R_LOBBY_MESSAGERECEIVED));
+    otherEvents.removeAll(uint(L4R_FILE_SEARCHRESULT));
     _activeContainer->removeAllTrigger();
+    if(!_dropOtherEvents)
+        for(uint id : otherEvents) _activeContainer->addEventTrigger(id);
     if(ui->cb_every->isChecked()) _activeContainer->addRunEveryTrigger(ui->spb_everycount->value(), ui->dd_everyunits->currentIndex());
     if(ui->cb_once->isChecked()) _activeContainer->addRunOnceTrigger(ui->dte_runonce->dateTime());
     if(ui->cb_startup->isChecked()) _activeContainer->addRunStratupTrigger();
@@ -523,7 +560,7 @@ bool Lua4RSWidget::saveScript()
     { QMessageBox::warning(this, tr("Could not save"), tr("The script could not be fully saved. Check write access to the scripts folder and try again.")); return false; }
     _dirty = false;
     { const QSignalBlocker blocker(ui->le_scriptname); ui->le_scriptname->setText(name); }
-    refreshScripts(); updateEditorState();
+    refreshScripts(); updateEditorState(); updateOtherEvents();
     ui->runStatus->setText(tr("Saved %1").arg(name));
     return true;
 }

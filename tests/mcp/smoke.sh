@@ -57,6 +57,11 @@ tool ok    "run_script, write denied"    run_script   '{"code":"chat.sendChat(\"
 tool ok    "run_script, endless loop"    run_script   '{"code":"while true do end"}'
 tool error "run_script, name + code"     run_script   "{\"name\":\"$s\",\"code\":\"x\"}"
 tool ok    "get_logs"                    get_logs     '{"limit":5}'
+tool ok    "list_events"                 list_events  '{}'
+tool ok    "set_triggers"                set_triggers "{\"name\":\"$s\",\"enabled\":false,\"every\":{\"amount\":1,\"unit\":\"hours\"},\"events\":[\"friend_online\",\"chat_message\"],\"time_window\":{\"from\":\"08:00\",\"to\":\"22:00\"}}"
+tool error "set_triggers, every 5 s"     set_triggers "{\"name\":\"$s\",\"every\":{\"amount\":5,\"unit\":\"seconds\"}}"
+tool error "set_triggers, unknown event" set_triggers "{\"name\":\"$s\",\"events\":[\"nope\"]}"
+tool error "set_triggers, once in past"  set_triggers "{\"name\":\"$s\",\"once\":\"2000-01-01T00:00:00\"}"
 tool ok    "delete_script"               delete_script "{\"name\":\"$s\"}"
 tool error "read deleted script"         read_script  "{\"name\":\"$s\"}"
 

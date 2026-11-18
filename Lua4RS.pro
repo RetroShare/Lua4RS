@@ -44,6 +44,7 @@ HEADERS +=  \
     Lua/LuaConfig.h \
     Lua/LuaContainer.h \
     Lua/LuaEvent.h \
+    Lua/LuaEventCatalog.h \
     Lua/Trigger/LuaTriggerBase.h \
     Lua/Trigger/LuaTriggerTimerInterval.h \
     Lua/Trigger/LuaTriggerStartup.h \

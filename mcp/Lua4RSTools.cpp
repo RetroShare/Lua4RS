@@ -15,6 +15,7 @@
 #include "Lua/LuaContainer.h"
 #include "Lua/LuaCore.h"
 #include "Lua/LuaEvent.h"
+#include "Lua/LuaEventCatalog.h"
 #include "Lua/LuaList.h"
 #include "Lua/LuaTrust.h"
 #include "Lua/LuaTrustStore.h"
@@ -82,8 +83,11 @@ QJsonObject triggerInfo(LuaContainer* c)
     t.insert("startup", c->getRunStartupChecked());
     t.insert("shutdown", c->getRunShutdownChecked());
     QJsonArray events;
-    if(c->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED)) events.append("chat_message");
-    if(c->getEventTriggerChecked(L4R_FILE_SEARCHRESULT)) events.append("file_search_result");
+    for(uint id : c->getEventTriggerIds())
+    {
+        const LuaEventInfo* info = luaEventById(id);
+        events.append(info ? QString::fromLatin1(info->name) : QString("event_%1").arg(id));
+    }
     t.insert("events", events);
     if(c->getConstraintEnabled())
     {
@@ -480,6 +484,129 @@ void addRunTools(McpProtocol& p, LuaCore* core)
     };
     p.addTool(logs);
 }
+
+const char* kUnits[] = { "seconds", "minutes", "hours", "days", "weeks" };
+const quint64 kUnitSeconds[] = { 1, 60, 3600, 86400, 604800 };
+const quint64 kMinIntervalSeconds = 10;
+
+void addTriggerTools(McpProtocol& p, LuaCore* core)
+{
+    McpTool events;
+    events.name = "list_events";
+    events.description = "Events a script can be triggered by (see set_triggers) and the fields of `args` "
+                         "the script gets for each.";
+    events.inputSchema = schema();
+    events.call = [](const QJsonObject&) {
+        QJsonArray list;
+        for(const LuaEventInfo& e : luaEventCatalog())
+        {
+            QJsonObject args;
+            for(const auto& field : e.args) args.insert(field.first, field.second);
+            list.append(QJsonObject{ { "name", e.name }, { "description", e.description }, { "args", args } });
+        }
+        return McpResult::ok(QJsonObject{
+            { "events", list },
+            { "note", "Timers (every, once), startup and shutdown runs have args = nil. "
+                      "Event scripts should return quickly: one run blocks the next." } });
+    };
+    p.addTool(events);
+
+    McpTool set;
+    set.name = "set_triggers";
+    set.description = "Set when a saved script runs on its own. Replaces all triggers of the script; "
+                      "anything not given is switched off. enabled=false keeps the triggers but stops automatic runs.";
+    set.readOnly = false;
+    QJsonArray unitNames;
+    for(const char* unit : kUnits) unitNames.append(unit);
+    QJsonArray eventNames;
+    for(const LuaEventInfo& e : luaEventCatalog()) eventNames.append(e.name);
+    set.inputSchema = schema(QJsonObject{
+        { "name", stringProperty("Saved script") },
+        { "enabled", QJsonObject{ { "type", "boolean" }, { "description", "Automatic runs on/off (default true)" } } },
+        { "every", QJsonObject{ { "type", "object" }, { "description", "Repeat; at least every 10 seconds" },
+                                { "properties", QJsonObject{
+                                    { "amount", QJsonObject{ { "type", "integer" }, { "minimum", 1 } } },
+                                    { "unit", QJsonObject{ { "type", "string" }, { "enum", unitNames } } } } },
+                                { "required", QJsonArray{ "amount", "unit" } } } },
+        { "once", stringProperty("Run once at this local time, ISO 8601, e.g. 2026-11-19T08:00:00") },
+        { "startup", QJsonObject{ { "type", "boolean" }, { "description", "Run when RetroShare starts" } } },
+        { "shutdown", QJsonObject{ { "type", "boolean" }, { "description", "Run when RetroShare shuts down" } } },
+        { "events", QJsonObject{ { "type", "array" }, { "items", QJsonObject{ { "type", "string" }, { "enum", eventNames } } },
+                                 { "description", "Event names from list_events" } } },
+        { "time_window", QJsonObject{ { "type", "object" }, { "description", "Only run between these local times" },
+                                      { "properties", QJsonObject{ { "from", stringProperty("HH:mm") }, { "to", stringProperty("HH:mm") } } },
+                                      { "required", QJsonArray{ "from", "to" } } } } }, { "name" });
+    set.call = [core](const QJsonObject& args) {
+        QString name, error;
+        if(!McpArgs::string(args, "name", name, error)) return McpResult::fail(error);
+        const bool enabled = args.value("enabled").toBool(true);
+
+        int everyAmount = 0, everyUnit = -1;
+        if(args.value("every").isObject())
+        {
+            const QJsonObject every = args.value("every").toObject();
+            everyAmount = every.value("amount").toInt(0);
+            for(int i = 0; i < 5; ++i) if(every.value("unit").toString() == kUnits[i]) everyUnit = i;
+            if(everyAmount < 1 || everyUnit < 0)
+                return McpResult::fail("every needs amount >= 1 and unit one of seconds, minutes, hours, days, weeks.");
+            const quint64 seconds = quint64(everyAmount) * kUnitSeconds[everyUnit];
+            if(seconds < kMinIntervalSeconds) return McpResult::fail("Repeat at most every 10 seconds.");
+            if(seconds > 0xffffffffULL) return McpResult::fail("Repeat interval too long.");
+        }
+        QDateTime once;
+        if(args.contains("once") && !args.value("once").isNull())
+        {
+            once = QDateTime::fromString(args.value("once").toString(), Qt::ISODate);
+            if(!once.isValid()) return McpResult::fail("once must be an ISO 8601 date and time.");
+            if(once <= QDateTime::currentDateTime()) return McpResult::fail("once must be in the future.");
+        }
+        QTime from, to;
+        const bool window = args.value("time_window").isObject();
+        if(window)
+        {
+            const QJsonObject w = args.value("time_window").toObject();
+            from = QTime::fromString(w.value("from").toString(), "HH:mm");
+            to = QTime::fromString(w.value("to").toString(), "HH:mm");
+            if(!from.isValid() || !to.isValid() || from >= to)
+                return McpResult::fail("time_window needs from and to as HH:mm, from before to.");
+            if(once.isValid() && (once.time() < from || once.time() > to))
+                return McpResult::fail("once must fall inside time_window.");
+        }
+        QList<uint> eventIds;
+        for(const QJsonValue& v : args.value("events").toArray())
+        {
+            const LuaEventInfo* info = luaEventByName(v.toString());
+            if(!info) return McpResult::fail("Unknown event '" + v.toString() + "'. Use list_events.");
+            if(!eventIds.contains(info->id)) eventIds << info->id;
+        }
+        const bool startup = args.value("startup").toBool(false);
+        const bool shutdown = args.value("shutdown").toBool(false);
+
+        return mcpRunOnThreadOf(core, [=]() {
+            std::unique_lock<std::recursive_mutex> lock(core->scriptsMutex());
+            LuaContainer* c = nullptr;
+            if(!core->codeList()->itemByName(name, c)) return McpResult::fail("No script named " + name + ".");
+            c->removeAllTrigger();
+            if(everyUnit >= 0) c->addRunEveryTrigger(uint(everyAmount), uint(everyUnit));
+            if(once.isValid()) c->addRunOnceTrigger(once);
+            if(startup) c->addRunStratupTrigger();
+            if(shutdown) c->addRunShutdownTrigger();
+            for(uint id : eventIds) c->addEventTrigger(id);
+            c->setConstraintEnabled(window);
+            if(window) c->setConstraintFromTo(from, to);
+            c->setEnabled(enabled);
+            const bool saved = core->codeList()->saveAll();
+            QJsonObject info = scriptInfo(core, c);
+            lock.unlock();
+            emit core->scriptChangedExternally(name);
+            if(!saved) return McpResult::fail("Could not write the settings of " + name + " to disk.");
+            if(info.value("access").toObject().value("level").toString() == luaTrustName(LuaTrust::SandboxReadOnly))
+                info.insert("note", "The script runs as sandbox-readonly: write functions fail until the user approves it.");
+            return McpResult::ok(info);
+        });
+    };
+    p.addTool(set);
+}
 }
 
 std::shared_ptr<McpProtocol> createLua4RSProtocol(LuaCore* core)
@@ -490,5 +617,6 @@ std::shared_ptr<McpProtocol> createLua4RSProtocol(LuaCore* core)
     addScriptReadTools(*p, core);
     addScriptWriteTools(*p, core);
     addRunTools(*p, core);
+    addTriggerTools(*p, core);
     return p;
 }

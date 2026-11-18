@@ -63,6 +63,7 @@ public:
     // event trigger
     void addEventTrigger(uint eventId);
     bool getEventTriggerChecked(uint eventId);
+    QList<uint> getEventTriggerIds();
 
     QString getTriggerNames();
 
