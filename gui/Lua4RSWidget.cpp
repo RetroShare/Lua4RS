@@ -455,8 +455,15 @@ bool Lua4RSWidget::saveScript()
     if(ui->cb_shutdown->isChecked()) _activeContainer->addRunShutdownTrigger();
     if(ui->cb_chatmessage->isChecked()) _activeContainer->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
     if(ui->cb_turtleSearchResult->isChecked()) _activeContainer->addEventTrigger(L4R_FILE_SEARCHRESULT);
-    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; }
-    else if(oldName != name) _lua->codeList()->rename(oldName, name);
+    // A new or renamed script never inherits sandbox globals of an older
+    // script that had this name.
+    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _lua->forgetScriptState(name); }
+    else if(oldName != name)
+    {
+        _lua->codeList()->rename(oldName, name);
+        _lua->forgetScriptState(oldName);
+        _lua->forgetScriptState(name);
+    }
     QDir().mkpath(QString::fromStdString(_lua->getPath()));
     const bool saved = _lua->codeList()->saveAll();
     scriptsLock.unlock();
@@ -477,7 +484,15 @@ void Lua4RSWidget::on_pb_load_clicked()
     std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     const QString name = _activeContainer ? _activeContainer->getName() : QString();
     _activeContainer = nullptr;
+    QStringList before;
+    for(auto container : *_lua->codeList()) before << container->getName();
     _lua->codeList()->loadAll();
+    // Scripts deleted outside the editor lose their sandbox globals.
+    for(const QString& old : before)
+    {
+        LuaContainer* still = nullptr;
+        if(!_lua->codeList()->itemByName(old, still)) _lua->forgetScriptState(old);
+    }
     LuaContainer* selected = nullptr;
     _lua->codeList()->itemByName(name, selected);
     loadScript(selected); refreshScripts();
@@ -500,6 +515,7 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
     auto removed = _activeContainer;
     loadScript(nullptr);
     _lua->trustStore().remove(removed->getName());
+    _lua->forgetScriptState(removed->getName());
     const bool deleted = _lua->codeList()->removeItemAndDelete(removed);
     scriptsLock.unlock();
     if(!deleted)

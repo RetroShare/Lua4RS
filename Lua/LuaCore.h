@@ -6,6 +6,8 @@
 #include <map>
 #include <atomic>
 #include <mutex>
+#include <string>
+#include <vector>
 #include <chrono>
 
 #include <QObject>
@@ -73,6 +75,10 @@ public:
     // Trust a stored script runs with (approval + hash rule, see LuaTrustStore).
     LuaTrust trustForScript(const QString& name, const QString& code) const;
     LuaTrustStore& trustStore() { return _trust; }
+    // Forget the sandbox globals of a script that was renamed or deleted, so a
+    // later script of that name starts clean. Applied by the worker before and
+    // after the next run (never blocks on a running script).
+    void forgetScriptState(const QString& name);
     // Full names (e.g. "chat.sendChat") of all bindings tagged write.
     const QStringList& writeFunctions() const { return _writeFunctions; }
 
@@ -88,6 +94,7 @@ public:
     void emitClearOutput();
 
 private:
+    void applyForgottenStatesLocked(); // with _mutexRunLua held
     // event == nullptr: manual run, args is nil
     bool executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event);
     void dispatchEvent(const LuaEvent& event);
@@ -110,6 +117,8 @@ private:
     std::recursive_mutex _scriptsMutex;
     LuaTrustStore _trust;
     QStringList _writeFunctions;
+    std::mutex _forgetMutex;
+    std::vector<std::string> _forget; // script names, see forgetScriptState
     QString _manualCode;
     QString _manualName;
     LuaTrust _manualTrust = LuaTrust::SandboxReadOnly;

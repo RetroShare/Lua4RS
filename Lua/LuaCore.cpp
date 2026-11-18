@@ -418,9 +418,27 @@ LuaTrust LuaCore::trustForScript(const QString& name, const QString& code) const
     return _trust.effective(name, code);
 }
 
+void LuaCore::forgetScriptState(const QString& name)
+{
+    std::lock_guard<std::mutex> lock(_forgetMutex);
+    _forget.push_back(name.toStdString());
+}
+
+void LuaCore::applyForgottenStatesLocked()
+{
+    std::vector<std::string> forget;
+    {
+        std::lock_guard<std::mutex> lock(_forgetMutex);
+        forget.swap(_forget);
+    }
+    if(!L) return;
+    for(const std::string& name : forget) LuaSandbox::dropEnv(L, name);
+}
+
 bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event)
 {
     if(!L || !_ready || _cancel) return false;
+    applyForgottenStatesLocked();
     const QByteArray bytes = code.toUtf8();
     const std::string scriptName = name.toStdString();
     int result = LuaSandbox::load(L, bytes.constData(), bytes.size(), scriptName, trust);
@@ -448,6 +466,8 @@ bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust t
         result = lua_pcall(L, 0, 0, 0);
     }
     reportLuaErrors(L, result);
+    // A script deleted while it was running must not leave its globals behind.
+    applyForgottenStatesLocked();
     return result == LUA_OK;
 }
 
