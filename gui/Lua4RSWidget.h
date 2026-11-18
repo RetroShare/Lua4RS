@@ -37,6 +37,8 @@ private:
     void filterFunctions(const QString& query);
     void testApiConnection();
     void newApiExample();
+    // Once per profile: ask whether scripts from before approvals existed are trusted.
+    void checkTrustMigration();
 
     Ui::Lua4RSWidget* ui;
     LuaCore* _lua;

@@ -16,6 +16,7 @@ HEADERS +=  \
     Lua/LuaExecutionGuard.h \
     Lua/LuaSandbox.h \
     Lua/LuaTrust.h \
+    Lua/LuaTrustStore.h \
     Lua/BundledScripts.h \
     gui/FunctionBrowser.h \
     gui/JsonApiCatalog.h \
@@ -45,6 +46,7 @@ HEADERS +=  \
 SOURCES +=  \
     Lua/LuaJsonApi.cpp \
     Lua/LuaSandbox.cpp \
+    Lua/LuaTrustStore.cpp \
     Lua4RSPlugin.cpp \
     Lua4RSNotify.cpp \
     gui/Lua4RSWidget.cpp \

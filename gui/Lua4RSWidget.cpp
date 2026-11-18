@@ -142,6 +142,42 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
         "Continuous JSON API subscriptions run in the separate command-line runner.</p>"), "Lua4RSWidget");
     refreshScripts();
     loadScript(nullptr);
+    QTimer::singleShot(0, this, &Lua4RSWidget::checkTrustMigration);
+}
+
+void Lua4RSWidget::checkTrustMigration()
+{
+    LuaTrustStore& trust = _lua->trustStore();
+    if(trust.migrated()) return;
+    std::vector<std::pair<QString, QString>> pending;
+    {
+        std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+        for(auto container : *_lua->codeList())
+            if(trust.status(container->getName(), container->getCode()).state == LuaTrustStore::State::Unknown)
+                pending.emplace_back(container->getName(), container->getCode());
+    }
+    if(pending.empty()) { trust.setMigrated(); return; }
+
+    QString list;
+    for(const auto& script : pending) list += "<li>" + script.first.toHtmlEscaped() + "</li>";
+    QMessageBox box(QMessageBox::Question, tr("Approve existing scripts"), tr(
+        "<p>Lua4RS now keeps an approval for every script. Scripts without one run in a "
+        "sandbox: no file or shell access, no JSON API calls and no functions that change "
+        "RetroShare (for example sending chat messages).</p>"
+        "<p>These scripts have no approval yet:</p><ul>%1</ul>"
+        "<p>Approve them as <b>trusted</b> (full access, as before)? Only do this if you wrote "
+        "or checked them yourself.</p>"
+        "<p>If you already answered this question before, the Lua4RS settings were reset or "
+        "deleted. Unless you know why, choose <b>Keep sandboxed</b>.</p>").arg(list),
+        QMessageBox::NoButton, this);
+    QPushButton* approve = box.addButton(tr("Approve as trusted"), QMessageBox::AcceptRole);
+    QPushButton* keep = box.addButton(tr("Keep sandboxed"), QMessageBox::RejectRole);
+    box.setDefaultButton(keep);
+    box.exec();
+    if(box.clickedButton() == approve)
+        for(const auto& script : pending) trust.approve(script.first, script.second, LuaTrust::Trusted);
+    trust.setMigrated();
+    refreshScripts();
 }
 
 Lua4RSWidget::~Lua4RSWidget()
@@ -329,9 +365,13 @@ bool Lua4RSWidget::saveScript()
     { QMessageBox::warning(this, tr("Check the interval"), tr("Choose a shorter repeat interval.")); return false; }
     std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     const QString oldName = _activeContainer->getName();
+    const QString oldCode = _activeContainer->getCode();
+    const bool createdInGui = _draft;
     _activeContainer->setName(name);
     _activeContainer->setDesc(ui->le_scriptdesc->text());
     _activeContainer->setCode(ui->pte_luacode->toPlainText());
+    // Before saveAll: the worker may run the new code right after the unlock.
+    _lua->trustStore().guiSaved(oldName, oldCode, name, _activeContainer->getCode(), createdInGui);
     _activeContainer->setEnabled(ui->cbx_enable->isChecked());
     _activeContainer->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
     _activeContainer->setConstraintFromTo(ui->tied_timefrom->time(), ui->tied_timeto->time());
@@ -386,6 +426,7 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
     std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     auto removed = _activeContainer;
     loadScript(nullptr);
+    _lua->trustStore().remove(removed->getName());
     const bool deleted = _lua->codeList()->removeItemAndDelete(removed);
     scriptsLock.unlock();
     if(!deleted)
@@ -399,7 +440,10 @@ void Lua4RSWidget::on_pb_run_clicked()
     ui->outputTabs->setCurrentWidget(ui->outputTab);
     ui->runStatus->setText(tr("Running…"));
     appendLog(tr("Run: %1").arg(ui->le_scriptname->text()));
-    if(!_lua->queueManualRun(ui->pte_luacode->toPlainText()))
+    // Editor changes inherit the level of the stored version only if that is
+    // approved; a script changed by someone else runs sandboxed even here.
+    const LuaTrust trust = _lua->trustStore().forEditor(_activeContainer->getName(), _activeContainer->getCode(), _draft);
+    if(!_lua->queueManualRun(ui->pte_luacode->toPlainText(), _activeContainer->getName(), trust))
     {
         _running = false;
         ui->runStatus->setText(tr("Cannot run: Lua is busy or shutting down."));

@@ -24,6 +24,9 @@ p3Lua4RS::p3Lua4RS() :
     _secondsToStarUpEvent = 5;
     _tickIntervalInSeconds = 1;
 
+    // Script approvals live in this (signed + encrypted) config.
+    _luaCore->trustStore().setChangedCallback([this]() { IndicateConfigChanged(); });
+
     start("Lua4RS");
 }
 
@@ -85,6 +88,14 @@ bool p3Lua4RS::saveList(bool& cleanup, std::list<RsItem*>& lst)
     vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_STARTUP, _secondsToStarUpEvent));
     vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_TICK,    _tickIntervalInSeconds));
 
+    for(const auto& kv : _luaCore->trustStore().toKeyValues())
+    {
+        RsTlvKeyValue entry;
+        entry.key = kv.first;
+        entry.value = kv.second;
+        vitem->tlvkvs.pairs.push_back(entry);
+    }
+
     lst.push_back(vitem);
 
     return true;
@@ -102,6 +113,8 @@ bool p3Lua4RS::loadList(std::list<RsItem*>& load)
                     _secondsToStarUpEvent = std::max(0, pop_int_value(kit->value));
                 else if(kit->key == L4RCONFIG_TIMER_TICK)
                     _tickIntervalInSeconds = std::max(1, pop_int_value(kit->value));
+                else if(_luaCore->trustStore().fromKeyValue(kit->key, kit->value))
+                    ; // script approval
                 else
                     std::cerr << "[Lua] L4RConfig::loadList : unknown key: " << kit->key << std::endl;
 	    }

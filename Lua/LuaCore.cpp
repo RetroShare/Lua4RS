@@ -78,6 +78,14 @@ LuaCore::LuaCore() :
 
     _path = RsAccounts::AccountDirectory() + "/" + _folderName + "/";
 
+    _trust.setScriptDirectory(QString::fromStdString(_path));
+    // Unchanged copies of shipped examples come from the plugin itself.
+    _trust.setBundledCheck([](const QString& name, const QByteArray& code) {
+        if(!BundledScripts::names().contains(name)) return false;
+        QFile source(":/lua4rs/examples/" + name);
+        return source.open(QIODevice::ReadOnly) && source.readAll() == code;
+    });
+
     // load codes
     _luaList->setFilePath(_path);
     QString exampleError;
@@ -331,11 +339,13 @@ void LuaCore::processEvent(LuaEventList &events)
     }
 }
 
-bool LuaCore::queueManualRun(const QString& code)
+bool LuaCore::queueManualRun(const QString& code, const QString& name, LuaTrust trust)
 {
     RsStackMutex lock(_mutex);
     if(_shutDownImminent || _manualPending || !_ready) return false;
     _manualCode = code;
+    _manualName = name;
+    _manualTrust = trust;
     _manualPending = true;
     return true;
 }
@@ -343,7 +353,8 @@ bool LuaCore::queueManualRun(const QString& code)
 bool LuaCore::processEventQueue()
 {
     std::unique_ptr<LuaEvent> event;
-    QString manualCode;
+    QString manualCode, manualName;
+    LuaTrust manualTrust = LuaTrust::SandboxReadOnly;
     bool manual = false;
     {
         RsStackMutex lock(_mutex);
@@ -352,6 +363,8 @@ bool LuaCore::processEventQueue()
         {
             manual = true;
             manualCode.swap(_manualCode);
+            manualName.swap(_manualName);
+            manualTrust = _manualTrust;
             _manualPending = false;
         }
         else if(_events.size())
@@ -360,7 +373,7 @@ bool LuaCore::processEventQueue()
         }
         else return false;
     }
-    if(manual) emit manualRunFinished(runLuaByString(manualCode));
+    if(manual) emit manualRunFinished(runLuaByString(manualCode, manualName, manualTrust));
     else dispatchEvent(*event);
     return true;
 }
@@ -379,16 +392,24 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
     for(const auto& script : scripts)
     {
         if(_cancel) break;
-        emit appendLog(QObject::tr("running (by event): ") + script.first);
+        const LuaTrustStore::Status status = _trust.status(script.first, script.second);
+        QString note;
+        if(status.state == LuaTrustStore::State::Modified)
+            note = QObject::tr(" [%1: changed since approval]").arg(luaTrustName(status.effective));
+        else if(status.state == LuaTrustStore::State::Unknown)
+            note = QObject::tr(" [%1: not approved]").arg(luaTrustName(status.effective));
+        else if(status.effective != LuaTrust::Trusted)
+            note = QString(" [%1]").arg(luaTrustName(status.effective));
+        emit appendLog(QObject::tr("running (by event): ") + script.first + note);
         runLuaByEvent(script.first, script.second, event);
     }
 }
 
 void addSettingsToLua(lua_State  *L, int top, LuaEventParameters *settings, int8_t skipLvl);
 
-LuaTrust LuaCore::trustForScript(const QString& /*name*/, const QString& /*code*/) const
+LuaTrust LuaCore::trustForScript(const QString& name, const QString& code) const
 {
-    return LuaTrust::Trusted;
+    return _trust.effective(name, code);
 }
 
 bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event)
@@ -424,10 +445,12 @@ bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust t
     return result == LUA_OK;
 }
 
-bool LuaCore::runLuaByString(const QString& code)
+bool LuaCore::runLuaByString(const QString& code, const QString& name, LuaTrust trust)
 {
     RsStackMutex lock(_mutexRunLua);
-    return executeLocked("editor", code, LuaTrust::Trusted, nullptr);
+    if(trust != LuaTrust::Trusted)
+        emit appendLog(QObject::tr("running %1 as %2").arg(name, luaTrustName(trust)));
+    return executeLocked(name.isEmpty() ? QString("editor") : name, code, trust, nullptr);
 }
 
 bool LuaCore::configureJsonApi(const QString& url, const QString& username,

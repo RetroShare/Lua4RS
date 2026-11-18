@@ -15,6 +15,7 @@
 #include "LuaEvent.h"
 #include "LuaSandbox.h"
 #include "LuaTrust.h"
+#include "LuaTrustStore.h"
 
 extern "C" {
 #include <lua.h>
@@ -48,7 +49,9 @@ public:
 
     void shutDown();
     void requestStop();
-    bool queueManualRun(const QString& code);
+    // name: script the editor shows (env of sandboxed runs), trust: see
+    // LuaTrustStore::forEditor
+    bool queueManualRun(const QString& code, const QString& name, LuaTrust trust);
     // Protect script containers and triggers, never hold this while executing Lua.
     std::recursive_mutex& scriptsMutex() { return _scriptsMutex; }
 
@@ -59,18 +62,16 @@ public:
     bool processEventQueue();
 
     // invoke lua
-    // Code typed into the editor: runs trusted (the user wrote it).
-    bool runLuaByString(const QString& code);
+    bool runLuaByString(const QString& code, const QString& name, LuaTrust trust);
     bool configureJsonApi(const QString& url, const QString& username,
                           const QString& password, QString& error);
     void runLuaByName(const QString& name);
     //void runLuaByNameWithParams(const QString& name, parameterMap paramMap);
     void runLuaByEvent(const QString& name, const QString& code, const LuaEvent& event);
 
-    // Trust a stored script runs with.
-    // TODO: read approvals (level + SHA-256) from p3Lua4RS' signed config;
-    // until then every stored script is trusted (= previous behaviour).
+    // Trust a stored script runs with (approval + hash rule, see LuaTrustStore).
     LuaTrust trustForScript(const QString& name, const QString& code) const;
+    LuaTrustStore& trustStore() { return _trust; }
 
     // getter & setter
     Lua4RSWidget* getUI();
@@ -104,7 +105,10 @@ private:
     Lua4RSWidget* _ui;
 
     std::recursive_mutex _scriptsMutex;
+    LuaTrustStore _trust;
     QString _manualCode;
+    QString _manualName;
+    LuaTrust _manualTrust = LuaTrust::SandboxReadOnly;
     bool _manualPending = false;
     std::atomic<bool> _ready{false};
     std::atomic<bool> _cancel{false};
