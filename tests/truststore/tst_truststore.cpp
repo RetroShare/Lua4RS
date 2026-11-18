@@ -45,8 +45,11 @@ void hashRule()
     CHECK(changed.state == State::Modified);
     CHECK(changed.effective == LuaTrust::SandboxReadOnly);
     CHECK(changed.approvedLevel == LuaTrust::Trusted);
+    CHECK(changed.approvedAt.isValid());
+    CHECK(s.status("a.lua", "print(1)").approvedAt == changed.approvedAt);
     // approval is per name
     CHECK(s.status("b.lua", "print(1)").state == State::Unknown);
+    CHECK(!s.status("b.lua", "print(1)").approvedAt.isValid());
 }
 
 void guiCreateIsTrusted()

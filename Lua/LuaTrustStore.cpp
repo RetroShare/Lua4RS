@@ -52,12 +52,12 @@ LuaTrustStore::Status LuaTrustStore::statusLocked(const QString& name, const QBy
     {
         const QByteArray current = QCryptographicHash::hash(utf8, QCryptographicHash::Sha256).toHex();
         if(current == it->second.sha256)
-            return { State::Approved, it->second.level, it->second.level };
-        return { State::Modified, it->second.level, LuaTrust::SandboxReadOnly };
+            return { State::Approved, it->second.level, it->second.level, it->second.approvedAt };
+        return { State::Modified, it->second.level, LuaTrust::SandboxReadOnly, it->second.approvedAt };
     }
     if(_bundled && _bundled(name, utf8))
-        return { State::Bundled, LuaTrust::Trusted, LuaTrust::Trusted };
-    return { State::Unknown, LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly };
+        return { State::Bundled, LuaTrust::Trusted, LuaTrust::Trusted, {} };
+    return { State::Unknown, LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly, {} };
 }
 
 LuaTrustStore::Status LuaTrustStore::status(const QString& name, const QString& code) const

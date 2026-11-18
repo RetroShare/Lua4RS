@@ -95,12 +95,17 @@
            <string>Auto</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Access</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="scriptsHint">
          <property name="text">
-          <string>Click a script to open it. Auto shows whether saved triggers are enabled.</string>
+          <string>Click a script to open it. Auto shows whether saved triggers are enabled, Access what the script may do.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

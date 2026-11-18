@@ -39,6 +39,7 @@ public:
         State state;
         LuaTrust approvedLevel; // level of the entry (Modified/Approved), Trusted for Bundled
         LuaTrust effective;     // what the script runs with now
+        QDateTime approvedAt;   // UTC, valid for Approved/Modified
     };
 
     // isBundled(name, code): true if code equals the shipped script of that name

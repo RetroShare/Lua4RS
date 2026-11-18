@@ -6,6 +6,7 @@
 #include "Lua/BundledScripts.h"
 #include "interface/L4RInterface.h"
 
+#include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
@@ -24,6 +25,7 @@
 #include <QRegularExpression>
 #include <QShortcut>
 #include <QSignalBlocker>
+#include <QStyle>
 #include <QTimer>
 #include <QUrl>
 
@@ -31,8 +33,8 @@ namespace {
 class ScriptTableItem : public QTableWidgetItem
 {
 public:
-    ScriptTableItem(const QString& text, bool enabled, const QString& name)
-        : QTableWidgetItem(text), _enabled(enabled), _name(name) {}
+    ScriptTableItem(const QString& text, bool enabled, const QString& name, int rank = 0)
+        : QTableWidgetItem(text), _enabled(enabled), _name(name), _rank(rank) {}
 
     bool operator<(const QTableWidgetItem& other) const override
     {
@@ -44,13 +46,74 @@ public:
                 tableWidget()->horizontalHeader()->sortIndicatorOrder() == Qt::DescendingOrder;
             return descending ? !_enabled : _enabled;
         }
+        if(_rank != script._rank) return _rank < script._rank;
         return QString::localeAwareCompare(_name, script._name) < 0;
     }
 
 private:
     bool _enabled;
     QString _name;
+    int _rank;
 };
+
+
+QString accessLabel(LuaTrust level)
+{
+    switch(level)
+    {
+    case LuaTrust::Trusted: return QCoreApplication::translate("Lua4RSWidget", "Trusted");
+    case LuaTrust::SandboxWrite: return QCoreApplication::translate("Lua4RSWidget", "Write");
+    case LuaTrust::SandboxReadOnly: break;
+    }
+    return QCoreApplication::translate("Lua4RSWidget", "Read-only");
+}
+
+QString accessMeaning(LuaTrust level)
+{
+    switch(level)
+    {
+    case LuaTrust::Trusted: return QCoreApplication::translate("Lua4RSWidget", "full access, like a program you installed");
+    case LuaTrust::SandboxWrite: return QCoreApplication::translate("Lua4RSWidget", "sandbox, may use functions that change RetroShare");
+    case LuaTrust::SandboxReadOnly: break;
+    }
+    return QCoreApplication::translate("Lua4RSWidget", "sandbox, read-only: no file or shell access, no JSON API, nothing that changes RetroShare");
+}
+
+// Tooltip for the Access column.
+QString accessDetails(const LuaTrustStore::Status& status)
+{
+    const QString when = status.approvedAt.toLocalTime().toString(Qt::TextDate);
+    switch(status.state)
+    {
+    case LuaTrustStore::State::Approved:
+        return QCoreApplication::translate("Lua4RSWidget", "Approved as %1 on %2.\nRuns with %3.")
+            .arg(accessLabel(status.approvedLevel), when, accessMeaning(status.effective));
+    case LuaTrustStore::State::Bundled:
+        return QCoreApplication::translate("Lua4RSWidget", "Unchanged example shipped with Lua4RS.\nRuns with %1.").arg(accessMeaning(status.effective));
+    case LuaTrustStore::State::Modified:
+        return QCoreApplication::translate("Lua4RSWidget", "Changed outside the editor since it was approved as %1 on %2.\n"
+                  "Runs with %3 until it is approved again.")
+            .arg(accessLabel(status.approvedLevel), when, accessMeaning(status.effective));
+    case LuaTrustStore::State::Unknown: break;
+    }
+    return QCoreApplication::translate("Lua4RSWidget", "Not approved.\nRuns with %1.").arg(accessMeaning(status.effective));
+}
+
+// One line for the status bar below the editor.
+QString accessSummary(const LuaTrustStore::Status& status)
+{
+    switch(status.state)
+    {
+    case LuaTrustStore::State::Approved:
+        return QCoreApplication::translate("Lua4RSWidget", "Access: %1 (approved).").arg(accessLabel(status.effective));
+    case LuaTrustStore::State::Bundled:
+        return QCoreApplication::translate("Lua4RSWidget", "Access: %1 (unchanged example).").arg(accessLabel(status.effective));
+    case LuaTrustStore::State::Modified:
+        return QCoreApplication::translate("Lua4RSWidget", "Access: %1 — changed since approval.").arg(accessLabel(status.effective));
+    case LuaTrustStore::State::Unknown: break;
+    }
+    return QCoreApplication::translate("Lua4RSWidget", "Access: %1 — not approved.").arg(accessLabel(status.effective));
+}
 }
 
 Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
@@ -70,6 +133,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     ui->tw_allscripts->verticalHeader()->hide();
     ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->tw_allscripts->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->tw_allscripts->setSortingEnabled(true);
     ui->tw_allscripts->sortItems(0);
     ui->pte_luacode->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
@@ -236,6 +300,14 @@ void Lua4RSWidget::refreshScripts()
         status->setIcon(icon);
         status->setToolTip(enabled ? tr("Automation enabled") : tr("Automation disabled"));
         ui->tw_allscripts->setItem(row, 1, status);
+
+        const auto trust = _lua->trustStore().status(container->getName(), container->getCode());
+        auto access = new ScriptTableItem(accessLabel(trust.effective), enabled, container->getName(),
+                                          -int(trust.effective));
+        if(trust.state == LuaTrustStore::State::Modified)
+            access->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
+        access->setToolTip(accessDetails(trust));
+        ui->tw_allscripts->setItem(row, 2, access);
     }
     ui->tw_allscripts->setSortingEnabled(true);
     filterScripts(ui->le_scriptfilter->text());
@@ -281,7 +353,17 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
     _dirty = false;
     _loading = false;
     ui->editorTabs->setCurrentWidget(ui->codeTab);
-    ui->runStatus->setText(container ? tr("Ready — F5 runs the code shown above.") : tr("Choose a script. Write Lua. Run and see the result."));
+    if(!container)
+        ui->runStatus->setText(tr("Choose a script. Write Lua. Run and see the result."));
+    else if(_draft)
+        ui->runStatus->setText(tr("Ready — F5 runs the code shown above.\nAccess: Trusted (new script)."));
+    else
+    {
+        const auto trust = _lua->trustStore().status(container->getName(), container->getCode());
+        ui->runStatus->setText(tr("Ready — F5 runs the code shown above.") + "\n" + accessSummary(trust));
+        ui->runStatus->setToolTip(accessDetails(trust));
+    }
+    if(!container || _draft) ui->runStatus->setToolTip(QString());
     updateEditorState();
     selectActiveScript();
 }
