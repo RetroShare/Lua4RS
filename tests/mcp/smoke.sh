@@ -49,6 +49,14 @@ tool error "edit_script, text missing"   edit_script  "{\"name\":\"$s\",\"old_te
 tool error "write_script, stale hash"    write_script "{\"name\":\"$s\",\"code\":\"x\",\"expected_hash\":\"0000\"}"
 tool error "write_script, bad name"      write_script '{"name":"../evil.lua","code":"x"}'
 tool error "delete shipped example"      delete_script '{"name":"chatBot.lua"}'
+tool ok    "run_script saved"            run_script   "{\"name\":\"$s\"}"
+tool ok    "run_script code"             run_script   '{"code":"print(_VERSION, 1+1)"}'
+tool ok    "run_script with args"        run_script   '{"code":"print(args.msg)","args":{"msg":"hello"}}'
+tool ok    "run_script, Lua error"       run_script   '{"code":"error(\"boom\")"}'
+tool ok    "run_script, write denied"    run_script   '{"code":"chat.sendChat(\"x\", \"y\")"}'
+tool ok    "run_script, endless loop"    run_script   '{"code":"while true do end"}'
+tool error "run_script, name + code"     run_script   "{\"name\":\"$s\",\"code\":\"x\"}"
+tool ok    "get_logs"                    get_logs     '{"limit":5}'
 tool ok    "delete_script"               delete_script "{\"name\":\"$s\"}"
 tool error "read deleted script"         read_script  "{\"name\":\"$s\"}"
 

@@ -424,6 +424,13 @@ int subscribe(lua_State* L)
 }
 }
 
+bool pushLuaJson(lua_State* L, const QJsonValue& value, QString& error)
+{
+    if(!validateJson(value, error)) return false;
+    fromJson(L, value);
+    return true;
+}
+
 void registerLuaJsonApi(lua_State* L, bool standalone)
 {
     luaL_newmetatable(L, arrayType);

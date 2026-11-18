@@ -9,6 +9,7 @@
 #include "LuaList.h"
 #include "LuaJsonApi.h"
 #include "LuaExecutionGuard.h"
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -118,6 +119,7 @@ void LuaCore::shutDown()
         _events.clear();
         _manualCode.clear();
         _manualPending = false;
+        _agentRuns.clear(); // waiting requesters time out
     }
     _cancel = false; // Give shutdown handlers the same bounded execution budget.
     LuaEvent event;
@@ -250,9 +252,24 @@ bool LuaCore::queueManualRun(const QString& code, const QString& name, LuaTrust 
     return true;
 }
 
+std::shared_ptr<LuaAgentRun> LuaCore::queueAgentRun(const QString& name, const QString& code,
+                                                    LuaTrust trust, const QJsonObject* args)
+{
+    auto run = std::make_shared<LuaAgentRun>();
+    run->name = name;
+    run->code = code;
+    run->trust = trust;
+    if(args) { run->hasArgs = true; run->args = *args; }
+    RsStackMutex lock(_mutex);
+    if(_shutDownImminent || !_ready || _agentRuns.size() >= 4) return nullptr;
+    _agentRuns.push_back(run);
+    return run;
+}
+
 bool LuaCore::processEventQueue()
 {
     std::unique_ptr<LuaEvent> event;
+    std::shared_ptr<LuaAgentRun> agentRun;
     QString manualCode, manualName;
     LuaTrust manualTrust = LuaTrust::SandboxReadOnly;
     bool manual = false;
@@ -267,6 +284,11 @@ bool LuaCore::processEventQueue()
             manualTrust = _manualTrust;
             _manualPending = false;
         }
+        else if(!_agentRuns.empty())
+        {
+            agentRun = _agentRuns.front();
+            _agentRuns.pop_front();
+        }
         else if(_events.size())
         {
             event = _events.pop();
@@ -274,6 +296,7 @@ bool LuaCore::processEventQueue()
         else return false;
     }
     if(manual) emit manualRunFinished(runLuaByString(manualCode, manualName, manualTrust));
+    else if(agentRun) runAgent(*agentRun);
     else dispatchEvent(*event);
     return true;
 }
@@ -302,7 +325,7 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
             note = QObject::tr(" [%1: not approved]").arg(luaTrustName(status.effective));
         else if(status.effective != LuaTrust::Trusted)
             note = QString(" [%1]").arg(luaTrustName(status.effective));
-        emit appendLog(QObject::tr("running (by event): ") + script.first + note);
+        logLine("info", QObject::tr("running (by event): ") + script.first + note, script.first);
         runLuaByEvent(script.first, script.second, event);
     }
 }
@@ -331,10 +354,18 @@ void LuaCore::applyForgottenStatesLocked()
     for(const std::string& name : forget) LuaSandbox::dropEnv(L, name);
 }
 
-bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event)
+bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event,
+                            const QJsonObject* jsonArgs)
 {
     if(!L || !_ready || _cancel) return false;
     applyForgottenStatesLocked();
+    struct RunningScript // log lines during the run belong to this script
+    {
+        LuaCore& core;
+        RunningScript(LuaCore& c, const QString& n) : core(c)
+        { std::lock_guard<std::mutex> lock(core._logMutex); core._runningScript = n; }
+        ~RunningScript() { std::lock_guard<std::mutex> lock(core._logMutex); core._runningScript.clear(); }
+    } running(*this, name);
     const QByteArray bytes = code.toUtf8();
     const std::string scriptName = name.toStdString();
     int result = LuaSandbox::load(L, bytes.constData(), bytes.size(), scriptName, trust);
@@ -342,12 +373,20 @@ bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust t
     {
         // args: event parameters, nil for manual runs (no stale args from the
         // previous event). Global for trusted scripts (legacy), env field otherwise.
+        QString argsError;
         if(event)
         {
             lua_newtable(L);
             addSettingsToLua(L, lua_gettop(L), event->dataParm, 0);
         }
-        else lua_pushnil(L);
+        else if(!jsonArgs || !pushLuaJson(L, QJsonValue(*jsonArgs), argsError)) lua_pushnil(L);
+        if(!argsError.isEmpty())
+        {
+            lua_pop(L, 2); // nil args + chunk
+            lua_pushstring(L, ("invalid args: " + argsError).toUtf8().constData());
+            reportLuaErrors(L, LUA_ERRRUN);
+            return false;
+        }
         if(trust == LuaTrust::Trusted) lua_setglobal(L, "args");
         else
         {
@@ -371,7 +410,7 @@ bool LuaCore::runLuaByString(const QString& code, const QString& name, LuaTrust 
 {
     RsStackMutex lock(_mutexRunLua);
     if(trust != LuaTrust::Trusted)
-        emit appendLog(QObject::tr("running %1 as %2").arg(name, luaTrustName(trust)));
+        logInfo(QObject::tr("running %1 as %2").arg(name, luaTrustName(trust)));
     return executeLocked(name.isEmpty() ? QString("editor") : name, code, trust, nullptr);
 }
 
@@ -503,8 +542,8 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
         s = LuaExecutionGuard::errorText(L);
         std::cerr << "-- " << s << std::endl;
 
-        s = "Lua error: " + s;
-        emit appendLog(QString::fromStdString(s));
+        if(_capture) _capture->error = QString::fromStdString(s);
+        logLine("error", QString::fromStdString("Lua error: " + s));
 
         lua_pop(L, 1); // remove error message
     }
@@ -549,6 +588,19 @@ Lua4RSWidget* LuaCore::getUI()
 // emit
 void LuaCore::emitAppendOutput(const QString &s)
 {
+    // Output of an agent run goes back to the agent (own limit: 64 KB, 500 lines).
+    if(_capture)
+    {
+        const int room = 64 * 1024 - _captureBytes;
+        if(room <= 0 || _capture->output.size() >= 500) _capture->outputTruncated = true;
+        else
+        {
+            const QString part = s.left(room);
+            _capture->output << part;
+            _captureBytes += part.size();
+            if(part.size() < s.size()) _capture->outputTruncated = true;
+        }
+    }
     // Rate-limit signals across runs, not just document size after delivery.
     const auto now = std::chrono::steady_clock::now();
     if(now - _outputWindow >= std::chrono::seconds(1))
@@ -561,6 +613,55 @@ void LuaCore::emitAppendOutput(const QString &s)
     --_outputMessages;
     const int length = qMin<int>(s.size(), static_cast<int>(_outputRemaining));
     _outputRemaining -= qMin<size_t>(_outputRemaining, size_t(length) + 1);
-    emit appendOutput(s.left(length));
+    const QString text = s.left(length);
+    recordLog("output", text);
+    emit appendOutput(text);
+}
+
+void LuaCore::recordLog(const QString& kind, const QString& text, const QString& script)
+{
+    std::lock_guard<std::mutex> lock(_logMutex);
+    _log.push_back({ _logNextId++, QDateTime::currentDateTimeUtc(),
+                     script.isEmpty() ? _runningScript : script, kind, text.left(2000) });
+    while(_log.size() > 1000) _log.pop_front();
+}
+
+void LuaCore::logLine(const QString& kind, const QString& text, const QString& script)
+{
+    recordLog(kind, text, script);
+    emit appendLog(text);
+}
+
+std::vector<LuaLogEntry> LuaCore::logEntries(quint64 since, const QString& script, int limit) const
+{
+    std::vector<LuaLogEntry> result;
+    std::lock_guard<std::mutex> lock(_logMutex);
+    for(auto it = _log.rbegin(); it != _log.rend() && int(result.size()) < limit; ++it)
+    {
+        if(it->id <= since) break;
+        if(script.isEmpty() || it->script == script) result.push_back(*it);
+    }
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+
+void LuaCore::runAgent(LuaAgentRun& run)
+{
+    int expected = LuaAgentRun::Pending;
+    if(!run.phase.compare_exchange_strong(expected, LuaAgentRun::Running)) return; // requester gave up
+    LuaRunResult result;
+    logLine("info", QObject::tr("MCP agent runs %1 as %2").arg(run.name, luaTrustName(run.trust)), run.name);
+    const auto start = std::chrono::steady_clock::now();
+    {
+        RsStackMutex lock(_mutexRunLua);
+        _capture = &result;
+        _captureBytes = 0;
+        result.ok = executeLocked(run.name, run.code, run.trust, nullptr, run.hasArgs ? &run.args : nullptr);
+        _capture = nullptr;
+    }
+    result.durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - start).count();
+    if(!result.ok && result.error.isEmpty()) result.error = "Lua is not ready or shutting down.";
+    run.result.set_value(result);
 }
 void LuaCore::emitClearOutput()                     { emit clearOutput(); }

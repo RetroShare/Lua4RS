@@ -21,6 +21,7 @@ HEADERS +=  \
     gui/McpPanel.h \
     Lua/LuaExecutionGuard.h \
     Lua/LuaBindings.h \
+    Lua/LuaRun.h \
     Lua/LuaSandbox.h \
     Lua/LuaTrust.h \
     Lua/LuaTrustStore.h \

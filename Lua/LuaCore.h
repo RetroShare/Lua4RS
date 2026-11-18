@@ -5,6 +5,8 @@
 #include <string.h>
 #include <map>
 #include <atomic>
+#include <deque>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -17,6 +19,7 @@
 
 #include "LuaBindings.h"
 #include "LuaEvent.h"
+#include "LuaRun.h"
 #include "LuaSandbox.h"
 #include "LuaTrust.h"
 #include "LuaTrustStore.h"
@@ -55,6 +58,13 @@ public:
     // name: script the editor shows (env of sandboxed runs), trust: see
     // LuaTrustStore::forEditor
     bool queueManualRun(const QString& code, const QString& name, LuaTrust trust);
+    // Run for the MCP agent, after the current run. Returns nullptr if the
+    // queue is full or Lua is not ready. See LuaAgentRun for abandoning.
+    std::shared_ptr<LuaAgentRun> queueAgentRun(const QString& name, const QString& code,
+                                               LuaTrust trust, const QJsonObject* args);
+    // Plugin log for get_logs: entries with id > since, optionally of one script,
+    // at most limit (newest last).
+    std::vector<LuaLogEntry> logEntries(quint64 since, const QString& script, int limit) const;
     // Protect script containers and triggers, never hold this while executing Lua.
     std::recursive_mutex& scriptsMutex() { return _scriptsMutex; }
 
@@ -97,8 +107,15 @@ public:
 
 private:
     void applyForgottenStatesLocked(); // with _mutexRunLua held
-    // event == nullptr: manual run, args is nil
-    bool executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event);
+    // args: event data, simulated data (jsonArgs) or nil
+    bool executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event,
+                       const QJsonObject* jsonArgs = nullptr);
+    void runAgent(LuaAgentRun& run);
+    // Log line for the GUI and get_logs (kind: info, error, output).
+    // script: owner of the line, default: the script running now
+    void logLine(const QString& kind, const QString& text, const QString& script = QString());
+    void logInfo(const QString& text) { logLine("info", text); }
+    void recordLog(const QString& kind, const QString& text, const QString& script = QString());
     void dispatchEvent(const LuaEvent& event);
     void reportLuaErrors(lua_State *L, int status);
     void registerBindings();
@@ -132,6 +149,16 @@ private:
     unsigned _outputMessages = 0;
     std::chrono::steady_clock::time_point _outputWindow;
     LuaEventQueue _events;
+    std::deque<std::shared_ptr<LuaAgentRun>> _agentRuns; // under _mutex
+
+    // Only touched by the Lua worker during a run (under _mutexRunLua).
+    LuaRunResult* _capture = nullptr;
+    int _captureBytes = 0;
+
+    mutable std::mutex _logMutex;
+    std::deque<LuaLogEntry> _log;
+    quint64 _logNextId = 1;
+    QString _runningScript; // under _logMutex
     // disable trigger on shutdown
     std::atomic<bool> _shutDownImminent{false};
 
