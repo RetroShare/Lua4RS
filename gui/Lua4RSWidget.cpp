@@ -82,7 +82,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     ui->tb_output->setFont(QFontDatabase::systemFont(QFontDatabase::FixedFont));
     ui->tb_output->setMaximumBlockCount(5000);
     ui->tb_log->setMaximumBlockCount(2000);
-    _lua->setupRsFunctionsAndTw(ui->tw_hints);
+    FunctionBrowser::setup(ui->tw_hints, _lua->bindings());
     ui->tw_hints->hideColumn(1);
     ui->tw_hints->header()->hide();
     if(ui->tw_hints->topLevelItemCount()) ui->tw_hints->topLevelItem(0)->setExpanded(true);

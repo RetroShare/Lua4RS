@@ -1,8 +1,7 @@
 #include <assert.h>
 #include <iostream>
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
+#include <cstring>
 
 #include <retroshare/rsinit.h>
 
@@ -15,7 +14,6 @@
 #include <vector>
 #include "BundledScripts.h"
 #include "gui/Lua4RSWidget.h"
-#include "gui/FunctionBrowser.h"
 #include "Lua4RSNotify.h"
 
 #include "LuaToRS.cpp"
@@ -53,10 +51,6 @@ LuaCore::LuaCore() :
     _notify     (new Lua4RSNotify()),
     _ui         (nullptr)
 {
-    /*
-     * Notes:
-     *  - RS functions get registered to Lua when GUI is initialized
-     */
     L = LuaSandbox::newState(&_memory);
     if(!L) throw std::runtime_error("Cannot allocate Lua state");
     // Headers and the loaded liblua must match (e.g. 5.4 headers + 5.5 lib
@@ -75,6 +69,7 @@ LuaCore::LuaCore() :
     lua_setglobal(L, "print");
     // Before any user code runs: capture what sandboxed scripts may use.
     LuaSandbox::snapshot(L);
+    registerBindings();
 
     _path = RsAccounts::AccountDirectory() + "/" + _folderName + "/";
 
@@ -141,187 +136,88 @@ void LuaCore::shutDown()
     // Keep containers alive until destruction: the GUI may still refer to them.
 }
 
-void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
-{
-    _writeFunctions.clear();
-    int top;
-    std::string namespc; // namespace (with '.' at the end)
+namespace {
+#define DOC(text) QT_TRANSLATE_NOOP("LuaBindings", text)
+const LuaAccess R = LuaAccess::Read;
+const LuaAccess W = LuaAccess::Write;
 
-    // two namespaces
-    tw->setColumnCount(2);
+// All native bindings. Namespaces are registered in this order.
+const std::vector<LuaBinding> kBindings = {
+    { "rs", "clear()",                  R, rs_clear,     DOC("clears the output") },
+    { "rs", "print(\"message\")",       R, rs_print,     DOC("prints to output") },
+    { "rs", "luaFolder()",              R, rs_luaFolder, DOC("path to Lua4RS folder") },
 
-    // setup tree widget (after ColumnCount was set!)
-    // no headers to not to confuse the user
-    tw->setHeaderHidden(true);
-    // make it big enough to show the full functionnames
-    tw->setColumnWidth(0,250);
-    // second col is only a "container" for the paste value, therefore it needs no width
-    tw->setColumnWidth(1,0);
+    { "peers", "getOwnId()",                  R, peers_getOwnId,       DOC("returns own SSL id (peer id)") },
+    { "peers", "getOnlineList()",             R, peers_getOnlineList,  DOC("returns list of online friends (SSL id)") },
+    { "peers", "getFriendList()",             R, peers_getFriendList,  DOC("returns list of all friends (SSL id)") },
+    { "peers", "getPeerCount()",              R, peers_getPeerCount,   DOC("returns number of all friends and online friends") },
+    { "peers", "isFriend(\"SSL_ID\")",        R, peers_isFriend,       DOC("returns if a peer is a friend") },
+    { "peers", "isGPGAccepted(\"PGP_ID\")",   R, peers_isGPGAccepted,  DOC("returns is a PGP key is accepted") },
+    { "peers", "isOnline(\"SSL_ID\")",        R, peers_isOnline,       DOC("returns if a peer is online") },
+    { "peers", "getGPGName(\"PGP_ID\")",      R, peers_getGPGName,     DOC("returns the PGP name for a given PGP id") },
+    { "peers", "getPeerName(\"SSL_ID\")",     R, peers_getPeerName,    DOC("returns the name for a given SSL/PGP id") },
+    { "peers", "getPeerDetails(\"SSL_ID\")",  R, peers_getPeerDetails, DOC("returns peer details as a table for a given SSL id") },
+    { "peers", "getGPGOwnId()",               R, peers_getGPGOwnId,    DOC("returns own PGP id") },
+    { "peers", "getGPGId(\"SSL_ID\")",        R, peers_getGPGId,       DOC("returns the PGP id for a given SSL/PGP id") },
+    { "peers", "addGroup({flag = 0, id = \"\", name = \"Group name\"})", W, peers_addGroup, DOC("creates a new group") },
+    { "peers", "editGroup(\"GROUP_ID\", {flag = 0, id = \"GROUP_ID\", name = \"Group name\"})", W, peers_editGroup, DOC("edits an existing group") },
+    { "peers", "removeGroup(\"GROUP_ID\")",   W, peers_removeGroup,    DOC("removes the group with the given groupd id") },
+    { "peers", "getGroupInfo(\"GROUP_ID\")",  R, peers_getGroupInfo,   DOC("returns group info for a given group id") },
+    { "peers", "getGroupInfoList()",          R, peers_getGroupInfoList, DOC("returns an array with all groups and their group infos") },
+    { "peers", "assignPeerToGroup(\"GROUP_ID\", \"PGP_ID\", true)", W, peers_assignPeerToGroup,
+      DOC("Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing") },
 
-    // we need to mess around with lua
-    RsStackMutex mtx(_mutexRunLua);   /******* LOCKED MUTEX *****/
+    { "config", "getOperatingMode()",          R, config_getOperatingMode,    DOC("returns the current operation mode as int and string") },
+    { "config", "setOperatingMode(\"full\")",  W, config_setOperatingMode,    DOC("sets the openration mode (takes int or string)") },
+    { "config", "setMaxDataRates(1000, 100)",  W, config_setMaxDataRates,     DOC("sets max down-/upload bandwidth in kB") },
+    { "config", "getMaxDataRates()",           R, config_getMaxDataRates,     DOC("gets max down-/upload bandwidth in kB") },
+    { "config", "getCurrentDataRates()",       R, config_getCurrentDataRates, DOC("gets current down-/upload bandwidth in kB") },
 
-    FunctionBrowser::addJsonEndpoints(tw);
-    QTreeWidgetItem* json = new QTreeWidgetItem(tw);
-    json->setText(0, "JSON API client helpers");
-    json->setToolTip(0, QObject::tr("Connection and JSON utilities. subscribe is standalone-only; use Automation triggers in the GUI."));
-    const QStringList jsonFunctions = {
-        "configure({url = \"http://127.0.0.1:9092\", username = \"YOUR_USER\", password = \"YOUR_PASSWORD\"})", "call(\"/rsPeers/getFriendList\", {})",
-        "encode({})", "decode(\"{}\")", "array()", "null"
-    };
-    for(const QString& function : jsonFunctions)
-    {
-        QTreeWidgetItem* item = new QTreeWidgetItem(json);
-        item->setText(0, function);
-        item->setText(1, "jsonapi." + function);
-        item->setToolTip(0, QObject::tr("RetroShare JSON API client. See JSON_API.md for connection settings and examples."));
-    }
+    { "disc", "getDiscFriends(\"SSL_ID\")",    R, disc_getDiscFriends,      DOC("gets discovery infos for a SSLID") },
+    { "disc", "getDiscPgpFriends(\"PGP_ID\")", R, disc_getDiscPgpFriends,   DOC("gets discovery infos for a PGPID") },
+    { "disc", "getPeerVersion(\"SSL_ID\")",    R, disc_getPeerVersion,      DOC("gets RS version from a given peer") },
+    { "disc", "getWaitingDiscCount()",         R, disc_getWaitingDiscCount, DOC("gets current pending discovery packets (down und up)") },
 
-    auto native = new QTreeWidgetItem(tw, {QObject::tr("Native Lua helpers (GUI only)")});
-    native->setToolTip(0, QObject::tr("Direct plugin bindings; no JSON API connection required. Replace placeholder arguments before running."));
+    { "chat", "sendChat(\"CHAT_ID\", \"message\")", W, chat_sendChat, DOC("send a chat message (ChatId, msg)") },
 
-    // rs namespace
-    namespc = "rs.";
-    QTreeWidgetItem* rs = new QTreeWidgetItem(native);
-    rs->setText(0, QString::fromStdString(namespc));
-    rs->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, rs, LuaAccess::Read, rs_clear,       "clear()",      QObject::tr("clears the output"));
-    addFunctionToLuaAndTw(top, namespc, rs, LuaAccess::Read, rs_print,       "print(\"message\")",      QObject::tr("prints to output"));
-    addFunctionToLuaAndTw(top, namespc, rs, LuaAccess::Read, rs_luaFolder,   "luaFolder()",  QObject::tr("path to Lua4RS folder"));
-
-    LuaSandbox::registerNamespace(L, "rs");
-
-    lua_setglobal(L, "rs");
-
-    // peers namespace
-    namespc = "peers.";
-    QTreeWidgetItem* peers = new QTreeWidgetItem(native);
-    peers->setText(0, QString::fromStdString(namespc));
-    peers->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getOwnId,          "getOwnId()",       QObject::tr("returns own SSL id (peer id)"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getOnlineList,     "getOnlineList()",  QObject::tr("returns list of online friends (SSL id)"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getFriendList,     "getFriendList()",  QObject::tr("returns list of all friends (SSL id)"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getPeerCount,      "getPeerCount()",   QObject::tr("returns number of all friends and online friends"));
-
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_isFriend,          "isFriend(\"SSL_ID\")",       QObject::tr("returns if a peer is a friend"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_isGPGAccepted,     "isGPGAccepted(\"PGP_ID\")",  QObject::tr("returns is a PGP key is accepted"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_isOnline,          "isOnline(\"SSL_ID\")",       QObject::tr("returns if a peer is online"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getGPGName,        "getGPGName(\"PGP_ID\")",     QObject::tr("returns the PGP name for a given PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getPeerName,       "getPeerName(\"SSL_ID\")",    QObject::tr("returns the name for a given SSL/PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getPeerDetails,    "getPeerDetails(\"SSL_ID\")", QObject::tr("returns peer details as a table for a given SSL id"));
-
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getGPGOwnId,       "getGPGOwnId()",    QObject::tr("returns own PGP id"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getGPGId,          "getGPGId(\"SSL_ID\")",       QObject::tr("returns the PGP id for a given SSL/PGP id"));
-
-    //groups
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Write, peers_addGroup,          "addGroup({flag = 0, id = \"\", name = \"Group name\"})",           QObject::tr("creates a new group"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Write, peers_editGroup,         "editGroup(\"GROUP_ID\", {flag = 0, id = \"GROUP_ID\", name = \"Group name\"})",          QObject::tr("edits an existing group"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Write, peers_removeGroup,       "removeGroup(\"GROUP_ID\")",        QObject::tr("removes the group with the given groupd id"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getGroupInfo,      "getGroupInfo(\"GROUP_ID\")",       QObject::tr("returns group info for a given group id"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Read, peers_getGroupInfoList,  "getGroupInfoList()",   QObject::tr("returns an array with all groups and their group infos"));
-    addFunctionToLuaAndTw(top, namespc, peers, LuaAccess::Write, peers_assignPeerToGroup, "assignPeerToGroup(\"GROUP_ID\", \"PGP_ID\", true)",  QObject::tr("Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing"));
-
-    LuaSandbox::registerNamespace(L, "peers");
-
-    lua_setglobal(L, "peers");
-
-    // server config
-    namespc = "config.";
-    QTreeWidgetItem* config = new QTreeWidgetItem(native);
-    config->setText(0, QString::fromStdString(namespc));
-    config->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, config, LuaAccess::Read, config_getOperatingMode,    "getOperatingMode()",   QObject::tr("returns the current operation mode as int and string"));
-    addFunctionToLuaAndTw(top, namespc, config, LuaAccess::Write, config_setOperatingMode,    "setOperatingMode(\"full\")",   QObject::tr("sets the openration mode (takes int or string)"));
-
-    addFunctionToLuaAndTw(top, namespc, config, LuaAccess::Write, config_setMaxDataRates,     "setMaxDataRates(1000, 100)",    QObject::tr("sets max down-/upload bandwidth in kB"));
-    addFunctionToLuaAndTw(top, namespc, config, LuaAccess::Read, config_getMaxDataRates,     "getMaxDataRates()",    QObject::tr("gets max down-/upload bandwidth in kB"));
-    addFunctionToLuaAndTw(top, namespc, config, LuaAccess::Read, config_getCurrentDataRates, "getCurrentDataRates()",QObject::tr("gets current down-/upload bandwidth in kB"));
-
-    LuaSandbox::registerNamespace(L, "config");
-
-    lua_setglobal(L, "config");
-
-    // discovery
-    namespc = "disc.";
-    QTreeWidgetItem* discovery = new QTreeWidgetItem(native);
-    discovery->setText(0, QString::fromStdString(namespc));
-    discovery->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, discovery, LuaAccess::Read, disc_getDiscFriends,     "getDiscFriends(\"SSL_ID\")",     QObject::tr("gets discovery infos for a SSLID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, LuaAccess::Read, disc_getDiscPgpFriends,  "getDiscPgpFriends(\"PGP_ID\")",  QObject::tr("gets discovery infos for a PGPID"));
-    addFunctionToLuaAndTw(top, namespc, discovery, LuaAccess::Read, disc_getPeerVersion,     "getPeerVersion(\"SSL_ID\")",     QObject::tr("gets RS version from a given peer"));
-    addFunctionToLuaAndTw(top, namespc, discovery, LuaAccess::Read, disc_getWaitingDiscCount,"getWaitingDiscCount()",QObject::tr("gets current pending discovery packets (down und up)"));
-
-    LuaSandbox::registerNamespace(L, "disc");
-
-    lua_setglobal(L, "disc");
-
-    // chat
-    namespc = "chat.";
-    QTreeWidgetItem* chat = new QTreeWidgetItem(native);
-    chat->setText(0, QString::fromStdString(namespc));
-    chat->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, chat, LuaAccess::Write, chat_sendChat, "sendChat(\"CHAT_ID\", \"message\")", QObject::tr("send a chat message (ChatId, msg)"));
-
-    LuaSandbox::registerNamespace(L, "chat");
-
-    lua_setglobal(L, "chat");
-
-    // files
-    namespc = "files.";
-    QTreeWidgetItem* files = new QTreeWidgetItem(native);
-    files->setText(0, QString::fromStdString(namespc));
-    files->setText(1, QString::fromStdString(namespc));
-    lua_newtable(L);
-    top = lua_gettop(L);
-
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Write, file_fileRequest,  "fileRequest(\"filename\", \"FILE_HASH\", 0)",					QObject::tr("Request a download (name, hash, size in bytes); replace the example size"));
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Read, file_getDownloadDirectory, "getDownloadDirectory()", QObject::tr("get download folder path"));
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Read, file_getPartialsDirectory, "getPartialsDirectory()", QObject::tr("get partial folder path"));
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Write, file_turtleSearch, "turtleSearch(\"search words\")",					QObject::tr("starts a search for given keywords"));
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Write, file_setDownloadDirectory, "setDownloadDirectory(\"PATH\")", QObject::tr("set download folder path (params: path)"));
-    addFunctionToLuaAndTw(top, namespc, files, LuaAccess::Write, file_setPartialsDirectory, "setPartialsDirectory(\"PATH\")", QObject::tr("set partial folder path (params: path)"));
-
-    LuaSandbox::registerNamespace(L, "files");
-
-    lua_setglobal(L, "files");
+    { "files", "fileRequest(\"filename\", \"FILE_HASH\", 0)", W, file_fileRequest,
+      DOC("Request a download (name, hash, size in bytes); replace the example size") },
+    { "files", "getDownloadDirectory()",         R, file_getDownloadDirectory, DOC("get download folder path") },
+    { "files", "getPartialsDirectory()",         R, file_getPartialsDirectory, DOC("get partial folder path") },
+    { "files", "turtleSearch(\"search words\")", W, file_turtleSearch,         DOC("starts a search for given keywords") },
+    { "files", "setDownloadDirectory(\"PATH\")", W, file_setDownloadDirectory, DOC("set download folder path (params: path)") },
+    { "files", "setPartialsDirectory(\"PATH\")", W, file_setPartialsDirectory, DOC("set partial folder path (params: path)") },
+};
+#undef DOC
 }
 
-void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QTreeWidgetItem* item, LuaAccess access, int (*f)(lua_State*), const std::string& name, const QString& hint)
+const std::vector<LuaBinding>& LuaCore::bindings() const
 {
-    QTreeWidgetItem *i = new QTreeWidgetItem(item);
-    i->setText(0, QString::fromStdString(name));
-    i->setText(1, QString::fromStdString(namespc + name));
-    i->setToolTip(0, (access == LuaAccess::Write ? QObject::tr("[write] ") : QObject::tr("[read] ")) + hint);
+    return kBindings;
+}
 
-    // name can be like foo(bar) but function name is just foo
-    std::string luaFuncName;
-    size_t pos;
-    if((pos = name.find_first_of('(')) != std::string::npos)
-        luaFuncName = name.substr(0, pos);
-    else
-        luaFuncName = name;
-
-    // Every binding goes through the central read/write check.
-    const std::string fullName = namespc + luaFuncName;
-    if(access == LuaAccess::Write) _writeFunctions << QString::fromStdString(fullName);
-    lua_pushstring(L, luaFuncName.c_str());
-    LuaSandbox::pushGuardedFunction(L, f, access, fullName.c_str());
-    lua_settable(L, tableTop);
+// Before any user code runs (after LuaSandbox::snapshot). Every binding goes
+// through the central read/write check.
+void LuaCore::registerBindings()
+{
+    _writeFunctions.clear();
+    for(size_t i = 0; i < kBindings.size();)
+    {
+        const char* ns = kBindings[i].ns;
+        lua_newtable(L);
+        const int table = lua_gettop(L);
+        for(; i < kBindings.size() && std::strcmp(kBindings[i].ns, ns) == 0; ++i)
+        {
+            const LuaBinding& binding = kBindings[i];
+            const std::string fullName = binding.fullName();
+            if(binding.access == LuaAccess::Write) _writeFunctions << QString::fromStdString(fullName);
+            lua_pushstring(L, binding.name().c_str());
+            LuaSandbox::pushGuardedFunction(L, binding.function, binding.access, fullName.c_str());
+            lua_settable(L, table);
+        }
+        LuaSandbox::registerNamespace(L, ns);
+        lua_setglobal(L, ns);
+    }
 }
 
 void LuaCore::processEvent(LuaEvent *e)

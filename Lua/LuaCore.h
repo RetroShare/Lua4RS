@@ -15,6 +15,7 @@
 
 #include <util/rsthreads.h> // for RsMutex
 
+#include "LuaBindings.h"
 #include "LuaEvent.h"
 #include "LuaSandbox.h"
 #include "LuaTrust.h"
@@ -33,8 +34,6 @@ extern "C" {
 
 typedef std::map<std::string, std::string>  parameterMap;
 
-class QTreeWidget;
-class QTreeWidgetItem;
 
 class Lua4RSWidget;
 class Lua4RSNotify;
@@ -58,7 +57,8 @@ public:
     // Protect script containers and triggers, never hold this while executing Lua.
     std::recursive_mutex& scriptsMutex() { return _scriptsMutex; }
 
-    void setupRsFunctionsAndTw(QTreeWidget* tw);
+    // All native bindings (registered at startup), for the GUI and MCP.
+    const std::vector<LuaBinding>& bindings() const;
 
     void processEvent(LuaEvent *e);
     void processEvent(LuaEventList &lel);
@@ -99,7 +99,7 @@ private:
     bool executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event);
     void dispatchEvent(const LuaEvent& event);
     void reportLuaErrors(lua_State *L, int status);
-    void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, LuaAccess access, int (*f)(lua_State*), const std::string& name, const QString& hint);
+    void registerBindings();
 
     const std::string _folderName;
     std::string _path;

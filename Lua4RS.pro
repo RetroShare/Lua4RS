@@ -14,6 +14,7 @@ include(lua.pri)
 
 HEADERS +=  \
     Lua/LuaExecutionGuard.h \
+    Lua/LuaBindings.h \
     Lua/LuaSandbox.h \
     Lua/LuaTrust.h \
     Lua/LuaTrustStore.h \
