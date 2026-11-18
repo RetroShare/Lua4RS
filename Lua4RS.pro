@@ -9,31 +9,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets
 }
 
-linux-* {
-    CONFIG += link_pkgconfig
-
-    # Test for Lua5.2
-    lua52 = $$system(pkg-config --exists lua5.2 && echo ok)
-    isEmpty(lua52) {
-        # Test for Lua5.3
-        lua53 = $$system(pkg-config --exists lua5.3 && echo ok)
-        isEmpty(lua53) {
-            PKGCONFIG *= lua
-        } else {
-            PKGCONFIG *= lua5.3
-        }
-    } else {
-        PKGCONFIG *= lua5.2
-    }
-}
-
-win32 {
-    # MSYS2 provides Lua through the toolchain include/library directories.
-    # Override these for a separately installed Lua version.
-    isEmpty(LUA_LIBS): LUA_LIBS = -llua
-    LIBS += $$LUA_LIBS
-    INCLUDEPATH += $$LUA_INCLUDEPATH
-}
+# Lua 5.4 or 5.5, see lua.pri (MSYS2: Lua comes from the toolchain dirs)
+include(lua.pri)
 
 HEADERS +=  \
     Lua/LuaExecutionGuard.h \

@@ -38,3 +38,6 @@ tests/ui-preview.cpp
 tests/ui-preview.pro
 object_script.Lua4RS.Debug
 object_script.Lua4RS.Release
+
+# local planning notes (for now)
+/CLAUDE.md

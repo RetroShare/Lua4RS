@@ -155,7 +155,7 @@ extern "C" {
 
             /* this doesn't fit to an array
             lua_pushstring(L, "size");
-            lua_pushunsigned(L, details.ipAddressList.size());
+            lua_pushinteger(L, details.ipAddressList.size());
             lua_settable(L, t2);
             */
         }

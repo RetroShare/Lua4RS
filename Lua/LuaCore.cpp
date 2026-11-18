@@ -59,6 +59,15 @@ LuaCore::LuaCore() :
      */
     L = luaL_newstate();
     if(!L) throw std::runtime_error("Cannot allocate Lua state");
+    // Headers and the loaded liblua must match (e.g. 5.4 headers + 5.5 lib
+    // would silently break the ABI). luaL_checkversion raises a Lua error, so
+    // compare manually before anything runs.
+    if(static_cast<int>(lua_version(L)) != LUA_VERSION_NUM)
+    {
+        lua_close(L);
+        L = nullptr;
+        throw std::runtime_error("Lua library version does not match the headers Lua4RS was built with");
+    }
     luaL_openlibs(L);
     registerLuaJsonApi(L);
     lua_pushlightuserdata(L, this);

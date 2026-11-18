@@ -20,6 +20,11 @@ extern "C" {
 #include <lauxlib.h>
 }
 
+// The sandbox relies on _ENV; 5.1/LuaJIT/5.2/5.3 are not supported.
+#if LUA_VERSION_NUM != 504 && LUA_VERSION_NUM != 505
+#error "Lua4RS requires Lua 5.4 or 5.5"
+#endif
+
 typedef std::map<std::string, std::string>  parameterMap;
 
 class QTreeWidget;
