@@ -13,6 +13,11 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 include(lua.pri)
 
 HEADERS +=  \
+    mcp/Lua4RSTools.h \
+    mcp/McpHttp.h \
+    mcp/McpProtocol.h \
+    mcp/McpSettings.h \
+    gui/McpPanel.h \
     Lua/LuaExecutionGuard.h \
     Lua/LuaBindings.h \
     Lua/LuaSandbox.h \
@@ -48,6 +53,11 @@ HEADERS +=  \
     helper.h
 
 SOURCES +=  \
+    mcp/Lua4RSTools.cpp \
+    mcp/McpHttp.cpp \
+    mcp/McpProtocol.cpp \
+    mcp/McpSettings.cpp \
+    gui/McpPanel.cpp \
     Lua/LuaJsonApi.cpp \
     Lua/LuaSandbox.cpp \
     Lua/LuaTrustStore.cpp \
@@ -72,6 +82,20 @@ SOURCES +=  \
     Lua/Trigger/LuaTriggerOnce.cpp \
     service/p3Lua4RS.cpp \
     helper.cpp
+
+# MCP endpoint, mounted into RetroShare's JSON API server (needs restbed headers
+# from the RetroShare build; override with RESTBED_INCLUDE_PATH=...).
+rs_jsonapi {
+    DEFINES += LUA4RS_MCP
+    isEmpty(RESTBED_INCLUDE_PATH): RESTBED_INCLUDE_PATH = $$clean_path($$OUT_PWD/../../supportlibs/restbed/include)
+    !exists($$RESTBED_INCLUDE_PATH/restbed): error("Lua4RS: restbed headers not found in $$RESTBED_INCLUDE_PATH (set RESTBED_INCLUDE_PATH)")
+    INCLUDEPATH += $$RESTBED_INCLUDE_PATH
+    HEADERS += mcp/McpServer.h
+    SOURCES += mcp/McpServer.cpp
+    message("Lua4RS: MCP endpoint enabled")
+} else {
+    message("Lua4RS: built without rs_jsonapi, no MCP endpoint")
+}
 
 # These bindings are included by LuaCore.cpp and must not be linked twice.
 OTHER_FILES += \

@@ -20,6 +20,7 @@
 #include "LuaSandbox.h"
 #include "LuaTrust.h"
 #include "LuaTrustStore.h"
+#include "mcp/McpSettings.h"
 
 extern "C" {
 #include <lua.h>
@@ -75,6 +76,7 @@ public:
     // Trust a stored script runs with (approval + hash rule, see LuaTrustStore).
     LuaTrust trustForScript(const QString& name, const QString& code) const;
     LuaTrustStore& trustStore() { return _trust; }
+    McpSettings& mcpSettings() { return _mcpSettings; }
     // Forget the sandbox globals of a script that was renamed or deleted, so a
     // later script of that name starts clean. Applied by the worker before and
     // after the next run (never blocks on a running script).
@@ -116,6 +118,7 @@ private:
 
     std::recursive_mutex _scriptsMutex;
     LuaTrustStore _trust;
+    McpSettings _mcpSettings;
     QStringList _writeFunctions;
     std::mutex _forgetMutex;
     std::vector<std::string> _forget; // script names, see forgetScriptState

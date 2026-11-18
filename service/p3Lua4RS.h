@@ -6,6 +6,8 @@
 
 #include "interface/L4RInterface.h"
 
+class McpServer;
+
 class p3Lua4RS : public L4RInterface, public RsTickingThread, public p3Config
 {
 public:
@@ -25,6 +27,8 @@ public:
     // Lua4RSInterface interface
 public:
     LuaCore *getCore();
+    // nullptr if built without JSON API support (no MCP endpoint)
+    McpServer* mcpServer();
     uint getTickIntervalInSeconds() const;
     void setTickIntervalInSeconds(const uint &value);
     uint getSecondsToStarUpEvent() const;
@@ -38,6 +42,7 @@ private:
     time_t      _initTime;
     bool        _startUpEventTriggered;
     LuaCore*    _luaCore;
+    McpServer*  _mcp = nullptr;
 };
 
 #endif // P3LUA4RS_H

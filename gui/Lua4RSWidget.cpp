@@ -2,6 +2,7 @@
 #include "AccessText.h"
 #include "ApprovalDialog.h"
 #include "FunctionBrowser.h"
+#include "McpPanel.h"
 #include "ui_Lua4RSWidget.h"
 #include "Lua/LuaCore.h"
 #include "Lua/LuaList.h"
@@ -83,6 +84,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     ui->tb_output->setMaximumBlockCount(5000);
     ui->tb_log->setMaximumBlockCount(2000);
     FunctionBrowser::setup(ui->tw_hints, _lua->bindings());
+    ui->toolsTabs->addTab(new McpPanel(_lua->mcpSettings(), L4R::L4RConfig->mcpServer(), this), tr("MCP"));
     ui->tw_hints->hideColumn(1);
     ui->tw_hints->header()->hide();
     if(ui->tw_hints->topLevelItemCount()) ui->tw_hints->topLevelItem(0)->setExpanded(true);

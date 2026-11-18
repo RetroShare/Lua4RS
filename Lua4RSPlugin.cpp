@@ -14,6 +14,9 @@
 #include "interface/L4RInterface.h"
 #include "Lua/LuaCore.h"
 #include "service/p3Lua4RS.h"
+#ifdef LUA4RS_MCP
+#include "mcp/McpServer.h"
+#endif
 
 #define LUA_ICON_LINK ":/images/lua_logo.png"
 
@@ -64,6 +67,9 @@ Lua4RSPlugin::Lua4RSPlugin()
 void Lua4RSPlugin::stop()
 {
     if(!_service) return;
+#ifdef LUA4RS_MCP
+    if(_service->mcpServer()) _service->mcpServer()->shutdown();
+#endif
     _service->getCore()->requestStop();
     _service->fullstop();
     _service->getCore()->shutDown();
@@ -105,6 +111,10 @@ void Lua4RSPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
 MainPage* Lua4RSPlugin::qt_page() const
 {
     if(_mainpage == NULL) {
+#ifdef LUA4RS_MCP
+        // GUI thread, config is loaded: mount the MCP endpoint if enabled.
+        if(_service && _service->mcpServer()) _service->mcpServer()->apply();
+#endif
         _mainpage = new Lua4RSWidget();
         L4R::L4RConfig->getCore()->setUi(dynamic_cast<Lua4RSWidget*>(_mainpage));
     }

@@ -6,6 +6,10 @@
 
 #include "p3Lua4RS.h"
 #include "Lua/LuaCore.h"
+#ifdef LUA4RS_MCP
+#include "mcp/Lua4RSTools.h"
+#include "mcp/McpServer.h"
+#endif
 
 #define L4RCONFIG_TIMER_STARTUP "L4RCONFIG_TIMER_STARTUP"
 #define L4RCONFIG_TIMER_TICK    "L4RCONFIG_TIMER_TICK"
@@ -26,6 +30,10 @@ p3Lua4RS::p3Lua4RS() :
 
     // Script approvals live in this (signed + encrypted) config.
     _luaCore->trustStore().setChangedCallback([this]() { IndicateConfigChanged(); });
+    _luaCore->mcpSettings().setChangedCallback([this]() { IndicateConfigChanged(); });
+#ifdef LUA4RS_MCP
+    _mcp = new McpServer(_luaCore->mcpSettings(), createLua4RSProtocol(_luaCore));
+#endif
 
     start("Lua4RS");
 }
@@ -34,6 +42,10 @@ p3Lua4RS::~p3Lua4RS()
 {
     _luaCore->requestStop();
     fullstop();
+#ifdef LUA4RS_MCP
+    if(_mcp) _mcp->shutdown();
+    delete _mcp;
+#endif
     delete _luaCore;
 }
 
@@ -88,7 +100,9 @@ bool p3Lua4RS::saveList(bool& cleanup, std::list<RsItem*>& lst)
     vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_STARTUP, _secondsToStarUpEvent));
     vitem->tlvkvs.pairs.push_back(push_int_value(L4RCONFIG_TIMER_TICK,    _tickIntervalInSeconds));
 
-    for(const auto& kv : _luaCore->trustStore().toKeyValues())
+    auto keyValues = _luaCore->trustStore().toKeyValues();
+    for(const auto& kv : _luaCore->mcpSettings().toKeyValues()) keyValues.push_back(kv);
+    for(const auto& kv : keyValues)
     {
         RsTlvKeyValue entry;
         entry.key = kv.first;
@@ -115,6 +129,8 @@ bool p3Lua4RS::loadList(std::list<RsItem*>& load)
                     _tickIntervalInSeconds = std::max(1, pop_int_value(kit->value));
                 else if(_luaCore->trustStore().fromKeyValue(kit->key, kit->value))
                     ; // script approval
+                else if(_luaCore->mcpSettings().fromKeyValue(kit->key, kit->value))
+                    ; // MCP endpoint
                 else
                     std::cerr << "[Lua] L4RConfig::loadList : unknown key: " << kit->key << std::endl;
 	    }
@@ -177,6 +193,11 @@ void p3Lua4RS::threadTick()
 LuaCore *p3Lua4RS::getCore()
 {
     return _luaCore;
+}
+
+McpServer* p3Lua4RS::mcpServer()
+{
+    return _mcp;
 }
 
 uint p3Lua4RS::getTickIntervalInSeconds() const

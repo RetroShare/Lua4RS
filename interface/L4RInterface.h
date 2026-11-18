@@ -9,6 +9,7 @@
 
 class L4RInterface;
 class LuaCore;
+class McpServer;
 
 namespace L4R {
     extern L4RInterface* L4RConfig;
@@ -20,6 +21,8 @@ public:
     virtual ~L4RInterface() {}
 
     virtual LuaCore* getCore() = 0;
+    // nullptr if built without JSON API support (no MCP endpoint)
+    virtual McpServer* mcpServer() = 0;
 
     // config
     virtual uint getTickIntervalInSeconds() const = 0;
