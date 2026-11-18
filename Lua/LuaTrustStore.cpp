@@ -23,10 +23,10 @@ void LuaTrustStore::setScriptDirectory(const QString& dir)
     _dir = dir;
 }
 
-void LuaTrustStore::setBundledCheck(BundledCheck check)
+void LuaTrustStore::setBundledSource(BundledSource source)
 {
     std::lock_guard<std::mutex> lock(_mutex);
-    _bundled = std::move(check);
+    _bundled = std::move(source);
 }
 
 void LuaTrustStore::setChangedCallback(std::function<void()> callback)
@@ -45,6 +45,32 @@ QString LuaTrustStore::approvedCopyPath(const QString& name) const
     return QDir(_dir).filePath(name + ".approved");
 }
 
+bool LuaTrustStore::approvedCode(const QString& name, QString& code) const
+{
+    QByteArray expected;
+    QString path;
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        const auto it = _entries.find(name);
+        if(it == _entries.end())
+        {
+            QByteArray shipped;
+            if(!_bundled || !_bundled(name, shipped)) return false;
+            code = QString::fromUtf8(shipped);
+            return true;
+        }
+        if(_dir.isEmpty()) return false;
+        expected = it->second.sha256;
+        path = approvedCopyPath(name);
+    }
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly)) return false;
+    const QByteArray utf8 = file.readAll();
+    if(QCryptographicHash::hash(utf8, QCryptographicHash::Sha256).toHex() != expected) return false;
+    code = QString::fromUtf8(utf8);
+    return true;
+}
+
 LuaTrustStore::Status LuaTrustStore::statusLocked(const QString& name, const QByteArray& utf8) const
 {
     const auto it = _entries.find(name);
@@ -55,8 +81,12 @@ LuaTrustStore::Status LuaTrustStore::statusLocked(const QString& name, const QBy
             return { State::Approved, it->second.level, it->second.level, it->second.approvedAt };
         return { State::Modified, it->second.level, LuaTrust::SandboxReadOnly, it->second.approvedAt };
     }
-    if(_bundled && _bundled(name, utf8))
-        return { State::Bundled, LuaTrust::Trusted, LuaTrust::Trusted, {} };
+    QByteArray shipped;
+    if(_bundled && _bundled(name, shipped))
+    {
+        if(shipped == utf8) return { State::Bundled, LuaTrust::Trusted, LuaTrust::Trusted, {} };
+        return { State::ChangedExample, LuaTrust::Trusted, LuaTrust::SandboxReadOnly, {} };
+    }
     return { State::Unknown, LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly, {} };
 }
 

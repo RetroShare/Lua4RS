@@ -39,6 +39,9 @@ private:
     void newApiExample();
     // Once per profile: ask whether scripts from before approvals existed are trusted.
     void checkTrustMigration();
+    // Approval dialog for the saved version of the open script.
+    void approveActiveScript();
+    void updateAccessStatus();
 
     Ui::Lua4RSWidget* ui;
     LuaCore* _lua;
@@ -56,6 +59,7 @@ private slots:
     void on_pb_deletescript_clicked();
     void on_pb_load_clicked();
     void on_pb_save_clicked();
+    void on_pb_approve_clicked();
     void openScript(int row, int column);
     void on_pb_pastehint_released();
     void on_tw_hints_itemDoubleClicked(QTreeWidgetItem* item, int column);

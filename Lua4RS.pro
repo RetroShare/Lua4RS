@@ -18,7 +18,10 @@ HEADERS +=  \
     Lua/LuaTrust.h \
     Lua/LuaTrustStore.h \
     Lua/BundledScripts.h \
+    gui/AccessText.h \
+    gui/ApprovalDialog.h \
     gui/FunctionBrowser.h \
+    gui/LineDiff.h \
     gui/JsonApiCatalog.h \
     Lua/LuaJsonApi.h \
     Lua4RSPlugin.h \
@@ -49,6 +52,9 @@ SOURCES +=  \
     Lua/LuaTrustStore.cpp \
     Lua4RSPlugin.cpp \
     Lua4RSNotify.cpp \
+    gui/AccessText.cpp \
+    gui/ApprovalDialog.cpp \
+    gui/LineDiff.cpp \
     gui/Lua4RSWidget.cpp \
     gui/Lua4RSConfig.cpp \
     gui/Lua4RSTextEdit.cpp \

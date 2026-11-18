@@ -9,6 +9,7 @@
 #include <chrono>
 
 #include <QObject>
+#include <QStringList>
 
 #include <util/rsthreads.h> // for RsMutex
 
@@ -72,6 +73,8 @@ public:
     // Trust a stored script runs with (approval + hash rule, see LuaTrustStore).
     LuaTrust trustForScript(const QString& name, const QString& code) const;
     LuaTrustStore& trustStore() { return _trust; }
+    // Full names (e.g. "chat.sendChat") of all bindings tagged write.
+    const QStringList& writeFunctions() const { return _writeFunctions; }
 
     // getter & setter
     Lua4RSWidget* getUI();
@@ -106,6 +109,7 @@ private:
 
     std::recursive_mutex _scriptsMutex;
     LuaTrustStore _trust;
+    QStringList _writeFunctions;
     QString _manualCode;
     QString _manualName;
     LuaTrust _manualTrust = LuaTrust::SandboxReadOnly;

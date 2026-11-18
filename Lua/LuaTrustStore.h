@@ -31,22 +31,24 @@ public:
         Approved, // entry exists and the code matches it
         Bundled,  // no entry, but byte-identical to a script shipped with the plugin
         Modified, // entry exists, code changed since approval
+        ChangedExample, // no entry, differs from the shipped script of that name
         Unknown   // no entry (e.g. file dropped into the folder)
     };
 
     struct Status
     {
         State state;
-        LuaTrust approvedLevel; // level of the entry (Modified/Approved), Trusted for Bundled
+        LuaTrust approvedLevel; // level of the entry (Modified/Approved), Trusted for examples
         LuaTrust effective;     // what the script runs with now
         QDateTime approvedAt;   // UTC, valid for Approved/Modified
     };
 
-    // isBundled(name, code): true if code equals the shipped script of that name
-    using BundledCheck = std::function<bool(const QString&, const QByteArray&)>;
+    // shipped(name, code): true and the code of the script of that name shipped
+    // with the plugin, false if there is none
+    using BundledSource = std::function<bool(const QString&, QByteArray&)>;
 
     void setScriptDirectory(const QString& dir); // for <name>.approved copies
-    void setBundledCheck(BundledCheck check);
+    void setBundledSource(BundledSource source);
     void setChangedCallback(std::function<void()> callback); // -> IndicateConfigChanged
 
     Status status(const QString& name, const QString& code) const;
@@ -82,6 +84,12 @@ public:
     static QByteArray hash(const QString& code);   // hex SHA-256 of UTF-8 code
     QString approvedCopyPath(const QString& name) const;
 
+    // Code of the approved version, read from <name>.approved. Only succeeds
+    // if the copy still hashes to the stored approval (the file itself can be
+    // changed by anyone with access to the folder). Without an entry, the
+    // shipped example of that name counts as the approved version.
+    bool approvedCode(const QString& name, QString& code) const;
+
 private:
     struct Entry
     {
@@ -99,7 +107,7 @@ private:
     std::map<QString, Entry> _entries;
     bool _migrated = false;
     QString _dir;
-    BundledCheck _bundled;
+    BundledSource _bundled;
     std::function<void()> _changed;
 };
 

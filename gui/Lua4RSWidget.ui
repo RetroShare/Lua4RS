@@ -178,6 +178,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pb_approve">
+            <property name="toolTip">
+             <string>Review the saved script and choose what it may do.</string>
+            </property>
+            <property name="text">
+             <string>Approve…</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="pb_run">
             <property name="toolTip">
              <string>Run the code currently shown in the editor. Automatic triggers are not required.</string>

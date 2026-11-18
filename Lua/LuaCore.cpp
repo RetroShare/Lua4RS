@@ -79,11 +79,13 @@ LuaCore::LuaCore() :
     _path = RsAccounts::AccountDirectory() + "/" + _folderName + "/";
 
     _trust.setScriptDirectory(QString::fromStdString(_path));
-    // Unchanged copies of shipped examples come from the plugin itself.
-    _trust.setBundledCheck([](const QString& name, const QByteArray& code) {
+    // Shipped examples come from the plugin itself; unchanged copies are trusted.
+    _trust.setBundledSource([](const QString& name, QByteArray& code) {
         if(!BundledScripts::names().contains(name)) return false;
         QFile source(":/lua4rs/examples/" + name);
-        return source.open(QIODevice::ReadOnly) && source.readAll() == code;
+        if(!source.open(QIODevice::ReadOnly)) return false;
+        code = source.readAll();
+        return true;
     });
 
     // load codes
@@ -141,6 +143,7 @@ void LuaCore::shutDown()
 
 void LuaCore::setupRsFunctionsAndTw(QTreeWidget* tw)
 {
+    _writeFunctions.clear();
     int top;
     std::string namespc; // namespace (with '.' at the end)
 
@@ -315,6 +318,7 @@ void LuaCore::addFunctionToLuaAndTw(int tableTop, const std::string& namespc, QT
 
     // Every binding goes through the central read/write check.
     const std::string fullName = namespc + luaFuncName;
+    if(access == LuaAccess::Write) _writeFunctions << QString::fromStdString(fullName);
     lua_pushstring(L, luaFuncName.c_str());
     LuaSandbox::pushGuardedFunction(L, f, access, fullName.c_str());
     lua_settable(L, tableTop);
@@ -396,6 +400,8 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
         QString note;
         if(status.state == LuaTrustStore::State::Modified)
             note = QObject::tr(" [%1: changed since approval]").arg(luaTrustName(status.effective));
+        else if(status.state == LuaTrustStore::State::ChangedExample)
+            note = QObject::tr(" [%1: changed example, not approved]").arg(luaTrustName(status.effective));
         else if(status.state == LuaTrustStore::State::Unknown)
             note = QObject::tr(" [%1: not approved]").arg(luaTrustName(status.effective));
         else if(status.effective != LuaTrust::Trusted)

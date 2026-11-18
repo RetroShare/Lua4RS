@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <string>
 
+#include "LineDiff.h"
 #include "LuaTrustStore.h"
 
 namespace {
@@ -120,20 +121,40 @@ void approvedCopyFollowsApproval()
 void bundledScripts()
 {
     LuaTrustStore s;
-    s.setBundledCheck([](const QString& name, const QByteArray& code) {
-        return name == "example.lua" && code == "shipped";
-    });
+    auto shipped = [](const QString& name, QByteArray& code) {
+        if(name != "example.lua" && name != "example2.lua") return false;
+        code = "shipped";
+        return true;
+    };
+    s.setBundledSource(shipped);
     CHECK(s.status("example.lua", "shipped").state == State::Bundled);
     CHECK(s.effective("example.lua", "shipped") == LuaTrust::Trusted);
-    CHECK(s.effective("example.lua", "changed") == LuaTrust::SandboxReadOnly);
     CHECK(s.effective("other.lua", "shipped") == LuaTrust::SandboxReadOnly);
+    CHECK(s.status("other.lua", "shipped").state == State::Unknown);
+
+    // changed outside the editor: sandboxed, but known as a changed example
+    const auto changed = s.status("example.lua", "changed");
+    CHECK(changed.state == State::ChangedExample);
+    CHECK(changed.effective == LuaTrust::SandboxReadOnly);
+    CHECK(changed.approvedLevel == LuaTrust::Trusted);
+    CHECK(!changed.approvedAt.isValid());
+    // the shipped code serves as the approved version for the diff
+    QString code;
+    CHECK(s.approvedCode("example.lua", code) && code == "shipped");
+    CHECK(!s.approvedCode("other.lua", code));
+    // saving a changed example in the GUI does not approve it
+    s.guiSaved("example.lua", "changed", "example.lua", "changed", false);
+    CHECK(s.status("example.lua", "changed").state == State::ChangedExample);
+
     // user edits the unchanged example in the GUI -> stays trusted
     s.guiSaved("example.lua", "shipped", "example.lua", "mine", false);
     CHECK(s.effective("example.lua", "mine") == LuaTrust::Trusted);
-    // an explicit entry wins over the bundled check
+    CHECK(s.status("example.lua", "mine").state == State::Approved);
+    // an explicit entry wins over the shipped script
     s.approve("example2.lua", "x", LuaTrust::SandboxReadOnly);
-    s.setBundledCheck([](const QString&, const QByteArray&) { return true; });
+    CHECK(s.status("example2.lua", "shipped").state == State::Modified);
     CHECK(s.effective("example2.lua", "shipped") == LuaTrust::SandboxReadOnly);
+    CHECK(s.effective("example2.lua", "x") == LuaTrust::SandboxReadOnly);
 }
 
 void editorRun()
@@ -180,6 +201,70 @@ void malformedEntriesDoNotGrantTrust()
     CHECK(!s.migrated());
 }
 
+void approvedCodeIsVerified()
+{
+    QTemporaryDir dir;
+    LuaTrustStore s;
+    QString code;
+    s.approve("a.lua", "v1", LuaTrust::Trusted);
+    CHECK(!s.approvedCode("a.lua", code)); // no directory -> no copy
+
+    s.setScriptDirectory(dir.path());
+    s.approve("a.lua", "v1", LuaTrust::Trusted);
+    CHECK(s.approvedCode("a.lua", code) && code == "v1");
+    CHECK(!s.approvedCode("b.lua", code)); // no entry
+
+    // someone swaps the copy to hide a change from the diff
+    {
+        QFile f(s.approvedCopyPath("a.lua"));
+        CHECK(f.open(QIODevice::WriteOnly));
+        f.write("evil");
+    }
+    code.clear();
+    CHECK(!s.approvedCode("a.lua", code) && code.isEmpty());
+
+    QFile::remove(s.approvedCopyPath("a.lua"));
+    CHECK(!s.approvedCode("a.lua", code));
+
+    // editing an approved version in the GUI refreshes the copy
+    s.approve("c.lua", "v1", LuaTrust::SandboxWrite);
+    s.guiSaved("c.lua", "v1", "c.lua", "v2 ü", false);
+    CHECK(s.approvedCode("c.lua", code) && code == "v2 ü");
+}
+
+QString render(const std::vector<DiffLine>& diff)
+{
+    QString out;
+    for(const auto& line : diff)
+        out += QString(line.kind == DiffLine::Same ? " " : line.kind == DiffLine::Added ? "+" : "-") + line.text + "|";
+    return out;
+}
+
+void lineDiffs()
+{
+    const QStringList abc = { "a", "b", "c" };
+    CHECK(render(lineDiff(abc, abc)) == " a| b| c|");
+    CHECK(render(lineDiff(abc, { "a", "x", "c" })) == " a|-b|+x| c|");
+    CHECK(render(lineDiff(abc, { "a", "b", "c", "d" })) == " a| b| c|+d|");
+    CHECK(render(lineDiff(abc, { "b", "c" })) == "-a| b| c|");
+    CHECK(render(lineDiff({}, { "a" })) == "+a|");
+    CHECK(render(lineDiff({ "a" }, {})) == "-a|");
+    // an inserted line in the middle of otherwise equal text
+    CHECK(render(lineDiff({ "1", "2", "3", "4" }, { "1", "2", "new", "3", "4" })) == " 1| 2|+new| 3| 4|");
+    // moved line: one removal + one addition, rest kept
+    CHECK(render(lineDiff({ "a", "b", "c", "d" }, { "b", "c", "d", "a" })) == "-a| b| c| d|+a|");
+    // over the size limit: plain replace of the middle part
+    CHECK(render(lineDiff({ "p", "a", "b", "s" }, { "p", "b", "a", "s" }, 4)) == " p|-a|-b|+b|+a| s|");
+    // every line of both sides appears exactly once in the result
+    QStringList before, after;
+    for(int i = 0; i < 300; ++i) { before << QString::number(i % 17); after << QString::number((i * 7) % 13); }
+    int removed = 0, added = 0, same = 0;
+    for(const auto& line : lineDiff(before, after))
+        (line.kind == DiffLine::Same ? same : line.kind == DiffLine::Added ? added : removed)++;
+    CHECK(same + removed == before.size());
+    CHECK(same + added == after.size());
+}
+
 void changeCallback()
 {
     LuaTrustStore s;
@@ -208,6 +293,8 @@ int main()
     editorRun();
     serialisationRoundTrip();
     malformedEntriesDoNotGrantTrust();
+    approvedCodeIsVerified();
+    lineDiffs();
     changeCallback();
     std::printf("%d checks, %d failed\n", checks, failures);
     return failures ? 1 : 0;
