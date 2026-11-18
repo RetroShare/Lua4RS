@@ -13,6 +13,8 @@
 #include <util/rsthreads.h> // for RsMutex
 
 #include "LuaEvent.h"
+#include "LuaSandbox.h"
+#include "LuaTrust.h"
 
 extern "C" {
 #include <lua.h>
@@ -57,12 +59,18 @@ public:
     bool processEventQueue();
 
     // invoke lua
+    // Code typed into the editor: runs trusted (the user wrote it).
     bool runLuaByString(const QString& code);
     bool configureJsonApi(const QString& url, const QString& username,
                           const QString& password, QString& error);
     void runLuaByName(const QString& name);
     //void runLuaByNameWithParams(const QString& name, parameterMap paramMap);
-    void runLuaByEvent(const QString& code, const LuaEvent& event);
+    void runLuaByEvent(const QString& name, const QString& code, const LuaEvent& event);
+
+    // Trust a stored script runs with.
+    // TODO: read approvals (level + SHA-256) from p3Lua4RS' signed config;
+    // until then every stored script is trusted (= previous behaviour).
+    LuaTrust trustForScript(const QString& name, const QString& code) const;
 
     // getter & setter
     Lua4RSWidget* getUI();
@@ -76,14 +84,16 @@ public:
     void emitClearOutput();
 
 private:
-    bool executeLocked(const QString& code);
+    // event == nullptr: manual run, args is nil
+    bool executeLocked(const QString& name, const QString& code, LuaTrust trust, const LuaEvent* event);
     void dispatchEvent(const LuaEvent& event);
     void reportLuaErrors(lua_State *L, int status);
-    void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, int (*f)(lua_State*), const std::string& name, const QString& hint);
+    void addFunctionToLuaAndTw(int tableTop, const std::string &namespc, QTreeWidgetItem* item, LuaAccess access, int (*f)(lua_State*), const std::string& name, const QString& hint);
 
     const std::string _folderName;
     std::string _path;
 
+    LuaSandbox::MemoryLimiter _memory;
     lua_State* L;
 
     RsMutex _mutex;

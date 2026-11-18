@@ -14,6 +14,8 @@ include(lua.pri)
 
 HEADERS +=  \
     Lua/LuaExecutionGuard.h \
+    Lua/LuaSandbox.h \
+    Lua/LuaTrust.h \
     Lua/BundledScripts.h \
     gui/FunctionBrowser.h \
     gui/JsonApiCatalog.h \
@@ -42,6 +44,7 @@ HEADERS +=  \
 
 SOURCES +=  \
     Lua/LuaJsonApi.cpp \
+    Lua/LuaSandbox.cpp \
     Lua4RSPlugin.cpp \
     Lua4RSNotify.cpp \
     gui/Lua4RSWidget.cpp \
