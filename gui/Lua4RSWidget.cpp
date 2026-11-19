@@ -550,6 +550,7 @@ bool Lua4RSWidget::saveScript()
     else if(oldName != name)
     {
         _lua->codeList()->rename(oldName, name);
+        _lua->store().rename(oldName, name);
         _lua->forgetScriptState(oldName);
         _lua->forgetScriptState(name);
     }
@@ -604,6 +605,7 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
     auto removed = _activeContainer;
     loadScript(nullptr);
     _lua->trustStore().remove(removed->getName());
+    _lua->store().remove(removed->getName());
     _lua->forgetScriptState(removed->getName());
     const bool deleted = _lua->codeList()->removeItemAndDelete(removed);
     scriptsLock.unlock();

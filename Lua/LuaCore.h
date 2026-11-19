@@ -21,6 +21,7 @@
 #include "LuaEvent.h"
 #include "LuaRun.h"
 #include "LuaSandbox.h"
+#include "LuaStore.h"
 #include "LuaTrust.h"
 #include "LuaTrustStore.h"
 #include "mcp/McpSettings.h"
@@ -61,7 +62,7 @@ public:
     // Run for the MCP agent, after the current run. Returns nullptr if the
     // queue is full or Lua is not ready. See LuaAgentRun for abandoning.
     std::shared_ptr<LuaAgentRun> queueAgentRun(const QString& name, const QString& code,
-                                               LuaTrust trust, const QJsonObject* args);
+                                               LuaTrust trust, const QJsonObject* args, bool adHoc);
     // Plugin log for get_logs: entries with id > since, optionally of one script,
     // at most limit (newest last).
     std::vector<LuaLogEntry> logEntries(quint64 since, const QString& script, int limit) const;
@@ -87,6 +88,7 @@ public:
     LuaTrust trustForScript(const QString& name, const QString& code) const;
     LuaTrustStore& trustStore() { return _trust; }
     McpSettings& mcpSettings() { return _mcpSettings; }
+    LuaStore& store() { return _store; }
     // Forget the sandbox globals of a script that was renamed or deleted, so a
     // later script of that name starts clean. Applied by the worker before and
     // after the next run (never blocks on a running script).
@@ -135,6 +137,8 @@ private:
 
     std::recursive_mutex _scriptsMutex;
     LuaTrustStore _trust;
+    LuaStore _store;
+    LuaStore::Mode _storeMode = LuaStore::Mode::Normal; // next run, Lua worker only
     McpSettings _mcpSettings;
     QStringList _writeFunctions;
     std::mutex _forgetMutex;

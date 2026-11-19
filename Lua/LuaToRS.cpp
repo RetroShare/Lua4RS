@@ -95,9 +95,11 @@ extern "C" {
         std::string output = "";
         if(argc > 0)
             for (int n = 1; n <= argc; ++n ) {
-                luaL_checktype(L, n, LUA_TSTRING);
-                const std::string s = lua_tostring(L, n);
-                output += s;
+                // any value, like print
+                size_t length = 0;
+                const char* s = luaL_tolstring(L, n, &length);
+                output.append(s, length);
+                lua_pop(L, 1);
                 if(n < argc)
                     output += '\t';
             }

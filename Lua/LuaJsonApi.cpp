@@ -122,7 +122,14 @@ void fromJson(lua_State* L, const QJsonValue& value)
 {
     if(value.isNull() || value.isUndefined()) lua_pushlightuserdata(L, &nullValue);
     else if(value.isBool()) lua_pushboolean(L, value.toBool());
-    else if(value.isDouble()) lua_pushnumber(L, value.toDouble());
+    else if(value.isDouble())
+    {
+        // Whole numbers come back as Lua integers (5, not 5.0).
+        const double number = value.toDouble();
+        if(number == std::floor(number) && std::abs(number) <= 9007199254740991.0)
+            lua_pushinteger(L, static_cast<lua_Integer>(number));
+        else lua_pushnumber(L, number);
+    }
     else if(value.isString())
     {
         const QByteArray text = value.toString().toUtf8();
@@ -422,6 +429,11 @@ int subscribe(lua_State* L)
     lua_pushinteger(L, status);
     return 3;
 }
+}
+
+bool luaToJson(lua_State* L, int index, QJsonValue& value, QString& error)
+{
+    return toJson(L, index, value, error);
 }
 
 bool pushLuaJson(lua_State* L, const QJsonValue& value, QString& error)

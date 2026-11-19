@@ -23,6 +23,7 @@ HEADERS +=  \
     Lua/LuaBindings.h \
     Lua/LuaRun.h \
     Lua/LuaSandbox.h \
+    Lua/LuaStore.h \
     Lua/LuaTrust.h \
     Lua/LuaTrustStore.h \
     Lua/BundledScripts.h \
@@ -63,6 +64,7 @@ SOURCES +=  \
     gui/McpPanel.cpp \
     Lua/LuaJsonApi.cpp \
     Lua/LuaSandbox.cpp \
+    Lua/LuaStore.cpp \
     Lua/LuaTrustStore.cpp \
     Lua4RSPlugin.cpp \
     Lua4RSNotify.cpp \

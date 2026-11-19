@@ -50,6 +50,11 @@ tool error "write_script, stale hash"    write_script "{\"name\":\"$s\",\"code\"
 tool error "write_script, bad name"      write_script '{"name":"../evil.lua","code":"x"}'
 tool error "delete shipped example"      delete_script '{"name":"chatBot.lua"}'
 tool ok    "run_script saved"            run_script   "{\"name\":\"$s\"}"
+tool ok    "store: write via script"     write_script "{\"name\":\"$s\",\"code\":\"store.set('runs', (store.get('runs') or 0) + 1)\\nprint(store.get('runs'))\"}"
+tool ok    "store: run saved script"     run_script   "{\"name\":\"$s\"}"
+tool ok    "store: test run (dropped)"   run_script   "{\"name\":\"$s\",\"args\":{}}"
+tool ok    "read_store (runs = 1)"       read_store   "{\"name\":\"$s\"}"
+tool error "read_store, unknown script"  read_store   '{"name":"nope.lua"}'
 tool ok    "run_script code"             run_script   '{"code":"print(_VERSION, 1+1)"}'
 tool ok    "run_script with args"        run_script   '{"code":"print(args.msg)","args":{"msg":"hello"}}'
 tool ok    "run_script, Lua error"       run_script   '{"code":"error(\"boom\")"}'

@@ -7,8 +7,6 @@ A RetroShare plugin to automate and script things on RetroShare using the Lua la
 > project was picked up again (Lua 5.4/5.5 support, sandbox, approvals, MCP
 > endpoint, see the commit history from `b179395` on) were written by an AI
 > coding agent (Claude), directed, reviewed and tested by the maintainer.
-> No judgement either way: we just want you to know how the code came to be,
-> so you can review it accordingly.
 
 What is RetroShare?
 -------------------
@@ -110,6 +108,23 @@ Sandboxed scripts get a fresh environment of safe functions (no `io`, `require`,
 Each script keeps its globals between runs; they are dropped when the script is
 renamed or deleted. Limits per run: 5 seconds and 32 MB of memory growth.
 
+### The store
+
+Every script has a small key-value store that survives runs and restarts:
+
+```lua
+local runs = (store.get("runs") or 0) + 1
+store.set("runs", runs)            -- strings, numbers, booleans, tables; nil deletes
+for _, key in ipairs(store.keys()) do print(key) end
+```
+
+It is available at every access level (it only holds the script's own data)
+and is written once after a run, at most 256 KB per script, to
+`Lua4RS/.store/<script>.json`. **It is not encrypted**: anyone with access to
+the folder can read it, so do not put passwords or keys in it. Test runs with
+simulated event data see the store but their changes are dropped; ad-hoc agent
+code gets an empty throwaway store.
+
 Known gap: Lua pattern functions (`string.find/match/gsub`) and long native
 calls run in C and are not interrupted by the time limit.
 
@@ -146,6 +161,7 @@ but not its users:
 | `list_functions`, `describe_function` | Native bindings with read/write tag and an example |
 | `list_events` | Events scripts can react to and the fields of `args` |
 | `list_scripts`, `read_script` | Scripts with access level, approval state, triggers, hash |
+| `read_store` | What a script saved with `store.set` |
 | `write_script`, `edit_script` | Create/replace a script, or replace one exact piece of text |
 | `delete_script` | Delete a script that was never approved |
 | `run_script` | Run a saved script or ad-hoc code once, returns its output |
@@ -201,6 +217,7 @@ None of these need a running RetroShare, except the MCP smoke test.
 |---|---|
 | Sandbox (via the standalone runner) | build `jsonapi-runner`, then `tests/sandbox/run.sh <path-to-lua4rs-jsonapi>` |
 | Approvals and diff | `qmake tests/truststore/truststore.pro && make && ./tst_truststore` |
+| Store | `qmake tests/store/store.pro && make && ./tst_store` |
 | Per-script environments | `qmake tests/env/env.pro && make && ./tst_env` (add `LUA_VERSION=5.5` to test 5.5) |
 | MCP protocol, HTTP rules, settings | `qmake tests/mcp/mcp.pro && make && ./tst_mcp` |
 | MCP endpoint of a running instance | `tests/mcp/smoke.sh <token> [url]` |

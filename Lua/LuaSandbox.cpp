@@ -79,10 +79,10 @@ int safeSetmetatable(lua_State* L)
         lua_pop(L, 1);
         if(hasGc) return luaL_error(L, "__gc metamethods are not allowed in the sandbox");
     }
-    lua_pushvalue(L, lua_upvalueindex(1));
-    lua_insert(L, 1);
-    lua_call(L, lua_gettop(L) - 1, LUA_MULTRET);
-    return lua_gettop(L);
+    // Call directly (not via lua_call) so argument errors name the function,
+    // e.g. "bad argument #1 to 'print'". Bindings must not use upvalues.
+    const lua_CFunction f = lua_tocfunction(L, lua_upvalueindex(1));
+    return f(L);
 }
 
 int guardedBinding(lua_State* L)

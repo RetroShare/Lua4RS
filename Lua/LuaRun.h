@@ -32,6 +32,7 @@ struct LuaAgentRun
     QString code;
     LuaTrust trust = LuaTrust::SandboxReadOnly;
     bool hasArgs = false;     // simulated event data for `args`
+    bool adHoc = false;       // code from the agent, not a saved script
     QJsonObject args;
 
     std::atomic<int> phase{ Pending };

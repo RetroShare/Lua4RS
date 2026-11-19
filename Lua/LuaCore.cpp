@@ -70,11 +70,13 @@ LuaCore::LuaCore() :
     lua_setglobal(L, "print");
     // Before any user code runs: capture what sandboxed scripts may use.
     LuaSandbox::snapshot(L);
+    LuaStore::install(L, &_store);
     registerBindings();
 
     _path = RsAccounts::AccountDirectory() + "/" + _folderName + "/";
 
     _trust.setScriptDirectory(QString::fromStdString(_path));
+    _store.setDirectory(QString::fromStdString(_path) + ".store");
     // Shipped examples come from the plugin itself; unchanged copies are trusted.
     _trust.setBundledSource([](const QString& name, QByteArray& code) {
         if(!BundledScripts::names().contains(name)) return false;
@@ -189,6 +191,14 @@ const std::vector<LuaBinding> kBindings = {
     { "files", "turtleSearch(\"search words\")", W, file_turtleSearch,         DOC("starts a search for given keywords") },
     { "files", "setDownloadDirectory(\"PATH\")", W, file_setDownloadDirectory, DOC("set download folder path (params: path)") },
     { "files", "setPartialsDirectory(\"PATH\")", W, file_setPartialsDirectory, DOC("set partial folder path (params: path)") },
+
+    // Own data of the script, allowed at every access level.
+    { "store", "get(\"key\")", R, LuaStore::luaGet,
+      DOC("returns the value saved under key by this script, or nil. NOT encrypted: do not store passwords or keys") },
+    { "store", "set(\"key\", value)", R, LuaStore::luaSet,
+      DOC("saves a value for later runs of this script (string, number, boolean or table; nil deletes). "
+          "Written after the run, at most 256 KB per script. NOT encrypted: anyone with access to the Lua4RS folder can read it") },
+    { "store", "keys()", R, LuaStore::luaKeys, DOC("returns the keys of this script's store, sorted") },
 };
 #undef DOC
 }
@@ -253,9 +263,10 @@ bool LuaCore::queueManualRun(const QString& code, const QString& name, LuaTrust 
 }
 
 std::shared_ptr<LuaAgentRun> LuaCore::queueAgentRun(const QString& name, const QString& code,
-                                                    LuaTrust trust, const QJsonObject* args)
+                                                    LuaTrust trust, const QJsonObject* args, bool adHoc)
 {
     auto run = std::make_shared<LuaAgentRun>();
+    run->adHoc = adHoc;
     run->name = name;
     run->code = code;
     run->trust = trust;
@@ -398,7 +409,9 @@ bool LuaCore::executeLocked(const QString& name, const QString& code, LuaTrust t
 
         LuaExecutionGuard guard(L, _cancel, std::chrono::seconds(5), trust);
         LuaSandbox::MemoryScope memory(_memory, trust != LuaTrust::Trusted);
+        _store.begin(name, _storeMode);
         result = lua_pcall(L, 0, 0, 0);
+        _store.end(); // also after errors: what the script stored, it meant to store
     }
     reportLuaErrors(L, result);
     // A script deleted while it was running must not leave its globals behind.
@@ -656,7 +669,11 @@ void LuaCore::runAgent(LuaAgentRun& run)
         RsStackMutex lock(_mutexRunLua);
         _capture = &result;
         _captureBytes = 0;
+        // Tests must not change the real store; ad-hoc code gets a throwaway one.
+        _storeMode = run.adHoc ? LuaStore::Mode::Ephemeral
+                   : run.hasArgs ? LuaStore::Mode::DiscardWrites : LuaStore::Mode::Normal;
         result.ok = executeLocked(run.name, run.code, run.trust, nullptr, run.hasArgs ? &run.args : nullptr);
+        _storeMode = LuaStore::Mode::Normal;
         _capture = nullptr;
     }
     result.durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(
