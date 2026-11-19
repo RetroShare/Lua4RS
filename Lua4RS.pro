@@ -40,6 +40,7 @@ HEADERS +=  \
     gui/Lua4RSTextEdit.h \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
+    Lua/LuaToRSIds.h \
     Lua/LuaCode.h \
     Lua/LuaList.h \
     Lua/LuaConfig.h \
@@ -109,7 +110,9 @@ OTHER_FILES += \
     Lua/LuaToRSServerConfig.cpp \
     Lua/LuaToRSDiscovery.cpp \
     Lua/LuaToRSChat.cpp \
-    Lua/LuaToRSFile.cpp
+    Lua/LuaToRSFile.cpp \
+    Lua/LuaToRSIdentity.cpp \
+    Lua/LuaToRSMail.cpp
 
 FORMS += \
     gui/Lua4RSWidget.ui \

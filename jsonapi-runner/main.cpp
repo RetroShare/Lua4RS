@@ -25,7 +25,7 @@ void usage()
     std::fprintf(stderr, "Usage: lua4rs-jsonapi [--sandbox=readonly|write] script.lua [arguments...]\n"
         "Connection: RETROSHARE_API_URL, RETROSHARE_API_USER, RETROSHARE_API_PASSWORD\n"
         "--sandbox runs the script like an untrusted Lua4RS script (time limit:\n"
-        "LUA4RS_TIMEOUT_MS, default 5000) and adds selftest.read()/selftest.write().\n");
+        "LUA4RS_TIMEOUT_MS, default 5000) and adds selftest.read()/write()/sensitive().\n");
 }
 }
 
@@ -69,6 +69,9 @@ int main(int argc, char** argv)
         lua_settable(L, -3);
         lua_pushstring(L, "write");
         LuaSandbox::pushGuardedFunction(L, selftestOk, LuaAccess::Write, "selftest.write");
+        lua_settable(L, -3);
+        lua_pushstring(L, "sensitive");
+        LuaSandbox::pushGuardedFunction(L, selftestOk, LuaAccess::Sensitive, "selftest.sensitive");
         lua_settable(L, -3);
         LuaSandbox::registerNamespace(L, "selftest");
         lua_pop(L, 1);

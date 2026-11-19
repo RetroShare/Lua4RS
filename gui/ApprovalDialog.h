@@ -21,7 +21,8 @@ public:
     // LuaTrustStore::approvedCode), only used if haveApprovedCode is true.
     ApprovalDialog(const QString& name, const QString& code, const LuaTrustStore::Status& status,
                    bool haveApprovedCode, const QString& approvedCode,
-                   const QStringList& writeFunctions, QWidget* parent = nullptr);
+                   const QStringList& writeFunctions, const QStringList& sensitiveFunctions,
+                   QWidget* parent = nullptr);
 
     LuaTrust level() const;
 

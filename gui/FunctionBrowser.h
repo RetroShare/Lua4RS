@@ -62,7 +62,9 @@ inline void addNativeBindings(QTreeWidget* tree, const std::vector<LuaBinding>& 
         const QString signature = QString::fromUtf8(binding.signature);
         item->setText(0, signature);
         item->setText(1, ns + signature);
-        item->setToolTip(0, (binding.access == LuaAccess::Write ? QObject::tr("[write] ") : QObject::tr("[read] ")) +
+        const QString tag = binding.access == LuaAccess::Write ? QObject::tr("[write] ")
+                          : binding.access == LuaAccess::Sensitive ? QObject::tr("[sensitive] ") : QObject::tr("[read] ");
+        item->setToolTip(0, tag +
                             QCoreApplication::translate("LuaBindings", binding.doc));
     }
 }

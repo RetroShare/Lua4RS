@@ -45,7 +45,7 @@ QJsonObject stringProperty(const QString& description)
     return QJsonObject{ { "type", "string" }, { "description", description } };
 }
 
-QString accessName(LuaAccess access) { return access == LuaAccess::Write ? "write" : "read"; }
+QString accessName(LuaAccess access) { return luaAccessName(access); }
 
 QString stateName(LuaTrustStore::State state)
 {
@@ -125,6 +125,9 @@ QJsonObject functionInfo(const LuaBinding& b, bool details)
         info.insert("example", QString::fromUtf8(b.ns) + "." + QString::fromUtf8(b.signature));
         info.insert("note", b.access == LuaAccess::Write
             ? "Changes RetroShare: fails with 'write access denied' unless the script is approved as sandbox-write or trusted."
+            : b.access == LuaAccess::Sensitive
+            ? "Reads sensitive content (mail, certificate): fails with 'sensitive access denied' unless the script is "
+              "approved as sandbox-write or trusted. Never available in your own test or ad-hoc runs."
             : "Read-only: available at every access level.");
     }
     return info;
@@ -150,7 +153,8 @@ void addEnvironmentTools(McpProtocol& p, LuaCore* core)
                 { "max_script_bytes", kMaxScriptBytes } } },
             { "access_levels", QJsonObject{
                 { "sandbox-readonly", "Default for scripts you write or change. Lua sandbox plus read-only RetroShare functions." },
-                { "sandbox-write", "Sandbox plus RetroShare functions that change things (send chat, add groups, ...). Set by the user." },
+                { "sandbox-write", "Sandbox plus RetroShare functions that change things (send chat, add groups, ...) "
+                                   "or read sensitive content (mail, certificate). Set by the user." },
                 { "trusted", "Full Lua (io, os, require) and jsonapi.call. Only for scripts the user wrote or checked." } } },
             { "sandbox", QJsonObject{
                 { "globals", QJsonArray{ "assert", "error", "ipairs", "next", "pairs", "pcall", "print", "rawequal",

@@ -77,11 +77,17 @@ Every script runs with one of three access levels:
 | Level | What the script can do |
 |---|---|
 | `sandbox-readonly` | Lua sandbox plus RetroShare functions that only read. Default for everything not approved. |
-| `sandbox-write` | Sandbox plus functions that change RetroShare (send chat, add groups, start downloads, ...). |
+| `sandbox-write` | Sandbox plus functions that change RetroShare (send chat or mail, add friends or groups, start downloads, ...) or read sensitive content (mail, your certificate). |
 | `trusted` | Full Lua (`io`, `os`, `require`) and `jsonapi.call`. For scripts you wrote or checked yourself. |
 
-Every native binding is tagged `read` or `write` (see the tooltips in the
-function browser); a central check refuses write calls below `sandbox-write`.
+Every native binding is tagged `read`, `write` or `sensitive` (see the
+tooltips in the function browser); a central check refuses `write` and
+`sensitive` calls below `sandbox-write`. `sensitive` marks functions that only
+read, but read things you would not hand out lightly: mail (subjects and
+bodies) and your certificate. Since the agent's own runs are always
+`sandbox-readonly`, an agent cannot read your mail unless you approved a script
+that does. The approval dialog lists the write and sensitive functions a script
+mentions.
 
 **Approvals are tied to the exact code.** An approval stores the level and the
 SHA-256 of the code in RetroShare's own signed and encrypted config, never in a

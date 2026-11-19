@@ -3,6 +3,7 @@
 #include <retroshare/rschats.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgossipdiscovery.h>
+#include <retroshare/rsmail.h>
 #include <stdexcept>
 
 #include "Lua4RSNotify.h"
@@ -124,6 +125,27 @@ void Lua4RSNotify::handleEvent(std::shared_ptr<const RsEvent> event)
     {
         if(system->mEventCode == RsSystemEventCode::DISK_SPACE_ERROR)
             notifyDiskFull(system->mDiskErrorLocation, system->mDiskErrorSizeLimit);
+    }
+    else if(auto mail = std::dynamic_pointer_cast<const RsMailStatusEvent>(event))
+    {
+        // One Lua event per mail; scripts read it with mail.getMessage (sensitive).
+        unsigned id = 0;
+        switch(mail->mMailStatusEventCode)
+        {
+        case RsMailStatusEventCode::NEW_MESSAGE:     id = L4R_MAIL_RECEIVED; break;
+        case RsMailStatusEventCode::MESSAGE_SENT:    id = L4R_MAIL_SENT; break;
+        case RsMailStatusEventCode::MESSAGE_REMOVED: id = L4R_MAIL_DELETED; break;
+        default: break;
+        }
+        if(id)
+            for(const auto& msgId : mail->mChangedMsgIds)
+            {
+                struct LuaEvent *e = new LuaEvent();
+                e->eventId = id;
+                e->timeStamp = QDateTime::currentDateTime();
+                e->dataParm->setValue("strmsgId", QString::fromStdString(msgId));
+                L4R::L4RConfig->getCore()->processEvent(e);
+            }
     }
     else if(auto discovery = std::dynamic_pointer_cast<const RsGossipDiscoveryEvent>(event))
     {

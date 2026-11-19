@@ -93,8 +93,9 @@ public:
     // later script of that name starts clean. Applied by the worker before and
     // after the next run (never blocks on a running script).
     void forgetScriptState(const QString& name);
-    // Full names (e.g. "chat.sendChat") of all bindings tagged write.
+    // Full names (e.g. "chat.sendChat") of all bindings tagged write / sensitive.
     const QStringList& writeFunctions() const { return _writeFunctions; }
+    const QStringList& sensitiveFunctions() const { return _sensitiveFunctions; }
 
     // getter & setter
     Lua4RSWidget* getUI();
@@ -141,6 +142,7 @@ private:
     LuaStore::Mode _storeMode = LuaStore::Mode::Normal; // next run, Lua worker only
     McpSettings _mcpSettings;
     QStringList _writeFunctions;
+    QStringList _sensitiveFunctions;
     std::mutex _forgetMutex;
     std::vector<std::string> _forget; // script names, see forgetScriptState
     QString _manualCode;

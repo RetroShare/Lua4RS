@@ -90,8 +90,8 @@ int guardedBinding(lua_State* L)
     const auto access = static_cast<LuaAccess>(lua_tointeger(L, lua_upvalueindex(2)));
     const LuaTrust trust = LuaExecutionGuard::currentTrust();
     if(!luaTrustAllows(trust, access))
-        return luaL_error(L, "%s: write access denied (script runs as %s; needs sandbox-write or trusted)",
-                          lua_tostring(L, lua_upvalueindex(3)), luaTrustName(trust));
+        return luaL_error(L, "%s: %s access denied (script runs as %s; needs sandbox-write or trusted)",
+                          lua_tostring(L, lua_upvalueindex(3)), luaAccessName(access), luaTrustName(trust));
     lua_pushvalue(L, lua_upvalueindex(1));
     lua_insert(L, 1);
     lua_call(L, lua_gettop(L) - 1, LUA_MULTRET);

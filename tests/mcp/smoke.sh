@@ -28,8 +28,8 @@ post 200 "get_environment"  '{"jsonrpc":"2.0","id":3,"method":"tools/call","para
 post 200 "list_scripts"     '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"list_scripts","arguments":{}}}' -H "$auth"
 post 200 "read_script"      '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"read_script","arguments":{"name":"chatBot.lua"}}}' -H "$auth"
 
-tool() { # tool ok|error <description> <tool> <arguments-json>
-    want=$1; what=$2; name=$3; args=$4
+tool() { # tool ok|error <description> <tool> <arguments-json> [text the result must contain]
+    want=$1; what=$2; name=$3; args=$4; needle=${5:-}
     body=$(curl -s -X POST "$url" -H 'Content-Type: application/json' -H "$auth" \
         --data "{\"jsonrpc\":\"2.0\",\"id\":9,\"method\":\"tools/call\",\"params\":{\"name\":\"$name\",\"arguments\":$args}}")
     case "$body" in
@@ -37,6 +37,9 @@ tool() { # tool ok|error <description> <tool> <arguments-json>
         *'"isError":true'*) got=error ;;
         *) got="no result" ;;
     esac
+    if [ -n "$needle" ] && [ "$got" = "$want" ]; then
+        case "$body" in *"$needle"*) ;; *) got="$got, without '$needle'" ;; esac
+    fi
     if [ "$got" = "$want" ]; then echo "ok   $what ($got)"; else echo "FAIL $what: got $got, expected $want"; fail=1; fi
     echo "$body" | head -c 300; echo; echo
 }
@@ -59,6 +62,10 @@ tool ok    "run_script code"             run_script   '{"code":"print(_VERSION, 
 tool ok    "run_script with args"        run_script   '{"code":"print(args.msg)","args":{"msg":"hello"}}'
 tool ok    "run_script, Lua error"       run_script   '{"code":"error(\"boom\")"}'
 tool ok    "run_script, write denied"    run_script   '{"code":"chat.sendChat(\"x\", \"y\")"}'
+tool ok    "ad-hoc: mail is sensitive"   run_script   '{"code":"mail.getMessageSummaries()"}' 'sensitive access denied'
+tool ok    "ad-hoc: friends list (read)" run_script   '{"code":"print(#peers.getGPGAcceptedList())"}' '"ok":true'
+tool ok    "describe sensitive function" describe_function '{"name":"mail.getMessage"}' '"access":"sensitive"'
+tool ok    "list_events has mail_received" list_events '{}' 'mail_received'
 tool ok    "run_script, endless loop"    run_script   '{"code":"while true do end"}'
 tool error "run_script, name + code"     run_script   "{\"name\":\"$s\",\"code\":\"x\"}"
 tool ok    "get_logs"                    get_logs     '{"limit":5}'

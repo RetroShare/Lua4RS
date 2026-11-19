@@ -369,7 +369,7 @@ void Lua4RSWidget::approveActiveScript()
     QString approvedCode;
     const bool haveApprovedCode = trust.approvedCode(name, approvedCode);
     ApprovalDialog dialog(name, code, trust.status(name, code), haveApprovedCode, approvedCode,
-                          _lua->writeFunctions(), this);
+                          _lua->writeFunctions(), _lua->sensitiveFunctions(), this);
     if(dialog.exec() != QDialog::Accepted) return;
     // Exactly the code shown in the dialog; if the script changes later, the
     // hash no longer matches and it is sandboxed again.

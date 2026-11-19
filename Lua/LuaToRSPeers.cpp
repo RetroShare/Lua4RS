@@ -414,3 +414,77 @@ extern "C" {
 //virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) = 0;
 //virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
 //virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) = 0;
+
+// ---------------------------------------------------------------------------
+// Friends (added for SyncFriends-style scripts)
+
+#include "LuaToRSIds.h"
+
+extern "C" {
+
+    // peers.getGPGAcceptedList() -> array of PGP ids of all friends
+    int peers_getGPGAcceptedList(lua_State* L)
+    {
+        std::list<RsPgpId> ids;
+        if(!rsPeers->getGPGAcceptedList(ids)) return 0;
+        luaPushIdList(L, ids);
+        return 1;
+    }
+
+    // peers.getAssociatedSSLIds("PGP_ID") -> array of SSL ids (locations) of that friend
+    int peers_getAssociatedSSLIds(lua_State* L)
+    {
+        RsPgpId pgp;
+        if(!luaIdArg(L, 1, pgp)) return luaL_argerror(L, 1, "invalid PGP id");
+        std::list<RsPeerId> ids;
+        if(!rsPeers->getAssociatedSSLIds(pgp, ids)) return 0;
+        luaPushIdList(L, ids);
+        return 1;
+    }
+
+    // peers.getRetroshareInvite(["SSL_ID"]) -> certificate (own node without argument)
+    int peers_getRetroshareInvite(lua_State* L)
+    {
+        RsPeerId ssl;
+        if(!lua_isnoneornil(L, 1) && !luaIdArg(L, 1, ssl)) return luaL_argerror(L, 1, "invalid SSL id");
+        {
+            const std::string invite = rsPeers->GetRetroshareInvite(ssl);
+            if(invite.empty()) lua_pushnil(L);
+            else lua_pushlstring(L, invite.data(), invite.size());
+        }
+        return 1;
+    }
+
+    // peers.acceptInvite("INVITE") -> true if the node was added as friend
+    int peers_acceptInvite(lua_State* L)
+    {
+        size_t length = 0;
+        const char* invite = luaL_checklstring(L, 1, &length);
+        bool ok;
+        {
+            ok = rsPeers->acceptInvite(std::string(invite, length));
+        }
+        lua_pushboolean(L, ok);
+        return 1;
+    }
+
+    // peers.addFriend("SSL_ID", "PGP_ID") -> true on success
+    int peers_addFriend(lua_State* L)
+    {
+        RsPeerId ssl;
+        RsPgpId pgp;
+        if(!luaIdArg(L, 1, ssl)) return luaL_argerror(L, 1, "invalid SSL id");
+        if(!luaIdArg(L, 2, pgp)) return luaL_argerror(L, 2, "invalid PGP id");
+        lua_pushboolean(L, rsPeers->addFriend(ssl, pgp));
+        return 1;
+    }
+
+    // peers.removeFriend("PGP_ID") -> true on success (revokes trust in all locations)
+    int peers_removeFriend(lua_State* L)
+    {
+        RsPgpId pgp;
+        if(!luaIdArg(L, 1, pgp)) return luaL_argerror(L, 1, "invalid PGP id");
+        lua_pushboolean(L, rsPeers->removeFriend(pgp));
+        return 1;
+    }
+}

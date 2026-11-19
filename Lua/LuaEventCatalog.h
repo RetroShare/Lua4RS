@@ -56,6 +56,12 @@ inline const std::vector<LuaEventInfo>& luaEventCatalog()
             { "name", "string: file name (chosen by another person)" }, { "size", "integer: bytes" } } },
         { "disk_full", L4R_INFO_DISK_FULL, "A disk is (nearly) full.",
           { { "location", "integer: which disk" }, { "sizeLimit", "integer: limit in MB" } } },
+        { "mail_received", L4R_MAIL_RECEIVED, "A mail arrived. Read it with mail.getMessage(args.msgId) "
+          "(sensitive: needs an approved script).",
+          { { "msgId", "string: mail id" } } },
+        { "mail_sent", L4R_MAIL_SENT, "A mail was sent.", { { "msgId", "string: mail id" } } },
+        { "mail_deleted", L4R_MAIL_DELETED, "A mail was deleted.", { { "msgId", "string: mail id" } } },
+        { "discovery_update", L4R_INFO_DISCOVERY_UPDATE, "Discovery received new information about friends.", {} },
     };
     return events;
 }

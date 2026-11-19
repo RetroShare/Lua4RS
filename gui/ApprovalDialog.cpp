@@ -19,7 +19,8 @@ using State = LuaTrustStore::State;
 
 ApprovalDialog::ApprovalDialog(const QString& name, const QString& code, const LuaTrustStore::Status& status,
                                bool haveApprovedCode, const QString& approvedCode,
-                               const QStringList& writeFunctions, QWidget* parent)
+                               const QStringList& writeFunctions, const QStringList& sensitiveFunctions,
+                               QWidget* parent)
     : QDialog(parent)
 {
     setWindowTitle(tr("Approve %1").arg(name));
@@ -83,6 +84,17 @@ ApprovalDialog::ApprovalDialog(const QString& name, const QString& code, const L
         : tr("Functions that change RetroShare mentioned in the code: %1").arg(used.join(", ")), this);
     writes->setWordWrap(true);
     layout->addWidget(writes);
+
+    QStringList reads;
+    for(const QString& function : sensitiveFunctions)
+        if(code.contains(function)) reads << function;
+    if(!reads.isEmpty())
+    {
+        auto sensitive = new QLabel("<b>" + tr("Reads sensitive content (mail, certificate):") + "</b> " +
+                                    reads.join(", ").toHtmlEscaped(), this);
+        sensitive->setWordWrap(true);
+        layout->addWidget(sensitive);
+    }
 
     auto box = new QGroupBox(tr("Access"), this);
     auto boxLayout = new QVBoxLayout(box);
