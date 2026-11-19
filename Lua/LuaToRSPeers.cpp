@@ -419,6 +419,7 @@ extern "C" {
 // Friends (added for SyncFriends-style scripts)
 
 #include "LuaToRSIds.h"
+#include <util/rsurl.h>
 
 extern "C" {
 
@@ -455,14 +456,45 @@ extern "C" {
         return 1;
     }
 
-    // peers.acceptInvite("INVITE") -> true if the node was added as friend
+    // peers.getShortInvite(["SSL_ID"]) -> short invite (radix) of a node, own node without argument.
+    // A few hundred bytes instead of ~2 KB, but without the PGP key: a node added from it
+    // is an SSL-only friend until the key arrives on the first connection.
+    int peers_getShortInvite(lua_State* L)
+    {
+        RsPeerId ssl;
+        if(!lua_isnoneornil(L, 1) && !luaIdArg(L, 1, ssl)) return luaL_argerror(L, 1, "invalid SSL id");
+        {
+            std::string invite;
+            const RetroshareInviteFlags flags = RetroshareInviteFlags::RADIX_FORMAT | RetroshareInviteFlags::DNS |
+                RetroshareInviteFlags::CURRENT_LOCAL_IP | RetroshareInviteFlags::CURRENT_EXTERNAL_IP;
+            if(!rsPeers->getShortInvite(invite, ssl, flags) || invite.empty()) lua_pushnil(L);
+            else lua_pushlstring(L, invite.data(), invite.size());
+        }
+        return 1;
+    }
+
+    // peers.acceptInvite("INVITE") -> true if the node was added as friend.
+    // Takes full certificates (getRetroshareInvite) and short invites (getShortInvite),
+    // also as https://...?radix=... link.
     int peers_acceptInvite(lua_State* L)
     {
         size_t length = 0;
-        const char* invite = luaL_checklstring(L, 1, &length);
+        const char* text = luaL_checklstring(L, 1, &length);
         bool ok;
         {
-            ok = rsPeers->acceptInvite(std::string(invite, length));
+            std::string invite(text, length);
+            ok = rsPeers->acceptInvite(invite);
+            if(!ok)
+            {
+                RsUrl url(invite);
+                const auto query = url.query();
+                const auto radix = query.find("radix");
+                if(radix != query.end()) invite = radix->second;
+                RsPeerDetails details;
+                uint32_t error = 0;
+                if(rsPeers->parseShortInvite(invite, details, error) && !details.id.isNull() && !details.gpg_id.isNull())
+                    ok = rsPeers->addSslOnlyFriend(details.id, details.gpg_id, details);
+            }
         }
         lua_pushboolean(L, ok);
         return 1;

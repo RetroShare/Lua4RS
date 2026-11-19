@@ -82,7 +82,9 @@ void setCommon(lua_State* L, const std::string& id, const MsgAddress& from, unsi
     setBool(L, "outgoing", flags & RS_MSG_OUTGOING);
     setBool(L, "trash", flags & RS_MSG_TRASH);
     setBool(L, "distant", flags & RS_MSG_DISTANT);
-    setBool(L, "signatureChecked", flags & RS_MSG_SIGNATURE_CHECKS);
+    // No signature flag: RS_MSG_SIGNATURE_CHECKS is only set on the sender's own
+    // copy. Received mail is authenticated before delivery (distant: author
+    // signature checked by GxsTrans/GRouter; direct: friend SSL connection).
 }
 
 bool boxByName(const char* name, BoxName& box)
