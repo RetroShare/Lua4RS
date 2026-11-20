@@ -81,9 +81,9 @@ Every script runs with one of three access levels:
 | `trusted` | Full Lua (`io`, `os`, `require`) and `jsonapi.call`. For scripts you wrote or checked yourself. |
 
 Every native binding is tagged `read`, `write` or `sensitive` (see the
-tooltips in the function browser); a central check refuses `write` and
-`sensitive` calls below `sandbox-write`. `sensitive` marks functions that only
-read, but read things you would not hand out lightly: mail (subjects and
+tooltips in the function browser or [docs/lua-api.md](docs/lua-api.md)); a
+central check refuses `write` and `sensitive` calls below `sandbox-write`.
+`sensitive` marks functions that only read, but read things you would not hand out lightly: mail (subjects and
 bodies) and your certificate. Since the agent's own runs are always
 `sandbox-readonly`, an agent cannot read your mail unless you approved a script
 that does. The approval dialog lists the write and sensitive functions a script
@@ -228,5 +228,14 @@ None of these need a running RetroShare, except the MCP smoke test.
 | MCP protocol, HTTP rules, settings | `qmake tests/mcp/mcp.pro && make && ./tst_mcp` |
 | MCP endpoint of a running instance | `tests/mcp/smoke.sh <token> [url]` |
 
-See [JSON_API.md](JSON_API.md) for the `jsonapi` Lua namespace and the
-standalone runner.
+
+Documentation
+-------------
+
+* [docs/lua-api.md](docs/lua-api.md): all functions and events available to
+  scripts, with their access tags (generated from the code by
+  `tools/generate-lua-docs.py`)
+* [JSON_API.md](JSON_API.md): the `jsonapi` Lua namespace and the standalone
+  runner
+* [ARCHITECTURE.md](ARCHITECTURE.md): how the plugin works inside, for
+  contributors
