@@ -1,7 +1,7 @@
 # Lua4RS with the RetroShare JSON API
 
 The `jsonapi` Lua namespace works in the plugin and in the independent
-`lua4rs-jsonapi` runner. The runner needs Qt Core/Network and Lua 5.2 or later;
+`lua4rs-jsonapi` runner. The runner needs Qt Core/Network and Lua 5.4 or 5.5;
 it does **not** link against RetroShare or require the plugin to be installed.
 This is an alternative to maintaining native C++ bindings for every API method.
 
