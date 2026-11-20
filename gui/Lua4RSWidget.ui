@@ -14,7 +14,7 @@
    <string>Lua4RS — Lua scripting</string>
   </property>
   <property name="styleSheet">
-   <string>QLabel#scriptsLabel { font-weight: 600; } QPushButton { padding: 5px 10px; } QPushButton#pb_run { background-color: palette(highlight); color: palette(highlighted-text); font-weight: 600; }</string>
+   <string>QLabel#scriptsLabel { font-weight: 600; } QPushButton { padding: 5px 10px; } QPushButton#pb_run { background-color: palette(highlight); color: palette(highlighted-text); font-weight: 600; } QComboBox { combobox-popup: 0; }</string>
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
    <property name="spacing">
