@@ -63,7 +63,7 @@ def tokens(text):
 
 def parse_list(toks, i):
     """Parse a brace list starting at toks[i] == '{'. Returns (items, next index).
-    Each item is either a nested list or a list of tokens (DOC(...) unwrapped)."""
+    Each item is either a nested list or a list of tokens (parentheses dropped)."""
     assert toks[i] == ("punct", "{")
     i += 1
     items, current = [], []
@@ -82,10 +82,7 @@ def parse_list(toks, i):
                 return items, i
             continue
         if kind == "punct" and value in "()":
-            i += 1  # DOC("...") -> "..."
-            continue
-        if (kind, value) == ("ident", "DOC"):
-            i += 1
+            i += 1  # ("...") -> "..."
             continue
         current.append((kind, value))
         i += 1
@@ -97,6 +94,8 @@ def initializer(text, marker):
     if start < 0:
         raise ValueError("Not found: " + marker)
     start = text.index("{", start)
+    # QT_TRANSLATE_NOOP("Context", "text") -> ("text")
+    text = text[:start] + re.sub(r'QT_TRANSLATE_NOOP\(\s*"[^"]*"\s*,', "(", text[start:])
     depth = 0
     for kind, value, end in scan(text, start):
         if (kind, value) == ("punct", "{"):
@@ -113,7 +112,7 @@ def read_bindings():
     text = BINDINGS.read_text(encoding="utf-8")
     bindings = []
     for entry in initializer(text, "const std::vector<LuaBinding> kBindings"):
-        # namespace, signature, access, function, DOC(text)
+        # namespace, signature, access, function, QT_TRANSLATE_NOOP(context, text)
         values = [element[0][1] for element in entry]
         if len(values) != 5 or values[2] not in ACCESS:
             raise ValueError("Unexpected binding entry: %r" % (entry,))

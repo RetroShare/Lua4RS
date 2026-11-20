@@ -42,7 +42,7 @@ Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc)
 | `peers.getFriendList()` | read | returns list of all friends (SSL id) |
 | `peers.getPeerCount()` | read | returns number of all friends and online friends |
 | `peers.isFriend("SSL_ID")` | read | returns if a peer is a friend |
-| `peers.isGPGAccepted("PGP_ID")` | read | returns is a PGP key is accepted |
+| `peers.isGPGAccepted("PGP_ID")` | read | returns if a PGP key is accepted |
 | `peers.isOnline("SSL_ID")` | read | returns if a peer is online |
 | `peers.getGPGName("PGP_ID")` | read | returns the PGP name for a given PGP id |
 | `peers.getPeerName("SSL_ID")` | read | returns the name for a given SSL/PGP id |
@@ -51,7 +51,7 @@ Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc)
 | `peers.getGPGId("SSL_ID")` | read | returns the PGP id for a given SSL/PGP id |
 | `peers.addGroup({flag = 0, id = "", name = "Group name"})` | write | creates a new group |
 | `peers.editGroup("GROUP_ID", {flag = 0, id = "GROUP_ID", name = "Group name"})` | write | edits an existing group |
-| `peers.removeGroup("GROUP_ID")` | write | removes the group with the given groupd id |
+| `peers.removeGroup("GROUP_ID")` | write | removes the group with the given group id |
 | `peers.getGroupInfo("GROUP_ID")` | read | returns group info for a given group id |
 | `peers.getGroupInfoList()` | read | returns an array with all groups and their group infos |
 | `peers.assignPeerToGroup("GROUP_ID", "PGP_ID", true)` | write | Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing |
@@ -68,7 +68,7 @@ Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc)
 | Function | Access | Description |
 |---|---|---|
 | `config.getOperatingMode()` | read | returns the current operation mode as int and string |
-| `config.setOperatingMode("full")` | write | sets the openration mode (takes int or string) |
+| `config.setOperatingMode("full")` | write | sets the operation mode (takes int or string) |
 | `config.setMaxDataRates(1000, 100)` | write | sets max down-/upload bandwidth in kB |
 | `config.getMaxDataRates()` | read | gets max down-/upload bandwidth in kB |
 | `config.getCurrentDataRates()` | read | gets current down-/upload bandwidth in kB |
@@ -77,10 +77,10 @@ Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc)
 
 | Function | Access | Description |
 |---|---|---|
-| `disc.getDiscFriends("SSL_ID")` | read | gets discovery infos for a SSLID |
-| `disc.getDiscPgpFriends("PGP_ID")` | read | gets discovery infos for a PGPID |
+| `disc.getDiscFriends("SSL_ID")` | read | gets discovery info for an SSL id |
+| `disc.getDiscPgpFriends("PGP_ID")` | read | gets discovery info for a PGP id |
 | `disc.getPeerVersion("SSL_ID")` | read | gets RS version from a given peer |
-| `disc.getWaitingDiscCount()` | read | gets current pending discovery packets (down und up) |
+| `disc.getWaitingDiscCount()` | read | gets current pending discovery packets (down and up) |
 
 ### chat
 
