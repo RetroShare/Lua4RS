@@ -41,20 +41,25 @@ Runs with %3.</source>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="38"/>
-        <source>Unchanged example shipped with Lua4RS.
+        <source>Unchanged example shipped with Lua4RS, not approved.
 Runs with %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AccessText.cpp" line="44"/>
+        <source>Example shipped with Lua4RS, changed since, not approved.
+Runs with %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AccessText.cpp" line="56"/>
+        <source>Access: %1 — unchanged example, not approved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="40"/>
         <source>Changed outside the editor since it was approved as %1 on %2.
 Runs with %3 until it is approved again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/AccessText.cpp" line="44"/>
-        <source>Changed outside the editor since it was shipped with Lua4RS.
-Runs with %1 until it is approved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -66,11 +71,6 @@ Runs with %1.</source>
     <message>
         <location filename="../gui/AccessText.cpp" line="55"/>
         <source>Access: %1 (approved).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/AccessText.cpp" line="56"/>
-        <source>Access: %1 (unchanged example).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -178,12 +178,12 @@ Runs with %1.</source>
 <context>
     <name>Lua4RS</name>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="184"/>
+        <location filename="../Lua4RSPlugin.cpp" line="177"/>
         <source>This plugin provides Lua scripting capabilities to RetroShare.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="194"/>
+        <location filename="../Lua4RSPlugin.cpp" line="187"/>
         <source>Lua4RS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1421,32 +1421,32 @@ Access: Trusted (new script).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="169"/>
+        <location filename="../Lua4RSPlugin.cpp" line="162"/>
         <source>&lt;h3&gt;RetroShare Lua4RS plugin&lt;/h3&gt;&lt;br/&gt;  * Contributors: sehraf, far*call&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="170"/>
+        <location filename="../Lua4RSPlugin.cpp" line="163"/>
         <source>&lt;br/&gt;The Lua4Rs plugin lets you interact with RetroShare.&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="171"/>
+        <location filename="../Lua4RSPlugin.cpp" line="164"/>
         <source>&lt;br/&gt;It exposes most RetroShare functions to Lua and provides a trigger system.&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="172"/>
+        <location filename="../Lua4RSPlugin.cpp" line="165"/>
         <source>&lt;br/&gt;You can write scripts that react to events (from RetroShare) &lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="173"/>
+        <location filename="../Lua4RSPlugin.cpp" line="166"/>
         <source>&lt;br/&gt;like a friend comes online or you received a new message plus lots more.&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="174"/>
+        <location filename="../Lua4RSPlugin.cpp" line="167"/>
         <source>&lt;br/&gt;With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>

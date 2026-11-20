@@ -29,22 +29,23 @@ public:
     enum class State
     {
         Approved, // entry exists and the code matches it
-        Bundled,  // no entry, but byte-identical to a script shipped with the plugin
+        Bundled,  // no entry, byte-identical to a script shipped with the plugin (not approved)
         Modified, // entry exists, code changed since approval
-        ChangedExample, // no entry, differs from the shipped script of that name
+        ChangedExample, // no entry, differs from the shipped script of that name (not approved)
         Unknown   // no entry (e.g. file dropped into the folder)
     };
 
     struct Status
     {
         State state;
-        LuaTrust approvedLevel; // level of the entry (Modified/Approved), Trusted for examples
+        LuaTrust approvedLevel; // level of the entry (Modified/Approved), else SandboxReadOnly
         LuaTrust effective;     // what the script runs with now
         QDateTime approvedAt;   // UTC, valid for Approved/Modified
     };
 
     // shipped(name, code): true and the code of the script of that name shipped
-    // with the plugin, false if there is none
+    // with the plugin, false if there is none. Only used to tell examples apart
+    // and to diff against them: shipping a script never approves it.
     using BundledSource = std::function<bool(const QString&, QByteArray&)>;
 
     void setScriptDirectory(const QString& dir); // for <name>.approved copies
@@ -59,7 +60,7 @@ public:
     void approve(const QString& name, const QString& code, LuaTrust level);
 
     // Saving in the GUI. Keeps the level and takes over the new hash only if
-    // the code being edited (oldCode, the stored version) was approved/bundled;
+    // the code being edited (oldCode, the stored version) was approved;
     // a new script created in the GUI becomes trusted. Never raises a level.
     void guiSaved(const QString& oldName, const QString& oldCode,
                   const QString& newName, const QString& newCode, bool createdInGui);

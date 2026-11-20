@@ -84,8 +84,8 @@ LuaTrustStore::Status LuaTrustStore::statusLocked(const QString& name, const QBy
     QByteArray shipped;
     if(_bundled && _bundled(name, shipped))
     {
-        if(shipped == utf8) return { State::Bundled, LuaTrust::Trusted, LuaTrust::Trusted, {} };
-        return { State::ChangedExample, LuaTrust::Trusted, LuaTrust::SandboxReadOnly, {} };
+        const State state = shipped == utf8 ? State::Bundled : State::ChangedExample;
+        return { state, LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly, {} };
     }
     return { State::Unknown, LuaTrust::SandboxReadOnly, LuaTrust::SandboxReadOnly, {} };
 }
@@ -135,7 +135,7 @@ void LuaTrustStore::guiSaved(const QString& oldName, const QString& oldCode,
             const Status before = statusLocked(oldName, oldCode.toUtf8());
             const bool renamed = oldName != newName;
             auto it = _entries.find(oldName);
-            if(before.state == State::Approved || before.state == State::Bundled)
+            if(before.state == State::Approved)
             {
                 // The user edited an approved version: their edit inherits it.
                 if(it != _entries.end() && renamed) _entries.erase(it);

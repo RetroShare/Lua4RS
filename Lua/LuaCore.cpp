@@ -367,7 +367,7 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
             note = QObject::tr(" [%1: changed since approval]").arg(luaTrustName(status.effective));
         else if(status.state == LuaTrustStore::State::ChangedExample)
             note = QObject::tr(" [%1: changed example, not approved]").arg(luaTrustName(status.effective));
-        else if(status.state == LuaTrustStore::State::Unknown)
+        else if(status.state == LuaTrustStore::State::Unknown || status.state == LuaTrustStore::State::Bundled)
             note = QObject::tr(" [%1: not approved]").arg(luaTrustName(status.effective));
         else if(status.effective != LuaTrust::Trusted)
             note = QString(" [%1]").arg(luaTrustName(status.effective));

@@ -101,7 +101,8 @@ approved again.
   hash; if it was tampered with, the dialog warns and shows the whole script.
 * Saving in the editor keeps the level only if the saved version was approved
   before. Scripts you create in the editor are trusted.
-* The bundled examples are trusted as long as they are unchanged.
+* The bundled examples are not approved either: the read-only ones work in the
+  sandbox, the others (e.g. the chat bot) need an approval like any script.
 * On first start, scripts from older versions are listed once and stay
   sandboxed unless you approve them.
 * The **Access** column shows each script's level; a warning icon marks scripts

@@ -302,7 +302,7 @@ void Lua4RSWidget::refreshScripts()
         const auto trust = _lua->trustStore().status(container->getName(), container->getCode());
         auto access = new ScriptTableItem(AccessText::label(trust.effective), enabled, container->getName(),
                                           -int(trust.effective));
-        if(trust.state == LuaTrustStore::State::Modified || trust.state == LuaTrustStore::State::ChangedExample)
+        if(trust.state == LuaTrustStore::State::Modified) // lost its approval
             access->setIcon(style()->standardIcon(QStyle::SP_MessageBoxWarning));
         access->setToolTip(AccessText::details(trust));
         ui->tw_allscripts->setItem(row, 2, access);

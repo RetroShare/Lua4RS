@@ -42,10 +42,22 @@ Läuft als %3.</translation>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="38"/>
-        <source>Unchanged example shipped with Lua4RS.
+        <source>Unchanged example shipped with Lua4RS, not approved.
 Runs with %1.</source>
-        <translation>Unverändertes Beispiel aus Lua4RS.
+        <translation>Unverändertes Beispiel aus Lua4RS, nicht freigegeben.
 Läuft als %1.</translation>
+    </message>
+    <message>
+        <location filename="../gui/AccessText.cpp" line="44"/>
+        <source>Example shipped with Lua4RS, changed since, not approved.
+Runs with %1.</source>
+        <translation>Beispiel aus Lua4RS, seitdem geändert, nicht freigegeben.
+Läuft als %1.</translation>
+    </message>
+    <message>
+        <location filename="../gui/AccessText.cpp" line="56"/>
+        <source>Access: %1 — unchanged example, not approved.</source>
+        <translation>Zugriff: %1 — unverändertes Beispiel, nicht freigegeben.</translation>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="40"/>
@@ -53,13 +65,6 @@ Läuft als %1.</translation>
 Runs with %3 until it is approved again.</source>
         <translation>Außerhalb des Editors geändert, seit es als %1 am %2 freigegeben wurde.
 Läuft als %3, bis es erneut freigegeben wird.</translation>
-    </message>
-    <message>
-        <location filename="../gui/AccessText.cpp" line="44"/>
-        <source>Changed outside the editor since it was shipped with Lua4RS.
-Runs with %1 until it is approved.</source>
-        <translation>Außerhalb des Editors geändert, seit es mit Lua4RS ausgeliefert wurde.
-Läuft als %1, bis es freigegeben wird.</translation>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="48"/>
@@ -72,11 +77,6 @@ Läuft als %1.</translation>
         <location filename="../gui/AccessText.cpp" line="55"/>
         <source>Access: %1 (approved).</source>
         <translation>Zugriff: %1 (freigegeben).</translation>
-    </message>
-    <message>
-        <location filename="../gui/AccessText.cpp" line="56"/>
-        <source>Access: %1 (unchanged example).</source>
-        <translation>Zugriff: %1 (unverändertes Beispiel).</translation>
     </message>
     <message>
         <location filename="../gui/AccessText.cpp" line="57"/>
@@ -183,12 +183,12 @@ Läuft als %1.</translation>
 <context>
     <name>Lua4RS</name>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="184"/>
+        <location filename="../Lua4RSPlugin.cpp" line="177"/>
         <source>This plugin provides Lua scripting capabilities to RetroShare.</source>
         <translation>Dieses Plugin ermöglicht es Lua Scripte in RetroShare auszuführen.</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="194"/>
+        <location filename="../Lua4RSPlugin.cpp" line="187"/>
         <source>Lua4RS</source>
         <translation>Lua4RS</translation>
     </message>
@@ -1431,32 +1431,32 @@ Zugriff: Vertrauenswürdig (neues Skript).</translation>
         <translation>keine</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="169"/>
+        <location filename="../Lua4RSPlugin.cpp" line="162"/>
         <source>&lt;h3&gt;RetroShare Lua4RS plugin&lt;/h3&gt;&lt;br/&gt;  * Contributors: sehraf, far*call&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare-Plugin Lua4RS&lt;/h3&gt;&lt;br/&gt;  * Mitwirkende: sehraf, far*call&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="170"/>
+        <location filename="../Lua4RSPlugin.cpp" line="163"/>
         <source>&lt;br/&gt;The Lua4Rs plugin lets you interact with RetroShare.&lt;br/&gt;</source>
         <translation>&lt;br/&gt;Mit dem Plugin Lua4RS können Sie RetroShare steuern.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="171"/>
+        <location filename="../Lua4RSPlugin.cpp" line="164"/>
         <source>&lt;br/&gt;It exposes most RetroShare functions to Lua and provides a trigger system.&lt;br/&gt;</source>
         <translation>&lt;br/&gt;Es stellt die meisten RetroShare-Funktionen in Lua bereit und bietet ein System von Auslösern.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="172"/>
+        <location filename="../Lua4RSPlugin.cpp" line="165"/>
         <source>&lt;br/&gt;You can write scripts that react to events (from RetroShare) &lt;br/&gt;</source>
         <translation>&lt;br/&gt;Sie können Skripte schreiben, die auf Ereignisse (von RetroShare) reagieren, &lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="173"/>
+        <location filename="../Lua4RSPlugin.cpp" line="166"/>
         <source>&lt;br/&gt;like a friend comes online or you received a new message plus lots more.&lt;br/&gt;</source>
         <translation>&lt;br/&gt;etwa wenn ein Freund online kommt, eine neue Nachricht eintrifft und vieles mehr.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../Lua4RSPlugin.cpp" line="174"/>
+        <location filename="../Lua4RSPlugin.cpp" line="167"/>
         <source>&lt;br/&gt;With access to most RetroShare functions, you can do the same in the Lua language as you can do in C++.&lt;br/&gt;</source>
         <translation>&lt;br/&gt;Mit Zugriff auf die meisten RetroShare-Funktionen können Sie in Lua dasselbe tun wie in C++.&lt;br/&gt;</translation>
     </message>

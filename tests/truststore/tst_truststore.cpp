@@ -127,16 +127,17 @@ void bundledScripts()
         return true;
     };
     s.setBundledSource(shipped);
+    // shipped scripts are recognised, but never approved by that
     CHECK(s.status("example.lua", "shipped").state == State::Bundled);
-    CHECK(s.effective("example.lua", "shipped") == LuaTrust::Trusted);
+    CHECK(s.effective("example.lua", "shipped") == LuaTrust::SandboxReadOnly);
     CHECK(s.effective("other.lua", "shipped") == LuaTrust::SandboxReadOnly);
     CHECK(s.status("other.lua", "shipped").state == State::Unknown);
 
-    // changed outside the editor: sandboxed, but known as a changed example
+    // changed: sandboxed, known as a changed example
     const auto changed = s.status("example.lua", "changed");
     CHECK(changed.state == State::ChangedExample);
     CHECK(changed.effective == LuaTrust::SandboxReadOnly);
-    CHECK(changed.approvedLevel == LuaTrust::Trusted);
+    CHECK(changed.approvedLevel == LuaTrust::SandboxReadOnly);
     CHECK(!changed.approvedAt.isValid());
     // the shipped code serves as the approved version for the diff
     QString code;
@@ -146,10 +147,14 @@ void bundledScripts()
     s.guiSaved("example.lua", "changed", "example.lua", "changed", false);
     CHECK(s.status("example.lua", "changed").state == State::ChangedExample);
 
-    // user edits the unchanged example in the GUI -> stays trusted
+    // editing the unchanged example in the GUI does not approve it either
     s.guiSaved("example.lua", "shipped", "example.lua", "mine", false);
-    CHECK(s.effective("example.lua", "mine") == LuaTrust::Trusted);
-    CHECK(s.status("example.lua", "mine").state == State::Approved);
+    CHECK(s.effective("example.lua", "mine") == LuaTrust::SandboxReadOnly);
+    CHECK(s.status("example.lua", "mine").state == State::ChangedExample);
+    // approving it explicitly works as for any script
+    s.approve("example.lua", "shipped", LuaTrust::SandboxWrite);
+    CHECK(s.status("example.lua", "shipped").state == State::Approved);
+    CHECK(s.effective("example.lua", "shipped") == LuaTrust::SandboxWrite);
     // an explicit entry wins over the shipped script
     s.approve("example2.lua", "x", LuaTrust::SandboxReadOnly);
     CHECK(s.status("example2.lua", "shipped").state == State::Modified);
