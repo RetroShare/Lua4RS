@@ -350,20 +350,6 @@ Your results appear in Output below.</string>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cb_chatmessage">
-                <property name="text">
-                 <string>A chat message arrives</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="cb_turtleSearchResult">
-                <property name="text">
-                 <string>A file search result arrives</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <layout class="QHBoxLayout" name="constraintRow">
                 <item>
                  <widget class="QCheckBox" name="cbx_timeconstraint">

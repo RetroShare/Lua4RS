@@ -8,6 +8,8 @@
 #include "Lua/LuaList.h"
 #include "Lua/BundledScripts.h"
 #include "Lua/LuaEventCatalog.h"
+
+#include <QListWidget>
 #include "interface/L4RInterface.h"
 
 #include <QDesktopServices>
@@ -137,6 +139,30 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     connect(ui->le_scriptname, &QLineEdit::textChanged, this, &Lua4RSWidget::markDirty);
     connect(ui->le_scriptdesc, &QLineEdit::textChanged, this, &Lua4RSWidget::markDirty);
     connect(ui->pte_luacode, &QPlainTextEdit::textChanged, this, &Lua4RSWidget::markDirty);
+    // One checkable entry per event of the catalog (same list the MCP agent
+    // sees). A list, not checkboxes: it fits any width and scrolls.
+    {
+        _eventList = new QListWidget(ui->automationTab);
+        _eventList->setMinimumHeight(120);
+        _eventList->setUniformItemSizes(true);
+        for(const LuaEventInfo& event : luaEventCatalog())
+        {
+            auto item = new QListWidgetItem(tr(event.label), _eventList);
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            item->setCheckState(Qt::Unchecked);
+            QString tip = QString::fromUtf8(event.description);
+            if(!event.args.empty())
+            {
+                tip += "\n\n" + tr("The script gets in args:");
+                for(const auto& field : event.args)
+                    tip += QString("\n  args.%1: %2").arg(QString::fromUtf8(field.first), QString::fromUtf8(field.second));
+            }
+            item->setToolTip(tip + "\n\n" + tr("Name for agents: %1").arg(event.name));
+            _eventItems[event.id] = item;
+        }
+        ui->automationSettingsLayout->insertWidget(ui->automationSettingsLayout->indexOf(ui->eventLabel) + 1, _eventList, 1);
+        connect(_eventList, &QListWidget::itemChanged, this, [this]() { markDirty(); });
+    }
     for(auto box : ui->automationTab->findChildren<QCheckBox*>())
         connect(box, &QCheckBox::toggled, this, [this]() { markDirty(); updateEditorState(); });
     connect(ui->spb_everycount, QOverload<int>::of(&QSpinBox::valueChanged), this, &Lua4RSWidget::markDirty);
@@ -144,7 +170,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     for(auto field : ui->automationTab->findChildren<QDateTimeEdit*>())
         connect(field, &QDateTimeEdit::dateTimeChanged, this, &Lua4RSWidget::markDirty);
 
-    // Event triggers set over MCP that have no checkbox above.
+    // Event triggers that are not in the catalog (old or unknown ids).
     _otherEvents = new QLabel(ui->automationTab);
     _otherEvents->setWordWrap(true);
     _removeOtherEvents = new QPushButton(tr("Remove these triggers"), ui->automationTab);
@@ -321,8 +347,8 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
     ui->dte_runonce->setDateTime(when);
     ui->cb_startup->setChecked(container && container->getRunStartupChecked());
     ui->cb_shutdown->setChecked(container && container->getRunShutdownChecked());
-    ui->cb_chatmessage->setChecked(container && container->getEventTriggerChecked(L4R_LOBBY_MESSAGERECEIVED));
-    ui->cb_turtleSearchResult->setChecked(container && container->getEventTriggerChecked(L4R_FILE_SEARCHRESULT));
+    for(const auto& item : _eventItems)
+        item.second->setCheckState(container && container->getEventTriggerChecked(item.first) ? Qt::Checked : Qt::Unchecked);
     updateOtherEvents();
     _dirty = false;
     _loading = false;
@@ -431,12 +457,9 @@ void Lua4RSWidget::updateOtherEvents()
     QStringList others;
     if(_activeContainer)
         for(uint id : _activeContainer->getEventTriggerIds())
-            if(id != L4R_LOBBY_MESSAGERECEIVED && id != L4R_FILE_SEARCHRESULT)
-            {
-                const LuaEventInfo* info = luaEventById(id);
-                others << (info ? QString::fromLatin1(info->name) : QString::number(id));
-            }
-    _otherEvents->setText(tr("Also runs on these events (set by the agent): %1").arg(others.join(", ")));
+            if(!_eventItems.count(id)) others << QString::number(id);
+    _otherEvents->setText(tr("Also triggered by events Lua4RS no longer offers (ids %1). "
+                             "They never fire; remove them.").arg(others.join(", ")));
     _otherEvents->setVisible(!others.isEmpty());
     _removeOtherEvents->setVisible(!others.isEmpty());
 }
@@ -453,6 +476,7 @@ void Lua4RSWidget::updateEditorState()
     ui->pb_deletescript->setEnabled(active && !_draft);
     ui->pb_approve->setEnabled(active && !_draft);
     const bool automatic = active && ui->cbx_enable->isChecked();
+    _eventList->setEnabled(automatic);
     for(auto box : ui->automationTab->findChildren<QCheckBox*>())
         if(box != ui->cbx_enable) box->setEnabled(automatic);
     ui->spb_everycount->setEnabled(automatic && ui->cb_every->isChecked());
@@ -531,10 +555,10 @@ bool Lua4RSWidget::saveScript()
     _activeContainer->setEnabled(ui->cbx_enable->isChecked());
     _activeContainer->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
     _activeContainer->setConstraintFromTo(ui->tied_timefrom->time(), ui->tied_timeto->time());
-    // Event triggers without a checkbox here (set over MCP) survive a GUI save.
-    QList<uint> otherEvents = _activeContainer->getEventTriggerIds();
-    otherEvents.removeAll(uint(L4R_LOBBY_MESSAGERECEIVED));
-    otherEvents.removeAll(uint(L4R_FILE_SEARCHRESULT));
+    // Event ids that are not in the catalog survive a save unless removed.
+    QList<uint> otherEvents;
+    for(uint id : _activeContainer->getEventTriggerIds())
+        if(!_eventItems.count(id)) otherEvents << id;
     _activeContainer->removeAllTrigger();
     if(!_dropOtherEvents)
         for(uint id : otherEvents) _activeContainer->addEventTrigger(id);
@@ -542,8 +566,8 @@ bool Lua4RSWidget::saveScript()
     if(ui->cb_once->isChecked()) _activeContainer->addRunOnceTrigger(ui->dte_runonce->dateTime());
     if(ui->cb_startup->isChecked()) _activeContainer->addRunStratupTrigger();
     if(ui->cb_shutdown->isChecked()) _activeContainer->addRunShutdownTrigger();
-    if(ui->cb_chatmessage->isChecked()) _activeContainer->addEventTrigger(L4R_LOBBY_MESSAGERECEIVED);
-    if(ui->cb_turtleSearchResult->isChecked()) _activeContainer->addEventTrigger(L4R_FILE_SEARCHRESULT);
+    for(const auto& item : _eventItems)
+        if(item.second->checkState() == Qt::Checked) _activeContainer->addEventTrigger(item.first);
     // A new or renamed script never inherits sandbox globals of an older
     // script that had this name.
     if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _draftUntrusted = false; _lua->forgetScriptState(name); }

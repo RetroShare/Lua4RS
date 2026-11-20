@@ -94,6 +94,7 @@ private:
 #define L4R_INFO_NEWENTRY               10000
 #define L4R_INFO_PEERLISTCHANGE         10010
 #define L4R_INFO_PEERLISTCHANGE_PRE     10011
+#define L4R_INFO_SHAREDLISTCHANGE       10012   // shared folder lists (was part of PEERLISTCHANGE)
 #define L4R_INFO_DISCOVERY_UPDATE       10020
 #define L4R_INFO_DISK_FULL              10030
 

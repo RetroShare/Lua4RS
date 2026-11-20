@@ -1,6 +1,8 @@
 #ifndef LUA4RSWIDGET_H
 #define LUA4RSWIDGET_H
 
+#include <map>
+
 #include <retroshare-gui/mainpage.h>
 
 namespace Ui { class Lua4RSWidget; }
@@ -9,6 +11,8 @@ class LuaContainer;
 class QTreeWidgetItem;
 class QLabel;
 class QPushButton;
+class QListWidget;
+class QListWidgetItem;
 class QNetworkAccessManager;
 
 class Lua4RSWidget : public MainPage
@@ -61,6 +65,8 @@ private:
     QLabel* _otherEvents = nullptr;          // event triggers without a checkbox
     QPushButton* _removeOtherEvents = nullptr;
     bool _dropOtherEvents = false;
+    QListWidget* _eventList = nullptr;             // events of the catalog, checkable
+    std::map<unsigned, QListWidgetItem*> _eventItems; // event id -> entry
 
 private slots:
     void on_pb_run_clicked();

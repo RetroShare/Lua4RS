@@ -77,7 +77,7 @@ void Lua4RSNotify::handleEvent(std::shared_ptr<const RsEvent> event)
         {
         case RsFriendListEventCode::NODE_STATUS_CHANGED:
             notifyPeerStatusChanged(peer->mSslId.toStdString(), static_cast<uint32_t>(peer->mStatus));
-            notifyPeerStatusChangedSummary();
+            // No extra "any status changed" event: it duplicated the one above.
             break;
         case RsFriendListEventCode::NODE_STATE_STRING_CHANGED:
             notifyCustomState(peer->mSslId.toStdString(), peer->mStateString);
@@ -168,7 +168,9 @@ void Lua4RSNotify::notifyListPreChange              (int list, int type)
 void Lua4RSNotify::notifyListChange                 (int list, int type)
 {
     struct LuaEvent *e = new LuaEvent();
-    e->eventId = L4R_INFO_PEERLISTCHANGE;
+    // Friends and shared folder lists are separate events: folder lists change
+    // every few seconds and would wake up every friend-list script.
+    e->eventId = list == LegacyNeighbours ? L4R_INFO_PEERLISTCHANGE : L4R_INFO_SHAREDLISTCHANGE;
     e->timeStamp = QDateTime::currentDateTime();
     e->dataParm->setValue("intlist", list);
     e->dataParm->setValue("inttype", type);
