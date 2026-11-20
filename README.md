@@ -235,6 +235,8 @@ Documentation
 * [docs/lua-api.md](docs/lua-api.md): all functions and events available to
   scripts, with their access tags (generated from the code by
   `tools/generate-lua-docs.py`)
+* [scripts/](scripts/README.md): the bundled examples, JSON API scripts and
+  more scripts to adapt
 * [JSON_API.md](JSON_API.md): the `jsonapi` Lua namespace and the standalone
   runner
 * [ARCHITECTURE.md](ARCHITECTURE.md): how the plugin works inside, for

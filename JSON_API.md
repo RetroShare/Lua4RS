@@ -33,7 +33,7 @@ For example, in PowerShell:
 $env:RETROSHARE_API_URL = 'http://127.0.0.1:9092'
 $env:RETROSHARE_API_USER = 'your-api-user'
 $env:RETROSHARE_API_PASSWORD = 'your-api-password'
-.\jsonapi-runner\release\lua4rs-jsonapi.exe .\scripts\jsonapi-friends.lua
+.\jsonapi-runner\release\lua4rs-jsonapi.exe .\scripts\jsonapi\jsonapi-friends.lua
 ```
 
 Inside the plugin, start RetroShare with these environment variables or call:

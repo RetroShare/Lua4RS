@@ -122,7 +122,8 @@ TARGET = Lua4RS
 
 RESOURCES +=  \
     Lua4RS_images.qrc \
-    Lua4RS_lang.qrc
+    Lua4RS_lang.qrc \
+    scripts/examples/examples.qrc
 
 TRANSLATIONS += \
     lang/Lua4RS_en.ts \

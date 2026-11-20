@@ -1,0 +1,12 @@
+<RCC>
+    <!-- Examples installed into a new profile (once) and listed under Example -> Bundled scripts.
+         Unchanged copies count as approved, so only add scripts that are safe to run as they are. -->
+    <qresource prefix="/lua4rs/examples">
+        <file>chatBot.lua</file>
+        <file>friendsVersionOverview.lua</file>
+        <file>ipOverview.lua</file>
+        <file>offlineChecker.lua</file>
+        <file>onlineHistory.lua</file>
+        <file>speedControl.lua</file>
+    </qresource>
+</RCC>
