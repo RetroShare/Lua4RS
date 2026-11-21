@@ -251,93 +251,93 @@ Läuft als %1.</translation>
         <translation>QLabel#scriptsLabel { font-weight: 600; } QPushButton { padding: 5px 10px; } QPushButton#pb_run { background-color: palette(highlight); color: palette(highlighted-text); font-weight: 600; } QComboBox { combobox-popup: 0; }</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="42"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="146"/>
         <source>Scripts</source>
         <translation>Skripte</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="49"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="153"/>
         <source>Find a script…</source>
         <translation>Skript suchen…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="58"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="162"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="65"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="169"/>
         <source>Example ▾</source>
         <translation>Beispiel ▾</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="90"/>
-        <location filename="../gui/Lua4RSWidget.ui" line="162"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="194"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="266"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="95"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="199"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="100"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="204"/>
         <source>Access</source>
         <translation>Zugriff</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="108"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="212"/>
         <source>Click a script to open it. Auto shows whether saved triggers are enabled, Access what the script may do.</source>
         <translation>Klicken Sie auf ein Skript, um es zu öffnen. „Auto“ zeigt, ob gespeicherte Auslöser aktiv sind, „Zugriff“, was das Skript darf.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="120"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="224"/>
         <source>Refresh</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="136"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="240"/>
         <source>Open scripts folder</source>
         <translation>Skriptordner öffnen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="169"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="273"/>
         <source>Choose New or Example to start</source>
         <translation>Wählen Sie „Neu“ oder „Beispiel“, um zu beginnen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="183"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="287"/>
         <source>Review the saved script and choose what it may do.</source>
         <translation>Prüfen Sie das gespeicherte Skript und legen Sie fest, was es darf.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="186"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="290"/>
         <source>Approve…</source>
         <translation>Freigeben…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="193"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="297"/>
         <source>Run the code currently shown in the editor. Automatic triggers are not required.</source>
         <translation>Führt den Code aus, der gerade im Editor steht. Automatische Auslöser sind dafür nicht nötig.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="196"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="300"/>
         <source>Run  F5</source>
         <translation>Ausführen  F5</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="205"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="309"/>
         <source>Optional description — what does this script do?</source>
         <translation>Optionale Beschreibung — was macht dieses Skript?</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="213"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="317"/>
         <source>Script</source>
         <translation>Skript</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="222"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="326"/>
         <source>Start with Example → Hello world, then click Run.
 
 Your results appear in Output below.</source>
@@ -346,224 +346,219 @@ Your results appear in Output below.</source>
 Das Ergebnis erscheint unten in der Ausgabe.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="232"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="336"/>
         <source>Automation</source>
         <translation>Automatisierung</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="238"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="342"/>
         <source>Optional: run this script automatically. Save to apply these settings. Run always executes the editor directly.</source>
         <translation>Optional: dieses Skript automatisch ausführen. Speichern übernimmt diese Einstellungen. „Ausführen“ führt immer direkt den Editorinhalt aus.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="248"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="352"/>
         <source>Enable automatic runs</source>
         <translation>Automatische Ausführung aktivieren</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="259"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="363"/>
         <source>Repeat every</source>
         <translation>Wiederholen alle</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="283"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="387"/>
         <source>seconds</source>
         <translation>Sekunden</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="288"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="392"/>
         <source>minutes</source>
         <translation>Minuten</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="293"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="397"/>
         <source>hours</source>
         <translation>Stunden</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="298"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="402"/>
         <source>days</source>
         <translation>Tage</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="303"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="407"/>
         <source>weeks</source>
         <translation>Wochen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="322"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="426"/>
         <source>yyyy-MM-dd HH:mm</source>
         <translation>dd.MM.yyyy HH:mm</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="334"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="438"/>
         <source>When RetroShare starts</source>
         <translation>Beim Start von RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="341"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="445"/>
         <source>When RetroShare closes</source>
         <translation>Beim Beenden von RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="348"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="452"/>
         <source>Or when an event occurs:</source>
         <translation>Oder wenn ein Ereignis eintritt:</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="357"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="461"/>
         <source>Only between</source>
         <translation>Nur zwischen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="364"/>
-        <location filename="../gui/Lua4RSWidget.ui" line="378"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="468"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="482"/>
         <source>HH:mm</source>
         <translation>HH:mm</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="371"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="475"/>
         <source>and</source>
         <translation>und</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="411"/>
-        <source>Help</source>
-        <translation>Hilfe</translation>
-    </message>
-    <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="417"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="516"/>
         <source>Ready — open a script or choose an example.</source>
         <translation>Bereit — öffnen Sie ein Skript oder wählen Sie ein Beispiel.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="427"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="526"/>
         <source>Clear output</source>
         <translation>Ausgabe leeren</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="446"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="545"/>
         <source>Script results and errors appear here. Use print(...) to write output.</source>
         <translation>Ergebnisse und Fehler der Skripte erscheinen hier. Mit print(...) schreiben Sie eine Ausgabe.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="454"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="553"/>
         <source>Activity</source>
         <translation>Aktivität</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="480"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="579"/>
         <source>JSON API</source>
         <translation>JSON-API</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="486"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="585"/>
         <source>Use the JSON API from Lua. First enable it in RetroShare and authorize an API username and password.</source>
         <translation>Die JSON-API aus Lua nutzen. Aktivieren Sie sie zuerst in RetroShare und autorisieren Sie einen API-Benutzernamen mit Passwort.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="496"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="595"/>
         <source>Server address</source>
         <translation>Serveradresse</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="503"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="602"/>
         <source>http://127.0.0.1:9092</source>
         <translation>http://127.0.0.1:9092</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="510"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="609"/>
         <source>API username</source>
         <translation>API-Benutzername</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="517"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="616"/>
         <source>Authorized API user</source>
         <translation>Autorisierter API-Benutzer</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="524"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="623"/>
         <source>API password</source>
         <translation>API-Passwort</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="534"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="633"/>
         <source>API password, not your profile password</source>
         <translation>API-Passwort, nicht Ihr Profilpasswort</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="541"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="640"/>
         <source>Credentials stay in memory for this session. Environment variables are loaded when this page opens.</source>
         <translation>Die Zugangsdaten bleiben nur für diese Sitzung im Speicher. Umgebungsvariablen werden beim Öffnen dieser Seite geladen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="551"/>
-        <source>Apply &amp; test connection</source>
-        <translation>Übernehmen &amp; Verbindung testen</translation>
+        <location filename="../gui/Lua4RSWidget.ui" line="650"/>
+        <source>Apply &amp;&amp; test connection</source>
+        <translation>Übernehmen &amp;&amp; Verbindung testen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="558"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="657"/>
         <source>Not tested</source>
         <translation>Nicht getestet</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="568"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="667"/>
         <source>New API example</source>
         <translation>Neues API-Beispiel</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="575"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="674"/>
         <source>The example lists your friends. It does not send messages or change settings.</source>
         <translation>Das Beispiel listet Ihre Freunde auf. Es sendet keine Nachrichten und ändert keine Einstellungen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="599"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="698"/>
         <source>Functions</source>
         <translation>Funktionen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="605"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="704"/>
         <source>Find a function…</source>
         <translation>Funktion suchen…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="612"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="711"/>
         <source>Double-click a function to insert it at the cursor.</source>
         <translation>Doppelklicken Sie auf eine Funktion, um sie an der Cursorposition einzufügen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="626"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="725"/>
         <source>Function</source>
         <translation>Funktion</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="631"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="730"/>
         <source>Insert</source>
         <translation>Einfügen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="639"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="738"/>
         <source>Insert function</source>
         <translation>Funktion einfügen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="127"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="231"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="176"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="280"/>
         <location filename="../gui/Lua4RSWidget.cpp" line="475"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="437"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="536"/>
         <source>Output</source>
         <translation>Ausgabe</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="315"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="419"/>
         <source>Run once at</source>
         <translation>Einmalig um</translation>
     </message>

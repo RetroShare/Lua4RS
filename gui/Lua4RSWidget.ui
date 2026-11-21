@@ -18,224 +18,571 @@
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
    <property name="spacing">
-    <number>12</number>
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
    </property>
    <item>
-    <widget class="QSplitter" name="workspaceSplitter">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+    <widget class="QFrame" name="titleBarFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="childrenCollapsible">
-      <bool>false</bool>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <widget class="QWidget" name="scriptsPane">
-      <property name="minimumSize">
-       <size>
-        <width>170</width>
-        <height>0</height>
-       </size>
+     <layout class="QHBoxLayout" name="titleBarLayout">
+      <property name="leftMargin">
+       <number>2</number>
       </property>
-      <layout class="QVBoxLayout" name="scriptsLayout">
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="titleBarPixmap">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../Lua4RS_images.qrc">:/images/lua_logo.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="titleBarLabel">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string notr="true">Lua4RS</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="titleBarSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="helpButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="contentArea" native="true">
+     <layout class="QVBoxLayout" name="contentLayout">
+      <property name="spacing">
+       <number>12</number>
+      </property>
        <item>
-        <widget class="QLabel" name="scriptsLabel">
-         <property name="text">
-          <string>Scripts</string>
+        <widget class="QSplitter" name="workspaceSplitter">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="le_scriptfilter">
-         <property name="placeholderText">
-          <string>Find a script…</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="newButtons">
-         <item>
-          <widget class="QPushButton" name="pb_newscript">
-           <property name="text">
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pb_example">
-           <property name="text">
-            <string>Example ▾</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="tw_allscripts">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="alternatingRowColors">
+         <property name="childrenCollapsible">
           <bool>false</bool>
          </property>
-         <property name="selectionMode">
-          <enum>QAbstractItemView::SingleSelection</enum>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="showGrid">
-          <bool>false</bool>
-         </property>
-         <column>
-          <property name="text">
-           <string>Name</string>
+         <widget class="QWidget" name="scriptsPane">
+          <property name="minimumSize">
+           <size>
+            <width>220</width>
+            <height>0</height>
+           </size>
           </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Auto</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Access</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="scriptsHint">
-         <property name="text">
-          <string>Click a script to open it. Auto shows whether saved triggers are enabled, Access what the script may do.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="scriptActions">
-         <item>
-          <widget class="QPushButton" name="pb_load">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pb_deletescript">
-           <property name="text">
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pb_folder">
-         <property name="text">
-          <string>Open scripts folder</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QSplitter" name="editorSplitter">
-      <property name="minimumSize">
-       <size>
-        <width>380</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="childrenCollapsible">
-       <bool>false</bool>
-      </property>
-      <widget class="QWidget" name="editorPane">
-       <layout class="QVBoxLayout" name="editorLayout">
-        <item>
-         <layout class="QHBoxLayout" name="nameLayout">
-          <item>
-           <widget class="QLabel" name="nameLabel">
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="le_scriptname">
-            <property name="placeholderText">
-             <string>Choose New or Example to start</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_save">
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_approve">
-            <property name="toolTip">
-             <string>Review the saved script and choose what it may do.</string>
-            </property>
-            <property name="text">
-             <string>Approve…</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_run">
-            <property name="toolTip">
-             <string>Run the code currently shown in the editor. Automatic triggers are not required.</string>
-            </property>
-            <property name="text">
-             <string>Run  F5</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_scriptdesc">
-          <property name="placeholderText">
-           <string>Optional description — what does this script do?</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTabWidget" name="editorTabs">
-          <widget class="QWidget" name="codeTab">
-           <attribute name="title">
-            <string>Script</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="codeTabLayout">
-            <item>
-             <widget class="Lua4RSTextEdit" name="pte_luacode">
-              <property name="lineWrapMode">
-               <enum>QPlainTextEdit::NoWrap</enum>
+          <layout class="QVBoxLayout" name="scriptsLayout">
+           <item>
+            <widget class="QLabel" name="scriptsLabel">
+             <property name="text">
+              <string>Scripts</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_scriptfilter">
+             <property name="placeholderText">
+              <string>Find a script…</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="newButtons">
+             <item>
+              <widget class="QPushButton" name="pb_newscript">
+               <property name="text">
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_example">
+               <property name="text">
+                <string>Example ▾</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="tw_allscripts">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <column>
+              <property name="text">
+               <string>Name</string>
               </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Access</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="scriptsHint">
+             <property name="text">
+              <string>Click a script to open it. Auto shows whether saved triggers are enabled, Access what the script may do.</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="scriptActions">
+             <item>
+              <widget class="QPushButton" name="pb_load">
+               <property name="text">
+                <string>Refresh</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_deletescript">
+               <property name="text">
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_folder">
+             <property name="text">
+              <string>Open scripts folder</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QSplitter" name="editorSplitter">
+          <property name="minimumSize">
+           <size>
+            <width>380</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="editorPane">
+           <layout class="QVBoxLayout" name="editorLayout">
+            <item>
+             <layout class="QHBoxLayout" name="nameLayout">
+              <item>
+               <widget class="QLabel" name="nameLabel">
+                <property name="text">
+                 <string>Name</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="le_scriptname">
+                <property name="placeholderText">
+                 <string>Choose New or Example to start</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_save">
+                <property name="text">
+                 <string>Save</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_approve">
+                <property name="toolTip">
+                 <string>Review the saved script and choose what it may do.</string>
+                </property>
+                <property name="text">
+                 <string>Approve…</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_run">
+                <property name="toolTip">
+                 <string>Run the code currently shown in the editor. Automatic triggers are not required.</string>
+                </property>
+                <property name="text">
+                 <string>Run  F5</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_scriptdesc">
               <property name="placeholderText">
-               <string>Start with Example → Hello world, then click Run.
+               <string>Optional description — what does this script do?</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTabWidget" name="editorTabs">
+              <widget class="QWidget" name="codeTab">
+               <attribute name="title">
+                <string>Script</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="codeTabLayout">
+                <item>
+                 <widget class="Lua4RSTextEdit" name="pte_luacode">
+                  <property name="lineWrapMode">
+                   <enum>QPlainTextEdit::NoWrap</enum>
+                  </property>
+                  <property name="placeholderText">
+                   <string>Start with Example → Hello world, then click Run.
 
 Your results appear in Output below.</string>
-              </property>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="automationTab">
+               <attribute name="title">
+                <string>Automation</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="automationTabLayout">
+                <item>
+                 <widget class="QLabel" name="automationHint">
+                  <property name="text">
+                   <string>Optional: run this script automatically. Save to apply these settings. Run always executes the editor directly.</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="cbx_enable">
+                  <property name="text">
+                   <string>Enable automatic runs</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="automationSettingsLayout">
+                  <item>
+                   <layout class="QHBoxLayout" name="everyRow">
+                    <item>
+                     <widget class="QCheckBox" name="cb_every">
+                      <property name="text">
+                       <string>Repeat every</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="spb_everycount">
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="maximum">
+                       <number>100000</number>
+                      </property>
+                      <property name="value">
+                       <number>5</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="dd_everyunits">
+                      <property name="currentIndex">
+                       <number>1</number>
+                      </property>
+                      <item>
+                       <property name="text">
+                        <string>seconds</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>minutes</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>hours</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>days</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>weeks</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="onceRow">
+                    <item>
+                     <widget class="QCheckBox" name="cb_once">
+                      <property name="text">
+                       <string>Run once at</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDateTimeEdit" name="dte_runonce">
+                      <property name="displayFormat">
+                       <string>yyyy-MM-dd HH:mm</string>
+                      </property>
+                      <property name="calendarPopup">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="cb_startup">
+                    <property name="text">
+                     <string>When RetroShare starts</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="cb_shutdown">
+                    <property name="text">
+                     <string>When RetroShare closes</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="eventLabel">
+                    <property name="text">
+                     <string>Or when an event occurs:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="constraintRow">
+                    <item>
+                     <widget class="QCheckBox" name="cbx_timeconstraint">
+                      <property name="text">
+                       <string>Only between</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QTimeEdit" name="tied_timefrom">
+                      <property name="displayFormat">
+                       <string>HH:mm</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="toLabel">
+                      <property name="text">
+                       <string>and</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QTimeEdit" name="tied_timeto">
+                      <property name="displayFormat">
+                       <string>HH:mm</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="automationSpace">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="automationTab">
-           <attribute name="title">
-            <string>Automation</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="automationTabLayout">
+          <widget class="QWidget" name="outputPane">
+           <layout class="QVBoxLayout" name="outputLayout">
             <item>
-             <widget class="QLabel" name="automationHint">
+             <layout class="QHBoxLayout" name="outputActions">
+              <item>
+               <widget class="QLabel" name="runStatus">
+                <property name="text">
+                 <string>Ready — open a script or choose an example.</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_clearoutput">
+                <property name="text">
+                 <string>Clear output</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTabWidget" name="outputTabs">
+              <widget class="QWidget" name="outputTab">
+               <attribute name="title">
+                <string>Output</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="outputTabLayout">
+                <item>
+                 <widget class="QPlainTextEdit" name="tb_output">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>Script results and errors appear here. Use print(...) to write output.</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="logTab">
+               <attribute name="title">
+                <string>Activity</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="logTabLayout">
+                <item>
+                 <widget class="QPlainTextEdit" name="tb_log">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QTabWidget" name="toolsTabs">
+          <property name="minimumSize">
+           <size>
+            <width>260</width>
+            <height>0</height>
+           </size>
+          </property>
+          <widget class="QWidget" name="apiTab">
+           <attribute name="title">
+            <string>JSON API</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="apiTabLayout">
+            <item>
+             <widget class="QLabel" name="apiIntro">
               <property name="text">
-               <string>Optional: run this script automatically. Save to apply these settings. Run always executes the editor directly.</string>
+               <string>Use the JSON API from Lua. First enable it in RetroShare and authorize an API username and password.</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -243,148 +590,96 @@ Your results appear in Output below.</string>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbx_enable">
+             <widget class="QLabel" name="urlLabel">
               <property name="text">
-               <string>Enable automatic runs</string>
+               <string>Server address</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="automationSettingsLayout">
-              <item>
-               <layout class="QHBoxLayout" name="everyRow">
-                <item>
-                 <widget class="QCheckBox" name="cb_every">
-                  <property name="text">
-                   <string>Repeat every</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="spb_everycount">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100000</number>
-                  </property>
-                  <property name="value">
-                   <number>5</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="dd_everyunits">
-                  <property name="currentIndex">
-                   <number>1</number>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>seconds</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>minutes</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>hours</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>days</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>weeks</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="onceRow">
-                <item>
-                 <widget class="QCheckBox" name="cb_once">
-                  <property name="text">
-                   <string>Run once at</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDateTimeEdit" name="dte_runonce">
-                  <property name="displayFormat">
-                   <string>yyyy-MM-dd HH:mm</string>
-                  </property>
-                  <property name="calendarPopup">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="cb_startup">
-                <property name="text">
-                 <string>When RetroShare starts</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="cb_shutdown">
-                <property name="text">
-                 <string>When RetroShare closes</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="eventLabel">
-                <property name="text">
-                 <string>Or when an event occurs:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="constraintRow">
-                <item>
-                 <widget class="QCheckBox" name="cbx_timeconstraint">
-                  <property name="text">
-                   <string>Only between</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTimeEdit" name="tied_timefrom">
-                  <property name="displayFormat">
-                   <string>HH:mm</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="toLabel">
-                  <property name="text">
-                   <string>and</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTimeEdit" name="tied_timeto">
-                  <property name="displayFormat">
-                   <string>HH:mm</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
+             <widget class="QLineEdit" name="le_apiurl">
+              <property name="placeholderText">
+               <string>http://127.0.0.1:9092</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <spacer name="automationSpace">
+             <widget class="QLabel" name="userLabel">
+              <property name="text">
+               <string>API username</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_apiuser">
+              <property name="placeholderText">
+               <string>Authorized API user</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="passwordLabel">
+              <property name="text">
+               <string>API password</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_apipassword">
+              <property name="echoMode">
+               <enum>QLineEdit::Password</enum>
+              </property>
+              <property name="placeholderText">
+               <string>API password, not your profile password</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="credentialsHint">
+              <property name="text">
+               <string>Credentials stay in memory for this session. Environment variables are loaded when this page opens.</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_apitest">
+              <property name="text">
+               <string>Apply &amp;&amp; test connection</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="apiStatus">
+              <property name="text">
+               <string>Not tested</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_apiexample">
+              <property name="text">
+               <string>New API example</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="apiUsage">
+              <property name="text">
+               <string>The example lists your friends. It does not send messages or change settings.</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="apiSpace">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -398,251 +693,58 @@ Your results appear in Output below.</string>
             </item>
            </layout>
           </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="outputPane">
-       <layout class="QVBoxLayout" name="outputLayout">
-        <item>
-         <layout class="QHBoxLayout" name="outputActions">
-          <item>
-           <widget class="QToolButton" name="helpButton">
-            <property name="text"><string>Help</string></property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="runStatus">
-            <property name="text">
-             <string>Ready — open a script or choose an example.</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_clearoutput">
-            <property name="text">
-             <string>Clear output</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QTabWidget" name="outputTabs">
-          <widget class="QWidget" name="outputTab">
+          <widget class="QWidget" name="referenceTab">
            <attribute name="title">
-            <string>Output</string>
+            <string>Functions</string>
            </attribute>
-           <layout class="QVBoxLayout" name="outputTabLayout">
+           <layout class="QVBoxLayout" name="referenceTabLayout">
             <item>
-             <widget class="QPlainTextEdit" name="tb_output">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
+             <widget class="QLineEdit" name="le_functionfilter">
               <property name="placeholderText">
-               <string>Script results and errors appear here. Use print(...) to write output.</string>
+               <string>Find a function…</string>
               </property>
              </widget>
             </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="logTab">
-           <attribute name="title">
-            <string>Activity</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="logTabLayout">
             <item>
-             <widget class="QPlainTextEdit" name="tb_log">
-              <property name="readOnly">
+             <widget class="QLabel" name="referenceHint">
+              <property name="text">
+               <string>Double-click a function to insert it at the cursor.</string>
+              </property>
+              <property name="wordWrap">
                <bool>true</bool>
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QTreeWidget" name="tw_hints">
+              <property name="columnCount">
+               <number>2</number>
+              </property>
+              <column>
+               <property name="text">
+                <string>Function</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Insert</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_pastehint">
+              <property name="text">
+               <string>Insert function</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QTabWidget" name="toolsTabs">
-      <property name="minimumSize">
-       <size>
-        <width>260</width>
-        <height>0</height>
-       </size>
-      </property>
-      <widget class="QWidget" name="apiTab">
-       <attribute name="title">
-        <string>JSON API</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="apiTabLayout">
-        <item>
-         <widget class="QLabel" name="apiIntro">
-          <property name="text">
-           <string>Use the JSON API from Lua. First enable it in RetroShare and authorize an API username and password.</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="urlLabel">
-          <property name="text">
-           <string>Server address</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_apiurl">
-          <property name="placeholderText">
-           <string>http://127.0.0.1:9092</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="userLabel">
-          <property name="text">
-           <string>API username</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_apiuser">
-          <property name="placeholderText">
-           <string>Authorized API user</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="passwordLabel">
-          <property name="text">
-           <string>API password</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_apipassword">
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-          <property name="placeholderText">
-           <string>API password, not your profile password</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="credentialsHint">
-          <property name="text">
-           <string>Credentials stay in memory for this session. Environment variables are loaded when this page opens.</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_apitest">
-          <property name="text">
-           <string>Apply &amp; test connection</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="apiStatus">
-          <property name="text">
-           <string>Not tested</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_apiexample">
-          <property name="text">
-           <string>New API example</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="apiUsage">
-          <property name="text">
-           <string>The example lists your friends. It does not send messages or change settings.</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="apiSpace">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="referenceTab">
-       <attribute name="title">
-        <string>Functions</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="referenceTabLayout">
-        <item>
-         <widget class="QLineEdit" name="le_functionfilter">
-          <property name="placeholderText">
-           <string>Find a function…</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="referenceHint">
-          <property name="text">
-           <string>Double-click a function to insert it at the cursor.</string>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTreeWidget" name="tw_hints">
-          <property name="columnCount">
-           <number>2</number>
-          </property>
-          <column>
-           <property name="text">
-            <string>Function</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Insert</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pb_pastehint">
-          <property name="text">
-           <string>Insert function</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
+        </widget>
+       </item>
+     </layout>
     </widget>
    </item>
   </layout>

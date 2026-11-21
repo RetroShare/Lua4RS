@@ -75,7 +75,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
         ui->runStatus->setText(success ? tr("Finished. Results appear in Output.") : tr("Script failed - see Output."));
         updateEditorState();
     }, Qt::QueuedConnection);
-    ui->workspaceSplitter->setSizes({210, 720, 290});
+    ui->workspaceSplitter->setSizes({270, 670, 290});
     ui->editorSplitter->setSizes({500, 190});
     ui->workspaceSplitter->setStretchFactor(1, 1);
     ui->editorSplitter->setStretchFactor(0, 1);
