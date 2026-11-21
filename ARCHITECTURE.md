@@ -153,6 +153,22 @@ When in doubt, choose the stricter tag. The GUI's function browser, the MCP
 tools and the approval dialog's list of write/sensitive calls all pick the new
 entry up from the table.
 
+Rules for the C++ side of a binding:
+
+* **Raise Lua errors only when no C++ objects are alive.** The system Lua is
+  built as C: `luaL_error`, `luaL_argerror`, `luaL_check*` and a failing
+  `lua_call` leave the function with `longjmp`, so destructors of objects
+  still in scope (`std::string`, containers, locks) never run. Check the
+  arguments first, do the work inside an inner `{ ... }` block, and raise
+  errors after it (see `Lua/LuaToRSServices.cpp`, `Lua/LuaStore.cpp`).
+* **No upvalues.** The access check (`guardedBinding` in
+  `Lua/LuaSandbox.cpp`) calls the binding directly in its own frame, so that
+  argument errors name the function (`bad argument #1 to 'isOnline'`). A
+  binding would see the wrapper's upvalues, not its own.
+* **Calling Lua from C** (a callback, a script function): use `lua_pcall`, or
+  `lua_call` only where a surrounding `pcall` is certain. `lua_call` is not
+  the way to wrap a C function: the extra frame loses the function's name.
+
 **An event.** Map the `RsEvent` in `Lua4RSNotify::handleEvent` to an `L4R_*`
 id, then add an entry to `Lua/LuaEventCatalog.h`: stable name, id, GUI label,
 description and the `args` fields. Each RetroShare change should be delivered

@@ -19,13 +19,15 @@ namespace {
 // Stand-ins for native bindings, only registered with --sandbox, so tests can
 // check the read/write gate without RetroShare.
 int selftestOk(lua_State* L) { lua_pushboolean(L, 1); return 1; }
+// Checks its argument like real bindings do (for the error message test).
+int selftestNumber(lua_State* L) { lua_pushinteger(L, luaL_checkinteger(L, 1)); return 1; }
 
 void usage()
 {
     std::fprintf(stderr, "Usage: lua4rs-jsonapi [--sandbox=readonly|write] script.lua [arguments...]\n"
         "Connection: RETROSHARE_API_URL, RETROSHARE_API_USER, RETROSHARE_API_PASSWORD\n"
         "--sandbox runs the script like an untrusted Lua4RS script (time limit:\n"
-        "LUA4RS_TIMEOUT_MS, default 5000) and adds selftest.read()/write()/sensitive().\n");
+        "LUA4RS_TIMEOUT_MS, default 5000) and adds selftest.read()/write()/sensitive()/number(n).\n");
 }
 }
 
@@ -72,6 +74,9 @@ int main(int argc, char** argv)
         lua_settable(L, -3);
         lua_pushstring(L, "sensitive");
         LuaSandbox::pushGuardedFunction(L, selftestOk, LuaAccess::Sensitive, "selftest.sensitive");
+        lua_settable(L, -3);
+        lua_pushstring(L, "number");
+        LuaSandbox::pushGuardedFunction(L, selftestNumber, LuaAccess::Read, "selftest.number");
         lua_settable(L, -3);
         LuaSandbox::registerNamespace(L, "selftest");
         lua_pop(L, 1);

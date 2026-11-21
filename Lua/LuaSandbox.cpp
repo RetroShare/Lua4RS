@@ -79,8 +79,8 @@ int safeSetmetatable(lua_State* L)
         lua_pop(L, 1);
         if(hasGc) return luaL_error(L, "__gc metamethods are not allowed in the sandbox");
     }
-    // Call directly (not via lua_call) so argument errors name the function,
-    // e.g. "bad argument #1 to 'print'". Bindings must not use upvalues.
+    // Call the original directly (not via lua_call) so argument errors name
+    // the function, e.g. "bad argument #1 to 'setmetatable'".
     const lua_CFunction f = lua_tocfunction(L, lua_upvalueindex(1));
     return f(L);
 }
@@ -92,10 +92,12 @@ int guardedBinding(lua_State* L)
     if(!luaTrustAllows(trust, access))
         return luaL_error(L, "%s: %s access denied (script runs as %s; needs sandbox-write or trusted)",
                           lua_tostring(L, lua_upvalueindex(3)), luaAccessName(access), luaTrustName(trust));
-    lua_pushvalue(L, lua_upvalueindex(1));
-    lua_insert(L, 1);
-    lua_call(L, lua_gettop(L) - 1, LUA_MULTRET);
-    return lua_gettop(L);
+    // Call the binding directly, in this frame, not via lua_call: then Lua
+    // knows the name the script used, and argument errors read "bad argument
+    // #1 to 'getPermissions'" instead of "to '?'". Bindings must therefore not
+    // use upvalues (they would see this wrapper's).
+    const lua_CFunction f = lua_tocfunction(L, lua_upvalueindex(1));
+    return f(L);
 }
 
 // ---------------------------------------------------------------------------

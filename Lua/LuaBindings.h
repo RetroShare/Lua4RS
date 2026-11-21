@@ -15,7 +15,7 @@ struct LuaBinding
     const char* ns;          // namespace, e.g. "peers"
     const char* signature;   // with example arguments, e.g. "isOnline(\"SSL_ID\")"
     LuaAccess access;
-    lua_CFunction function;
+    lua_CFunction function;  // called inside the access-check wrapper: must not use upvalues
     const char* doc;         // English; translate with QCoreApplication::translate("LuaBindings", doc)
 
     // "isOnline" for "isOnline(\"SSL_ID\")"
