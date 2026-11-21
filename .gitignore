@@ -41,3 +41,6 @@ object_script.Lua4RS.Release
 
 # local planning notes (for now)
 /CLAUDE.md
+
+# local editor settings
+/.vscode/

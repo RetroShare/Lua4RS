@@ -112,7 +112,8 @@ OTHER_FILES += \
     Lua/LuaToRSChat.cpp \
     Lua/LuaToRSFile.cpp \
     Lua/LuaToRSIdentity.cpp \
-    Lua/LuaToRSMail.cpp
+    Lua/LuaToRSMail.cpp \
+    Lua/LuaToRSServices.cpp
 
 FORMS += \
     gui/Lua4RSWidget.ui \

@@ -23,7 +23,7 @@ additionally get the full standard library and `jsonapi` (see
 
 ## Functions
 
-Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc), [`chat`](#chat), [`files`](#files), [`identity`](#identity), [`mail`](#mail), [`store`](#store)
+Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc), [`chat`](#chat), [`files`](#files), [`identity`](#identity), [`mail`](#mail), [`services`](#services), [`store`](#store)
 
 ### rs
 
@@ -118,6 +118,15 @@ Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc)
 | `mail.markRead("MSG_ID", true)` | write | marks a mail as read (false: unread); returns true on success |
 | `mail.trashMessage("MSG_ID")` | write | moves a mail to the trash (can be restored); returns true on success |
 | `mail.deleteMessage("MSG_ID")` | write | deletes a mail permanently (cannot be undone); returns true on success |
+
+### services
+
+| Function | Access | Description |
+|---|---|---|
+| `services.list()` | read | returns your RetroShare services (chat, disc, turtle, ...) as a list of id and name |
+| `services.getPermissions("chat")` | read | returns which friends may use a service: id, name, defaultAllowed and the exception lists allowed and denied (SSL ids; only denied counts if defaultAllowed, else only allowed) |
+| `services.isAllowed("chat", "SSL_ID")` | read | returns whether a friend location may use a service |
+| `services.setAllowed("chat", "SSL_ID", false)` | write | allows or blocks a service for a friend location (service name or id); returns true on success |
 
 ### store
 

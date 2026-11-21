@@ -25,6 +25,7 @@
 #include "LuaToRSServerConfig.cpp"
 #include "LuaToRSIdentity.cpp"
 #include "LuaToRSMail.cpp"
+#include "LuaToRSServices.cpp"
 
 #include "helper.h"
 
@@ -225,6 +226,16 @@ const std::vector<LuaBinding> kBindings = {
     { "mail", "markRead(\"MSG_ID\", true)", W, mail_markRead, QT_TRANSLATE_NOOP("LuaBindings", "marks a mail as read (false: unread); returns true on success") },
     { "mail", "trashMessage(\"MSG_ID\")",   W, mail_trashMessage, QT_TRANSLATE_NOOP("LuaBindings", "moves a mail to the trash (can be restored); returns true on success") },
     { "mail", "deleteMessage(\"MSG_ID\")",  W, mail_deleteMessage, QT_TRANSLATE_NOOP("LuaBindings", "deletes a mail permanently (cannot be undone); returns true on success") },
+
+    { "services", "list()", R, services_list,
+      QT_TRANSLATE_NOOP("LuaBindings", "returns your RetroShare services (chat, disc, turtle, ...) as a list of id and name") },
+    { "services", "getPermissions(\"chat\")", R, services_getPermissions,
+      QT_TRANSLATE_NOOP("LuaBindings", "returns which friends may use a service: id, name, defaultAllowed and the exception lists "
+                        "allowed and denied (SSL ids; only denied counts if defaultAllowed, else only allowed)") },
+    { "services", "isAllowed(\"chat\", \"SSL_ID\")", R, services_isAllowed,
+      QT_TRANSLATE_NOOP("LuaBindings", "returns whether a friend location may use a service") },
+    { "services", "setAllowed(\"chat\", \"SSL_ID\", false)", W, services_setAllowed,
+      QT_TRANSLATE_NOOP("LuaBindings", "allows or blocks a service for a friend location (service name or id); returns true on success") },
 
     // Own data of the script, allowed at every access level.
     { "store", "get(\"key\")", R, LuaStore::luaGet,
