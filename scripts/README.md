@@ -41,11 +41,12 @@ endpoints.
 
 | Script | What it does | Needs |
 |---|---|---|
-| `buryTheDead.lua` | Moves friends offline for a long time into a separate group | write |
 | `discOverviewBot.lua` | Answers `!versions` in a lobby with your friends' versions | write |
 | `simpleDownloadBot.lua` | Starts downloads requested in chat by allowed friends | an allow list; write |
 | `chatWrapper.lua` | Runs a local command and sends its output to a chat | trusted (runs shell commands) |
 
-More scripts that are useful on their own, e.g. **SyncFriends** (keeps the
-friend lists of your own nodes in sync via RetroShare mail), live in
-[Lua4RS-Scripts](https://github.com/sehraf/Lua4RS-Scripts).
+More scripts that are useful on their own live in
+[Lua4RS-Scripts](https://github.com/sehraf/Lua4RS-Scripts), e.g.
+**SyncFriends** (keeps the friend lists of your own nodes in sync via
+RetroShare mail) and **buryTheDead** (moves friends offline for a long time
+into a separate group).
