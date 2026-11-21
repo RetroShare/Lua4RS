@@ -198,7 +198,18 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
         "<p>For JSON API scripts, enable the API in RetroShare, enter its authorized credentials in the right panel, "
         "and click <b>Apply &amp; test connection</b>. Then choose <b>New API example</b>.</p>"
         "<p>Use <code>print(...)</code> or <code>rs.print(...)</code> for output. "
-        "Continuous JSON API subscriptions run in the separate command-line runner.</p>"), "Lua4RSWidget");
+        "Continuous JSON API subscriptions run in the separate command-line runner.</p>") + tr(
+        "<h3>What a script may do</h3>"
+        "<p>Every script runs with an access level, shown in the <b>Access</b> column:</p><ul>"
+        "<li><b>Read-only</b>: reads RetroShare, cannot change anything. No files, no shell, no JSON API.</li>"
+        "<li><b>Write</b>: may also send chat and mail, add friends, change settings, and read mail.</li>"
+        "<li><b>Trusted</b>: full Lua, files and the JSON API, like a program you installed.</li></ul>"
+        "<p>Scripts you create here are trusted. Everything else, including the examples, runs read-only "
+        "until you click <b>Approve…</b>. An approval belongs to the exact code: if the script changes, "
+        "it runs read-only again, and Approve… shows what changed.</p>"
+        "<h3>Coding agents (MCP)</h3>"
+        "<p>In the <b>MCP</b> tab you can let a coding agent such as Claude Code write and test scripts. "
+        "The agent never gets more than read-only access; only you approve scripts, here.</p>"), "Lua4RSWidget");
     refreshScripts();
     loadScript(nullptr);
     QTimer::singleShot(0, this, &Lua4RSWidget::checkTrustMigration);

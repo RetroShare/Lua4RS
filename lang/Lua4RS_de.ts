@@ -548,7 +548,7 @@ Das Ergebnis erscheint unten in der Ausgabe.</translation>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="280"/>
-        <location filename="../gui/Lua4RSWidget.cpp" line="475"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="486"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
@@ -638,291 +638,296 @@ Das Ergebnis erscheint unten in der Ausgabe.</translation>
         <translation>&lt;h2&gt;Mit einem einfachen Skript beginnen&lt;/h2&gt;&lt;ol&gt;&lt;li&gt;Wählen Sie &lt;b&gt;Beispiel → Hello world&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Klicken Sie auf &lt;b&gt;Ausführen&lt;/b&gt; (F5). Das Ergebnis steht in der &lt;b&gt;Ausgabe&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Geben Sie dem Skript einen Namen und klicken Sie auf &lt;b&gt;Speichern&lt;/b&gt; (Strg+S).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Die &lt;b&gt;Automatisierung&lt;/b&gt; brauchen Sie nur für zeitgesteuerte oder ereignisgesteuerte Ausführung. Speichern übernimmt sie.&lt;/p&gt;&lt;p&gt;Für JSON-API-Skripte aktivieren Sie die API in RetroShare, tragen die autorisierten Zugangsdaten rechts ein und klicken auf &lt;b&gt;Übernehmen &amp;amp; Verbindung testen&lt;/b&gt;. Wählen Sie dann &lt;b&gt;Neues API-Beispiel&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Ausgaben schreiben Sie mit &lt;code&gt;print(...)&lt;/code&gt; oder &lt;code&gt;rs.print(...)&lt;/code&gt;. Dauerhafte JSON-API-Abonnements laufen im separaten Kommandozeilen-Runner.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="225"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="201"/>
+        <source>&lt;h3&gt;What a script may do&lt;/h3&gt;&lt;p&gt;Every script runs with an access level, shown in the &lt;b&gt;Access&lt;/b&gt; column:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Read-only&lt;/b&gt;: reads RetroShare, cannot change anything. No files, no shell, no JSON API.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Write&lt;/b&gt;: may also send chat and mail, add friends, change settings, and read mail.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Trusted&lt;/b&gt;: full Lua, files and the JSON API, like a program you installed.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Scripts you create here are trusted. Everything else, including the examples, runs read-only until you click &lt;b&gt;Approve…&lt;/b&gt;. An approval belongs to the exact code: if the script changes, it runs read-only again, and Approve… shows what changed.&lt;/p&gt;&lt;h3&gt;Coding agents (MCP)&lt;/h3&gt;&lt;p&gt;In the &lt;b&gt;MCP&lt;/b&gt; tab you can let a coding agent such as Claude Code write and test scripts. The agent never gets more than read-only access; only you approve scripts, here.&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;Was ein Skript darf&lt;/h3&gt;&lt;p&gt;Jedes Skript läuft mit einer Zugriffsstufe, angezeigt in der Spalte &lt;b&gt;Zugriff&lt;/b&gt;:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Nur lesen&lt;/b&gt;: liest RetroShare, kann nichts verändern. Keine Dateien, keine Shell, keine JSON-API.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Schreiben&lt;/b&gt;: darf außerdem Chat und Mails senden, Freunde hinzufügen, Einstellungen ändern und Mails lesen.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Vertrauenswürdig&lt;/b&gt;: volles Lua, Dateien und die JSON-API, wie ein installiertes Programm.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Skripte, die Sie hier anlegen, sind vertrauenswürdig. Alles andere, auch die Beispiele, läuft nur lesend, bis Sie auf &lt;b&gt;Freigeben…&lt;/b&gt; klicken. Eine Freigabe gilt für genau diesen Code: Ändert sich das Skript, läuft es wieder nur lesend, und Freigeben… zeigt, was sich geändert hat.&lt;/p&gt;&lt;h3&gt;Coding-Agenten (MCP)&lt;/h3&gt;&lt;p&gt;Im Tab &lt;b&gt;MCP&lt;/b&gt; können Sie einen Coding-Agenten wie Claude Code Skripte schreiben und testen lassen. Der Agent bekommt nie mehr als Lesezugriff; nur Sie geben Skripte frei, hier.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="236"/>
         <source>Approve existing scripts</source>
         <translation>Vorhandene Skripte freigeben</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="225"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="236"/>
         <source>&lt;p&gt;Lua4RS now keeps an approval for every script. Scripts without one run in a sandbox: no file or shell access, no JSON API calls and no functions that change RetroShare (for example sending chat messages).&lt;/p&gt;&lt;p&gt;These scripts have no approval yet:&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;&lt;p&gt;Approve them as &lt;b&gt;trusted&lt;/b&gt; (full access, as before)? Only do this if you wrote or checked them yourself.&lt;/p&gt;&lt;p&gt;If you already answered this question before, the Lua4RS settings were reset or deleted. Unless you know why, choose &lt;b&gt;Keep sandboxed&lt;/b&gt;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Lua4RS speichert jetzt für jedes Skript eine Freigabe. Skripte ohne Freigabe laufen in einer Sandbox: kein Datei- oder Shell-Zugriff, keine JSON-API-Aufrufe und keine Funktionen, die RetroShare verändern (zum Beispiel Chatnachrichten senden).&lt;/p&gt;&lt;p&gt;Diese Skripte haben noch keine Freigabe:&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;&lt;p&gt;Als &lt;b&gt;vertrauenswürdig&lt;/b&gt; freigeben (voller Zugriff wie bisher)? Tun Sie das nur, wenn Sie sie selbst geschrieben oder geprüft haben.&lt;/p&gt;&lt;p&gt;Falls Sie diese Frage schon einmal beantwortet haben, wurden die Lua4RS-Einstellungen zurückgesetzt oder gelöscht. Wenn Sie nicht wissen, warum, wählen Sie &lt;b&gt;In der Sandbox lassen&lt;/b&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="235"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="246"/>
         <source>Approve as trusted</source>
         <translation>Als vertrauenswürdig freigeben</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="236"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="247"/>
         <source>Keep sandboxed</source>
         <translation>In der Sandbox lassen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="264"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="275"/>
         <source>Script failed — see Output.</source>
         <translation>Skript fehlgeschlagen — siehe Ausgabe.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="280"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="291"/>
         <source>Last run: %1</source>
         <translation>Letzte Ausführung: %1</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="280"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="291"/>
         <source>Never</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="282"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="293"/>
         <source>On</source>
         <translation>An</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="282"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="293"/>
         <source>Off</source>
         <translation>Aus</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
         <source>Automation enabled</source>
         <translation>Automatisierung aktiv</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
         <source>Automation disabled</source>
         <translation>Automatisierung aus</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="365"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="376"/>
         <source>Choose a script. Write Lua. Run and see the result.</source>
         <translation>Skript wählen. Lua schreiben. Ausführen und Ergebnis ansehen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="367"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="378"/>
         <source>Ready — F5 runs the code shown above.
 Access: Read-only (based on a script the agent deleted).</source>
         <translation>Bereit — F5 führt den obigen Code aus.
 Zugriff: Nur lesen (basiert auf einem Skript, das der Agent gelöscht hat).</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="369"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="380"/>
         <source>Ready — F5 runs the code shown above.
 Access: Trusted (new script).</source>
         <translation>Bereit — F5 führt den obigen Code aus.
 Zugriff: Vertrauenswürdig (neues Skript).</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="373"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="384"/>
         <source>Ready — F5 runs the code shown above.</source>
         <translation>Bereit — F5 führt den obigen Code aus.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="383"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="394"/>
         <source>Save before approving</source>
         <translation>Vor der Freigabe speichern</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="384"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="395"/>
         <source>Approval applies to the saved script. Save your changes to %1 first?</source>
         <translation>Die Freigabe gilt für das gespeicherte Skript. Änderungen an %1 zuerst speichern?</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="403"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="414"/>
         <source>Approved %1 as %2</source>
         <translation>%1 freigegeben als %2</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="413"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="424"/>
         <source>The agent deleted %1.</source>
         <translation>Der Agent hat %1 gelöscht.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="422"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="433"/>
         <source>The agent deleted %1. Your unsaved version is kept — Save stores it as a new, unapproved script.</source>
         <translation>Der Agent hat %1 gelöscht. Ihre ungespeicherte Fassung bleibt erhalten — Speichern legt sie als neues, nicht freigegebenes Skript an.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="432"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="443"/>
         <source>The agent updated %1.</source>
         <translation>Der Agent hat %1 aktualisiert.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="439"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="450"/>
         <source>Script changed by the agent</source>
         <translation>Skript vom Agenten geändert</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="440"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="451"/>
         <source>The agent changed %1 while you have unsaved changes.</source>
         <translation>Der Agent hat %1 geändert, während Sie ungespeicherte Änderungen haben.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="441"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="452"/>
         <source>Load the agent&apos;s version</source>
         <translation>Fassung des Agenten laden</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="442"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="453"/>
         <source>Keep my version</source>
         <translation>Meine Fassung behalten</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="444"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="455"/>
         <source>Loading discards your changes. If you keep your version, saving it replaces the agent&apos;s version.</source>
         <translation>Laden verwirft Ihre Änderungen. Wenn Sie Ihre Fassung behalten, ersetzt Speichern die Fassung des Agenten.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="461"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="472"/>
         <source>Also triggered by events Lua4RS no longer offers (ids %1). They never fire; remove them.</source>
         <translation>Wird außerdem durch Ereignisse ausgelöst, die Lua4RS nicht mehr anbietet (IDs %1). Diese treten nie ein; entfernen Sie sie.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="475"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="486"/>
         <source>Save *</source>
         <translation>Speichern *</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="493"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="504"/>
         <source>Unsaved changes — Run uses the editor; automatic runs use the saved script.</source>
         <translation>Ungespeicherte Änderungen — „Ausführen“ nutzt den Editor, automatische Ausführungen das gespeicherte Skript.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="500"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="511"/>
         <source>Unsaved script</source>
         <translation>Ungespeichertes Skript</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="501"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="512"/>
         <source>Save changes to %1?</source>
         <translation>Änderungen an %1 speichern?</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="530"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="541"/>
         <source>Choose a script name</source>
         <translation>Skriptnamen wählen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="530"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="541"/>
         <source>Use a unique filename, such as my-script.lua, without folders or special filename characters.</source>
         <translation>Verwenden Sie einen eindeutigen Dateinamen wie my-script.lua, ohne Ordner und ohne Sonderzeichen, die in Dateinamen nicht erlaubt sind.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="534"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="545"/>
         <source>Check the schedule</source>
         <translation>Zeitplan prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="534"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="545"/>
         <source>Choose a future time for the one-time run.</source>
         <translation>Wählen Sie für die einmalige Ausführung einen Zeitpunkt in der Zukunft.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="540"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="551"/>
         <source>Check the time window</source>
         <translation>Zeitfenster prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="540"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="551"/>
         <source>Choose an end time after the start time. A one-time run must fall inside that window.</source>
         <translation>Wählen Sie eine Endzeit nach der Startzeit. Eine einmalige Ausführung muss in dieses Fenster fallen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="544"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="555"/>
         <source>Check the interval</source>
         <translation>Intervall prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="544"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="555"/>
         <source>Choose a shorter repeat interval.</source>
         <translation>Wählen Sie ein kürzeres Wiederholungsintervall.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="585"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="596"/>
         <source>Could not save</source>
         <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="585"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="596"/>
         <source>The script could not be fully saved. Check write access to the scripts folder and try again.</source>
         <translation>Das Skript konnte nicht vollständig gespeichert werden. Prüfen Sie die Schreibrechte für den Skriptordner und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="589"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="600"/>
         <source>Saved %1</source>
         <translation>%1 gespeichert</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="626"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
         <source>Delete script</source>
         <translation>Skript löschen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="626"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
         <source>Delete %1 from disk? This also discards any editor changes.</source>
         <translation>%1 von der Festplatte löschen? Damit werden auch alle Änderungen im Editor verworfen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="648"/>
         <source>Could not delete file</source>
         <translation>Datei konnte nicht gelöscht werden</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="648"/>
         <source>The script was removed from this list, but its file could not be deleted. Check the scripts folder.</source>
         <translation>Das Skript wurde aus der Liste entfernt, aber seine Datei konnte nicht gelöscht werden. Prüfen Sie den Skriptordner.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="645"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
         <source>Running…</source>
         <translation>Läuft…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="646"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="657"/>
         <source>Run: %1</source>
         <translation>Ausführen: %1</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="654"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
         <source>Cannot run: Lua is busy or shutting down.</source>
         <translation>Ausführen nicht möglich: Lua ist beschäftigt oder wird beendet.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
         <source>List friends through the JSON API</source>
         <translation>Freunde über die JSON-API auflisten</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="696"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="707"/>
         <source>Enter an HTTP(S) server address without a path, and a username without a colon.</source>
         <translation>Geben Sie eine HTTP(S)-Serveradresse ohne Pfad und einen Benutzernamen ohne Doppelpunkt ein.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="711"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="722"/>
         <source>Settings applied. Testing connection…</source>
         <translation>Einstellungen übernommen. Verbindung wird getestet…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="715"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="726"/>
         <source>Connection timed out. Check that the JSON API is enabled and the address is correct.</source>
         <translation>Zeitüberschreitung. Prüfen Sie, ob die JSON-API aktiviert und die Adresse richtig ist.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="716"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="727"/>
         <source>Credentials rejected. Authorize this API user in RetroShare, then try again.</source>
         <translation>Zugangsdaten abgelehnt. Autorisieren Sie diesen API-Benutzer in RetroShare und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="717"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="728"/>
         <source>Could not connect: %1</source>
         <translation>Verbindung fehlgeschlagen: %1</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="718"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="729"/>
         <source>Server replied, but the friend-list request failed (HTTP %1).</source>
         <translation>Der Server hat geantwortet, aber die Abfrage der Freundesliste ist fehlgeschlagen (HTTP %1).</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="719"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="730"/>
         <source>Connected. Choose New API example, then Run.</source>
         <translation>Verbunden. Wählen Sie „Neues API-Beispiel“ und dann „Ausführen“.</translation>
     </message>
