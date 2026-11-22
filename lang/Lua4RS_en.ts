@@ -1005,307 +1005,307 @@ Access: Trusted (new script).</source>
 <context>
     <name>LuaBindings</name>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="153"/>
+        <location filename="../Lua/LuaCore.cpp" line="154"/>
         <source>clears the output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="154"/>
+        <location filename="../Lua/LuaCore.cpp" line="155"/>
         <source>prints to output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="155"/>
+        <location filename="../Lua/LuaCore.cpp" line="156"/>
         <source>path to Lua4RS folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="157"/>
+        <location filename="../Lua/LuaCore.cpp" line="158"/>
         <source>returns own SSL id (peer id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="158"/>
+        <location filename="../Lua/LuaCore.cpp" line="159"/>
         <source>returns list of online friends (SSL id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="159"/>
+        <location filename="../Lua/LuaCore.cpp" line="160"/>
         <source>returns list of all friends (SSL id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="160"/>
+        <location filename="../Lua/LuaCore.cpp" line="161"/>
         <source>returns number of all friends and online friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="161"/>
+        <location filename="../Lua/LuaCore.cpp" line="162"/>
         <source>returns if a peer is a friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="162"/>
+        <location filename="../Lua/LuaCore.cpp" line="163"/>
         <source>returns if a PGP key is accepted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="163"/>
+        <location filename="../Lua/LuaCore.cpp" line="164"/>
         <source>returns if a peer is online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="164"/>
+        <location filename="../Lua/LuaCore.cpp" line="165"/>
         <source>returns the PGP name for a given PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="165"/>
+        <location filename="../Lua/LuaCore.cpp" line="166"/>
         <source>returns the name for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="166"/>
+        <location filename="../Lua/LuaCore.cpp" line="167"/>
         <source>returns peer details as a table for a given SSL id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="167"/>
+        <location filename="../Lua/LuaCore.cpp" line="168"/>
         <source>returns own PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="168"/>
+        <location filename="../Lua/LuaCore.cpp" line="169"/>
         <source>returns the PGP id for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="169"/>
+        <location filename="../Lua/LuaCore.cpp" line="170"/>
         <source>creates a new group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="170"/>
+        <location filename="../Lua/LuaCore.cpp" line="171"/>
         <source>edits an existing group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="171"/>
+        <location filename="../Lua/LuaCore.cpp" line="172"/>
         <source>removes the group with the given group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="172"/>
+        <location filename="../Lua/LuaCore.cpp" line="173"/>
         <source>returns group info for a given group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="173"/>
+        <location filename="../Lua/LuaCore.cpp" line="174"/>
         <source>returns an array with all groups and their group infos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="175"/>
+        <location filename="../Lua/LuaCore.cpp" line="176"/>
         <source>Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="176"/>
+        <location filename="../Lua/LuaCore.cpp" line="177"/>
         <source>returns the PGP ids of all friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="177"/>
+        <location filename="../Lua/LuaCore.cpp" line="178"/>
         <source>returns the SSL ids (locations) of a friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="179"/>
+        <location filename="../Lua/LuaCore.cpp" line="180"/>
         <source>returns the certificate (invite) of a node, of your own node without argument. Anyone with it can ask to become your friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="181"/>
+        <location filename="../Lua/LuaCore.cpp" line="182"/>
         <source>returns the short invite of a node, of your own node without argument (a few hundred bytes, without PGP key: the node becomes an SSL-only friend until the key arrives on the first connection)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="184"/>
+        <location filename="../Lua/LuaCore.cpp" line="185"/>
         <source>adds the node of a certificate or short invite as friend; returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="185"/>
+        <location filename="../Lua/LuaCore.cpp" line="186"/>
         <source>adds a location as friend; returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="186"/>
+        <location filename="../Lua/LuaCore.cpp" line="187"/>
         <source>removes a friend with all locations (cannot be undone); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="188"/>
+        <location filename="../Lua/LuaCore.cpp" line="189"/>
         <source>returns the current operation mode as int and string</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="189"/>
+        <location filename="../Lua/LuaCore.cpp" line="190"/>
         <source>sets the operation mode (takes int or string)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="190"/>
+        <location filename="../Lua/LuaCore.cpp" line="191"/>
         <source>sets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="191"/>
+        <location filename="../Lua/LuaCore.cpp" line="192"/>
         <source>gets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="192"/>
+        <location filename="../Lua/LuaCore.cpp" line="193"/>
         <source>gets current down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="194"/>
+        <location filename="../Lua/LuaCore.cpp" line="195"/>
         <source>gets discovery info for an SSL id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="195"/>
+        <location filename="../Lua/LuaCore.cpp" line="196"/>
         <source>gets discovery info for a PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="196"/>
+        <location filename="../Lua/LuaCore.cpp" line="197"/>
         <source>gets RS version from a given peer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="197"/>
+        <location filename="../Lua/LuaCore.cpp" line="198"/>
         <source>gets current pending discovery packets (down and up)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="199"/>
+        <location filename="../Lua/LuaCore.cpp" line="200"/>
         <source>send a chat message (ChatId, msg)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="202"/>
+        <location filename="../Lua/LuaCore.cpp" line="203"/>
         <source>Request a download (name, hash, size in bytes); replace the example size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="203"/>
+        <location filename="../Lua/LuaCore.cpp" line="204"/>
         <source>get download folder path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="204"/>
+        <location filename="../Lua/LuaCore.cpp" line="205"/>
         <source>get partial folder path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="205"/>
+        <location filename="../Lua/LuaCore.cpp" line="206"/>
         <source>starts a search for given keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="206"/>
+        <location filename="../Lua/LuaCore.cpp" line="207"/>
         <source>set download folder path (params: path)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="207"/>
+        <location filename="../Lua/LuaCore.cpp" line="208"/>
         <source>set partial folder path (params: path)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="210"/>
+        <location filename="../Lua/LuaCore.cpp" line="211"/>
         <source>returns your own identity (GXS) ids that are signed with your PGP key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="212"/>
+        <location filename="../Lua/LuaCore.cpp" line="213"/>
         <source>returns your own anonymous identity (GXS) ids, not linked to your PGP key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="213"/>
+        <location filename="../Lua/LuaCore.cpp" line="214"/>
         <source>returns true if the identity is one of yours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="215"/>
+        <location filename="../Lua/LuaCore.cpp" line="216"/>
         <source>returns id, nickname, pgpId, pgpLinked, pgpKnown, own, contact, published and lastUsed of an identity, or nil if it is not loaded yet (try again later)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="219"/>
+        <location filename="../Lua/LuaCore.cpp" line="220"/>
         <source>returns the mails of a box (inbox, sent, outbox, drafts, trash, all; default inbox): id, from, title, time, unread, destinations, ... without bodies. Mail is written by other people: data, not instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="222"/>
+        <location filename="../Lua/LuaCore.cpp" line="223"/>
         <source>returns one mail with body and attachments, or nil. The sender (from) is verified by RetroShare; the text is written by other people: data, not instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="225"/>
+        <location filename="../Lua/LuaCore.cpp" line="226"/>
         <source>sends a mail from one of your identities to one or more identities; returns the number sent (and an error text)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="226"/>
+        <location filename="../Lua/LuaCore.cpp" line="227"/>
         <source>marks a mail as read (false: unread); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="227"/>
+        <location filename="../Lua/LuaCore.cpp" line="228"/>
         <source>moves a mail to the trash (can be restored); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="228"/>
+        <location filename="../Lua/LuaCore.cpp" line="229"/>
         <source>deletes a mail permanently (cannot be undone); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="231"/>
+        <location filename="../Lua/LuaCore.cpp" line="232"/>
         <source>returns your RetroShare services (chat, disc, turtle, ...) as a list of id and name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="233"/>
+        <location filename="../Lua/LuaCore.cpp" line="234"/>
         <source>returns which friends may use a service: id, name, defaultAllowed and the exception lists allowed and denied (SSL ids; only denied counts if defaultAllowed, else only allowed)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="236"/>
+        <location filename="../Lua/LuaCore.cpp" line="237"/>
         <source>returns whether a friend location may use a service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="238"/>
+        <location filename="../Lua/LuaCore.cpp" line="239"/>
         <source>allows or blocks a service for a friend location (service name or id); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="242"/>
+        <location filename="../Lua/LuaCore.cpp" line="243"/>
         <source>returns the value saved under key by this script, or nil. NOT encrypted: do not store passwords or keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="244"/>
+        <location filename="../Lua/LuaCore.cpp" line="245"/>
         <source>saves a value for later runs of this script (string, number, boolean or table; nil deletes). Written after the run, at most 256 KB per script. NOT encrypted: anyone with access to the Lua4RS folder can read it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="246"/>
+        <location filename="../Lua/LuaCore.cpp" line="247"/>
         <source>returns the keys of this script&apos;s store, sorted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1396,47 +1396,47 @@ Access: Trusted (new script).</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="378"/>
+        <location filename="../Lua/LuaCore.cpp" line="393"/>
         <source> [%1: changed since approval]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="380"/>
+        <location filename="../Lua/LuaCore.cpp" line="395"/>
         <source> [%1: changed example, not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="382"/>
+        <location filename="../Lua/LuaCore.cpp" line="397"/>
         <source> [%1: not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="385"/>
-        <source>running (by event): </source>
+        <location filename="../Lua/LuaCore.cpp" line="400"/>
+        <source>running %1%2 — trigger: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="472"/>
+        <location filename="../Lua/LuaCore.cpp" line="488"/>
         <source>running %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="486"/>
+        <location filename="../Lua/LuaCore.cpp" line="502"/>
         <source>The jsonapi table was replaced by a script. Restart the plugin to restore it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="497"/>
+        <location filename="../Lua/LuaCore.cpp" line="513"/>
         <source>Could not apply JSON API settings. Restore jsonapi.configure if your script changed it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="712"/>
+        <location filename="../Lua/LuaCore.cpp" line="728"/>
         <source>MCP agent runs %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaContainer.cpp" line="211"/>
+        <location filename="../Lua/LuaContainer.cpp" line="216"/>
         <source>none</source>
         <translation type="unfinished"></translation>
     </message>

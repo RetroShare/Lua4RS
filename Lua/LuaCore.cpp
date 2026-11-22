@@ -6,6 +6,7 @@
 #include <retroshare/rsinit.h>
 
 #include "LuaCore.h"
+#include "LuaEventCatalog.h"
 #include "LuaList.h"
 #include "LuaJsonApi.h"
 #include "LuaExecutionGuard.h"
@@ -358,6 +359,20 @@ bool LuaCore::processEventQueue()
     return true;
 }
 
+// Stable name of what started a run, for the log: the event's catalog name
+// (friend_online, mail_received, ...), timer (also "once"), startup or shutdown.
+static QString triggerName(unsigned eventId)
+{
+    switch(eventId)
+    {
+    case L4R_TIMERTICK: return "timer";
+    case L4R_STARTUP:   return "startup";
+    case L4R_SHUTDOWN:  return "shutdown";
+    }
+    if(const LuaEventInfo* info = luaEventById(eventId)) return QString::fromLatin1(info->name);
+    return QString("event %1").arg(eventId);
+}
+
 void LuaCore::dispatchEvent(const LuaEvent& event)
 {
     // Snapshot under the same lock used by the editor; never retain raw script
@@ -382,7 +397,8 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
             note = QObject::tr(" [%1: not approved]").arg(luaTrustName(status.effective));
         else if(status.effective != LuaTrust::Trusted)
             note = QString(" [%1]").arg(luaTrustName(status.effective));
-        logLine("info", QObject::tr("running (by event): ") + script.first + note, script.first);
+        logLine("info", QObject::tr("running %1%2 — trigger: %3").arg(script.first, note, triggerName(event.eventId)),
+                script.first);
         runLuaByEvent(script.first, script.second, event);
     }
 }
