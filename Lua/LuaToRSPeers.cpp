@@ -144,6 +144,8 @@ extern "C" {
         pushTable(L, t1, "connectPort", details.connectPort);
         pushTable(L, t1, "extAddr", details.extAddr.c_str());
         pushTable(L, t1, "extPort", details.extPort);
+        lua_pushboolean(L, details.isHiddenNode); lua_setfield(L, t1, "hiddenNode");
+        pushTable(L, t1, "hiddenNodeAddress", details.hiddenNodeAddress); // Tor/I2P address, "" otherwise
 
         lua_pushstring(L, "ipAddressList");
         {
@@ -200,38 +202,45 @@ extern "C" {
     int peers_addGroup(lua_State* L)
     {
         luaL_checktype(L, 1, LUA_TTABLE);
-
-        RsGroupInfo grpInfo;
+        // Read all fields before creating C++ objects (Lua errors skip destructors).
         lua_getfield(L, 1, "flag");
-        grpInfo.flag = luaL_checkinteger(L, -1);
+        const lua_Integer flag = luaL_checkinteger(L, -1);
         lua_getfield(L, 1, "id");
-        grpInfo.id = RsNodeGroupId(luaL_checkstring(L, -1));
+        const char* id = luaL_checkstring(L, -1);
         lua_getfield(L, 1, "name");
-        grpInfo.name = luaL_checkstring(L, -1);
-        // irgnore peerIds for now
-
-        rsPeers->addGroup(grpInfo);
+        const char* name = luaL_checkstring(L, -1);
+        // peerIds are ignored for now
+        {
+            RsGroupInfo grpInfo;
+            grpInfo.flag = uint32_t(flag);
+            grpInfo.id = RsNodeGroupId(std::string(id));
+            grpInfo.name = name;
+            rsPeers->addGroup(grpInfo);
+        }
         return 0;
     }
 
     // virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
     int peers_editGroup(lua_State* L)
     {
-        luaL_checktype(L, 1, LUA_TSTRING);
+        const char* groupId = luaL_checkstring(L, 1);
         luaL_checktype(L, 2, LUA_TTABLE);
-
-        const RsNodeGroupId grpId = RsNodeGroupId(luaL_checkstring(L, 1));
-
-        RsGroupInfo grpInfo;
+        // Read all fields before creating C++ objects (Lua errors skip destructors).
         lua_getfield(L, 2, "flag");
-        grpInfo.flag = luaL_checkinteger(L, -1);
+        const lua_Integer flag = luaL_checkinteger(L, -1);
         lua_getfield(L, 2, "id");
-        grpInfo.id = RsNodeGroupId(luaL_checkstring(L, -1));
+        const char* id = luaL_checkstring(L, -1);
         lua_getfield(L, 2, "name");
-        grpInfo.name = luaL_checkstring(L, -1);
-        // irgnore peerIds for now
-
-        rsPeers->editGroup(grpId, grpInfo);
+        const char* name = luaL_checkstring(L, -1);
+        // peerIds are ignored for now
+        {
+            const RsNodeGroupId grpId = RsNodeGroupId(std::string(groupId));
+            RsGroupInfo grpInfo;
+            grpInfo.flag = uint32_t(flag);
+            grpInfo.id = RsNodeGroupId(std::string(id));
+            grpInfo.name = name;
+            rsPeers->editGroup(grpId, grpInfo);
+        }
         return 0;
     }
 
@@ -291,7 +300,8 @@ extern "C" {
             {
                 lua_newtable(L);
                 int t2 = lua_gettop(L);
-                pushTable(L, t2, "falg", grpInfo.flag);
+                pushTable(L, t2, "flag", grpInfo.flag);
+                pushTable(L, t2, "falg", grpInfo.flag); // misspelled until 2026, kept for old scripts
                 pushTable(L, t2, "id", grpInfo.id.toStdString());
                 pushTable(L, t2, "name", grpInfo.name);
 

@@ -91,20 +91,21 @@ extern "C" {
 
     int rs_print(lua_State* L)
     {
-        int argc = getArgCount(L);
-        std::string output = "";
-        if(argc > 0)
-            for (int n = 1; n <= argc; ++n ) {
-                // any value, like print
-                size_t length = 0;
-                const char* s = luaL_tolstring(L, n, &length);
-                output.append(s, length);
-                lua_pop(L, 1);
-                if(n < argc)
-                    output += '\t';
-            }
-
-        emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromUtf8(output.c_str()));
+        // Any values, like print. Collected in a Lua buffer: luaL_tolstring can
+        // raise an error (a failing __tostring), which would skip C++ destructors.
+        const int argc = lua_gettop(L);
+        luaL_Buffer b;
+        luaL_buffinit(L, &b);
+        for(int n = 1; n <= argc; ++n)
+        {
+            luaL_tolstring(L, n, nullptr);
+            luaL_addvalue(&b);
+            if(n < argc) luaL_addchar(&b, '\t');
+        }
+        luaL_pushresult(&b);
+        size_t length = 0;
+        const char* text = lua_tolstring(L, -1, &length);
+        emit L4R::L4RConfig->getCore()->emitAppendOutput(QString::fromUtf8(text, int(length)));
         return 0;
     }
 

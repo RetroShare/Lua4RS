@@ -23,6 +23,10 @@ additionally get the full standard library and `jsonapi` (see
 
 ## Functions
 
+Functions that return a table leave out text fields that are empty: a
+location without a name has no `location` field. Write
+`details.location or ""` before using such a field with `..`.
+
 Namespaces: [`rs`](#rs), [`peers`](#peers), [`config`](#config), [`disc`](#disc), [`chat`](#chat), [`files`](#files), [`identity`](#identity), [`mail`](#mail), [`services`](#services), [`store`](#store)
 
 ### rs

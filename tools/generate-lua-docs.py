@@ -169,6 +169,10 @@ def render(bindings, events):
         "",
         "## Functions",
         "",
+        "Functions that return a table leave out text fields that are empty: a",
+        "location without a name has no `location` field. Write",
+        "`details.location or \"\"` before using such a field with `..`.",
+        "",
     ]
     namespaces = []
     for ns, *_ in bindings:

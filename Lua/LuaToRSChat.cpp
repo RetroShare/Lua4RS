@@ -12,13 +12,15 @@ extern "C" {
 extern "C" {
     int chat_sendChat(lua_State* L)
     {
-        luaL_checktype(L, 1, LUA_TSTRING);
-
-        const std::string s = luaL_checkstring(L, 1);
-        const ChatId id = ChatId(s);
-        const std::string msg = luaL_checkstring(L, 2);
-        const bool ret = rsChats->sendChat(id, msg);
-        lua_pushboolean(L, ret);
+        // Check all arguments before creating C++ objects (Lua errors skip destructors).
+        const char* chatId = luaL_checkstring(L, 1);
+        const char* text = luaL_checkstring(L, 2);
+        bool ok;
+        {
+            const ChatId id = ChatId(std::string(chatId));
+            ok = rsChats->sendChat(id, std::string(text));
+        }
+        lua_pushboolean(L, ok);
         return 1;
     }
 }
