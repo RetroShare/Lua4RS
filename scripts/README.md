@@ -30,17 +30,18 @@ an "access denied" message until you approve them.
 | `jsonapi-friends.lua` | Minimal JSON API example: list friends |
 | `jsonapi-events.lua` | Prints RetroShare events (`jsonapi.subscribe`, runner only) |
 | `login.lua` | Lists profiles, logs in or shuts down a RetroShare service (runner only) |
-| `autoPermissions.lua` | Sets service permissions by group, address or name |
 | `resetPermissions.lua` | Resets all service permissions to the defaults |
 | `servicePermission.lua` | Switches service permissions on a daily schedule |
 
-The three permission scripts need RetroShare's development service-control
-endpoints.
+The two permission scripts need RetroShare's development service-control
+endpoints. For rule-based permissions without the JSON API, see
+`more/autoPermissions.lua`.
 
 ## more/
 
 | Script | What it does | Needs |
 |---|---|---|
+| `autoPermissions.lua` | Sets which friends may use which service (files, chat, forums, ...) by rules: group, hidden node, address, name. Unmatched friends get the defaults; previews first | write |
 | `discOverviewBot.lua` | Answers `!versions` in a lobby with your friends' versions | write |
 | `simpleDownloadBot.lua` | Starts downloads requested in chat by allowed friends | an allow list; write |
 | `chatWrapper.lua` | Runs a local command and sends its output to a chat | trusted (runs shell commands) |
