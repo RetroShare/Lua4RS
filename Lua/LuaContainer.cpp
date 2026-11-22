@@ -51,6 +51,12 @@ void LuaContainer::setName(const QString& name)
     _name = name.endsWith(".lua") ? name : name + ".lua";
 }
 
+void LuaContainer::setTriggers(const LuaTriggers& triggers)
+{
+    _triggers = triggers;
+    if(!_triggers.every) _timerLastRun = QDateTime();
+}
+
 bool LuaContainer::isTriggered(const LuaEvent& event)
 {
     if(!_enabled) return false;
@@ -72,9 +78,12 @@ bool LuaContainer::isTriggered(const LuaEvent& event)
         }
         // Not run since the time it was due; a few seconds late is fine.
         const QDateTime& due = _triggers.onceAt;
-        if(_triggers.once && due.isValid() && (!_lastRun.isValid() || _lastRun < due) &&
+        if(_triggers.once && due.isValid() && (!_onceLastRun.isValid() || _onceLastRun < due) &&
            at >= due && at < due.addSecs(5))
+        {
+            _onceLastRun = at;
             triggered = true;
+        }
         break;
     }
     case L4R_STARTUP:  triggered = _triggers.startup; break;
@@ -124,7 +133,7 @@ void LuaContainer::toSettings(QSettings& settings)
     }
     if(_triggers.once)
     {
-        group(kClassOnce, _lastRun);
+        group(kClassOnce, _onceLastRun);
         settings.setValue(kWhen, _triggers.onceAt);
         settings.endGroup();
     }
@@ -144,6 +153,7 @@ void LuaContainer::fromSettings(QSettings& settings)
     _enabled = settings.value(kEnabled, false).toBool();
     _lastRun = readTime(settings, kLastTriggered);
     _timerLastRun = QDateTime();
+    _onceLastRun = QDateTime();
 
     _triggers = LuaTriggers();
     _triggers.window = settings.value(kConstraintEnabled, false).toBool();
@@ -167,6 +177,7 @@ void LuaContainer::fromSettings(QSettings& settings)
         {
             _triggers.once = true;
             _triggers.onceAt = settings.value(kWhen).toDateTime();
+            _onceLastRun = readTime(settings, kLastRun);
         }
         else if(className == kClassStartup) _triggers.startup = true;
         else if(className == kClassShutdown) _triggers.shutdown = true;

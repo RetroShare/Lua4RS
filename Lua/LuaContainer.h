@@ -44,7 +44,8 @@ public:
     void setEnabled(bool enable) { _enabled = enable; }
 
     const LuaTriggers& triggers() const { return _triggers; }
-    void setTriggers(const LuaTriggers& triggers) { _triggers = triggers; }
+    // Keeps the run state; a timer that is switched off starts anew.
+    void setTriggers(const LuaTriggers& triggers);
     // e.g. "Event|Startup|TimerInterval", for tooltips
     QString getTriggerNames() const;
 
@@ -69,6 +70,7 @@ private:
 
     QDateTime _lastRun;
     QDateTime _timerLastRun;
+    QDateTime _onceLastRun; // only other triggers' runs must not count for once
 };
 
 #endif // LUACONTAINER_H

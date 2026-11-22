@@ -41,7 +41,7 @@ LuaTriggers every(uint amount, uint unit)
 const uint kHours = 2; // unit index: sec, min, hour, day, week
 } // namespace
 
-int main(int, char** argv)
+int main()
 {
     const QDateTime now = QDateTime::currentDateTime();
     {
@@ -72,10 +72,14 @@ int main(int, char** argv)
         CHECK(!c.getTimerLastRun().isValid());
         CHECK(!tick(c, now.addSecs(4 * 3600)));
 
-        // Other triggers do not move the timer's schedule.
+        // A timer switched on again starts anew: it runs on the next tick,
+        // although its old schedule (last run at +1h) is not due yet.
         LuaTriggers both = every(1, kHours);
         both.eventIds << 10010;
         c.setTriggers(both);
+        CHECK(tick(c, now.addSecs(3600 + 240)));
+
+        // Other triggers do not move the timer's schedule.
         const QDateTime timerRun = c.getTimerLastRun();
         CHECK(fire(c, 10010, now.addSecs(3600 + 600)));
         CHECK(!fire(c, 10011, now.addSecs(3600 + 600)));
@@ -102,6 +106,16 @@ int main(int, char** argv)
         CHECK(!tick(c, now.addSecs(602))); // but only once
         CHECK(!tick(c, now.addSecs(700)));
 
+        // An event run just after the due time does not swallow the once run.
+        LuaTriggers e;
+        e.eventIds << 10010;
+        e.once = true;
+        e.onceAt = now.addSecs(1200);
+        c.setTriggers(e);
+        CHECK(fire(c, 10010, now.addSecs(1200)));
+        CHECK(tick(c, now.addSecs(1201)));
+        CHECK(!tick(c, now.addSecs(1202)));
+
         LuaTriggers w;
         w.startup = true;
         w.window = true;
@@ -115,9 +129,7 @@ int main(int, char** argv)
     // .ini files of earlier versions load and are written back the same way.
     {
         QTemporaryDir dir;
-        const QString source = QString::fromLocal8Bit(argv[0]).section('/', 0, -2) + "/old-format.ini";
-        QString fixture = QFile::exists(source) ? source : QString(SRCDIR "/old-format.ini");
-        QSettings old(fixture, QSettings::IniFormat);
+        QSettings old(SRCDIR "/old-format.ini", QSettings::IniFormat);
         LuaContainer c;
         c.fromSettings(old);
         const LuaTriggers& t = c.triggers();
@@ -133,10 +145,12 @@ int main(int, char** argv)
         c.toSettings(written);
         written.sync();
         // Every key of the old file is written with the same value, except the
-        // LastRun of non-timer triggers: they now share the script's last run.
+        // LastRun of startup, shutdown and event triggers: they now hold the
+        // script's last run (only timer and once keep their own).
         for(const QString& key : old.allKeys())
         {
-            if(key.endsWith("/LastRun") && old.value(key.section('/', 0, 0) + "/Classname") != "LuaTriggerTimerInterval")
+            const QString className = old.value(key.section('/', 0, 0) + "/Classname").toString();
+            if(key.endsWith("/LastRun") && className != "LuaTriggerTimerInterval" && className != "LuaTriggerTimerOnce")
                 continue;
             if(written.value(key) != old.value(key))
             {
@@ -197,12 +211,21 @@ int main(int, char** argv)
         LuaContainer* c = nullptr;
         CHECK(list.itemByName(QString("utf8.lua"), c) && c->getCode() == umlauts);
         CHECK(list.itemByName(QString("bom.lua"), c) && c->getCode() == "print(1)");
+#ifdef _WIN32
         CHECK(list.itemByName(QString("crlf.lua"), c) && c->getCode() == "a = 1\nb = 2\n");
+#else
+        // Byte for byte: the approval hash covers the code in memory.
+        CHECK(list.itemByName(QString("crlf.lua"), c) && c->getCode() == "a = 1\r\nb = 2\r\n");
+#endif
         CHECK(list.itemByName(QString("noeol.lua"), c) && c->getCode() == "return 1");
 
         CHECK(list.saveAll());
         QFile saved(dir.filePath("utf8.lua"));
         CHECK(saved.open(QIODevice::ReadOnly) && saved.readAll() == umlauts.toUtf8());
+#ifndef _WIN32
+        QFile crlf(dir.filePath("crlf.lua"));
+        CHECK(crlf.open(QIODevice::ReadOnly) && crlf.readAll() == "a = 1\r\nb = 2\r\n");
+#endif
         CHECK(QFile::exists(dir.filePath("utf8.lua.ini")));
 
         CHECK(list.itemByName(QString("utf8.lua"), c) && list.removeItemAndDelete(c));

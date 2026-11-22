@@ -18,6 +18,14 @@
 #include "util/rsdebuglevel0.h"
 
 namespace {
+// Windows: CRLF on disk, LF in memory (as earlier versions did). Elsewhere the
+// bytes stay as they are: the approval hash covers the code in memory.
+#ifdef _WIN32
+const QIODevice::OpenMode kTextMode = QIODevice::Text;
+#else
+const QIODevice::OpenMode kTextMode = QIODevice::NotOpen;
+#endif
+
 // Scripts are UTF-8 (a BOM is dropped). Earlier versions saved them in the
 // local 8-bit encoding on Windows; those still load.
 QString decodeScript(const QByteArray& data)
@@ -246,7 +254,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         }
 
         QFile file(luaFileName);
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        if(!file.open(QIODevice::ReadOnly | kTextMode))
         {
             RS_ERR("can't open file ", luaFileName.toStdString());
             return false;
@@ -327,7 +335,7 @@ bool LuaList::save(LuaContainer* container)
         // leaves half a script.
         QSaveFile file(luaFileName);
         const QByteArray code = container->getCode().toUtf8();
-        if(!file.open(QIODevice::WriteOnly | QIODevice::Text) || file.write(code) != code.size() || !file.commit())
+        if(!file.open(QIODevice::WriteOnly | kTextMode) || file.write(code) != code.size() || !file.commit())
         {
             RS_ERR("can't write file ", luaFileName.toStdString(), ": ", file.errorString().toStdString());
             return false;
