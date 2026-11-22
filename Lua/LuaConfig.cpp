@@ -1,27 +1,26 @@
 #include "LuaConfig.h"
 
-#define INI_KEY_CLASSNAME           "Classname"
-#define INI_KEY_CONSTRAINT_ENABLED  "ConstraintEnabled"
-#define INI_KEY_CONSTRAINT_FROM     "ConstraintFrom"
-#define INI_KEY_CONSTRAINT_TO       "ConstraintTo"
-#define INI_KEY_DESC                "Description"
-#define INI_KEY_ENABLED             "Enabled"
-#define INI_KEY_LAST_TRIGGERED      "LastTriggered"
-#define INI_KEY_TRIGGER             "Trigger"
+#define INI_KEY_CLASSNAME "Classname"
+#define INI_KEY_CONSTRAINT_ENABLED "ConstraintEnabled"
+#define INI_KEY_CONSTRAINT_FROM "ConstraintFrom"
+#define INI_KEY_CONSTRAINT_TO "ConstraintTo"
+#define INI_KEY_DESC "Description"
+#define INI_KEY_ENABLED "Enabled"
+#define INI_KEY_LAST_TRIGGERED "LastTriggered"
+#define INI_KEY_TRIGGER "Trigger"
 
-LuaConfig::LuaConfig() :
-    _description(""),
-    _enableScript(false),
-    _constraint(false),
-    _constraintFrom(QTime(0, 0, 0)),
-    _constraintTo(QTime(0, 0, 0)),
-    _lastTriggered(QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)))
+LuaConfig::LuaConfig() : _description(""),
+                         _enableScript(false),
+                         _constraint(false),
+                         _constraintFrom(QTime(0, 0, 0)),
+                         _constraintTo(QTime(0, 0, 0)),
+                         _lastTriggered(QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0)))
 {
 }
 
 LuaConfig::~LuaConfig()
 {
-    for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
+    for (QList<LuaTriggerBase *>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
         delete *it;
 
     _myTriggers.clear();
@@ -31,14 +30,14 @@ LuaConfig::~LuaConfig()
 bool LuaConfig::isTriggered(const LuaEvent &luaevent)
 {
     // is the script enabled at all?
-    if(isScriptEnabled())
+    if (isScriptEnabled())
     {
         // is there a constraint on the enabled script?
-        if(isConstraintEnabled())
+        if (isConstraintEnabled())
         {
             // is the event timestamp outside the set constraint of the enabled script?
-            if ( (luaevent.timeStamp.time() < getConstraintFrom()) ||
-                 (luaevent.timeStamp.time() > getConstraintTo()) )
+            if ((luaevent.timeStamp.time() < getConstraintFrom()) ||
+                (luaevent.timeStamp.time() > getConstraintTo()))
             {
                 // if the time constraint is enabled and we are outside of the
                 // constraint window [from..to], then no trigger can happen.
@@ -47,10 +46,10 @@ bool LuaConfig::isTriggered(const LuaEvent &luaevent)
         }
 
         // now test each trigger if it is triggered by the event
-        for (int i=0 ; i<_myTriggers.size() ; ++i)
+        for (int i = 0; i < _myTriggers.size(); ++i)
         {
             // if at least one trigger returns true then we *are* triggered.
-            if ( _myTriggers.at(i)->isTriggered (luaevent) )
+            if (_myTriggers.at(i)->isTriggered(luaevent))
             {
                 // lets remember the time we've been triggered
                 _lastTriggered = QDateTime().currentDateTime();
@@ -62,7 +61,7 @@ bool LuaConfig::isTriggered(const LuaEvent &luaevent)
 }
 
 // addTrigger - Add a trigger to the trigger list of this LuaConfig
-void LuaConfig::addTrigger(LuaTriggerBase* trigger)
+void LuaConfig::addTrigger(LuaTriggerBase *trigger)
 {
     if (trigger != NULL)
     {
@@ -82,32 +81,39 @@ uint LuaConfig::getTriggerCount()
 
 void LuaConfig::removeAllTrigger()
 {
-    for(QList <LuaTriggerBase*>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
+    // Saving (GUI, MCP set_triggers) removes all triggers and adds them again.
+    // Remember when the timer last ran, so the new one continues the schedule
+    // instead of firing right away (see LuaContainer::addRunEveryTrigger).
+    _timerLastRun = QDateTime();
+    for (QList<LuaTriggerBase *>::const_iterator it = _myTriggers.begin(); it != _myTriggers.end(); ++it)
+    {
+        if ((*it)->classname() == LUA_TRIGGER_TIMER_INTERVAL)
+            _timerLastRun = (*it)->lastRun();
         delete *it;
+    }
 
     _myTriggers.clear();
 }
 
-QList<LuaTriggerBase*>::const_iterator LuaConfig::triggersBegin()   { return _myTriggers.begin(); }
-QList<LuaTriggerBase*>::const_iterator LuaConfig::triggersEnd()     { return _myTriggers.end(); }
+QList<LuaTriggerBase *>::const_iterator LuaConfig::triggersBegin() { return _myTriggers.begin(); }
+QList<LuaTriggerBase *>::const_iterator LuaConfig::triggersEnd() { return _myTriggers.end(); }
 
 // load this luaconfig from QSettings data
 void LuaConfig::fromSettings(QSettings &mySettings)
 {
-    LuaTriggerBase* atrigger;
-    QStringList     childGroups;
-    QString         childGroup;
-    QString         className;
+    LuaTriggerBase *atrigger;
+    QStringList childGroups;
+    QString childGroup;
+    QString className;
 
     // first get description and stuff from ini
-    _description    = mySettings.value(INI_KEY_DESC, "").toString();
-    _enableScript   = mySettings.value(INI_KEY_ENABLED, false).toBool();
-    _lastTriggered  = mySettings.value(INI_KEY_LAST_TRIGGERED, QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0))).toDateTime();
+    _description = mySettings.value(INI_KEY_DESC, "").toString();
+    _enableScript = mySettings.value(INI_KEY_ENABLED, false).toBool();
+    _lastTriggered = mySettings.value(INI_KEY_LAST_TRIGGERED, QDateTime(QDate(1970, 1, 1), QTime(0, 0, 0))).toDateTime();
 
-    _constraint     = mySettings.value(INI_KEY_CONSTRAINT_ENABLED, false).toBool();
+    _constraint = mySettings.value(INI_KEY_CONSTRAINT_ENABLED, false).toBool();
     _constraintFrom = mySettings.value(INI_KEY_CONSTRAINT_FROM, QTime()).toTime();
-    _constraintTo   = mySettings.value(INI_KEY_CONSTRAINT_TO, QTime()).toTime();
-
+    _constraintTo = mySettings.value(INI_KEY_CONSTRAINT_TO, QTime()).toTime();
 
     // then fetch all groups of ini file
     childGroups = mySettings.childGroups();
@@ -122,17 +128,32 @@ void LuaConfig::fromSettings(QSettings &mySettings)
         if (childGroup.startsWith(INI_KEY_TRIGGER))
         {
             className = mySettings.value(INI_KEY_CLASSNAME).toString();
-            if(className == "")
+            if (className == "")
             {
                 std::cerr << "[Lua] LuaConfig::fromSettings() : empty trigger classname found in : [" << childGroup.toStdString() << "]" << std::endl;
                 continue;
             }
 
-            if (     className == LUA_TRIGGER_TIMER_INTERVAL) { atrigger = new LuaTriggerTimerInterval(); }
-            else if (className == LUA_TRIGGER_STARTUP)        { atrigger = new LuaTriggerStartup(); }
-            else if (className == LUA_TRIGGER_SHUTDOWN)       { atrigger = new LuaTriggerShutdown(); }
-            else if (className == LUA_TRIGGER_ONCE)           { atrigger = new LuaTriggerOnce(); }
-            else if (className == LUA_TRIGGER_EVENT)          { atrigger = new LuaTriggerEvent(); }
+            if (className == LUA_TRIGGER_TIMER_INTERVAL)
+            {
+                atrigger = new LuaTriggerTimerInterval();
+            }
+            else if (className == LUA_TRIGGER_STARTUP)
+            {
+                atrigger = new LuaTriggerStartup();
+            }
+            else if (className == LUA_TRIGGER_SHUTDOWN)
+            {
+                atrigger = new LuaTriggerShutdown();
+            }
+            else if (className == LUA_TRIGGER_ONCE)
+            {
+                atrigger = new LuaTriggerOnce();
+            }
+            else if (className == LUA_TRIGGER_EVENT)
+            {
+                atrigger = new LuaTriggerEvent();
+            }
             else
             {
                 std::cerr << "[Lua] LuaConfig::fromSettings() : unknown trigger class : '" << className.toStdString() << "' found in [" << childGroup.toStdString() << "]" << std::endl;
@@ -170,7 +191,7 @@ void LuaConfig::toSettings(QSettings &mySettings)
 
     // now save each trigger in a group
     QString inigroup;
-    for (int i = 0 ; i < _myTriggers.size() ; ++i)
+    for (int i = 0; i < _myTriggers.size(); ++i)
     {
         inigroup = INI_KEY_TRIGGER + QString("_");
         inigroup += QString::number(i);
@@ -185,26 +206,22 @@ void LuaConfig::toSettings(QSettings &mySettings)
     }
 }
 
-
 // getter/setter
 
-void        LuaConfig::enableScript(bool enable)                        { _enableScript = enable; }
-bool        LuaConfig::isScriptEnabled()                                { return _enableScript; }
+void LuaConfig::enableScript(bool enable) { _enableScript = enable; }
+bool LuaConfig::isScriptEnabled() { return _enableScript; }
 
-void        LuaConfig::enableConstraint(bool enable)                    { _constraint = enable; }
-bool        LuaConfig::isConstraintEnabled()                            { return _constraint; }
+void LuaConfig::enableConstraint(bool enable) { _constraint = enable; }
+bool LuaConfig::isConstraintEnabled() { return _constraint; }
 
-void        LuaConfig::setConstraintFrom(QTime constraintfrom)          { _constraintFrom = constraintfrom; }
-QTime       LuaConfig::getConstraintFrom()                              { return _constraintFrom; }
+void LuaConfig::setConstraintFrom(QTime constraintfrom) { _constraintFrom = constraintfrom; }
+QTime LuaConfig::getConstraintFrom() { return _constraintFrom; }
 
-void        LuaConfig::setConstraintTo(QTime constraintto)              { _constraintTo = constraintto; }
-QTime       LuaConfig::getConstraintTo()                                { return _constraintTo; }
+void LuaConfig::setConstraintTo(QTime constraintto) { _constraintTo = constraintto; }
+QTime LuaConfig::getConstraintTo() { return _constraintTo; }
 
-QString     LuaConfig::getDescription()                                 { return _description; }
-void        LuaConfig::setDescription(const QString& description)       { _description = description; }
+QString LuaConfig::getDescription() { return _description; }
+void LuaConfig::setDescription(const QString &description) { _description = description; }
 
-QDateTime   LuaConfig::getLastTriggered() const                         { return _lastTriggered; }
-void        LuaConfig::setLastTriggered(const QDateTime &lastTriggered) { _lastTriggered = lastTriggered; }
-
-
-
+QDateTime LuaConfig::getLastTriggered() const { return _lastTriggered; }
+void LuaConfig::setLastTriggered(const QDateTime &lastTriggered) { _lastTriggered = lastTriggered; }

@@ -34,6 +34,8 @@ public:
 
     // remove all trigger
     void removeAllTrigger();
+    // last run of the timer removed by removeAllTrigger(), invalid if there was none
+    QDateTime timerLastRun() const { return _timerLastRun; }
 
     // load this luaconfig from QSettings data
     void fromSettings(QSettings& mySettings);
@@ -85,6 +87,7 @@ protected:
     QList <LuaTriggerBase*> _myTriggers;
 
     QDateTime _lastTriggered;
+    QDateTime _timerLastRun;
 };
 
 #endif // LUACONFIG_H

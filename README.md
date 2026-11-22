@@ -225,6 +225,7 @@ None of these need a running RetroShare, except the MCP smoke test.
 | Sandbox (via the standalone runner) | build `jsonapi-runner`, then `tests/sandbox/run.sh <path-to-lua4rs-jsonapi>` |
 | Approvals and diff | `qmake tests/truststore/truststore.pro && make && ./tst_truststore` |
 | Store | `qmake tests/store/store.pro && make && ./tst_store` |
+| Triggers (timer schedule across saves) | `qmake tests/triggers/triggers.pro && make && ./tst_triggers` |
 | Per-script environments | `qmake tests/env/env.pro && make && ./tst_env` (add `LUA_VERSION=5.5` to test 5.5) |
 | MCP protocol, HTTP rules, settings | `qmake tests/mcp/mcp.pro && make && ./tst_mcp` |
 | MCP endpoint of a running instance | `tests/mcp/smoke.sh <token> [url]` |

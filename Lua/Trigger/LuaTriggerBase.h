@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../LuaEvent.h"
+#include <QDateTime>
 #include <QString>
 #include <QSettings>
 
@@ -27,6 +28,9 @@ public:
     virtual void fromSettings(const QSettings &mySettings);
 
     virtual QString classname();
+
+    QDateTime lastRun() const { return _lastRun; }
+    void setLastRun(const QDateTime& lastRun) { _lastRun = lastRun; }
 
 protected:
     QString _classname;

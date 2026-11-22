@@ -78,7 +78,12 @@ void    LuaContainer::removeAllTrigger() { _config->removeAllTrigger(); }
 void    LuaContainer::addRunEveryTrigger(uint amout, uint unit)
 {
     std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
-    _config->addTrigger(new LuaTriggerTimerInterval(amout, unit));
+    auto trigger = new LuaTriggerTimerInterval(amout, unit);
+    // Continue the schedule of the timer this one replaces (saving rebuilds all
+    // triggers); a timer that did not exist before runs on the next tick.
+    const QDateTime previous = _config->timerLastRun();
+    if(previous.isValid()) trigger->setLastRun(previous);
+    _config->addTrigger(trigger);
 }
 
 bool    LuaContainer::getRunEveryChecked(uint& amout, uint& unit)
