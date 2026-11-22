@@ -81,7 +81,6 @@ public:
     bool configureJsonApi(const QString& url, const QString& username,
                           const QString& password, QString& error);
     void runLuaByName(const QString& name);
-    //void runLuaByNameWithParams(const QString& name, parameterMap paramMap);
     void runLuaByEvent(const QString& name, const QString& code, const LuaEvent& event);
 
     // Trust a stored script runs with (approval + hash rule, see LuaTrustStore).
@@ -98,7 +97,6 @@ public:
     const QStringList& sensitiveFunctions() const { return _sensitiveFunctions; }
 
     // getter & setter
-    Lua4RSWidget* getUI();
     void setUi(Lua4RSWidget* ui);
     Lua4RSNotify *notify() const;
     LuaList* codeList() const;

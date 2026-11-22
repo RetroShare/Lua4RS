@@ -1,4 +1,5 @@
 #include "LuaConfig.h"
+#include "util/rsdebuglevel0.h"
 
 #define INI_KEY_CLASSNAME "Classname"
 #define INI_KEY_CONSTRAINT_ENABLED "ConstraintEnabled"
@@ -63,13 +64,13 @@ bool LuaConfig::isTriggered(const LuaEvent &luaevent)
 // addTrigger - Add a trigger to the trigger list of this LuaConfig
 void LuaConfig::addTrigger(LuaTriggerBase *trigger)
 {
-    if (trigger != NULL)
+    if (trigger != nullptr)
     {
         _myTriggers.append(trigger);
     }
     else
     {
-        std::cerr << "[Lua] LuaConfig::addTrigger() : tried to add an invalid trigger obj." << std::endl;
+        RS_ERR("tried to add an invalid trigger object");
     }
 }
 
@@ -130,7 +131,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             className = mySettings.value(INI_KEY_CLASSNAME).toString();
             if (className == "")
             {
-                std::cerr << "[Lua] LuaConfig::fromSettings() : empty trigger classname found in : [" << childGroup.toStdString() << "]" << std::endl;
+                RS_WARN("empty trigger class name in [", childGroup.toStdString(), "]");
                 continue;
             }
 
@@ -156,7 +157,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             }
             else
             {
-                std::cerr << "[Lua] LuaConfig::fromSettings() : unknown trigger class : '" << className.toStdString() << "' found in [" << childGroup.toStdString() << "]" << std::endl;
+                RS_WARN("unknown trigger class '", className.toStdString(), "' in [", childGroup.toStdString(), "]");
                 atrigger = 0;
             }
 
@@ -164,7 +165,7 @@ void LuaConfig::fromSettings(QSettings &mySettings)
             // from mySettings now and add him to our trigger list
             if (atrigger != 0)
             {
-                std::cerr << "[Lua] LuaConfig::fromSettings() : trigger : '" << className.toStdString() << "' added." << std::endl;
+                RS_DBG1("trigger '", className.toStdString(), "' added");
                 atrigger->fromSettings(mySettings);
                 addTrigger(atrigger);
             }

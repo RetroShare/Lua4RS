@@ -3,6 +3,7 @@
 #include "LuaContainer.h"
 #include "LuaCode.h"
 #include "LuaConfig.h"
+#include "util/rsdebuglevel0.h"
 
 LuaContainer::LuaContainer() :
     _code(new LuaCode()),
@@ -80,10 +81,9 @@ void    LuaContainer::setConstraintFromTo(const QTime& from, const QTime& to)   
 void    LuaContainer::removeAllTrigger() { _config->removeAllTrigger(); }
 
 // every
-void    LuaContainer::addRunEveryTrigger(uint amout, uint unit)
+void    LuaContainer::addRunEveryTrigger(uint amount, uint unit)
 {
-    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
-    auto trigger = new LuaTriggerTimerInterval(amout, unit);
+    auto trigger = new LuaTriggerTimerInterval(amount, unit);
     // Continue the schedule of the timer this one replaces (saving rebuilds all
     // triggers); a timer that did not exist before runs on the next tick.
     const QDateTime previous = _config->timerLastRun();
@@ -91,19 +91,19 @@ void    LuaContainer::addRunEveryTrigger(uint amout, uint unit)
     _config->addTrigger(trigger);
 }
 
-bool    LuaContainer::getRunEveryChecked(uint& amout, uint& unit)
+bool    LuaContainer::getRunEveryChecked(uint& amount, uint& unit)
 {
     for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
     {
         if((*it)->classname() == LUA_TRIGGER_TIMER_INTERVAL)
         {
             LuaTriggerTimerInterval* t = dynamic_cast<LuaTriggerTimerInterval*>(*it);
-            if(t == NULL)
+            if(t == nullptr)
             {
-                std::cerr << "[Lua] LuaContainer::getRunEveryChecked() - failed cast!" << std::endl;
+                RS_ERR("failed cast");
                 continue; // since there should be only one trigger with that name the continue might be useless - keep it for now
             }
-            t->getValues(amout, unit);
+            t->getValues(amount, unit);
             return true;
         }
     }
@@ -125,7 +125,6 @@ QDateTime LuaContainer::getTimerLastRun()
 // once
 void    LuaContainer::addRunOnceTrigger(const QDateTime& when)
 {
-    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
     _config->addTrigger(new LuaTriggerOnce(when));
 }
 
@@ -136,9 +135,9 @@ bool    LuaContainer::getRunOnceChecked(QDateTime& when)
         if((*it)->classname() == LUA_TRIGGER_ONCE)
         {
             LuaTriggerOnce* t = dynamic_cast<LuaTriggerOnce*>(*it);
-            if(t == NULL)
+            if(t == nullptr)
             {
-                std::cerr << "[Lua] LuaContainer::getRunOnceChecked() - failed cast!" << std::endl;
+                RS_ERR("failed cast");
                 continue; // since there should be only one trigger with that name the continue might be useless - keep it for now
             }
             when = t->getValues();
@@ -149,9 +148,8 @@ bool    LuaContainer::getRunOnceChecked(QDateTime& when)
 }
 
 // start up
-void    LuaContainer::addRunStratupTrigger()
+void    LuaContainer::addRunStartupTrigger()
 {
-    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
     _config->addTrigger(new LuaTriggerStartup());
 }
 
@@ -168,7 +166,6 @@ bool    LuaContainer::getRunStartupChecked()
 // shut down
 void    LuaContainer::addRunShutdownTrigger()
 {
-    std::cout << "[Lua] LuaContainer::addRunEveryTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
     _config->addTrigger(new LuaTriggerShutdown());
 }
 
@@ -184,7 +181,6 @@ bool    LuaContainer::getRunShutdownChecked()
 
 void LuaContainer::addEventTrigger(uint eventId)
 {
-    std::cout << "[Lua] LuaContainer::addEventTrigger() : triggercount=" << _config->getTriggerCount() << std::endl;
     _config->addTrigger(new LuaTriggerEvent(eventId));
 }
 
@@ -203,7 +199,7 @@ bool LuaContainer::getEventTriggerChecked(uint eventId)
         if((*it)->classname() == "LuaTriggerEvent")
         {
             LuaTriggerEvent *e = dynamic_cast<LuaTriggerEvent*>(*it);
-            if(e != NULL && e->getEventId() == eventId)
+            if(e != nullptr && e->getEventId() == eventId)
                 return true;
         }
     }

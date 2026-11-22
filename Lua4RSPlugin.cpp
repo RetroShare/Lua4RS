@@ -50,11 +50,11 @@ extern "C" {
 
 Lua4RSPlugin::Lua4RSPlugin()
 {
-    _icon = NULL;
-    _mainpage = NULL;
-    _peers = NULL;
-    _pluginHandler = NULL;
-    _service = NULL;
+    _icon = nullptr;
+    _mainpage = nullptr;
+    _peers = nullptr;
+    _pluginHandler = nullptr;
+    _service = nullptr;
 }
 
 void Lua4RSPlugin::stop()
@@ -86,7 +86,7 @@ void Lua4RSPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
     // get stuff
     _peers = interfaces.mPeers;
 
-    if(_service == NULL)
+    if(_service == nullptr)
     {
         _service = new p3Lua4RS();
         L4R::L4RConfig = _service;
@@ -103,7 +103,7 @@ void Lua4RSPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
 
 MainPage* Lua4RSPlugin::qt_page() const
 {
-    if(_mainpage == NULL) {
+    if(_mainpage == nullptr) {
 #ifdef LUA4RS_MCP
         // GUI thread, config is loaded: keep the MCP endpoint mounted if enabled
         // (the JSON API server itself is created after this page).
@@ -118,7 +118,7 @@ MainPage* Lua4RSPlugin::qt_page() const
 
 QIcon* Lua4RSPlugin::qt_icon() const
 {
-    if(_icon == NULL)
+    if(_icon == nullptr)
     {
         Q_INIT_RESOURCE(Lua4RS_images);
         _icon = new QIcon(LUA_ICON_LINK);
@@ -130,7 +130,7 @@ QIcon* Lua4RSPlugin::qt_icon() const
 QTranslator* Lua4RSPlugin::qt_translator(QApplication* /*app*/, const QString& languageCode, const QString& externalDir) const
 {
     if (languageCode == "en") {
-        return NULL;
+        return nullptr;
     }
 
     QTranslator* translator = new QTranslator();
@@ -142,7 +142,7 @@ QTranslator* Lua4RSPlugin::qt_translator(QApplication* /*app*/, const QString& l
     }
 
     delete(translator);
-    return NULL;
+    return nullptr;
 }
 
 ConfigPage *Lua4RSPlugin::qt_config_page() const
@@ -152,9 +152,9 @@ ConfigPage *Lua4RSPlugin::qt_config_page() const
 
 QDialog *Lua4RSPlugin::qt_about_page() const
 {
-    static QMessageBox *about_dialog = NULL;
+    static QMessageBox *about_dialog = nullptr;
 
-    if(about_dialog == NULL)
+    if(about_dialog == nullptr)
     {
         about_dialog = new QMessageBox();
 

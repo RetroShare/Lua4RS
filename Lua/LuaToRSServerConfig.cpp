@@ -11,7 +11,6 @@ extern "C" {
 
 extern "C" {
     //	/* Operating Mode */
-    //virtual uint32_t getOperatingMode() = 0;
     int config_getOperatingMode(lua_State* L)
     {
         const RsOpMode opMode = rsConfig->getOperatingMode();
@@ -40,7 +39,6 @@ extern "C" {
         return 2;
     }
 
-    //virtual bool     setOperatingMode(uint32_t opMode) = 0;
     int config_setOperatingMode(lua_State* L)
     {
         if( getArgCount(L) != 1)
@@ -51,7 +49,6 @@ extern "C" {
         if(lua_isnumber(L, 1))
         {
             const int opModeI = luaL_checkinteger(L, 1);
-            //std::cout << "[Lua] config_setOperatingMode got int: " << opModeI << std::endl;
             switch (opModeI) {
             case 1:
                 opMode = RsOpMode::FULL;
@@ -71,7 +68,6 @@ extern "C" {
             }
         } else {
             const std::string opModeS = luaL_checkstring(L, 1);
-            //std::cout << "[Lua] config_setOperatingMode got string: " << opModeS << std::endl;
 
             if(opModeS == "full")
                 opMode = RsOpMode::FULL;
@@ -84,7 +80,6 @@ extern "C" {
             // else opMode = 0
         }
 
-        //std::cout << "[Lua] config_setOperatingMode opMode: " << opMode << std::endl;
         if(opMode == static_cast<RsOpMode>(0))
             // somthing went wrong
             return 0;
@@ -94,7 +89,6 @@ extern "C" {
     }
 
     // download / upload speed
-    //virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
     int config_setMaxDataRates(lua_State* L)
     {
         if( getArgCount(L) != 2)
@@ -110,7 +104,6 @@ extern "C" {
         return 0;
     }
 
-    //virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
     int config_getMaxDataRates(lua_State* L)
     {
         int kbDown, kbUp;
@@ -120,7 +113,6 @@ extern "C" {
         return 2;
     }
 
-    //virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
     int config_getCurrentDataRates(lua_State* L)
     {
         float kbDown, kbUp;
@@ -132,18 +124,6 @@ extern "C" {
 }
 
 
-//virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
-
-//virtual int 	getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
-//virtual int 	getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap) = 0;
-
-//virtual uint32_t getUserLevel() = 0;
-
-//virtual uint32_t getNetState() = 0;
-//virtual uint32_t getNetworkMode() = 0;
-//virtual uint32_t getNatTypeMode() = 0;
-//virtual uint32_t getNatHoleMode() = 0;
-//virtual uint32_t getConnectModes() = 0;
-
-//virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
-//virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;
+// TODO: not bound yet, possibly useful (see retroshare/rsconfig.h):
+//   getConfigNetStatus, getTotalBandwidthRates, getAllBandwidthRates, getUserLevel,
+//   getNetState, getNetworkMode, getNatTypeMode, getNatHoleMode, getConnectModes

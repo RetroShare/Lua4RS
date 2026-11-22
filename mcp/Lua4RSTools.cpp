@@ -623,7 +623,7 @@ void addTriggerTools(McpProtocol& p, LuaCore* core)
             c->removeAllTrigger();
             if(everyUnit >= 0) c->addRunEveryTrigger(uint(everyAmount), uint(everyUnit));
             if(once.isValid()) c->addRunOnceTrigger(once);
-            if(startup) c->addRunStratupTrigger();
+            if(startup) c->addRunStartupTrigger();
             if(shutdown) c->addRunShutdownTrigger();
             for(uint id : eventIds) c->addEventTrigger(id);
             c->setConstraintEnabled(window);

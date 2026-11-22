@@ -9,6 +9,7 @@
 #include <QTimer>
 
 #include <retroshare/rsjsonapi.h>
+#include "util/rsdebuglevel0.h"
 
 namespace {
 void closeWith(const std::shared_ptr<rb::Session>& session, const McpHttpReply& reply)
@@ -109,5 +110,5 @@ void McpServer::restartJsonApi(int attempt)
     if(err == RsJsonApiErrorNum::NOT_A_MACHINE_GUN && attempt < 6)
         QTimer::singleShot(10000, [attempt]() { restartJsonApi(attempt + 1); });
     else if(err)
-        std::cerr << "[Lua4RS] Could not restart JSON API for MCP: " << err.message() << std::endl;
+        RS_ERR("could not restart JSON API for MCP: ", err.message());
 }

@@ -594,7 +594,7 @@ bool Lua4RSWidget::saveScript()
         for(uint id : otherEvents) _activeContainer->addEventTrigger(id);
     if(ui->cb_every->isChecked()) _activeContainer->addRunEveryTrigger(ui->spb_everycount->value(), ui->dd_everyunits->currentIndex());
     if(ui->cb_once->isChecked()) _activeContainer->addRunOnceTrigger(ui->dte_runonce->dateTime());
-    if(ui->cb_startup->isChecked()) _activeContainer->addRunStratupTrigger();
+    if(ui->cb_startup->isChecked()) _activeContainer->addRunStartupTrigger();
     if(ui->cb_shutdown->isChecked()) _activeContainer->addRunShutdownTrigger();
     for(const auto& item : _eventItems)
         if(item.second->checkState() == Qt::Checked) _activeContainer->addEventTrigger(item.first);

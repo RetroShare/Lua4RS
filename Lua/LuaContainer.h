@@ -50,15 +50,15 @@ public:
     // trigger
     void removeAllTrigger();
 
-    void addRunEveryTrigger(uint amout, uint unit);
-    bool getRunEveryChecked(uint& amout, uint& unit);
+    void addRunEveryTrigger(uint amount, uint unit);
+    bool getRunEveryChecked(uint& amount, uint& unit);
     // Last run of the repeat timer; invalid if there is none or it never ran.
     QDateTime getTimerLastRun();
 
     void addRunOnceTrigger(const QDateTime& when);
     bool getRunOnceChecked(QDateTime& when);
 
-    void addRunStratupTrigger();
+    void addRunStartupTrigger();
     bool getRunStartupChecked();
 
     void addRunShutdownTrigger();

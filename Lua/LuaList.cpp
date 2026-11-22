@@ -12,6 +12,7 @@
 #include "LuaList.h"
 
 #include <QRegularExpression>
+#include "util/rsdebuglevel0.h"
 
 bool LuaList::isValidName(const QString& name)
 {
@@ -156,7 +157,7 @@ void LuaList::addItem(LuaContainer* container)
         if((*it)->getName() == container->getName())
         {
             // a file with the same name already exists
-            std::cerr << "[Lua] LuaList::addItem : ERROR: name already exists " << container->getName().toStdString() << std::endl;
+            RS_WARN("name already exists: ", container->getName().toStdString());
             return;
         }
 
@@ -219,7 +220,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         // check whether file exists
         if(!QFile::exists(luaFileName))
         {
-            std::cerr << "[Lua] can't find Lua file " << luaFileName.toStdString() << std::endl;
+            RS_ERR("can't find Lua file ", luaFileName.toStdString());
             return false;
         }
 
@@ -227,7 +228,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         file.open(luaFileName.toLocal8Bit().data(), std::ios::in);
         if(!file.good() || !file.is_open())
         {
-            std::cerr << "[Lua] can't open file " << luaFileName.toStdString() << std::endl;
+            RS_ERR("can't open file ", luaFileName.toStdString());
             return false;
         }
 
@@ -253,11 +254,11 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         {
             if(ignoreNoSettingsFile)
             {
-                std::cerr << "[Lua] can't find settings file " << settingsFileName.toStdString() << " -> continuing" << std::endl;
+                RS_DBG1("no settings file ", settingsFileName.toStdString(), ", continuing");
                 return true;
             } else
             {
-                std::cerr << "[Lua] can't find settings file " << settingsFileName.toStdString() << " -> aborting" << std::endl;
+                RS_ERR("can't find settings file ", settingsFileName.toStdString());
                 return false;
             }
         }
@@ -270,7 +271,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
 
 bool LuaList::loadAll()
 {
-    std::cout << "[Lua] loading all script files from " << _filePath.toStdString() << std::endl;
+    RS_DBG1("loading all script files from ", _filePath.toStdString());
 
     // get everything with ".lua"
     QStringList files;
@@ -290,13 +291,13 @@ bool LuaList::loadAll()
     for( QStringList::iterator it = files.begin(); it != files.end(); ++it)
     {
         LuaContainer* c = new LuaContainer();
-        std::cout << "[Lua] loading file " << it->toStdString() << " ..." << std::endl;
+        RS_DBG1("loading file ", it->toStdString());
         if(load((*it), c))
             _luaList.push_back(c);
         else
         {
             delete c;
-            std::cerr << "[Lua] can't load file " << it->toStdString() << std::endl;
+            RS_ERR("can't load file ", it->toStdString());
         }
     }
     if(_luaList.empty())
@@ -319,7 +320,7 @@ bool LuaList::save(LuaContainer* container)
         file.open(luaFileName.toLocal8Bit().data(), std::ios::trunc);
         if(!file.is_open())
         {
-            std::cerr << "[Lua] can't open file " << luaFileName.toStdString() << std::endl;
+            RS_ERR("can't open file ", luaFileName.toStdString());
             return false;
         }
 
@@ -350,7 +351,7 @@ bool LuaList::saveSettings(LuaContainer* container)
     QSettings settings(settingsFileName, QSettings::IniFormat);
     if(!settings.isWritable())
     {
-        std::cerr << "[Lua] no write access for settings file " << settingsFileName.toStdString() << std::endl;
+        RS_ERR("no write access for settings file ", settingsFileName.toStdString());
         return false;
     }
     settings.clear();
@@ -361,12 +362,11 @@ bool LuaList::saveSettings(LuaContainer* container)
 
 bool LuaList::saveAll()
 {
-    std::cout << "[Lua] saving all script files" << std::endl;
     bool r = true;
     for(LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it)
         if(!save((*it)))
         {
-            std::cerr << "[Lua] failed to save lua script " << (*it)->getName().toStdString() << std::endl;
+            RS_ERR("failed to save Lua script ", (*it)->getName().toStdString());
             r = false;
         }
 
@@ -382,7 +382,7 @@ bool LuaList::remove(LuaContainer *container)
 
     if( !QFile::exists(fileName))
     {
-        std::cerr << "[Lua] can't find file " << fileName.toStdString() << std::endl;
+        RS_ERR("can't find file ", fileName.toStdString());
         return false;
     }
 
@@ -409,22 +409,4 @@ void LuaList::getFileNames(const QString& name, QString& luaFileName, QString& s
 {
     luaFileName = _filePath + name;
     settingsFileName =  luaFileName + QString(".ini");
-}
-
-void LuaList::dump()
-{
-    std::cout << "[Lua] dumping LuaList: " << size() << " elements" << std::endl;
-    uint counter = 0;
-    for( LuaContainerList::iterator it = _luaList.begin(); it != _luaList.end(); ++it, counter++)
-    {
-        LuaContainer* c = *it;
-        std::cout << " "<< counter << ": ";
-        if( c == NULL)
-            std::cout << "NULL" << std::endl;
-        else
-        {
-            std::cout << "Name: " << c->getName().toStdString() << std::endl;
-            std::cout << "Desc: " << c->getDesc().toStdString() << std::endl;
-        }
-    }
 }

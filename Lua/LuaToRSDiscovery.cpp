@@ -11,7 +11,6 @@ extern "C" {
 }
 
 extern "C" {
-    //virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
     int disc_getDiscFriends(lua_State* L)
     {
         luaL_checktype(L, 1, LUA_TSTRING);
@@ -30,7 +29,6 @@ extern "C" {
         return 1;
     }
 
-    //virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
     int disc_getDiscPgpFriends(lua_State* L)
     {
         luaL_checktype(L, 1, LUA_TSTRING);
@@ -49,7 +47,6 @@ extern "C" {
         return 1;
     }
 
-    //virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
     int disc_getPeerVersion(lua_State* L)
     {
         luaL_checktype(L, 1, LUA_TSTRING);
@@ -64,7 +61,6 @@ extern "C" {
         return 1;
     }
 
-    //virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
     int disc_getWaitingDiscCount(lua_State* L)
     {
         size_t sendCount, recvCount;

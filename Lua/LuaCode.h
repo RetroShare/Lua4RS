@@ -10,7 +10,6 @@ public:
     LuaCode(QString name);
     LuaCode(QString name, QString code);
 
-    // bool save();
 
     // getter/setter
     QString code() const;

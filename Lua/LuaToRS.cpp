@@ -47,7 +47,7 @@ void pushTable(lua_State* L, int tableTop, const std::string& name, const std::s
 
 void pushTable(lua_State* L, int tableTop, const std::string& name, int (*f)(lua_State*))
 {
-    if(name == "" || f == NULL)
+    if(name == "" || f == nullptr)
         return;
 
     lua_pushstring(L, name.c_str());

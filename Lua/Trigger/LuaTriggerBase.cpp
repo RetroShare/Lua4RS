@@ -1,4 +1,5 @@
 #include "LuaTriggerBase.h"
+#include "util/rsdebuglevel0.h"
 
 #define INI_KEY_TRIGGER_CLASSNAME   "Classname"
 #define INI_KEY_TRIGGER_LASTRUN     "LastRun"
@@ -13,7 +14,7 @@ LuaTriggerBase::~LuaTriggerBase() {}
 
 bool LuaTriggerBase::isTriggered (const LuaEvent& /*luaevent*/)
 {
-    std::cerr << "[Lua] isTriggered() called on LuaTriggerBase" << std::endl;
+    RS_ERR("called on LuaTriggerBase");
     return false;
 }
 

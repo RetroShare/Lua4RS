@@ -29,6 +29,7 @@
 #include "LuaToRSServices.cpp"
 
 #include "helper.h"
+#include "util/rsdebuglevel0.h"
 
 namespace {
 int printToOutput(lua_State* state)
@@ -94,11 +95,11 @@ LuaCore::LuaCore() :
     _luaList->setFilePath(_path);
     QString exampleError;
     if(!BundledScripts::install(QString::fromStdString(_path), exampleError))
-        std::cerr << "[Lua] " << exampleError.toStdString() << std::endl;
+        RS_ERR(exampleError.toStdString());
     if(_luaList->loadAll())
-        std::cout << "[Lua] loaded " << _luaList->size() << " Lua script(s)" << std::endl;
+        RS_INFO("loaded ", _luaList->size(), " Lua script(s)");
     else
-        std::cout << "[Lua] didn't load any Lua scripts" << std::endl;
+        RS_INFO("didn't load any Lua scripts");
 }
 
 LuaCore::~LuaCore()
@@ -136,7 +137,7 @@ void LuaCore::shutDown()
     {
         std::lock_guard<std::recursive_mutex> lock(_scriptsMutex);
         if(!_luaList->saveAll())
-            std::cerr << "[Lua] Could not save all scripts during shutdown" << std::endl;
+            RS_ERR("could not save all scripts during shutdown");
     }
     RsStackMutex lock(_mutexRunLua);
     lua_close(L);
@@ -387,7 +388,7 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
                 // Keep the timer's last run across crashes (saveAll only runs
                 // on a clean shutdown); otherwise it would run early after a restart.
                 if(event.eventId == L4R_TIMERTICK && !_luaList->saveSettings(container))
-                    std::cerr << "[Lua] could not save the last run of " << container->getName().toStdString() << std::endl;
+                    RS_ERR("could not save the last run of ", container->getName().toStdString());
             }
     }
     for(const auto& script : scripts)
@@ -537,7 +538,6 @@ void LuaCore::runLuaByName(const QString& name)
 
 void addSettingsEntryToLua(lua_State *L, int top, const QString &type, const QVariant& value, const QString &name)
 {
-//    std::cout << "[Lua] runByEvent/addSettingsEntry adding " << name.toStdString() << " with " << value.toString().toStdString() << std::endl;
 
     const QByteArray key = name.toUtf8();
     lua_pushlstring(L, key.constData(), key.size());
@@ -569,7 +569,6 @@ void addSettingsToLua(lua_State  *L, int top, LuaEventParameters *settings, int8
 	(void) skipLvl;
 
         QString type = key.mid(0, 3);
-//        std::cout << "[Lua] runByEvent/addSettingsToLua adding type " << type.toStdString() << " key is " << key.toStdString() << " (was " << it->toStdString() << ")" << std::endl;
         if(!(type == "str" || type == "int"  || type == "u32" || type == "u64" /*|| type == "arr" */))
             continue;
 
@@ -622,7 +621,7 @@ void LuaCore::reportLuaErrors(lua_State *L, int status)
     std::string s;
     if ( status!=0 ) {
         s = LuaExecutionGuard::errorText(L);
-        std::cerr << "-- " << s << std::endl;
+        RS_DBG1("Lua error: ", s); // also in the Lua4RS log
 
         if(_capture) _capture->error = QString::fromStdString(s);
         logLine("error", QString::fromStdString("Lua error: " + s));
@@ -657,14 +656,6 @@ void LuaCore::setUi(Lua4RSWidget *ui)
     QObject::connect(this, SIGNAL(appendLog(QString)), _ui, SLOT(appendLog(QString)));
     QObject::connect(this, SIGNAL(appendOutput(QString)), _ui, SLOT(appendOutput(QString)));
     QObject::connect(this, SIGNAL(clearOutput()), _ui, SLOT(clearOutput()));
-}
-
-Lua4RSWidget* LuaCore::getUI()
-{
-    ///TODO better fix
-    assert(_ui);
-
-    return _ui;
 }
 
 // emit

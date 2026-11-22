@@ -9,3 +9,6 @@ SOURCES += tst_triggers.cpp \
     ../../Lua/Trigger/LuaTriggerBase.cpp ../../Lua/Trigger/LuaTriggerTimerInterval.cpp \
     ../../Lua/Trigger/LuaTriggerStartup.cpp ../../Lua/Trigger/LuaTriggerShutdown.cpp \
     ../../Lua/Trigger/LuaTriggerOnce.cpp ../../Lua/Trigger/LuaTriggerEvent.cpp
+# RetroShare logging (util/rsdebug.h, header-only)
+INCLUDEPATH += $$PWD/../../../../libretroshare/src
+QMAKE_CXXFLAGS += -isystem $$PWD/../../../../supportlibs/rapidjson/include

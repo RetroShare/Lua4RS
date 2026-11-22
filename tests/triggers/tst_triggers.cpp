@@ -55,7 +55,7 @@ int main()
 
     // A timer that did not exist before the save runs right away.
     c.removeAllTrigger();
-    c.addRunStratupTrigger();
+    c.addRunStartupTrigger();
     c.removeAllTrigger();
     c.addRunEveryTrigger(1, kHours);
     CHECK(tick(c, now.addSecs(3600 + 180)));

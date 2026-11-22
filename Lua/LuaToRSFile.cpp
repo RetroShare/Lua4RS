@@ -12,8 +12,6 @@ extern "C" {
 
 extern "C" {
 
-    //virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
-    //virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
     // only words for now
 
     int file_turtleSearch(lua_State *L)
@@ -27,10 +25,8 @@ extern "C" {
         return 1;
     }
 
-    // virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
     int file_fileRequest(lua_State *L)
     {
-        //int argc = getArgCount(L);
         luaL_checktype(L, 1, LUA_TSTRING);
         luaL_checktype(L, 2, LUA_TSTRING);
         luaL_checktype(L, 3, LUA_TNUMBER);
@@ -46,10 +42,8 @@ extern "C" {
         return 1;
     }
 
-    //virtual void    setDownloadDirectory(std::string path) = 0;
     int file_setDownloadDirectory(lua_State *L)
     {
-        //int argc = getArgCount(L);
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string path = luaL_checkstring(L, 1);
@@ -59,10 +53,8 @@ extern "C" {
         return 0;
     }
 
-    //virtual void    setPartialsDirectory(std::string path) = 0;
     int file_setPartialsDirectory(lua_State *L)
     {
-        //int argc = getArgCount(L);
         luaL_checktype(L, 1, LUA_TSTRING);
 
         const std::string path = luaL_checkstring(L, 1);
@@ -72,10 +64,8 @@ extern "C" {
         return 0;
     }
 
-    //virtual std::string getDownloadDirectory() = 0;
     int file_getDownloadDirectory(lua_State *L)
     {
-        //int argc = getArgCount(L);
 
         const std::string path = rsFiles->getDownloadDirectory();
 
@@ -83,10 +73,8 @@ extern "C" {
         return 1;
     }
 
-    //virtual std::string getPartialsDirectory() = 0;
     int file_getPartialsDirectory(lua_State *L)
     {
-        //int argc = getArgCount(L);
 
         const std::string path = rsFiles->getPartialsDirectory();
 

@@ -25,7 +25,6 @@ public:
     bool saveSettings(LuaContainer* container);
     void rename(const QString& oldName, const QString& newName);
 
-    //bool itemAt(size_t index, LuaContainer*& container);
     bool itemByName(const QString& name, LuaContainer*& container);
     bool itemByName(const std::string& name, LuaContainer*& container);
 
@@ -45,7 +44,6 @@ public:
     void setFilePath(const std::string& path);
 
     // debug
-    void dump();
 
 private:
     bool load(const QString& name, LuaContainer* container, bool ignoreNoSettingsFile = true);
