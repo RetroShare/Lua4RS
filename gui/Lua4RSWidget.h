@@ -51,6 +51,7 @@ private:
     void updateAccessStatus();
     void onScriptRemovedExternally(const QString& name);
     void onScriptChangedExternally(const QString& name);
+    void updateTimerLastRun();
 
     Ui::Lua4RSWidget* ui;
     LuaCore* _lua;

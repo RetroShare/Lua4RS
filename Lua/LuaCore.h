@@ -176,6 +176,8 @@ signals:
     // deleted (drop pointers to it) and after scripts changed.
     void scriptAboutToBeRemoved(const QString& name);
     void scriptChangedExternally(const QString& name);
+    // Worker thread: a trigger fired and the script is about to run.
+    void scriptTriggered(const QString& name);
     void clearOutput();
 };
 

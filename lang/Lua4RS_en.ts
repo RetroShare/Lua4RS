@@ -383,153 +383,153 @@ Your results appear in Output below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="426"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="433"/>
         <source>yyyy-MM-dd HH:mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="438"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="445"/>
         <source>When RetroShare starts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="445"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="452"/>
         <source>When RetroShare closes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="452"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="459"/>
         <source>Or when an event occurs:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="461"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="468"/>
         <source>Only between</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="468"/>
-        <location filename="../gui/Lua4RSWidget.ui" line="482"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="475"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="489"/>
         <source>HH:mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="475"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="482"/>
         <source>and</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="516"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="523"/>
         <source>Ready — open a script or choose an example.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="526"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="533"/>
         <source>Clear output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="545"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="552"/>
         <source>Script results and errors appear here. Use print(...) to write output.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="553"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="560"/>
         <source>Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="579"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="586"/>
         <source>JSON API</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="585"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="592"/>
         <source>Use the JSON API from Lua. First enable it in RetroShare and authorize an API username and password.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="595"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="602"/>
         <source>Server address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="602"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="609"/>
         <source>http://127.0.0.1:9092</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="609"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="616"/>
         <source>API username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="616"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="623"/>
         <source>Authorized API user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="623"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="630"/>
         <source>API password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="633"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="640"/>
         <source>API password, not your profile password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="640"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="647"/>
         <source>Credentials stay in memory for this session. Environment variables are loaded when this page opens.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="650"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="657"/>
         <source>Apply &amp;&amp; test connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="657"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="664"/>
         <source>Not tested</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="667"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="674"/>
         <source>New API example</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="674"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="681"/>
         <source>The example lists your friends. It does not send messages or change settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="698"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="705"/>
         <source>Functions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="704"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="711"/>
         <source>Find a function…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="711"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="718"/>
         <source>Double-click a function to insert it at the cursor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="725"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="732"/>
         <source>Function</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="730"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="737"/>
         <source>Insert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="738"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="745"/>
         <source>Insert function</source>
         <translation type="unfinished"></translation>
     </message>
@@ -540,384 +540,389 @@ Your results appear in Output below.</source>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="280"/>
-        <location filename="../gui/Lua4RSWidget.cpp" line="486"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="493"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="536"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="543"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.ui" line="419"/>
+        <location filename="../gui/Lua4RSWidget.ui" line="426"/>
         <source>Run once at</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="75"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="79"/>
         <source>Finished. Results appear in Output.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="75"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="79"/>
         <source>Script failed - see Output.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="93"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="97"/>
         <source>MCP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="104"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="108"/>
         <source>Settings changed — click Apply &amp; test connection.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="122"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="126"/>
         <source>Hello world — no setup needed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="123"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="127"/>
         <source>My first Lua script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="125"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="129"/>
         <source>List friends with the JSON API</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="126"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="130"/>
         <source>Bundled scripts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="132"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="136"/>
         <source>Example unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="135"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="139"/>
         <source>Example: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="156"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="160"/>
         <source>The script gets in args:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="160"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="164"/>
         <source>Name for agents: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="176"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="180"/>
         <source>Remove these triggers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="181"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="185"/>
         <source>Other event triggers will be removed when you save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="192"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="196"/>
         <source>&lt;h2&gt;Start with a simple script&lt;/h2&gt;&lt;ol&gt;&lt;li&gt;Choose &lt;b&gt;Example → Hello world&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Click &lt;b&gt;Run&lt;/b&gt; (F5). Read the result in &lt;b&gt;Output&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Give your script a name and click &lt;b&gt;Save&lt;/b&gt; (Ctrl+S).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Use &lt;b&gt;Automation&lt;/b&gt; only if you want scheduled or event-driven runs. Save to apply them.&lt;/p&gt;&lt;p&gt;For JSON API scripts, enable the API in RetroShare, enter its authorized credentials in the right panel, and click &lt;b&gt;Apply &amp;amp; test connection&lt;/b&gt;. Then choose &lt;b&gt;New API example&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Use &lt;code&gt;print(...)&lt;/code&gt; or &lt;code&gt;rs.print(...)&lt;/code&gt; for output. Continuous JSON API subscriptions run in the separate command-line runner.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="201"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="205"/>
         <source>&lt;h3&gt;What a script may do&lt;/h3&gt;&lt;p&gt;Every script runs with an access level, shown in the &lt;b&gt;Access&lt;/b&gt; column:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Read-only&lt;/b&gt;: reads RetroShare, cannot change anything. No files, no shell, no JSON API.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Write&lt;/b&gt;: may also send chat and mail, add friends, change settings, and read mail.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Trusted&lt;/b&gt;: full Lua, files and the JSON API, like a program you installed.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Scripts you create here are trusted. Everything else, including the examples, runs read-only until you click &lt;b&gt;Approve…&lt;/b&gt;. An approval belongs to the exact code: if the script changes, it runs read-only again, and Approve… shows what changed.&lt;/p&gt;&lt;h3&gt;Coding agents (MCP)&lt;/h3&gt;&lt;p&gt;In the &lt;b&gt;MCP&lt;/b&gt; tab you can let a coding agent such as Claude Code write and test scripts. The agent never gets more than read-only access; only you approve scripts, here.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="236"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="240"/>
         <source>Approve existing scripts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="236"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="240"/>
         <source>&lt;p&gt;Lua4RS now keeps an approval for every script. Scripts without one run in a sandbox: no file or shell access, no JSON API calls and no functions that change RetroShare (for example sending chat messages).&lt;/p&gt;&lt;p&gt;These scripts have no approval yet:&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;&lt;p&gt;Approve them as &lt;b&gt;trusted&lt;/b&gt; (full access, as before)? Only do this if you wrote or checked them yourself.&lt;/p&gt;&lt;p&gt;If you already answered this question before, the Lua4RS settings were reset or deleted. Unless you know why, choose &lt;b&gt;Keep sandboxed&lt;/b&gt;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="246"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="250"/>
         <source>Approve as trusted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="247"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="251"/>
         <source>Keep sandboxed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="275"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="279"/>
         <source>Script failed — see Output.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="291"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="296"/>
         <source>Last run: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="291"/>
-        <source>Never</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="293"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
         <source>On</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="293"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="316"/>
         <source>Automation enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="310"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="316"/>
         <source>Automation disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="376"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="383"/>
         <source>Choose a script. Write Lua. Run and see the result.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="378"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="385"/>
         <source>Ready — F5 runs the code shown above.
 Access: Read-only (based on a script the agent deleted).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="380"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="387"/>
         <source>Ready — F5 runs the code shown above.
 Access: Trusted (new script).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="384"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="391"/>
         <source>Ready — F5 runs the code shown above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="394"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="401"/>
         <source>Save before approving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="395"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="402"/>
         <source>Approval applies to the saved script. Save your changes to %1 first?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="414"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="421"/>
         <source>Approved %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="424"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="431"/>
         <source>The agent deleted %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="433"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="440"/>
         <source>The agent deleted %1. Your unsaved version is kept — Save stores it as a new, unapproved script.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="443"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="450"/>
         <source>The agent updated %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="450"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="457"/>
         <source>Script changed by the agent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="451"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="458"/>
         <source>The agent changed %1 while you have unsaved changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="452"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="459"/>
         <source>Load the agent&apos;s version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="453"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="460"/>
         <source>Keep my version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="455"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="462"/>
         <source>Loading discards your changes. If you keep your version, saving it replaces the agent&apos;s version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="472"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="479"/>
         <source>Also triggered by events Lua4RS no longer offers (ids %1). They never fire; remove them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="486"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="493"/>
         <source>Save *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="504"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="514"/>
+        <source>last run %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="516"/>
+        <source>The timer last ran on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="523"/>
         <source>Unsaved changes — Run uses the editor; automatic runs use the saved script.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="511"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="530"/>
         <source>Unsaved script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="512"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="531"/>
         <source>Save changes to %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="541"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="560"/>
         <source>Choose a script name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="541"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="560"/>
         <source>Use a unique filename, such as my-script.lua, without folders or special filename characters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="545"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="564"/>
         <source>Check the schedule</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="545"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="564"/>
         <source>Choose a future time for the one-time run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="551"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="570"/>
         <source>Check the time window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="551"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="570"/>
         <source>Choose an end time after the start time. A one-time run must fall inside that window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="555"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
         <source>Check the interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="555"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
         <source>Choose a shorter repeat interval.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="596"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="615"/>
         <source>Could not save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="596"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="615"/>
         <source>The script could not be fully saved. Check write access to the scripts folder and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="600"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="619"/>
         <source>Saved %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
         <source>Delete script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
         <source>Delete %1 from disk? This also discards any editor changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="648"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="667"/>
         <source>Could not delete file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="648"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="667"/>
         <source>The script was removed from this list, but its file could not be deleted. Check the scripts folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="675"/>
         <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="657"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
         <source>Run: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="684"/>
         <source>Cannot run: Lua is busy or shutting down.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="695"/>
         <source>List friends through the JSON API</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="707"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="726"/>
         <source>Enter an HTTP(S) server address without a path, and a username without a colon.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="722"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="741"/>
         <source>Settings applied. Testing connection…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="726"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="745"/>
         <source>Connection timed out. Check that the JSON API is enabled and the address is correct.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="727"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="746"/>
         <source>Credentials rejected. Authorize this API user in RetroShare, then try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="728"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="747"/>
         <source>Could not connect: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="729"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="748"/>
         <source>Server replied, but the friend-list request failed (HTTP %1).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="730"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="749"/>
         <source>Connected. Choose New API example, then Run.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1396,47 +1401,47 @@ Access: Trusted (new script).</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="393"/>
+        <location filename="../Lua/LuaCore.cpp" line="399"/>
         <source> [%1: changed since approval]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="395"/>
+        <location filename="../Lua/LuaCore.cpp" line="401"/>
         <source> [%1: changed example, not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="397"/>
+        <location filename="../Lua/LuaCore.cpp" line="403"/>
         <source> [%1: not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="400"/>
+        <location filename="../Lua/LuaCore.cpp" line="406"/>
         <source>running %1%2 — trigger: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="488"/>
+        <location filename="../Lua/LuaCore.cpp" line="495"/>
         <source>running %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="502"/>
+        <location filename="../Lua/LuaCore.cpp" line="509"/>
         <source>The jsonapi table was replaced by a script. Restart the plugin to restore it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="513"/>
+        <location filename="../Lua/LuaCore.cpp" line="520"/>
         <source>Could not apply JSON API settings. Restore jsonapi.configure if your script changed it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="728"/>
+        <location filename="../Lua/LuaCore.cpp" line="735"/>
         <source>MCP agent runs %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaContainer.cpp" line="216"/>
+        <location filename="../Lua/LuaContainer.cpp" line="233"/>
         <source>none</source>
         <translation type="unfinished"></translation>
     </message>

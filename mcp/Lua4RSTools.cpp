@@ -109,9 +109,8 @@ QJsonObject scriptInfo(LuaCore* core, LuaContainer* c)
         { "sha256", QString::fromLatin1(LuaTrustStore::hash(code)) },
         { "bytes", code.toUtf8().size() }
     };
-    // Never-run scripts have the epoch as "last triggered".
-    const QDateTime lastRun = c->getLastTriggered();
-    if(lastRun.isValid() && lastRun.toSecsSinceEpoch() > 86400) info.insert("last_run", lastRun.toString(Qt::ISODate));
+    const QDateTime lastRun = c->getLastRun();
+    if(lastRun.isValid()) info.insert("last_run", lastRun.toString(Qt::ISODate));
     return info;
 }
 

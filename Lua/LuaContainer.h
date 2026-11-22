@@ -38,6 +38,8 @@ public:
 
     QDateTime getLastTriggered();
     void setLastTriggered(const QDateTime& dt);
+    // Last automatic run; invalid if the script never ran (stored as the epoch).
+    QDateTime getLastRun();
 
     bool getConstraintEnabled();
     void setConstraintEnabled(const bool enable);
@@ -50,6 +52,8 @@ public:
 
     void addRunEveryTrigger(uint amout, uint unit);
     bool getRunEveryChecked(uint& amout, uint& unit);
+    // Last run of the repeat timer; invalid if there is none or it never ran.
+    QDateTime getTimerLastRun();
 
     void addRunOnceTrigger(const QDateTime& when);
     bool getRunOnceChecked(QDateTime& when);

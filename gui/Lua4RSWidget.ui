@@ -409,6 +409,13 @@ Your results appear in Output below.</string>
                       </item>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QLabel" name="lbl_everylastrun">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                   <item>

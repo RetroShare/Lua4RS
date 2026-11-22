@@ -405,6 +405,7 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
             note = QString(" [%1]").arg(luaTrustName(status.effective));
         logLine("info", QObject::tr("running %1%2 — trigger: %3").arg(script.first, note, triggerName(event.eventId)),
                 script.first);
+        emit scriptTriggered(script.first);
         runLuaByEvent(script.first, script.second, event);
     }
 }

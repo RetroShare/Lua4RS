@@ -62,6 +62,11 @@ void    LuaContainer::setEnabled(const bool enable) { _config->enableScript(enab
 
 QDateTime   LuaContainer::getLastTriggered()                    { return _config->getLastTriggered(); }
 void        LuaContainer::setLastTriggered(const QDateTime& dt) { _config->setLastTriggered(dt); }
+QDateTime   LuaContainer::getLastRun()
+{
+    const QDateTime dt = _config->getLastTriggered();
+    return dt.isValid() && dt.toSecsSinceEpoch() > 86400 ? dt : QDateTime();
+}
 
 // constraint
 
@@ -103,6 +108,18 @@ bool    LuaContainer::getRunEveryChecked(uint& amout, uint& unit)
         }
     }
     return false;
+}
+
+QDateTime LuaContainer::getTimerLastRun()
+{
+    for(QList<LuaTriggerBase*>::const_iterator it = _config->triggersBegin(); it != _config->triggersEnd(); ++it)
+        if((*it)->classname() == LUA_TRIGGER_TIMER_INTERVAL)
+        {
+            // A timer that never ran has the epoch as its last run.
+            const QDateTime dt = (*it)->lastRun();
+            return dt.isValid() && dt.toSecsSinceEpoch() > 86400 ? dt : QDateTime();
+        }
+    return QDateTime();
 }
 
 // once

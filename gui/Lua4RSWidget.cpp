@@ -33,6 +33,7 @@
 #include <QStyle>
 #include <QTimer>
 #include <QUrl>
+#include "util/DateTime.h"
 
 namespace {
 class ScriptTableItem : public QTableWidgetItem
@@ -70,6 +71,9 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
     // Changes by the MCP agent (emitted on this thread).
     connect(_lua, &LuaCore::scriptAboutToBeRemoved, this, &Lua4RSWidget::onScriptRemovedExternally);
     connect(_lua, &LuaCore::scriptChangedExternally, this, &Lua4RSWidget::onScriptChangedExternally);
+    connect(_lua, &LuaCore::scriptTriggered, this, [this](const QString& name) {
+        if(_activeContainer && !_draft && _activeContainer->getName() == name) updateTimerLastRun();
+    }, Qt::QueuedConnection);
     connect(_lua, &LuaCore::manualRunFinished, this, [this](bool success) {
         _running = false;
         ui->runStatus->setText(success ? tr("Finished. Results appear in Output.") : tr("Script failed - see Output."));
@@ -287,8 +291,10 @@ void Lua4RSWidget::refreshScripts()
         ui->tw_allscripts->insertRow(row);
         const bool enabled = container->getEnabled();
         auto name = new ScriptTableItem(container->getName(), enabled, container->getName());
-        name->setToolTip(container->getDesc() + "\n" + container->getTriggerNames() + "\n" +
-                         tr("Last run: %1").arg(container->getLastTriggered().isValid() ? container->getLastTriggered().toString() : tr("Never")));
+        const QDateTime lastRun = container->getLastRun();
+        name->setToolTip(container->getDesc() + "\n" + container->getTriggerNames() +
+                         (lastRun.isValid() ? "\n" + tr("Last run: %1").arg(DateTime::formatDateTime(lastRun))
+                                            : QString()));
         ui->tw_allscripts->setItem(row, 0, name);
         auto status = new ScriptTableItem(enabled ? tr("On") : tr("Off"), enabled, container->getName());
         const qreal ratio = ui->tw_allscripts->devicePixelRatioF();
@@ -353,6 +359,7 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
     ui->cb_every->setChecked(every);
     ui->spb_everycount->setValue(amount);
     ui->dd_everyunits->setCurrentIndex(unit < 5 ? unit : 1);
+    updateTimerLastRun();
     QDateTime when = QDateTime::currentDateTime().addSecs(3600);
     ui->cb_once->setChecked(container && container->getRunOnceChecked(when));
     ui->dte_runonce->setDateTime(when);
@@ -497,6 +504,18 @@ void Lua4RSWidget::updateEditorState()
     ui->tied_timeto->setEnabled(automatic && ui->cbx_timeconstraint->isChecked());
 }
 
+void Lua4RSWidget::updateTimerLastRun()
+{
+    std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+    const QDateTime lastRun = _activeContainer && !_draft ? _activeContainer->getTimerLastRun() : QDateTime();
+    ui->lbl_everylastrun->setVisible(lastRun.isValid());
+    if(!lastRun.isValid()) return;
+    // Follows RetroShare's date format setting.
+    ui->lbl_everylastrun->setText(tr("last run %1").arg(lastRun.date() == QDate::currentDate()
+        ? DateTime::formatTime(lastRun.time()) : DateTime::formatDateTime(lastRun)));
+    ui->lbl_everylastrun->setToolTip(tr("The timer last ran on %1.").arg(DateTime::formatLongDateTime(lastRun)));
+}
+
 void Lua4RSWidget::markDirty()
 {
     if(_loading || !_activeContainer) return;
@@ -596,7 +615,7 @@ bool Lua4RSWidget::saveScript()
     { QMessageBox::warning(this, tr("Could not save"), tr("The script could not be fully saved. Check write access to the scripts folder and try again.")); return false; }
     _dirty = false;
     { const QSignalBlocker blocker(ui->le_scriptname); ui->le_scriptname->setText(name); }
-    refreshScripts(); updateEditorState(); updateOtherEvents();
+    refreshScripts(); updateEditorState(); updateOtherEvents(); updateTimerLastRun();
     ui->runStatus->setText(tr("Saved %1").arg(name));
     return true;
 }
