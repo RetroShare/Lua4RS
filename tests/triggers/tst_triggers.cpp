@@ -2,7 +2,10 @@
 // Build: qmake triggers.pro && make && ./tst_triggers
 #include <cstdio>
 
+#include <QTemporaryDir>
+
 #include "LuaContainer.h"
+#include "LuaList.h"
 #include "LuaEvent.h"
 
 namespace {
@@ -56,6 +59,34 @@ int main()
     c.removeAllTrigger();
     c.addRunEveryTrigger(1, kHours);
     CHECK(tick(c, now.addSecs(3600 + 180)));
+
+    // The last run survives a restart without a clean shutdown: the settings
+    // are saved right after the run (LuaList::saveSettings), not only by saveAll.
+    {
+        QTemporaryDir dir;
+        LuaList before;
+        before.setFilePath(dir.path().toStdString() + "/");
+        LuaContainer* t = before.createItem();
+        t->setName(QString("timer.lua"));
+        t->setCode(QString("print(1)"));
+        t->setEnabled(true);
+        t->addRunEveryTrigger(1, kHours);
+        CHECK(before.addItemAndSave(t));
+        CHECK(tick(*t, now));
+        CHECK(before.saveSettings(t));
+
+        LuaList after; // what a restart loads
+        after.setFilePath(dir.path().toStdString() + "/");
+        CHECK(after.loadAll());
+        LuaContainer* loaded = nullptr;
+        CHECK(after.itemByName(QString("timer.lua"), loaded));
+        if(loaded)
+        {
+            CHECK(!tick(*loaded, now.addSecs(60)));
+            CHECK(tick(*loaded, now.addSecs(3600 + 60)));
+            CHECK(loaded->getCode() == "print(1)");
+        }
+    }
 
     std::printf("%d checks, %d failed\n", checks, failures);
     return failures ? 1 : 0;

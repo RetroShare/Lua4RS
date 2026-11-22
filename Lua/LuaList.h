@@ -21,6 +21,8 @@ public:
 
     bool loadAll();
     bool saveAll();
+    // Only the .ini (triggers, last runs); the code stays as it is on disk.
+    bool saveSettings(LuaContainer* container);
     void rename(const QString& oldName, const QString& newName);
 
     //bool itemAt(size_t index, LuaContainer*& container);

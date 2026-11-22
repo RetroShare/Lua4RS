@@ -336,19 +336,27 @@ bool LuaList::save(LuaContainer* container)
         file.close();
     }
 
-    // save config
-    {
-        QSettings settings(settingsFileName, QSettings::IniFormat);        
-        if(!settings.isWritable())
-        {
-            std::cerr << "[Lua] no write access for settings file " << settingsFileName.toStdString() << " -> aborting (code was saved)" << std::endl;
-            return false;
-        }
-        settings.clear();
-        container->getSettings(settings);
-    }
+    return saveSettings(container);
+}
 
-    return true;
+bool LuaList::saveSettings(LuaContainer* container)
+{
+    if(_filePath == "")
+        return false;
+
+    QString luaFileName, settingsFileName;
+    getFileNames(container->getName(), luaFileName, settingsFileName);
+
+    QSettings settings(settingsFileName, QSettings::IniFormat);
+    if(!settings.isWritable())
+    {
+        std::cerr << "[Lua] no write access for settings file " << settingsFileName.toStdString() << std::endl;
+        return false;
+    }
+    settings.clear();
+    container->getSettings(settings);
+    settings.sync();
+    return settings.status() == QSettings::NoError;
 }
 
 bool LuaList::saveAll()

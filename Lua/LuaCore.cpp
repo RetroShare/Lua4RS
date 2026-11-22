@@ -382,7 +382,13 @@ void LuaCore::dispatchEvent(const LuaEvent& event)
         std::lock_guard<std::recursive_mutex> lock(_scriptsMutex);
         for(auto container : *_luaList)
             if(container->isTriggered(event))
+            {
                 scripts.emplace_back(container->getName(), container->getCode());
+                // Keep the timer's last run across crashes (saveAll only runs
+                // on a clean shutdown); otherwise it would run early after a restart.
+                if(event.eventId == L4R_TIMERTICK && !_luaList->saveSettings(container))
+                    std::cerr << "[Lua] could not save the last run of " << container->getName().toStdString() << std::endl;
+            }
     }
     for(const auto& script : scripts)
     {
