@@ -1,18 +1,39 @@
 #include <algorithm>
-#include <fstream>
-#include <stdexcept>
-#include <iostream>
 
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>
 #include <QFileInfo>
+#include <QSaveFile>
 #include <QString>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringDecoder>
+#else
+#include <QTextCodec>
+#endif
 
 #include "LuaList.h"
 
 #include <QRegularExpression>
 #include "util/rsdebuglevel0.h"
+
+namespace {
+// Scripts are UTF-8 (a BOM is dropped). Earlier versions saved them in the
+// local 8-bit encoding on Windows; those still load.
+QString decodeScript(const QByteArray& data)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QStringDecoder utf8(QStringConverter::Utf8);
+    const QString code = utf8.decode(data);
+    if(!utf8.hasError()) return code;
+#else
+    QTextCodec::ConverterState state; // default flags drop the BOM
+    const QString code = QTextCodec::codecForName("UTF-8")->toUnicode(data.constData(), data.size(), &state);
+    if(state.invalidChars == 0) return code;
+#endif
+    return QString::fromLocal8Bit(data);
+}
+} // namespace
 
 bool LuaList::isValidName(const QString& name)
 {
@@ -224,27 +245,13 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
             return false;
         }
 
-        std::ifstream file;
-        file.open(luaFileName.toLocal8Bit().data(), std::ios::in);
-        if(!file.good() || !file.is_open())
+        QFile file(luaFileName);
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             RS_ERR("can't open file ", luaFileName.toStdString());
             return false;
         }
-
-        std::string line, c = "";
-        while(!file.eof())
-        {
-            std::getline(file, line);
-            c += line;
-
-            // don't add \n at the end of the file
-            if(!file.eof())
-                c += '\n';
-        }
-        container->setCode(QString::fromUtf8(c.c_str()));
-
-        file.close();
+        container->setCode(decodeScript(file.readAll()));
     }
 
     // load config
@@ -316,25 +323,15 @@ bool LuaList::save(LuaContainer* container)
 
     // save code
     {
-        std::ofstream file;
-        file.open(luaFileName.toLocal8Bit().data(), std::ios::trunc);
-        if(!file.is_open())
+        // Always UTF-8; written to a temporary file first, so a crash never
+        // leaves half a script.
+        QSaveFile file(luaFileName);
+        const QByteArray code = container->getCode().toUtf8();
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Text) || file.write(code) != code.size() || !file.commit())
         {
-            RS_ERR("can't open file ", luaFileName.toStdString());
+            RS_ERR("can't write file ", luaFileName.toStdString(), ": ", file.errorString().toStdString());
             return false;
         }
-
-        std::string code;
-#ifdef _WIN32
-        code = container->getCode().toLocal8Bit().constData();
-#else
-        code = container->getCode().toUtf8().constData();
-#endif
-        // rest = code
-        file << code;
-
-        file.flush();
-        file.close();
     }
 
     return saveSettings(container);
@@ -378,16 +375,19 @@ bool LuaList::remove(LuaContainer *container)
     if(_filePath == "")
         return false;
 
-    QString fileName = _filePath + container->getName();
+    QString luaFileName, settingsFileName;
+    getFileNames(container->getName(), luaFileName, settingsFileName);
 
-    if( !QFile::exists(fileName))
+    if(!QFile::exists(luaFileName))
     {
-        RS_ERR("can't find file ", fileName.toStdString());
+        RS_ERR("can't find file ", luaFileName.toStdString());
         return false;
     }
-
-    QFile f(fileName);
-    return f.remove();
+    if(!QFile::remove(luaFileName)) return false;
+    // The triggers and last runs belong to the script.
+    if(QFile::exists(settingsFileName) && !QFile::remove(settingsFileName))
+        RS_WARN("can't remove ", settingsFileName.toStdString());
+    return true;
 }
 
 void LuaList::rename(const QString& oldName, const QString& newName)

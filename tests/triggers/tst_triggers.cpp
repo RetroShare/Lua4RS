@@ -176,6 +176,40 @@ int main(int, char** argv)
         }
     }
 
+    // Script files: UTF-8 on every platform, written back unchanged; deleting
+    // a script also deletes its settings.
+    {
+        QTemporaryDir dir;
+        const std::string path = dir.path().toStdString() + "/";
+        auto writeRaw = [&](const char* name, const QByteArray& data) {
+            QFile f(dir.filePath(name));
+            return f.open(QIODevice::WriteOnly) && f.write(data) == data.size();
+        };
+        const QString umlauts = QString::fromUtf8("print(\"Grüße, Ärger 🙂\")\n");
+        CHECK(writeRaw("utf8.lua", umlauts.toUtf8()));
+        CHECK(writeRaw("bom.lua", QByteArray("\xEF\xBB\xBF") + "print(1)"));
+        CHECK(writeRaw("crlf.lua", "a = 1\r\nb = 2\r\n"));
+        CHECK(writeRaw("noeol.lua", "return 1"));
+
+        LuaList list;
+        list.setFilePath(path);
+        CHECK(list.loadAll()); // no .ini files: loads anyway
+        LuaContainer* c = nullptr;
+        CHECK(list.itemByName(QString("utf8.lua"), c) && c->getCode() == umlauts);
+        CHECK(list.itemByName(QString("bom.lua"), c) && c->getCode() == "print(1)");
+        CHECK(list.itemByName(QString("crlf.lua"), c) && c->getCode() == "a = 1\nb = 2\n");
+        CHECK(list.itemByName(QString("noeol.lua"), c) && c->getCode() == "return 1");
+
+        CHECK(list.saveAll());
+        QFile saved(dir.filePath("utf8.lua"));
+        CHECK(saved.open(QIODevice::ReadOnly) && saved.readAll() == umlauts.toUtf8());
+        CHECK(QFile::exists(dir.filePath("utf8.lua.ini")));
+
+        CHECK(list.itemByName(QString("utf8.lua"), c) && list.removeItemAndDelete(c));
+        CHECK(!QFile::exists(dir.filePath("utf8.lua")));
+        CHECK(!QFile::exists(dir.filePath("utf8.lua.ini")));
+    }
+
     std::printf("%d checks, %d failed\n", checks, failures);
     return failures ? 1 : 0;
 }
