@@ -1,6 +1,6 @@
 -- Auto permissions: decides which friends may use which RetroShare service
--- (chat, file transfer, forums, ...) by rules: by group, for hidden (Tor/I2P)
--- nodes, by address or by name.
+-- (chat, file transfer, forums, ...) by rules: by id, group, hidden (Tor/I2P)
+-- node, address, profile name or location name.
 --
 -- The rules describe the complete target state: a friend no rule matches gets
 -- each service's default. Exceptions set by hand in the permission matrix are
@@ -26,12 +26,16 @@ local PRESETS = {
 }
 
 -- In order: a later rule overrides an earlier one for the same service.
+-- id: exact SSL id (one location) or PGP id (all locations of a person);
 -- group: exact group name; hidden = true: Tor/I2P nodes;
--- address and name: Lua patterns.
+-- address, name (profile name) and location (location name): Lua patterns.
+-- Names are chosen by your friends; for a single peer, prefer id.
 local RULES = {
     { group = "Strangers",  set = PRESETS.noFiles },
     { hidden = true,        set = PRESETS.noFiles },   -- saves bandwidth over Tor/I2P
     { group = "Graveyard",  set = PRESETS.graveyard },
+    -- { id = "SSL_OR_PGP_ID", set = { ["*"] = true } },  -- exception for one peer: put it last
+    -- { location = "^tor2$", set = { turtle = true } },
     -- { name = "test",     set = { turtle = false } },
     -- { address = "^ipv6://", set = { rtt = false } },
 }
@@ -67,11 +71,17 @@ local function addressMatches(details, pattern)
 end
 
 local function matches(rule, details)
+    if rule.id then
+        -- case-insensitive: SSL ids come in lowercase, PGP ids in uppercase
+        local id = rule.id:lower()
+        return id == (details.id or ""):lower() or id == (details.gpg_id or ""):lower()
+    end
     if rule.group then return (groupMembers[rule.group] or {})[details.gpg_id] == true end
     if rule.hidden ~= nil then return (details.hiddenNode == true) == rule.hidden end
     if rule.address then return addressMatches(details, rule.address) end
     if rule.name then return (details.name or ""):find(rule.name) ~= nil end
-    error("rule needs group, hidden, address or name")
+    if rule.location then return (details.location or ""):find(rule.location) ~= nil end
+    error("rule needs id, group, hidden, address, name or location")
 end
 
 -- wanted[sslId][service] = true/false for every friend and service

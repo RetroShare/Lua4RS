@@ -41,7 +41,7 @@ endpoints. For rule-based permissions without the JSON API, see
 
 | Script | What it does | Needs |
 |---|---|---|
-| `autoPermissions.lua` | Sets which friends may use which service (files, chat, forums, ...) by rules: group, hidden node, address, name. Unmatched friends get the defaults; previews first | write |
+| `autoPermissions.lua` | Sets which friends may use which service (files, chat, forums, ...) by rules: id, group, hidden node, address, profile or location name. Unmatched friends get the defaults; previews first | write |
 | `discOverviewBot.lua` | Answers `!versions` in a lobby with your friends' versions | write |
 | `simpleDownloadBot.lua` | Starts downloads requested in chat by allowed friends | an allow list; write |
 | `chatWrapper.lua` | Runs a local command and sends its output to a chat | trusted (runs shell commands) |
