@@ -84,7 +84,7 @@ LuaContainer* LuaList::createItem()
      * name the new container newX.lua with x being the lower number that is not already used
      *
      * first iterate over all container and get all numbers that are in use (like new1.lua, new3.lua and new4.lua)
-     * second iterate over all numbers in use and finde the smalles not used
+     * second iterate over all numbers in use and find the smallest not used
      *
      * new42.lua
      * 012345678 <- position
@@ -126,7 +126,7 @@ LuaContainer* LuaList::createItem()
         QString name;
         for(int i = 0; i  < usedNr.size(); ++i)
         {
-            // usedNr[i] shoudl be i! (since we sorted it before)
+            // usedNr[i] should be i! (since we sorted it before)
             if(usedNr[i] == i)
                 continue;
 
