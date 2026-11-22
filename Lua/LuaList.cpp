@@ -242,7 +242,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
             if(!file.eof())
                 c += '\n';
         }
-        container->setCode(c);
+        container->setCode(QString::fromUtf8(c.c_str()));
 
         file.close();
     }
@@ -264,7 +264,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         }
 
         QSettings settings(settingsFileName, QSettings::IniFormat);
-        container->loadSettings(settings);
+        container->fromSettings(settings);
     }
     return true;
 }
@@ -355,7 +355,7 @@ bool LuaList::saveSettings(LuaContainer* container)
         return false;
     }
     settings.clear();
-    container->getSettings(settings);
+    container->toSettings(settings);
     settings.sync();
     return settings.status() == QSettings::NoError;
 }

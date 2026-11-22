@@ -41,18 +41,10 @@ HEADERS +=  \
     Lua/LuaCore.h \
     Lua/LuaToRS.h \
     Lua/LuaToRSIds.h \
-    Lua/LuaCode.h \
     Lua/LuaList.h \
-    Lua/LuaConfig.h \
     Lua/LuaContainer.h \
     Lua/LuaEvent.h \
     Lua/LuaEventCatalog.h \
-    Lua/Trigger/LuaTriggerBase.h \
-    Lua/Trigger/LuaTriggerTimerInterval.h \
-    Lua/Trigger/LuaTriggerStartup.h \
-    Lua/Trigger/LuaTriggerEvent.h \
-    Lua/Trigger/LuaTriggerShutdown.h \
-    Lua/Trigger/LuaTriggerOnce.h \
     service/p3Lua4RS.h \
     interface/L4RInterface.h \
     helper.h
@@ -76,16 +68,8 @@ SOURCES +=  \
     gui/Lua4RSConfig.cpp \
     gui/Lua4RSTextEdit.cpp \
     Lua/LuaCore.cpp \
-    Lua/LuaCode.cpp \
     Lua/LuaList.cpp \
-    Lua/LuaConfig.cpp \
     Lua/LuaContainer.cpp \
-    Lua/Trigger/LuaTriggerBase.cpp \
-    Lua/Trigger/LuaTriggerTimerInterval.cpp \
-    Lua/Trigger/LuaTriggerStartup.cpp \
-    Lua/Trigger/LuaTriggerEvent.cpp \
-    Lua/Trigger/LuaTriggerShutdown.cpp \
-    Lua/Trigger/LuaTriggerOnce.cpp \
     service/p3Lua4RS.cpp \
     helper.cpp
 

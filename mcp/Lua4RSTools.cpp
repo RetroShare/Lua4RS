@@ -74,27 +74,23 @@ QJsonObject accessInfo(const LuaTrustStore::Status& status)
 QJsonObject triggerInfo(LuaContainer* c)
 {
     static const char* units[] = { "seconds", "minutes", "hours", "days", "weeks" };
+    const LuaTriggers& tr = c->triggers();
     QJsonObject t{ { "enabled", c->getEnabled() } };
-    uint amount = 0, unit = 0;
-    if(c->getRunEveryChecked(amount, unit))
-        t.insert("every", QJsonObject{ { "amount", int(amount) }, { "unit", unit < 5 ? units[unit] : "seconds" } });
-    QDateTime when;
-    if(c->getRunOnceChecked(when)) t.insert("once", when.toString(Qt::ISODate));
-    t.insert("startup", c->getRunStartupChecked());
-    t.insert("shutdown", c->getRunShutdownChecked());
+    if(tr.every)
+        t.insert("every", QJsonObject{ { "amount", int(tr.everyAmount) },
+                                       { "unit", tr.everyUnit < 5 ? units[tr.everyUnit] : "seconds" } });
+    if(tr.once) t.insert("once", tr.onceAt.toString(Qt::ISODate));
+    t.insert("startup", tr.startup);
+    t.insert("shutdown", tr.shutdown);
     QJsonArray events;
-    for(uint id : c->getEventTriggerIds())
+    for(uint id : tr.eventIds)
     {
         const LuaEventInfo* info = luaEventById(id);
         events.append(info ? QString::fromLatin1(info->name) : QString("event_%1").arg(id));
     }
     t.insert("events", events);
-    if(c->getConstraintEnabled())
-    {
-        QTime from, to;
-        c->getConstraintFromTo(from, to);
-        t.insert("time_window", QJsonObject{ { "from", from.toString("HH:mm") }, { "to", to.toString("HH:mm") } });
-    }
+    if(tr.window)
+        t.insert("time_window", QJsonObject{ { "from", tr.windowFrom.toString("HH:mm") }, { "to", tr.windowTo.toString("HH:mm") } });
     return t;
 }
 
@@ -520,7 +516,6 @@ void addRunTools(McpProtocol& p, LuaCore* core)
 }
 
 const char* kUnits[] = { "seconds", "minutes", "hours", "days", "weeks" };
-const quint64 kUnitSeconds[] = { 1, 60, 3600, 86400, 604800 };
 const quint64 kMinIntervalSeconds = 10;
 
 void addTriggerTools(McpProtocol& p, LuaCore* core)
@@ -583,9 +578,9 @@ void addTriggerTools(McpProtocol& p, LuaCore* core)
             for(int i = 0; i < 5; ++i) if(every.value("unit").toString() == kUnits[i]) everyUnit = i;
             if(everyAmount < 1 || everyUnit < 0)
                 return McpResult::fail("every needs amount >= 1 and unit one of seconds, minutes, hours, days, weeks.");
-            const quint64 seconds = quint64(everyAmount) * kUnitSeconds[everyUnit];
+            const quint64 seconds = LuaTriggers::intervalSeconds(uint(everyAmount), uint(everyUnit));
+            if(!seconds) return McpResult::fail("Repeat interval too long.");
             if(seconds < kMinIntervalSeconds) return McpResult::fail("Repeat at most every 10 seconds.");
-            if(seconds > 0xffffffffULL) return McpResult::fail("Repeat interval too long.");
         }
         QDateTime once;
         if(args.contains("once") && !args.value("once").isNull())
@@ -620,14 +615,17 @@ void addTriggerTools(McpProtocol& p, LuaCore* core)
             std::unique_lock<std::recursive_mutex> lock(core->scriptsMutex());
             LuaContainer* c = nullptr;
             if(!core->codeList()->itemByName(name, c)) return McpResult::fail("No script named " + name + ".");
-            c->removeAllTrigger();
-            if(everyUnit >= 0) c->addRunEveryTrigger(uint(everyAmount), uint(everyUnit));
-            if(once.isValid()) c->addRunOnceTrigger(once);
-            if(startup) c->addRunStartupTrigger();
-            if(shutdown) c->addRunShutdownTrigger();
-            for(uint id : eventIds) c->addEventTrigger(id);
-            c->setConstraintEnabled(window);
-            if(window) c->setConstraintFromTo(from, to);
+            LuaTriggers t;
+            t.every = everyUnit >= 0;
+            if(t.every) { t.everyAmount = uint(everyAmount); t.everyUnit = uint(everyUnit); }
+            t.once = once.isValid();
+            t.onceAt = once;
+            t.startup = startup;
+            t.shutdown = shutdown;
+            t.eventIds = eventIds;
+            t.window = window;
+            if(window) { t.windowFrom = from; t.windowTo = to; }
+            c->setTriggers(t);
             c->setEnabled(enabled);
             const bool saved = core->codeList()->saveAll();
             QJsonObject info = scriptInfo(core, c);

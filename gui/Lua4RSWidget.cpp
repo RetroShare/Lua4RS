@@ -350,23 +350,19 @@ void Lua4RSWidget::loadScript(LuaContainer* container)
     ui->le_scriptdesc->setText(container ? container->getDesc() : QString());
     ui->pte_luacode->setPlainText(container ? container->getCode() : QString());
     ui->cbx_enable->setChecked(container && container->getEnabled());
-    ui->cbx_timeconstraint->setChecked(container && container->getConstraintEnabled());
-    QTime from(0,0), to(0,0);
-    if(container) container->getConstraintFromTo(from, to);
-    ui->tied_timefrom->setTime(from); ui->tied_timeto->setTime(to);
-    uint amount = 5, unit = 1;
-    const bool every = container && container->getRunEveryChecked(amount, unit);
-    ui->cb_every->setChecked(every);
-    ui->spb_everycount->setValue(amount);
-    ui->dd_everyunits->setCurrentIndex(unit < 5 ? unit : 1);
+    const LuaTriggers triggers = container ? container->triggers() : LuaTriggers();
+    ui->cbx_timeconstraint->setChecked(triggers.window);
+    ui->tied_timefrom->setTime(triggers.windowFrom); ui->tied_timeto->setTime(triggers.windowTo);
+    ui->cb_every->setChecked(triggers.every);
+    ui->spb_everycount->setValue(triggers.every ? int(triggers.everyAmount) : 5);
+    ui->dd_everyunits->setCurrentIndex(triggers.every && triggers.everyUnit < 5 ? int(triggers.everyUnit) : 1);
     updateTimerLastRun();
-    QDateTime when = QDateTime::currentDateTime().addSecs(3600);
-    ui->cb_once->setChecked(container && container->getRunOnceChecked(when));
-    ui->dte_runonce->setDateTime(when);
-    ui->cb_startup->setChecked(container && container->getRunStartupChecked());
-    ui->cb_shutdown->setChecked(container && container->getRunShutdownChecked());
+    ui->cb_once->setChecked(triggers.once);
+    ui->dte_runonce->setDateTime(triggers.once ? triggers.onceAt : QDateTime::currentDateTime().addSecs(3600));
+    ui->cb_startup->setChecked(triggers.startup);
+    ui->cb_shutdown->setChecked(triggers.shutdown);
     for(const auto& item : _eventItems)
-        item.second->setCheckState(container && container->getEventTriggerChecked(item.first) ? Qt::Checked : Qt::Unchecked);
+        item.second->setCheckState(triggers.eventIds.contains(item.first) ? Qt::Checked : Qt::Unchecked);
     updateOtherEvents();
     _dirty = false;
     _loading = false;
@@ -474,7 +470,7 @@ void Lua4RSWidget::updateOtherEvents()
     _dropOtherEvents = false;
     QStringList others;
     if(_activeContainer)
-        for(uint id : _activeContainer->getEventTriggerIds())
+        for(uint id : _activeContainer->triggers().eventIds)
             if(!_eventItems.count(id)) others << QString::number(id);
     _otherEvents->setText(tr("Also triggered by events Lua4RS no longer offers (ids %1). "
                              "They never fire; remove them.").arg(others.join(", ")));
@@ -569,8 +565,7 @@ bool Lua4RSWidget::saveScript()
         if(from >= to || (ui->cb_once->isChecked() && (once < from || once > to)))
         { QMessageBox::warning(this, tr("Check the time window"), tr("Choose an end time after the start time. A one-time run must fall inside that window.")); return false; }
     }
-    const quint64 units[] = {1, 60, 3600, 86400, 604800};
-    if(quint64(ui->spb_everycount->value()) * units[ui->dd_everyunits->currentIndex()] > 0xffffffffULL)
+    if(!LuaTriggers::intervalSeconds(uint(ui->spb_everycount->value()), uint(ui->dd_everyunits->currentIndex())))
     { QMessageBox::warning(this, tr("Check the interval"), tr("Choose a shorter repeat interval.")); return false; }
     std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     const QString oldName = _activeContainer->getName();
@@ -583,21 +578,23 @@ bool Lua4RSWidget::saveScript()
     // Before saveAll: the worker may run the new code right after the unlock.
     _lua->trustStore().guiSaved(oldName, oldCode, name, _activeContainer->getCode(), createdInGui);
     _activeContainer->setEnabled(ui->cbx_enable->isChecked());
-    _activeContainer->setConstraintEnabled(ui->cbx_timeconstraint->isChecked());
-    _activeContainer->setConstraintFromTo(ui->tied_timefrom->time(), ui->tied_timeto->time());
+    LuaTriggers triggers;
+    triggers.window = ui->cbx_timeconstraint->isChecked();
+    triggers.windowFrom = ui->tied_timefrom->time();
+    triggers.windowTo = ui->tied_timeto->time();
+    triggers.every = ui->cb_every->isChecked();
+    if(triggers.every) { triggers.everyAmount = uint(ui->spb_everycount->value()); triggers.everyUnit = uint(ui->dd_everyunits->currentIndex()); }
+    triggers.once = ui->cb_once->isChecked();
+    if(triggers.once) triggers.onceAt = ui->dte_runonce->dateTime();
+    triggers.startup = ui->cb_startup->isChecked();
+    triggers.shutdown = ui->cb_shutdown->isChecked();
     // Event ids that are not in the catalog survive a save unless removed.
-    QList<uint> otherEvents;
-    for(uint id : _activeContainer->getEventTriggerIds())
-        if(!_eventItems.count(id)) otherEvents << id;
-    _activeContainer->removeAllTrigger();
     if(!_dropOtherEvents)
-        for(uint id : otherEvents) _activeContainer->addEventTrigger(id);
-    if(ui->cb_every->isChecked()) _activeContainer->addRunEveryTrigger(ui->spb_everycount->value(), ui->dd_everyunits->currentIndex());
-    if(ui->cb_once->isChecked()) _activeContainer->addRunOnceTrigger(ui->dte_runonce->dateTime());
-    if(ui->cb_startup->isChecked()) _activeContainer->addRunStartupTrigger();
-    if(ui->cb_shutdown->isChecked()) _activeContainer->addRunShutdownTrigger();
+        for(uint id : _activeContainer->triggers().eventIds)
+            if(!_eventItems.count(id)) triggers.eventIds << id;
     for(const auto& item : _eventItems)
-        if(item.second->checkState() == Qt::Checked) _activeContainer->addEventTrigger(item.first);
+        if(item.second->checkState() == Qt::Checked) triggers.eventIds << item.first;
+    _activeContainer->setTriggers(triggers);
     // A new or renamed script never inherits sandbox globals of an older
     // script that had this name.
     if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _draftUntrusted = false; _lua->forgetScriptState(name); }
