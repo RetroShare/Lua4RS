@@ -127,17 +127,29 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
         createScript("-- Click Run or press F5.\nprint(\"Hello from Lua4RS!\")\n", tr("My first Lua script"));
     });
     examples->addAction(tr("List friends with the JSON API"), this, &Lua4RSWidget::newApiExample);
-    auto bundled = examples->addMenu(tr("Bundled scripts"));
-    for(const QString& name : BundledScripts::names())
-        bundled->addAction(name, this, [this, name]() {
-            QFile source(":/lua4rs/examples/" + name);
-            if(!source.open(QIODevice::ReadOnly))
-            {
-                QMessageBox::warning(this, tr("Example unavailable"), source.errorString());
-                return;
-            }
-            createScript(QString::fromUtf8(source.readAll()), tr("Example: %1").arg(name));
-        });
+    examples->addSeparator();
+    // Translations of BundledScripts::groups() titles.
+    (void)QT_TR_NOOP("Ready to use"); (void)QT_TR_NOOP("Examples"); (void)QT_TR_NOOP("Trusted only");
+    for(const BundledScripts::Group& group : BundledScripts::groups())
+    {
+        auto submenu = examples->addMenu(tr(group.title));
+        submenu->setToolTipsVisible(true);
+        for(const QString& name : BundledScripts::names(group.folder))
+        {
+            QByteArray code;
+            BundledScripts::read(name, code);
+            auto action = submenu->addAction(QFileInfo(name).completeBaseName(), this, [this, name]() {
+                QByteArray code;
+                if(!BundledScripts::read(name, code))
+                {
+                    QMessageBox::warning(this, tr("Example unavailable"), tr("%1 is missing in this build.").arg(name));
+                    return;
+                }
+                createScript(QString::fromUtf8(code), tr("Example: %1").arg(name));
+            });
+            action->setToolTip(BundledScripts::summary(code));
+        }
+    }
     ui->pb_example->setMenu(examples);
 
     connect(ui->le_scriptname, &QLineEdit::textChanged, this, &Lua4RSWidget::markDirty);

@@ -1,7 +1,7 @@
 -- Friends' versions: which RetroShare versions your friends report through
 -- discovery.
 --
--- Trigger: none, click Run.   Access: read-only (works in the sandbox).
+-- Click Run.   Access: read-only (works in the sandbox).
 
 -- "0.6.7.2", or "Revision 1234" for very old peers; nil if unrecognized
 local function versionOf(reported)

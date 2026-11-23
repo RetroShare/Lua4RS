@@ -227,6 +227,7 @@ None of these need a running RetroShare, except the MCP smoke test.
 | Store | `qmake tests/store/store.pro && make && ./tst_store` |
 | Triggers (timer schedule across saves) | `qmake tests/triggers/triggers.pro && make && ./tst_triggers` |
 | Per-script environments | `qmake tests/env/env.pro && make && ./tst_env` (add `LUA_VERSION=5.5` to test 5.5) |
+| Bundled scripts (unique names, header, size, syntax; install) | `qmake tests/bundled/bundled.pro && make && ./tst_bundled` |
 | MCP protocol, HTTP rules, settings | `qmake tests/mcp/mcp.pro && make && ./tst_mcp` |
 | MCP endpoint of a running instance | `tests/mcp/smoke.sh <token> [url]` |
 
@@ -237,8 +238,8 @@ Documentation
 * [docs/lua-api.md](docs/lua-api.md): all functions and events available to
   scripts, with their access tags (generated from the code by
   `tools/generate-lua-docs.py`)
-* [scripts/](scripts/README.md): the bundled examples, JSON API scripts and
-  more scripts to adapt
+* [scripts/](scripts/README.md): the bundled scripts (ready to use, examples,
+  trusted only) and scripts for the JSON API runner
 * [JSON_API.md](JSON_API.md): the `jsonapi` Lua namespace and the standalone
   runner
 * [ARCHITECTURE.md](ARCHITECTURE.md): how the plugin works inside, for

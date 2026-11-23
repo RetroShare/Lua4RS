@@ -1,7 +1,7 @@
 -- IP overview: how many of your friends' addresses are IPv4 or IPv6, and
 -- which protocol the connected friends use right now.
 --
--- Trigger: none, click Run.   Access: read-only (works in the sandbox).
+-- Click Run.   Access: read-only (works in the sandbox).
 
 local function ipType(address)
     if type(address) ~= "string" then return nil end

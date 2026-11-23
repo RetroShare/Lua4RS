@@ -82,14 +82,8 @@ LuaCore::LuaCore() :
 
     _trust.setScriptDirectory(QString::fromStdString(_path));
     _store.setDirectory(QString::fromStdString(_path) + ".store");
-    // Shipped examples come from the plugin itself; unchanged copies are trusted.
-    _trust.setBundledSource([](const QString& name, QByteArray& code) {
-        if(!BundledScripts::names().contains(name)) return false;
-        QFile source(":/lua4rs/examples/" + name);
-        if(!source.open(QIODevice::ReadOnly)) return false;
-        code = source.readAll();
-        return true;
-    });
+    // Scripts shipped with the plugin: shown as such and diffed against, never trusted.
+    _trust.setBundledSource(&BundledScripts::read);
 
     // load codes
     _luaList->setFilePath(_path);

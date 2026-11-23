@@ -1,6 +1,6 @@
 -- Offline checker: lists friend locations that have not connected for a while.
 --
--- Trigger: none, click Run (or a daily timer).   Access: read-only (works in the sandbox).
+-- Click Run.   Access: read-only (works in the sandbox).
 
 -- Settings
 local DAYS = 14   -- report locations offline for at least this many days

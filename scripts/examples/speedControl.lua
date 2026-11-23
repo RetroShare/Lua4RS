@@ -1,7 +1,7 @@
 -- Speed control: lowers your bandwidth limits during the day and raises them
 -- at night.
 --
--- Trigger: a timer, e.g. every 10 minutes (Automation tab).
+-- Needs regular runs, e.g. a timer every 10 minutes (Automation tab).
 -- Access: changes RetroShare settings, so approve it as "Write" first.
 --         Without approval it only prints what it would do.
 

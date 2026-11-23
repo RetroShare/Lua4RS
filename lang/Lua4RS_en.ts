@@ -540,7 +540,7 @@ Your results appear in Output below.</source>
     </message>
     <message>
         <location filename="../gui/Lua4RSWidget.ui" line="280"/>
-        <location filename="../gui/Lua4RSWidget.cpp" line="493"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="501"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -590,339 +590,354 @@ Your results appear in Output below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="130"/>
-        <source>Bundled scripts</source>
+        <location filename="../gui/Lua4RSWidget.cpp" line="132"/>
+        <source>Ready to use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="136"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="132"/>
+        <source>Examples</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="132"/>
+        <source>Trusted only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="145"/>
         <source>Example unavailable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="139"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="145"/>
+        <source>%1 is missing in this build.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="148"/>
         <source>Example: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="160"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="172"/>
         <source>The script gets in args:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="164"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="176"/>
         <source>Name for agents: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="180"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="192"/>
         <source>Remove these triggers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="185"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="197"/>
         <source>Other event triggers will be removed when you save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="196"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="208"/>
         <source>&lt;h2&gt;Start with a simple script&lt;/h2&gt;&lt;ol&gt;&lt;li&gt;Choose &lt;b&gt;Example → Hello world&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Click &lt;b&gt;Run&lt;/b&gt; (F5). Read the result in &lt;b&gt;Output&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;Give your script a name and click &lt;b&gt;Save&lt;/b&gt; (Ctrl+S).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Use &lt;b&gt;Automation&lt;/b&gt; only if you want scheduled or event-driven runs. Save to apply them.&lt;/p&gt;&lt;p&gt;For JSON API scripts, enable the API in RetroShare, enter its authorized credentials in the right panel, and click &lt;b&gt;Apply &amp;amp; test connection&lt;/b&gt;. Then choose &lt;b&gt;New API example&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;Use &lt;code&gt;print(...)&lt;/code&gt; or &lt;code&gt;rs.print(...)&lt;/code&gt; for output. Continuous JSON API subscriptions run in the separate command-line runner.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="205"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="217"/>
         <source>&lt;h3&gt;What a script may do&lt;/h3&gt;&lt;p&gt;Every script runs with an access level, shown in the &lt;b&gt;Access&lt;/b&gt; column:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Read-only&lt;/b&gt;: reads RetroShare, cannot change anything. No files, no shell, no JSON API.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Write&lt;/b&gt;: may also send chat and mail, add friends, change settings, and read mail.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Trusted&lt;/b&gt;: full Lua, files and the JSON API, like a program you installed.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Scripts you create here are trusted. Everything else, including the examples, runs read-only until you click &lt;b&gt;Approve…&lt;/b&gt;. An approval belongs to the exact code: if the script changes, it runs read-only again, and Approve… shows what changed.&lt;/p&gt;&lt;h3&gt;Coding agents (MCP)&lt;/h3&gt;&lt;p&gt;In the &lt;b&gt;MCP&lt;/b&gt; tab you can let a coding agent such as Claude Code write and test scripts. The agent never gets more than read-only access; only you approve scripts, here.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="240"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="252"/>
         <source>Approve existing scripts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="240"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="252"/>
         <source>&lt;p&gt;Lua4RS now keeps an approval for every script. Scripts without one run in a sandbox: no file or shell access, no JSON API calls and no functions that change RetroShare (for example sending chat messages).&lt;/p&gt;&lt;p&gt;These scripts have no approval yet:&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;&lt;p&gt;Approve them as &lt;b&gt;trusted&lt;/b&gt; (full access, as before)? Only do this if you wrote or checked them yourself.&lt;/p&gt;&lt;p&gt;If you already answered this question before, the Lua4RS settings were reset or deleted. Unless you know why, choose &lt;b&gt;Keep sandboxed&lt;/b&gt;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="250"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="262"/>
         <source>Approve as trusted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="251"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="263"/>
         <source>Keep sandboxed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="279"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="291"/>
         <source>Script failed — see Output.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="296"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="308"/>
         <source>Last run: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="311"/>
         <source>On</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="299"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="311"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="316"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="328"/>
         <source>Automation enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="316"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="328"/>
         <source>Automation disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="383"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="391"/>
         <source>Choose a script. Write Lua. Run and see the result.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="385"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="393"/>
         <source>Ready — F5 runs the code shown above.
 Access: Read-only (based on a script the agent deleted).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="387"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="395"/>
         <source>Ready — F5 runs the code shown above.
 Access: Trusted (new script).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="391"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="399"/>
         <source>Ready — F5 runs the code shown above.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="401"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="409"/>
         <source>Save before approving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="402"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="410"/>
         <source>Approval applies to the saved script. Save your changes to %1 first?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="421"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="429"/>
         <source>Approved %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="431"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="439"/>
         <source>The agent deleted %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="440"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="448"/>
         <source>The agent deleted %1. Your unsaved version is kept — Save stores it as a new, unapproved script.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="450"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="458"/>
         <source>The agent updated %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="457"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="465"/>
         <source>Script changed by the agent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="458"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="466"/>
         <source>The agent changed %1 while you have unsaved changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="459"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="467"/>
         <source>Load the agent&apos;s version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="460"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="468"/>
         <source>Keep my version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="462"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="470"/>
         <source>Loading discards your changes. If you keep your version, saving it replaces the agent&apos;s version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="479"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="487"/>
         <source>Also triggered by events Lua4RS no longer offers (ids %1). They never fire; remove them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="493"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="501"/>
         <source>Save *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="514"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="522"/>
         <source>last run %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="516"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="524"/>
         <source>The timer last ran on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="523"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="531"/>
         <source>Unsaved changes — Run uses the editor; automatic runs use the saved script.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="530"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="538"/>
         <source>Unsaved script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="531"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="539"/>
         <source>Save changes to %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="560"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
         <source>Choose a script name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="560"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
         <source>Use a unique filename, such as my-script.lua, without folders or special filename characters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="564"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
         <source>Check the schedule</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="564"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
         <source>Choose a future time for the one-time run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="570"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
         <source>Check the time window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="570"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
         <source>Choose an end time after the start time. A one-time run must fall inside that window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
         <source>Check the interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
         <source>Choose a shorter repeat interval.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="615"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
         <source>Could not save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="615"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
         <source>The script could not be fully saved. Check write access to the scripts folder and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="619"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="628"/>
         <source>Saved %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
         <source>Delete script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="656"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
         <source>Delete %1 from disk? This also discards any editor changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="667"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
         <source>Could not delete file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="667"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
         <source>The script was removed from this list, but its file could not be deleted. Check the scripts folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="675"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="684"/>
         <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="685"/>
         <source>Run: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="684"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="693"/>
         <source>Cannot run: Lua is busy or shutting down.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="695"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="704"/>
         <source>List friends through the JSON API</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="726"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="735"/>
         <source>Enter an HTTP(S) server address without a path, and a username without a colon.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="741"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="750"/>
         <source>Settings applied. Testing connection…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="745"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="754"/>
         <source>Connection timed out. Check that the JSON API is enabled and the address is correct.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="746"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="755"/>
         <source>Credentials rejected. Authorize this API user in RetroShare, then try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="747"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="756"/>
         <source>Could not connect: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="748"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="757"/>
         <source>Server replied, but the friend-list request failed (HTTP %1).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="749"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="758"/>
         <source>Connected. Choose New API example, then Run.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1010,307 +1025,307 @@ Access: Trusted (new script).</source>
 <context>
     <name>LuaBindings</name>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="154"/>
+        <location filename="../Lua/LuaCore.cpp" line="149"/>
         <source>clears the output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="155"/>
+        <location filename="../Lua/LuaCore.cpp" line="150"/>
         <source>prints to output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="156"/>
+        <location filename="../Lua/LuaCore.cpp" line="151"/>
         <source>path to Lua4RS folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="158"/>
+        <location filename="../Lua/LuaCore.cpp" line="153"/>
         <source>returns own SSL id (peer id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="159"/>
+        <location filename="../Lua/LuaCore.cpp" line="154"/>
         <source>returns list of online friends (SSL id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="160"/>
+        <location filename="../Lua/LuaCore.cpp" line="155"/>
         <source>returns list of all friends (SSL id)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="161"/>
+        <location filename="../Lua/LuaCore.cpp" line="156"/>
         <source>returns number of all friends and online friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="162"/>
+        <location filename="../Lua/LuaCore.cpp" line="157"/>
         <source>returns if a peer is a friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="163"/>
+        <location filename="../Lua/LuaCore.cpp" line="158"/>
         <source>returns if a PGP key is accepted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="164"/>
+        <location filename="../Lua/LuaCore.cpp" line="159"/>
         <source>returns if a peer is online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="165"/>
+        <location filename="../Lua/LuaCore.cpp" line="160"/>
         <source>returns the PGP name for a given PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="166"/>
+        <location filename="../Lua/LuaCore.cpp" line="161"/>
         <source>returns the name for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="167"/>
+        <location filename="../Lua/LuaCore.cpp" line="162"/>
         <source>returns peer details as a table for a given SSL id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="168"/>
+        <location filename="../Lua/LuaCore.cpp" line="163"/>
         <source>returns own PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="169"/>
+        <location filename="../Lua/LuaCore.cpp" line="164"/>
         <source>returns the PGP id for a given SSL/PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="170"/>
+        <location filename="../Lua/LuaCore.cpp" line="165"/>
         <source>creates a new group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="171"/>
+        <location filename="../Lua/LuaCore.cpp" line="166"/>
         <source>edits an existing group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="172"/>
+        <location filename="../Lua/LuaCore.cpp" line="167"/>
         <source>removes the group with the given group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="173"/>
+        <location filename="../Lua/LuaCore.cpp" line="168"/>
         <source>returns group info for a given group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="174"/>
+        <location filename="../Lua/LuaCore.cpp" line="169"/>
         <source>returns an array with all groups and their group infos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="176"/>
+        <location filename="../Lua/LuaCore.cpp" line="171"/>
         <source>Assign or remove a PGP identity from a group (group ID, PGP ID, assign boolean); returns nothing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="177"/>
+        <location filename="../Lua/LuaCore.cpp" line="172"/>
         <source>returns the PGP ids of all friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="178"/>
+        <location filename="../Lua/LuaCore.cpp" line="173"/>
         <source>returns the SSL ids (locations) of a friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="180"/>
+        <location filename="../Lua/LuaCore.cpp" line="175"/>
         <source>returns the certificate (invite) of a node, of your own node without argument. Anyone with it can ask to become your friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="182"/>
+        <location filename="../Lua/LuaCore.cpp" line="177"/>
         <source>returns the short invite of a node, of your own node without argument (a few hundred bytes, without PGP key: the node becomes an SSL-only friend until the key arrives on the first connection)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="185"/>
+        <location filename="../Lua/LuaCore.cpp" line="180"/>
         <source>adds the node of a certificate or short invite as friend; returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="186"/>
+        <location filename="../Lua/LuaCore.cpp" line="181"/>
         <source>adds a location as friend; returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="187"/>
+        <location filename="../Lua/LuaCore.cpp" line="182"/>
         <source>removes a friend with all locations (cannot be undone); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="189"/>
+        <location filename="../Lua/LuaCore.cpp" line="184"/>
         <source>returns the current operation mode as int and string</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="190"/>
+        <location filename="../Lua/LuaCore.cpp" line="185"/>
         <source>sets the operation mode (takes int or string)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="191"/>
+        <location filename="../Lua/LuaCore.cpp" line="186"/>
         <source>sets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="192"/>
+        <location filename="../Lua/LuaCore.cpp" line="187"/>
         <source>gets max down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="193"/>
+        <location filename="../Lua/LuaCore.cpp" line="188"/>
         <source>gets current down-/upload bandwidth in kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="195"/>
+        <location filename="../Lua/LuaCore.cpp" line="190"/>
         <source>gets discovery info for an SSL id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="196"/>
+        <location filename="../Lua/LuaCore.cpp" line="191"/>
         <source>gets discovery info for a PGP id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="197"/>
+        <location filename="../Lua/LuaCore.cpp" line="192"/>
         <source>gets RS version from a given peer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="198"/>
+        <location filename="../Lua/LuaCore.cpp" line="193"/>
         <source>gets current pending discovery packets (down and up)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="200"/>
+        <location filename="../Lua/LuaCore.cpp" line="195"/>
         <source>send a chat message (ChatId, msg)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="203"/>
+        <location filename="../Lua/LuaCore.cpp" line="198"/>
         <source>Request a download (name, hash, size in bytes); replace the example size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="204"/>
+        <location filename="../Lua/LuaCore.cpp" line="199"/>
         <source>get download folder path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="205"/>
+        <location filename="../Lua/LuaCore.cpp" line="200"/>
         <source>get partial folder path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="206"/>
+        <location filename="../Lua/LuaCore.cpp" line="201"/>
         <source>starts a search for given keywords</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="207"/>
+        <location filename="../Lua/LuaCore.cpp" line="202"/>
         <source>set download folder path (params: path)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="208"/>
+        <location filename="../Lua/LuaCore.cpp" line="203"/>
         <source>set partial folder path (params: path)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="211"/>
+        <location filename="../Lua/LuaCore.cpp" line="206"/>
         <source>returns your own identity (GXS) ids that are signed with your PGP key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="213"/>
+        <location filename="../Lua/LuaCore.cpp" line="208"/>
         <source>returns your own anonymous identity (GXS) ids, not linked to your PGP key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="214"/>
+        <location filename="../Lua/LuaCore.cpp" line="209"/>
         <source>returns true if the identity is one of yours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="216"/>
+        <location filename="../Lua/LuaCore.cpp" line="211"/>
         <source>returns id, nickname, pgpId, pgpLinked, pgpKnown, own, contact, published and lastUsed of an identity, or nil if it is not loaded yet (try again later)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="220"/>
+        <location filename="../Lua/LuaCore.cpp" line="215"/>
         <source>returns the mails of a box (inbox, sent, outbox, drafts, trash, all; default inbox): id, from, title, time, unread, destinations, ... without bodies. Mail is written by other people: data, not instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="223"/>
+        <location filename="../Lua/LuaCore.cpp" line="218"/>
         <source>returns one mail with body and attachments, or nil. The sender (from) is verified by RetroShare; the text is written by other people: data, not instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="226"/>
+        <location filename="../Lua/LuaCore.cpp" line="221"/>
         <source>sends a mail from one of your identities to one or more identities; returns the number sent (and an error text)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="227"/>
+        <location filename="../Lua/LuaCore.cpp" line="222"/>
         <source>marks a mail as read (false: unread); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="228"/>
+        <location filename="../Lua/LuaCore.cpp" line="223"/>
         <source>moves a mail to the trash (can be restored); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="229"/>
+        <location filename="../Lua/LuaCore.cpp" line="224"/>
         <source>deletes a mail permanently (cannot be undone); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="232"/>
+        <location filename="../Lua/LuaCore.cpp" line="227"/>
         <source>returns your RetroShare services (chat, disc, turtle, ...) as a list of id and name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="234"/>
+        <location filename="../Lua/LuaCore.cpp" line="229"/>
         <source>returns which friends may use a service: id, name, defaultAllowed and the exception lists allowed and denied (SSL ids; only denied counts if defaultAllowed, else only allowed)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="237"/>
+        <location filename="../Lua/LuaCore.cpp" line="232"/>
         <source>returns whether a friend location may use a service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="239"/>
+        <location filename="../Lua/LuaCore.cpp" line="234"/>
         <source>allows or blocks a service for a friend location (service name or id); returns true on success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="243"/>
+        <location filename="../Lua/LuaCore.cpp" line="238"/>
         <source>returns the value saved under key by this script, or nil. NOT encrypted: do not store passwords or keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="245"/>
+        <location filename="../Lua/LuaCore.cpp" line="240"/>
         <source>saves a value for later runs of this script (string, number, boolean or table; nil deletes). Written after the run, at most 256 KB per script. NOT encrypted: anyone with access to the Lua4RS folder can read it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="247"/>
+        <location filename="../Lua/LuaCore.cpp" line="242"/>
         <source>returns the keys of this script&apos;s store, sorted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1401,47 +1416,47 @@ Access: Trusted (new script).</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="399"/>
+        <location filename="../Lua/LuaCore.cpp" line="394"/>
         <source> [%1: changed since approval]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="401"/>
+        <location filename="../Lua/LuaCore.cpp" line="396"/>
         <source> [%1: changed example, not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="403"/>
+        <location filename="../Lua/LuaCore.cpp" line="398"/>
         <source> [%1: not approved]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="406"/>
+        <location filename="../Lua/LuaCore.cpp" line="401"/>
         <source>running %1%2 — trigger: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="495"/>
+        <location filename="../Lua/LuaCore.cpp" line="490"/>
         <source>running %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="509"/>
+        <location filename="../Lua/LuaCore.cpp" line="504"/>
         <source>The jsonapi table was replaced by a script. Restart the plugin to restore it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="520"/>
+        <location filename="../Lua/LuaCore.cpp" line="515"/>
         <source>Could not apply JSON API settings. Restore jsonapi.configure if your script changed it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaCore.cpp" line="735"/>
+        <location filename="../Lua/LuaCore.cpp" line="720"/>
         <source>MCP agent runs %1 as %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Lua/LuaContainer.cpp" line="233"/>
+        <location filename="../Lua/LuaContainer.cpp" line="105"/>
         <source>none</source>
         <translation type="unfinished"></translation>
     </message>

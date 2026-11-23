@@ -6,9 +6,8 @@
 -- each service's default. Exceptions set by hand in the permission matrix are
 -- reset too; to keep one, write a rule for it.
 --
--- Triggers: "A friend is added or removed", "A friend comes online", at
--- startup, and a timer (e.g. every hour, so friends that buryTheDead moved out
--- of the Graveyard get their permissions back).
+-- Needs regular runs, e.g. a timer every hour (Automation tab). Until the next
+-- run, a new friend has each service's default permissions.
 -- Access: changes service permissions, so approve it as "Write" first.
 -- Starts with DRY_RUN = true: it only prints what it would change.
 

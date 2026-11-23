@@ -1,0 +1,25 @@
+<RCC>
+    <!-- Scripts compiled into the plugin, listed under Example (one submenu per prefix,
+         see Lua/BundledScripts.h). Only "examples" is installed into a new profile (once).
+         File names must be unique across all groups. Shipping a script does not approve it. -->
+    <qresource prefix="/lua4rs/scripts/ready">
+        <file alias="autoPermissions.lua">ready/autoPermissions.lua</file>
+        <file alias="buryTheDead.lua">ready/buryTheDead.lua</file>
+        <file alias="syncFriends.lua">ready/syncFriends.lua</file>
+    </qresource>
+    <qresource prefix="/lua4rs/scripts/examples">
+        <file alias="chatBot.lua">examples/chatBot.lua</file>
+        <file alias="discOverviewBot.lua">examples/discOverviewBot.lua</file>
+        <file alias="friendsVersionOverview.lua">examples/friendsVersionOverview.lua</file>
+        <file alias="ipOverview.lua">examples/ipOverview.lua</file>
+        <file alias="offlineChecker.lua">examples/offlineChecker.lua</file>
+        <file alias="onlineHistory.lua">examples/onlineHistory.lua</file>
+        <file alias="simpleDownloadBot.lua">examples/simpleDownloadBot.lua</file>
+        <file alias="speedControl.lua">examples/speedControl.lua</file>
+    </qresource>
+    <qresource prefix="/lua4rs/scripts/trusted">
+        <file alias="chatWrapper.lua">trusted/chatWrapper.lua</file>
+        <file alias="resetPermissions.lua">trusted/resetPermissions.lua</file>
+        <file alias="servicePermission.lua">trusted/servicePermission.lua</file>
+    </qresource>
+</RCC>

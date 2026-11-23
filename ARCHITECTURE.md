@@ -109,10 +109,11 @@ In RetroShare's encrypted config (via `p3Lua4RS`): approvals
 (`L4R_TRUST:<name>` = `level;sha256;time`, `L4R_TRUST_MIGRATED`) and MCP
 settings (`L4R_MCP_ENABLED`, `L4R_MCP_TOKEN`).
 
-The bundled example scripts are compiled into the plugin
-(`scripts/examples/examples.qrc`, installed by `Lua/BundledScripts.h`). Like
-any script, an example needs an approval for more than read-only access;
-the approval dialog diffs a changed example against the shipped version.
+The bundled scripts are compiled into the plugin (`scripts/scripts.qrc`, one
+resource folder per *Example* submenu: `ready`, `examples`, `trusted`; see
+`Lua/BundledScripts.h`). Only `examples` is installed into a new profile.
+Like any script, a bundled one needs an approval for more than read-only
+access; the approval dialog diffs a changed copy against the shipped version.
 
 
 MCP endpoint

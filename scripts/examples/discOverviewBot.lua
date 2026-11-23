@@ -1,10 +1,13 @@
--- Enable Automation > A chat message arrives, then Save.
--- Type !versions in a lobby to summarize versions reported by your friends.
+-- Versions bot: answers "!versions" in a chat with a summary of the RetroShare
+-- versions your friends report.
+--
+-- Trigger: the event "A chat message arrives" (Automation tab), then Save.
+-- Access: sends chat messages, so approve it as "Write" first.
 -- Current RetroShare shares release versions, not enough data for Git commit counts.
 
 local output = type(rs) == "table" and rs.print or print
 if type(args) ~= "table" or type(args.msg) ~= "string" then
-    output("Discovery bot: waiting for !versions in chat. Enable the chat-message trigger and Save.")
+    output("Discovery bot: waiting for !versions in chat. Enable the trigger \"A chat message arrives\" and Save.")
     return
 end
 local command = args.msg:match("^%s*(.-)%s*$"):lower()

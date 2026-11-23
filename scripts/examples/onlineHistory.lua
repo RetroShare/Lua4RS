@@ -1,7 +1,7 @@
 -- Online history: remembers how many friends were online, using the script's
 -- store (kept between runs and restarts), and prints a small summary.
 --
--- Trigger: a timer, e.g. every hour (Automation tab), or click Run a few times.
+-- Click Run a few times, or let a timer run it (e.g. every hour, Automation tab).
 -- Access: read-only (works in the sandbox).
 
 -- Settings

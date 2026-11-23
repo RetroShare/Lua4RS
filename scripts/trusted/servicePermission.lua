@@ -1,5 +1,8 @@
--- Daily service permission schedule, in local time: start inclusive, finish exclusive.
--- Add a Lua4RS startup trigger and a timer interval trigger (e.g. every 30 seconds).
+-- Service schedule: blocks RetroShare services for all friends during set
+-- hours each day (JSON API, trusted only).
+--
+-- Rules use local time: start inclusive, finish exclusive.
+-- Needs regular runs, e.g. a timer every minute (Automation tab).
 -- Configure the plugin JSON API connection; rsServiceControl development endpoints
 -- must be enabled in RetroShare. No C++ binding or plugin rebuild is required.
 -- This blocks peer access, not the service's internal processing.
@@ -81,7 +84,7 @@ local function run()
             else active[id] = active[id] or inside end
             output("Schedule " .. tostring(rule.service) .. " " .. rule.start .. "-" .. rule.finish
                 .. (inside and ": blocking now" or ": outside blocked window")
-                .. " (local time; startup + repeating timer required)")
+                .. " (local time; needs a repeating timer)")
         end
     end
     for fullId, name in pairs(serviceNames) do
