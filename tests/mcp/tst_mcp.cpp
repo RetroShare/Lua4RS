@@ -39,7 +39,10 @@ McpProtocol makeProtocol()
     McpTool boom;
     boom.name = "boom";
     boom.readOnly = false;
+    boom.title = "Boom";
     boom.destructive = true;
+    boom.idempotent = false;
+    boom.openWorld = true;
     boom.call = [](const QJsonObject&) -> McpResult { throw std::runtime_error("kaputt"); };
     p.addTool(boom);
     return p;
@@ -95,8 +98,20 @@ void tools()
     const QJsonArray list = obj(r.body).value("result").toObject().value("tools").toArray();
     CHECK(list.size() == 2);
     CHECK(list[0].toObject().value("name").toString() == "echo"); // registration order
-    CHECK(list[0].toObject().value("annotations").toObject().value("readOnlyHint").toBool());
-    CHECK(list[1].toObject().value("annotations").toObject().value("destructiveHint").toBool());
+    const QJsonObject echoAnn = list[0].toObject().value("annotations").toObject();
+    CHECK(echoAnn.value("readOnlyHint").toBool());
+    // MCP defaults are destructive/open-world: the hints must be sent explicitly
+    CHECK(echoAnn.contains("destructiveHint") && !echoAnn.value("destructiveHint").toBool());
+    CHECK(echoAnn.contains("openWorldHint") && !echoAnn.value("openWorldHint").toBool());
+    CHECK(echoAnn.value("idempotentHint").toBool());
+    CHECK(!list[0].toObject().contains("title") && !echoAnn.contains("title"));
+    const QJsonObject boomAnn = list[1].toObject().value("annotations").toObject();
+    CHECK(!boomAnn.value("readOnlyHint").toBool());
+    CHECK(boomAnn.value("destructiveHint").toBool());
+    CHECK(!boomAnn.value("idempotentHint").toBool());
+    CHECK(boomAnn.value("openWorldHint").toBool());
+    CHECK(list[1].toObject().value("title").toString() == "Boom");
+    CHECK(boomAnn.value("title").toString() == "Boom");
 
     r = p.handle(R"({"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"text":"hi"}}})");
     QJsonObject res = obj(r.body).value("result").toObject();

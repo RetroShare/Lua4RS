@@ -141,14 +141,20 @@ QJsonObject McpProtocol::listTools() const
     for(const QString& name : _order)
     {
         const McpTool& tool = _tools.at(name);
-        tools.append(QJsonObject{
-            { "name", tool.name },
-            { "description", tool.description },
-            { "inputSchema", tool.inputSchema },
-            { "annotations", QJsonObject{ { "readOnlyHint", tool.readOnly },
-                                          { "destructiveHint", tool.destructive },
-                                          { "openWorldHint", false } } }
-        });
+        QJsonObject annotations{ { "readOnlyHint", tool.readOnly },
+                                 { "destructiveHint", tool.destructive },
+                                 { "idempotentHint", tool.idempotent },
+                                 { "openWorldHint", tool.openWorld } };
+        QJsonObject entry{ { "name", tool.name },
+                           { "description", tool.description },
+                           { "inputSchema", tool.inputSchema } };
+        if(!tool.title.isEmpty())
+        {
+            entry.insert("title", tool.title);       // since 2025-06-18
+            annotations.insert("title", tool.title); // 2025-03-26
+        }
+        entry.insert("annotations", annotations);
+        tools.append(entry);
     }
     return QJsonObject{ { "tools", tools } };
 }

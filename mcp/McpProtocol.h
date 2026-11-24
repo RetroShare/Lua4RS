@@ -27,8 +27,15 @@ struct McpTool
     QString name;
     QString description;
     QJsonObject inputSchema;   // JSON Schema of the arguments object
-    bool readOnly = true;      // annotations: readOnlyHint
-    bool destructive = false;  // annotations: destructiveHint
+    QString title;             // human-readable name (tool title + annotations.title)
+    // Annotations: hints for the client (confirmation prompts, UI), no
+    // guarantee and no security boundary. Defaults here describe a read-only
+    // tool that only touches Lua4RS itself; the MCP defaults differ
+    // (destructiveHint and openWorldHint default to true), so all are sent.
+    bool readOnly = true;      // readOnlyHint: changes nothing
+    bool destructive = false;  // destructiveHint: may overwrite or delete (if !readOnly)
+    bool idempotent = true;    // idempotentHint: repeating the same call has no extra effect
+    bool openWorld = false;    // openWorldHint: reaches beyond Lua4RS (other people, network)
     std::function<McpResult(const QJsonObject& arguments)> call;
 };
 
