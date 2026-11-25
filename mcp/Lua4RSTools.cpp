@@ -264,6 +264,14 @@ McpResult storeScript(LuaCore* core, const QString& name, const QString& expecte
                 return McpResult::fail(name + " changed since you read it (sha256 is now " + actual +
                                        "). Read it again before changing it.");
         }
+        if(!exists)
+        {
+            const QString conflict = core->codeList()->nameConflict(name);
+            if(!conflict.isEmpty())
+                return McpResult::fail(name + " collides with " + conflict + ": script names that differ only in upper "
+                                       "and lower case are the same file on Windows and macOS. Use " + conflict +
+                                       " or another name.");
+        }
         QString code, error;
         if(!produce(exists, current, code, error)) return McpResult::fail(error);
         const int bytes = code.toUtf8().size();
@@ -285,7 +293,15 @@ McpResult storeScript(LuaCore* core, const QString& name, const QString& expecte
         c->setCode(code);
         if(hasDescription) c->setDesc(description);
         QDir().mkpath(QString::fromStdString(core->getPath()));
-        const bool saved = core->codeList()->saveAll();
+        const bool saved = core->codeList()->save(c);
+        if(!saved && !exists)
+        {
+            // Never leave a script in the list that is not on disk.
+            core->codeList()->discard(c);
+            lock.unlock();
+            emit core->scriptChangedExternally(name);
+            return McpResult::fail("Could not write " + name + " to disk.");
+        }
         QJsonObject info = scriptInfo(core, c);
         lock.unlock();
         emit core->scriptChangedExternally(name);
@@ -413,13 +429,19 @@ void addScriptWriteTools(McpProtocol& p, LuaCore* core)
                                        .arg(name, stateName(status.state), luaTrustName(status.effective)));
             emit core->scriptAboutToBeRemoved(name); // the editor lets go of it
             if(!core->codeList()->itemByName(name, c)) return McpResult::fail("No script named " + name + ".");
-            core->trustStore().remove(name);
-            core->store().remove(name);
-            core->forgetScriptState(name);
+            // The file first: if it cannot be deleted, the script keeps its
+            // store and everything else.
             const bool deleted = core->codeList()->removeItemAndDelete(c);
+            if(deleted)
+            {
+                core->trustStore().remove(name);
+                core->store().remove(name);
+                core->forgetScriptState(name);
+            }
             lock.unlock();
             emit core->scriptChangedExternally(name);
-            if(!deleted) return McpResult::fail(name + " was removed from the list, but its file could not be deleted.");
+            if(!deleted) return McpResult::fail("Could not delete the file of " + name + " (is it open in another "
+                                                "program?). Nothing was changed.");
             return McpResult::ok(QJsonObject{ { "deleted", name } });
         });
     };

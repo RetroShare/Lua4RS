@@ -4,92 +4,92 @@
 <context>
     <name>AccessText</name>
     <message>
-        <location filename="../gui/AccessText.cpp" line="11"/>
+        <location filename="../gui/AccessText.cpp" line="13"/>
         <source>Trusted</source>
         <translation>Vertrauenswürdig</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="12"/>
+        <location filename="../gui/AccessText.cpp" line="14"/>
         <source>Write</source>
         <translation>Schreiben</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="15"/>
+        <location filename="../gui/AccessText.cpp" line="17"/>
         <source>Read-only</source>
         <translation>Nur lesen</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="22"/>
+        <location filename="../gui/AccessText.cpp" line="24"/>
         <source>full access, like a program you installed</source>
         <translation>voller Zugriff, wie ein installiertes Programm</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="23"/>
+        <location filename="../gui/AccessText.cpp" line="25"/>
         <source>sandbox, may use functions that change RetroShare</source>
         <translation>Sandbox, darf Funktionen nutzen, die RetroShare verändern</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="26"/>
+        <location filename="../gui/AccessText.cpp" line="28"/>
         <source>sandbox, read-only: no file or shell access, no JSON API, nothing that changes RetroShare</source>
         <translation>Sandbox, nur lesen: kein Datei- oder Shell-Zugriff, keine JSON-API, nichts, was RetroShare verändert</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="35"/>
+        <location filename="../gui/AccessText.cpp" line="37"/>
         <source>Approved as %1 on %2.
 Runs with %3.</source>
         <translation>Freigegeben als %1 am %2.
 Läuft als %3.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="38"/>
+        <location filename="../gui/AccessText.cpp" line="40"/>
         <source>Unchanged example shipped with Lua4RS, not approved.
 Runs with %1.</source>
         <translation>Unverändertes Beispiel aus Lua4RS, nicht freigegeben.
 Läuft als %1.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="44"/>
+        <location filename="../gui/AccessText.cpp" line="46"/>
         <source>Example shipped with Lua4RS, changed since, not approved.
 Runs with %1.</source>
         <translation>Beispiel aus Lua4RS, seitdem geändert, nicht freigegeben.
 Läuft als %1.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="56"/>
+        <location filename="../gui/AccessText.cpp" line="58"/>
         <source>Access: %1 — unchanged example, not approved.</source>
         <translation>Zugriff: %1 — unverändertes Beispiel, nicht freigegeben.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="40"/>
+        <location filename="../gui/AccessText.cpp" line="42"/>
         <source>Changed outside the editor since it was approved as %1 on %2.
 Runs with %3 until it is approved again.</source>
         <translation>Außerhalb des Editors geändert, seit es als %1 am %2 freigegeben wurde.
 Läuft als %3, bis es erneut freigegeben wird.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="48"/>
+        <location filename="../gui/AccessText.cpp" line="50"/>
         <source>Not approved.
 Runs with %1.</source>
         <translation>Nicht freigegeben.
 Läuft als %1.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="55"/>
+        <location filename="../gui/AccessText.cpp" line="57"/>
         <source>Access: %1 (approved).</source>
         <translation>Zugriff: %1 (freigegeben).</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="57"/>
+        <location filename="../gui/AccessText.cpp" line="59"/>
         <source>Access: %1 — changed since approval.</source>
         <translation>Zugriff: %1 — seit der Freigabe geändert.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="58"/>
+        <location filename="../gui/AccessText.cpp" line="60"/>
         <source>Access: %1 — changed example, not approved.</source>
         <translation>Zugriff: %1 — geändertes Beispiel, nicht freigegeben.</translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="61"/>
+        <location filename="../gui/AccessText.cpp" line="63"/>
         <source>Access: %1 — not approved.</source>
         <translation>Zugriff: %1 — nicht freigegeben.</translation>
     </message>
@@ -822,132 +822,138 @@ Zugriff: Vertrauenswürdig (neues Skript).</translation>
         <translation>Änderungen an %1 speichern?</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="566"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
         <source>Choose a script name</source>
         <translation>Skriptnamen wählen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="566"/>
         <source>Use a unique filename, such as my-script.lua, without folders or special filename characters.</source>
         <translation>Verwenden Sie einen eindeutigen Dateinamen wie my-script.lua, ohne Ordner und ohne Sonderzeichen, die in Dateinamen nicht erlaubt sind.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="575"/>
+        <source>%1 already exists. Names that differ only in upper and lower case count as the same name.</source>
+        <translation>%1 gibt es schon. Namen, die sich nur in Groß- und Kleinschreibung unterscheiden, gelten als gleich.</translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="580"/>
         <source>Check the schedule</source>
         <translation>Zeitplan prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="580"/>
         <source>Choose a future time for the one-time run.</source>
         <translation>Wählen Sie für die einmalige Ausführung einen Zeitpunkt in der Zukunft.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="586"/>
         <source>Check the time window</source>
         <translation>Zeitfenster prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="586"/>
         <source>Choose an end time after the start time. A one-time run must fall inside that window.</source>
         <translation>Wählen Sie eine Endzeit nach der Startzeit. Eine einmalige Ausführung muss in dieses Fenster fallen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="589"/>
         <source>Check the interval</source>
         <translation>Intervall prüfen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="589"/>
         <source>Choose a shorter repeat interval.</source>
         <translation>Wählen Sie ein kürzeres Wiederholungsintervall.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="633"/>
         <source>Could not save</source>
         <translation>Speichern fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="633"/>
         <source>The script could not be fully saved. Check write access to the scripts folder and try again.</source>
         <translation>Das Skript konnte nicht vollständig gespeichert werden. Prüfen Sie die Schreibrechte für den Skriptordner und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="628"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
         <source>Saved %1</source>
         <translation>%1 gespeichert</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="674"/>
         <source>Delete script</source>
         <translation>Skript löschen</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="674"/>
         <source>Delete %1 from disk? This also discards any editor changes.</source>
         <translation>%1 von der Festplatte löschen? Damit werden auch alle Änderungen im Editor verworfen.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="691"/>
         <source>Could not delete file</source>
         <translation>Datei konnte nicht gelöscht werden</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
-        <source>The script was removed from this list, but its file could not be deleted. Check the scripts folder.</source>
-        <translation>Das Skript wurde aus der Liste entfernt, aber seine Datei konnte nicht gelöscht werden. Prüfen Sie den Skriptordner.</translation>
+        <location filename="../gui/Lua4RSWidget.cpp" line="691"/>
+        <source>The file of %1 could not be deleted, so the script was kept. Is it open in another program?</source>
+        <translation>Die Datei von %1 konnte nicht gelöscht werden, das Skript bleibt erhalten. Ist sie in einem anderen Programm geöffnet?</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="684"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="701"/>
         <source>Running…</source>
         <translation>Läuft…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="685"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="702"/>
         <source>Run: %1</source>
         <translation>Ausführen: %1</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="693"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="710"/>
         <source>Cannot run: Lua is busy or shutting down.</source>
         <translation>Ausführen nicht möglich: Lua ist beschäftigt oder wird beendet.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="704"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="721"/>
         <source>List friends through the JSON API</source>
         <translation>Freunde über die JSON-API auflisten</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="735"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="752"/>
         <source>Enter an HTTP(S) server address without a path, and a username without a colon.</source>
         <translation>Geben Sie eine HTTP(S)-Serveradresse ohne Pfad und einen Benutzernamen ohne Doppelpunkt ein.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="750"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="767"/>
         <source>Settings applied. Testing connection…</source>
         <translation>Einstellungen übernommen. Verbindung wird getestet…</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="754"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="771"/>
         <source>Connection timed out. Check that the JSON API is enabled and the address is correct.</source>
         <translation>Zeitüberschreitung. Prüfen Sie, ob die JSON-API aktiviert und die Adresse richtig ist.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="755"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="772"/>
         <source>Credentials rejected. Authorize this API user in RetroShare, then try again.</source>
         <translation>Zugangsdaten abgelehnt. Autorisieren Sie diesen API-Benutzer in RetroShare und versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="756"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="773"/>
         <source>Could not connect: %1</source>
         <translation>Verbindung fehlgeschlagen: %1</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="757"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="774"/>
         <source>Server replied, but the friend-list request failed (HTTP %1).</source>
         <translation>Der Server hat geantwortet, aber die Abfrage der Freundesliste ist fehlgeschlagen (HTTP %1).</translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="758"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="775"/>
         <source>Connected. Choose New API example, then Run.</source>
         <translation>Verbunden. Wählen Sie „Neues API-Beispiel“ und dann „Ausführen“.</translation>
     </message>

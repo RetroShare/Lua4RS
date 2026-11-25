@@ -13,42 +13,73 @@
 #endif
 
 #include "LuaList.h"
+#include "LuaFiles.h"
 
 #include <QRegularExpression>
 #include "util/rsdebuglevel0.h"
 
 namespace {
-// Windows: CRLF on disk, LF in memory (as earlier versions did). Elsewhere the
-// bytes stay as they are: the approval hash covers the code in memory.
-#ifdef _WIN32
-const QIODevice::OpenMode kTextMode = QIODevice::Text;
-#else
-const QIODevice::OpenMode kTextMode = QIODevice::NotOpen;
-#endif
-
-// Scripts are UTF-8 (a BOM is dropped). Earlier versions saved them in the
-// local 8-bit encoding on Windows; those still load.
-QString decodeScript(const QByteArray& data)
+// Old versions, and a plain QIODevice::Text read, decoded every byte that is
+// not valid UTF-8 in the local 8-bit encoding (the ANSI code page on Windows).
+// Elsewhere Latin-1: it keeps every byte, so saving again loses nothing.
+QString decodeLegacy(const QByteArray& data)
 {
+#ifdef _WIN32
+    return QString::fromLocal8Bit(data.constData(), data.size());
+#else
+    return QString::fromLatin1(data.constData(), data.size());
+#endif
+}
+} // namespace
+
+QString LuaList::decodeScript(const QByteArray& file, bool crlf)
+{
+    QByteArray data = file;
+    if(crlf) data.replace("\r\n", "\n");
+    // Stateless: a file that ends inside a UTF-8 sequence is an error, not a
+    // few bytes the decoder keeps waiting for (and drops).
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    QStringDecoder utf8(QStringConverter::Utf8);
+    QStringDecoder utf8(QStringConverter::Utf8, QStringConverter::Flag::Stateless); // drops a BOM
     const QString code = utf8.decode(data);
     if(!utf8.hasError()) return code;
 #else
     QTextCodec::ConverterState state; // default flags drop the BOM
     const QString code = QTextCodec::codecForName("UTF-8")->toUnicode(data.constData(), data.size(), &state);
-    if(state.invalidChars == 0) return code;
+    if(state.invalidChars == 0 && state.remainingChars == 0) return code;
 #endif
-    return QString::fromLocal8Bit(data);
+    return decodeLegacy(data);
 }
-} // namespace
+
+QByteArray LuaList::encodeScript(const QString& code, bool crlf)
+{
+    QByteArray data = code.toUtf8();
+    // Every LF becomes CRLF and decodeScript turns every CRLF back into LF:
+    // a CR in the code (also right before a LF) survives unchanged.
+    if(crlf) data.replace("\n", "\r\n");
+    return data;
+}
 
 bool LuaList::isValidName(const QString& name)
 {
-    static const QRegularExpression special("[<>\"|?*]");
-    return name.endsWith(".lua") && name != ".lua" && !name.contains('/') && !name.contains('\\') &&
-           !name.contains(':') && !name.contains("..") && !name.contains(special) &&
+    static const QRegularExpression special("[<>\"|?*~:/\\\\\\x00-\\x1f\\x7f]");
+    // Windows device names, also with an extension (nul.lua, con.backup.lua).
+    static const QRegularExpression device("^(con|prn|aux|nul|com[0-9\\x{b9}\\x{b2}\\x{b3}]|lpt[0-9\\x{b9}\\x{b2}\\x{b3}])$",
+                                           QRegularExpression::CaseInsensitiveOption);
+    const QString base = name.section('.', 0, 0).trimmed();
+    return name.endsWith(".lua") && name != ".lua" && name.size() <= kMaxNameLength &&
+           !name.contains("..") && !name.contains(special) && !base.contains(device) &&
            name.trimmed() == name;
+}
+
+QString LuaList::nameConflict(const QString& name, const LuaContainer* self) const
+{
+    for(const LuaContainer* c : _luaList)
+        if(c != self && LuaFiles::sameName(c->getName(), name)) return c->getName();
+    // Changing only the case of its own name is fine.
+    if(self && LuaFiles::sameName(self->getName(), name)) return QString();
+    // A file that is no script in the list, or another spelling of one.
+    if(!_filePath.isEmpty() && QFileInfo::exists(_filePath + name)) return name;
+    return QString();
 }
 
 LuaList::LuaList() :
@@ -206,16 +237,25 @@ void LuaList::removeItem(LuaContainer* container)
 
 bool LuaList::removeItemAndDelete(LuaContainer* container)
 {
-    // remove item from list
+    // Disk first: a file that cannot be deleted (open in another program on
+    // Windows) would come back with the next start.
+    if(!remove(container)) return false;
     removeItem(container);
-
-    // remove item from disk
-    bool rc = remove(container);
-
-    // remove item from ram
     delete container;
+    return true;
+}
 
-    return rc;
+void LuaList::discard(LuaContainer* container)
+{
+    removeItem(container);
+    QString luaFileName, settingsFileName;
+    getFileNames(container->getName(), luaFileName, settingsFileName);
+    if(!_filePath.isEmpty())
+    {
+        QFile::remove(luaFileName);
+        QFile::remove(settingsFileName);
+    }
+    delete container;
 }
 
 size_t LuaList::size()
@@ -254,7 +294,7 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         }
 
         QFile file(luaFileName);
-        if(!file.open(QIODevice::ReadOnly | kTextMode))
+        if(!file.open(QIODevice::ReadOnly))
         {
             RS_ERR("can't open file ", luaFileName.toStdString());
             return false;
@@ -279,6 +319,11 @@ bool LuaList::load(const QString& name, LuaContainer* container, bool ignoreNoSe
         }
 
         QSettings settings(settingsFileName, QSettings::IniFormat);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        // Qt 6 writes non-ASCII text as UTF-8, Qt 5 as escapes (which this
+        // reads too). Only for reading: Qt 5 writing UTF-8 loses emoji.
+        settings.setIniCodec("UTF-8");
+#endif
         container->fromSettings(settings);
     }
     return true;
@@ -334,8 +379,8 @@ bool LuaList::save(LuaContainer* container)
         // Always UTF-8; written to a temporary file first, so a crash never
         // leaves half a script.
         QSaveFile file(luaFileName);
-        const QByteArray code = container->getCode().toUtf8();
-        if(!file.open(QIODevice::WriteOnly | kTextMode) || file.write(code) != code.size() || !file.commit())
+        const QByteArray code = encodeScript(container->getCode());
+        if(!file.open(QIODevice::WriteOnly) || file.write(code) != code.size() || !file.commit())
         {
             RS_ERR("can't write file ", luaFileName.toStdString(), ": ", file.errorString().toStdString());
             return false;
@@ -386,31 +431,34 @@ bool LuaList::remove(LuaContainer *container)
     QString luaFileName, settingsFileName;
     getFileNames(container->getName(), luaFileName, settingsFileName);
 
-    if(!QFile::exists(luaFileName))
+    // Already gone (deleted outside RetroShare): nothing to do for the code.
+    if(QFile::exists(luaFileName) && !QFile::remove(luaFileName))
     {
-        RS_ERR("can't find file ", luaFileName.toStdString());
+        RS_ERR("can't remove ", luaFileName.toStdString());
         return false;
     }
-    if(!QFile::remove(luaFileName)) return false;
     // The triggers and last runs belong to the script.
     if(QFile::exists(settingsFileName) && !QFile::remove(settingsFileName))
         RS_WARN("can't remove ", settingsFileName.toStdString());
     return true;
 }
 
-void LuaList::rename(const QString& oldName, const QString& newName)
+bool LuaList::rename(const QString& oldName, const QString& newName)
 {
     QString luaFileNameOld, luaFileNameNew, settingsFileNameOld, settingsFileNameNew;
     getFileNames(oldName, luaFileNameOld, settingsFileNameOld);
     getFileNames(newName, luaFileNameNew, settingsFileNameNew);
 
-    QFile fCode(luaFileNameOld);
-    QFile fSettings(settingsFileNameOld);
-
-    if(fCode.exists())
-        fCode.rename(luaFileNameNew);
-    if(fSettings.exists())
-        fSettings.rename(settingsFileNameNew);
+    // Never replaces another script: callers check nameConflict first.
+    bool ok = true;
+    if(QFile::exists(luaFileNameOld) && !LuaFiles::rename(luaFileNameOld, luaFileNameNew, false))
+    {
+        RS_ERR("can't rename ", luaFileNameOld.toStdString(), " to ", luaFileNameNew.toStdString());
+        ok = false;
+    }
+    if(QFile::exists(settingsFileNameOld) && !LuaFiles::rename(settingsFileNameOld, settingsFileNameNew, true))
+        RS_WARN("can't rename ", settingsFileNameOld.toStdString());
+    return ok;
 }
 
 void LuaList::getFileNames(const QString& name, QString& luaFileName, QString& settingsFileName)

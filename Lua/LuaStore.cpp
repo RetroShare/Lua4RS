@@ -1,4 +1,5 @@
 #include "LuaStore.h"
+#include "LuaFiles.h"
 #include "LuaJsonApi.h"
 
 #include <QDir>
@@ -84,8 +85,9 @@ bool LuaStore::rename(const QString& oldName, const QString& newName)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     if(_dir.isEmpty() || !QFile::exists(path(oldName))) return true;
-    QFile::remove(path(newName));
-    return QFile::rename(path(oldName), path(newName));
+    // A stale store of an older script with the new name goes; a rename that
+    // only changes the case keeps the data (same file on Windows/macOS).
+    return LuaFiles::rename(path(oldName), path(newName), true);
 }
 
 void LuaStore::remove(const QString& name)
@@ -118,7 +120,8 @@ LuaStore* LuaStore::from(lua_State* L)
 int LuaStore::luaGet(lua_State* L)
 {
     LuaStore* store = from(L);
-    const char* key = luaL_checkstring(L, 1);
+    size_t keyLength = 0;
+    const char* key = luaL_checklstring(L, 1, &keyLength);
     bool ok = true;
     {
         std::string error;
@@ -127,7 +130,7 @@ int LuaStore::luaGet(lua_State* L)
         else
         {
             std::lock_guard<std::mutex> lock(store->_mutex);
-            if(store->loadLocked(error)) value = store->_data.value(QString::fromUtf8(key));
+            if(store->loadLocked(error)) value = store->_data.value(QString::fromUtf8(key, int(keyLength)));
         }
         if(!error.empty()) { ok = false; lua_pushlstring(L, error.data(), error.size()); }
         else if(value.isUndefined()) lua_pushnil(L);

@@ -2,6 +2,7 @@
 // Build: qmake triggers.pro && make && ./tst_triggers
 #include <cstdio>
 
+#include <QDir>
 #include <QFile>
 #include <QTemporaryDir>
 
@@ -221,16 +222,142 @@ int main()
 
         CHECK(list.saveAll());
         QFile saved(dir.filePath("utf8.lua"));
-        CHECK(saved.open(QIODevice::ReadOnly) && saved.readAll() == umlauts.toUtf8());
-#ifndef _WIN32
+        CHECK(saved.open(QIODevice::ReadOnly) && saved.readAll() == LuaList::encodeScript(umlauts));
         QFile crlf(dir.filePath("crlf.lua"));
+        // Windows: written back as it was read (LF in memory, CRLF on disk).
         CHECK(crlf.open(QIODevice::ReadOnly) && crlf.readAll() == "a = 1\r\nb = 2\r\n");
-#endif
         CHECK(QFile::exists(dir.filePath("utf8.lua.ini")));
 
         CHECK(list.itemByName(QString("utf8.lua"), c) && list.removeItemAndDelete(c));
         CHECK(!QFile::exists(dir.filePath("utf8.lua")));
         CHECK(!QFile::exists(dir.filePath("utf8.lua.ini")));
+    }
+
+    // Script files <-> code, for both line-ending modes (crlf = Windows).
+    {
+        const QString tricky = QString::fromUtf8("a\rb\r\nc\r\r\nd = [[x\ry]]\n\u00e4\n");
+        for(bool crlf : { false, true })
+        {
+            // Any code comes back unchanged: the approval hash covers it.
+            CHECK(LuaList::decodeScript(LuaList::encodeScript(tricky, crlf), crlf) == tricky);
+            CHECK(LuaList::decodeScript(LuaList::encodeScript("x\n", crlf), crlf) == "x\n");
+        }
+        CHECK(LuaList::encodeScript("a\nb", true) == "a\r\nb");
+        CHECK(LuaList::encodeScript("a\r\nb", true) == "a\r\r\nb");
+        CHECK(LuaList::decodeScript("a\r\nb\rc", true) == "a\nb\rc"); // a lone CR stays
+        CHECK(LuaList::decodeScript("a\r\nb", false) == "a\r\nb");
+        CHECK(LuaList::decodeScript("\xEF\xBB\xBFx", false) == "x");
+        // Qt 5 stopped at the first NUL in some conversions.
+        CHECK(LuaList::decodeScript(QByteArray("a\0b", 3), false).size() == 3);
+        CHECK(LuaList::decodeScript(QByteArray("\xff\0b", 3), false).size() == 3);
+        // Not UTF-8: Latin-1 here (every byte kept), the ANSI code page on
+        // Windows. A file that ends inside a UTF-8 sequence is not UTF-8 either.
+#ifndef _WIN32
+        CHECK(LuaList::decodeScript("-- \xE4", false) == QString::fromUtf8("-- \u00e4"));
+        CHECK(LuaList::decodeScript("x = \"\xE4\"\n", false) == QString::fromUtf8("x = \"\u00e4\"\n"));
+#else
+        CHECK(LuaList::decodeScript("-- \xE4", false).size() == 4);
+#endif
+    }
+
+    // Names: valid on every platform, compared ignoring case.
+    {
+        for(const char* ok : { "a.lua", "my-script.lua", "Gr\xC3\xBC\xC3\x9F" "e.lua", "con2.lua", "console.lua", "nul_x.lua" })
+            CHECK(LuaList::isValidName(QString::fromUtf8(ok)));
+        for(const char* bad : { ".lua", "a.txt", "a.LUA", "a/b.lua", "a\\b.lua", "c:a.lua", "a..lua", "a?.lua", "a*.lua",
+                                "a\".lua", "a<.lua", "a|.lua", " a.lua", "a.lua ", "SYNCFR~1.lua", "con.lua", "NUL.lua",
+                                "Com1.lua", "lpt9.lua", "aux.backup.lua", "prn .lua", "a\x01" "b.lua", "a\x7f.lua" })
+            CHECK(!LuaList::isValidName(QString::fromUtf8(bad)));
+        CHECK(!LuaList::isValidName(QString::fromUtf8("com\xC2\xB9.lua")));
+        CHECK(!LuaList::isValidName(QString(1, QChar(0)) + ".lua"));
+        CHECK(LuaList::isValidName(QString(LuaList::kMaxNameLength - 4, 'a') + ".lua"));
+        CHECK(!LuaList::isValidName(QString(LuaList::kMaxNameLength - 3, 'a') + ".lua"));
+
+        QTemporaryDir dir;
+        LuaList list;
+        list.setFilePath(dir.path().toStdString() + "/");
+        auto add = [&](const char* name) {
+            auto c = new LuaContainer();
+            c->setName(name); c->setCode("return 1\n");
+            list.addItem(c);
+            CHECK(list.save(c));
+            return c;
+        };
+        LuaContainer* foo = add("foo.lua");
+        CHECK(list.nameConflict("bar.lua").isEmpty());
+        CHECK(list.nameConflict("foo.lua") == "foo.lua");
+        CHECK(list.nameConflict("FOO.lua") == "foo.lua");
+        CHECK(list.nameConflict("Foo.lua", foo).isEmpty()); // its own name, other case
+        CHECK(list.nameConflict("foo.lua", foo).isEmpty());
+        LuaContainer* bar = add("bar.lua");
+        CHECK(list.nameConflict("Foo.lua", bar) == "foo.lua");
+        // A file that is not in the list (not loaded, or another spelling).
+        { QFile f(dir.filePath("stray.lua")); CHECK(f.open(QIODevice::WriteOnly)); }
+        CHECK(list.nameConflict("stray.lua") == "stray.lua");
+
+        // Renaming only the case keeps the file and its settings.
+        foo->setName("Foo.lua");
+        CHECK(list.rename("foo.lua", "Foo.lua"));
+        CHECK(list.save(foo));
+        const QStringList files = QDir(dir.path()).entryList({ "*.lua", "*.ini" }, QDir::Files);
+        CHECK(files.contains("Foo.lua") && files.contains("Foo.lua.ini"));
+        CHECK(!files.contains("foo.lua") && !files.contains("foo.lua.ini"));
+        LuaList reloaded;
+        reloaded.setFilePath(dir.path().toStdString() + "/");
+        CHECK(reloaded.loadAll());
+        LuaContainer* c = nullptr;
+        CHECK(reloaded.itemByName(QString("Foo.lua"), c) && c->getCode() == "return 1\n");
+
+        // discard takes back a new script with its files.
+        LuaContainer* gone = add("gone.lua");
+        list.discard(gone);
+        CHECK(!list.itemByName(QString("gone.lua"), c));
+        CHECK(!QFile::exists(dir.filePath("gone.lua")) && !QFile::exists(dir.filePath("gone.lua.ini")));
+
+        // A file that is already gone does not block deleting the script.
+        LuaContainer* missing = add("missing.lua");
+        CHECK(QFile::remove(dir.filePath("missing.lua")));
+        CHECK(list.removeItemAndDelete(missing));
+        CHECK(!list.itemByName(QString("missing.lua"), c));
+        CHECK(!QFile::exists(dir.filePath("missing.lua.ini")));
+
+        // A file that cannot be deleted keeps the script in the list.
+        LuaContainer* locked = add("locked.lua");
+        const QFile::Permissions permissions = QFile::permissions(dir.path());
+        QFile::setPermissions(dir.path(), QFile::ReadOwner | QFile::ExeOwner);
+        if(!QFile::remove(dir.filePath("locked.lua"))) // not as root
+        {
+            CHECK(!list.removeItemAndDelete(locked));
+            CHECK(list.itemByName(QString("locked.lua"), c) && c == locked);
+        }
+        QFile::setPermissions(dir.path(), permissions);
+    }
+
+    // .ini text written by Qt 6 (UTF-8) and by Qt 5 (escapes) reads the same
+    // with either Qt version.
+    {
+        QTemporaryDir dir;
+        const QString desc = QString::fromUtf8("Gr\u00fc\u00dfe \u20ac \u65e5 \U0001F600");
+        auto writeRaw = [&](const QString& name, const QByteArray& data) {
+            QFile f(dir.filePath(name));
+            return f.open(QIODevice::WriteOnly) && f.write(data) == data.size();
+        };
+        CHECK(writeRaw("qt6.lua", "return 1\n"));
+        CHECK(writeRaw("qt6.lua.ini", "[General]\nDescription=" + desc.toUtf8() + "\n"));
+        CHECK(writeRaw("qt5.lua", "return 1\n"));
+        CHECK(writeRaw("qt5.lua.ini", "[General]\nDescription=Gr\\xfc\\xdf\\x65 \\x20ac \\x65e5 \\xd83d\\xde00\n"));
+        LuaList list;
+        list.setFilePath(dir.path().toStdString() + "/");
+        CHECK(list.loadAll());
+        LuaContainer* c = nullptr;
+        CHECK(list.itemByName(QString("qt6.lua"), c) && c->getDesc() == desc);
+        CHECK(list.itemByName(QString("qt5.lua"), c) && c->getDesc() == desc);
+        // And what this build writes reads back the same.
+        CHECK(list.saveAll());
+        LuaList again;
+        again.setFilePath(dir.path().toStdString() + "/");
+        CHECK(again.loadAll());
+        CHECK(again.itemByName(QString("qt6.lua"), c) && c->getDesc() == desc);
     }
 
     std::printf("%d checks, %d failed\n", checks, failures);

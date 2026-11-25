@@ -145,7 +145,7 @@ Lua4RSWidget::Lua4RSWidget(QWidget* parent) :
                     QMessageBox::warning(this, tr("Example unavailable"), tr("%1 is missing in this build.").arg(name));
                     return;
                 }
-                createScript(QString::fromUtf8(code), tr("Example: %1").arg(name));
+                createScript(QString::fromUtf8(code.constData(), code.size()), tr("Example: %1").arg(name));
             });
             action->setToolTip(BundledScripts::summary(code));
         }
@@ -561,12 +561,20 @@ bool Lua4RSWidget::saveScript()
     if(!_activeContainer) return true;
     QString name = ui->le_scriptname->text().trimmed();
     if(!name.endsWith(".lua")) name += ".lua";
-    LuaContainer* duplicate = nullptr;
-    if(!LuaList::isValidName(name) ||
-       (_lua->codeList()->itemByName(name, duplicate) && duplicate != _activeContainer))
+    if(!LuaList::isValidName(name))
     {
         QMessageBox::warning(this, tr("Choose a script name"), tr("Use a unique filename, such as my-script.lua, without folders or special filename characters."));
         return false;
+    }
+    {
+        std::lock_guard<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
+        const QString conflict = _lua->codeList()->nameConflict(name, _activeContainer);
+        if(!conflict.isEmpty())
+        {
+            QMessageBox::warning(this, tr("Choose a script name"),
+                                 tr("%1 already exists. Names that differ only in upper and lower case count as the same name.").arg(conflict));
+            return false;
+        }
     }
     if(ui->cbx_enable->isChecked() && ui->cb_once->isChecked() && ui->dte_runonce->dateTime() <= QDateTime::currentDateTime())
     { QMessageBox::warning(this, tr("Check the schedule"), tr("Choose a future time for the one-time run.")); return false; }
@@ -609,16 +617,17 @@ bool Lua4RSWidget::saveScript()
     _activeContainer->setTriggers(triggers);
     // A new or renamed script never inherits sandbox globals of an older
     // script that had this name.
-    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _draftUntrusted = false; _lua->forgetScriptState(name); }
-    else if(oldName != name)
+    bool renamed = true;
+    if(!_draft && oldName != name)
     {
-        _lua->codeList()->rename(oldName, name);
+        renamed = _lua->codeList()->rename(oldName, name);
         _lua->store().rename(oldName, name);
         _lua->forgetScriptState(oldName);
         _lua->forgetScriptState(name);
     }
+    if(_draft) { _lua->codeList()->addItem(_activeContainer); _draft = false; _draftUntrusted = false; _lua->forgetScriptState(name); }
     QDir().mkpath(QString::fromStdString(_lua->getPath()));
-    const bool saved = _lua->codeList()->saveAll();
+    const bool saved = _lua->codeList()->saveAll() && renamed;
     scriptsLock.unlock();
     if(!saved)
     { QMessageBox::warning(this, tr("Could not save"), tr("The script could not be fully saved. Check write access to the scripts folder and try again.")); return false; }
@@ -666,14 +675,22 @@ void Lua4RSWidget::on_pb_deletescript_clicked()
        QMessageBox::Yes | QMessageBox::Cancel, QMessageBox::Cancel) != QMessageBox::Yes) return;
     std::unique_lock<std::recursive_mutex> scriptsLock(_lua->scriptsMutex());
     auto removed = _activeContainer;
+    const QString name = removed->getName();
     loadScript(nullptr);
-    _lua->trustStore().remove(removed->getName());
-    _lua->store().remove(removed->getName());
-    _lua->forgetScriptState(removed->getName());
+    // The file first: if it cannot be deleted, the script keeps everything.
     const bool deleted = _lua->codeList()->removeItemAndDelete(removed);
+    if(deleted)
+    {
+        _lua->trustStore().remove(name);
+        _lua->store().remove(name);
+        _lua->forgetScriptState(name);
+    }
     scriptsLock.unlock();
     if(!deleted)
-        QMessageBox::warning(this, tr("Could not delete file"), tr("The script was removed from this list, but its file could not be deleted. Check the scripts folder."));
+    {
+        QMessageBox::warning(this, tr("Could not delete file"), tr("The file of %1 could not be deleted, so the script was kept. Is it open in another program?").arg(name));
+        loadScript(removed);
+    }
     refreshScripts();
 }
 void Lua4RSWidget::on_pb_run_clicked()

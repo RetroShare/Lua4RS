@@ -1,4 +1,5 @@
 #include "LuaTrustStore.h"
+#include "LuaFiles.h"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -56,7 +57,7 @@ bool LuaTrustStore::approvedCode(const QString& name, QString& code) const
         {
             QByteArray shipped;
             if(!_bundled || !_bundled(name, shipped)) return false;
-            code = QString::fromUtf8(shipped);
+            code = QString::fromUtf8(shipped.constData(), shipped.size());
             return true;
         }
         if(_dir.isEmpty()) return false;
@@ -67,7 +68,7 @@ bool LuaTrustStore::approvedCode(const QString& name, QString& code) const
     if(!file.open(QIODevice::ReadOnly)) return false;
     const QByteArray utf8 = file.readAll();
     if(QCryptographicHash::hash(utf8, QCryptographicHash::Sha256).toHex() != expected) return false;
-    code = QString::fromUtf8(utf8);
+    code = QString::fromUtf8(utf8.constData(), utf8.size());
     return true;
 }
 
@@ -139,6 +140,8 @@ void LuaTrustStore::guiSaved(const QString& oldName, const QString& oldCode,
             {
                 // The user edited an approved version: their edit inherits it.
                 if(it != _entries.end() && renamed) _entries.erase(it);
+                // (setEntryLocked writes the copy again under the new name,
+                // which can be the same file if only the case changed.)
                 if(renamed && !_dir.isEmpty()) QFile::remove(approvedCopyPath(oldName));
                 setEntryLocked(newName, newUtf8, before.approvedLevel);
             }
@@ -150,10 +153,7 @@ void LuaTrustStore::guiSaved(const QString& oldName, const QString& oldCode,
                 _entries.erase(it);
                 _entries[newName] = moved;
                 if(!_dir.isEmpty())
-                {
-                    QFile::remove(approvedCopyPath(newName));
-                    QFile::rename(approvedCopyPath(oldName), approvedCopyPath(newName));
-                }
+                    LuaFiles::rename(approvedCopyPath(oldName), approvedCopyPath(newName), true);
             }
         }
     }

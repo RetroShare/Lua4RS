@@ -4,87 +4,87 @@
 <context>
     <name>AccessText</name>
     <message>
-        <location filename="../gui/AccessText.cpp" line="11"/>
+        <location filename="../gui/AccessText.cpp" line="13"/>
         <source>Trusted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="12"/>
+        <location filename="../gui/AccessText.cpp" line="14"/>
         <source>Write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="15"/>
+        <location filename="../gui/AccessText.cpp" line="17"/>
         <source>Read-only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="22"/>
+        <location filename="../gui/AccessText.cpp" line="24"/>
         <source>full access, like a program you installed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="23"/>
+        <location filename="../gui/AccessText.cpp" line="25"/>
         <source>sandbox, may use functions that change RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="26"/>
+        <location filename="../gui/AccessText.cpp" line="28"/>
         <source>sandbox, read-only: no file or shell access, no JSON API, nothing that changes RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="35"/>
+        <location filename="../gui/AccessText.cpp" line="37"/>
         <source>Approved as %1 on %2.
 Runs with %3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="38"/>
+        <location filename="../gui/AccessText.cpp" line="40"/>
         <source>Unchanged example shipped with Lua4RS, not approved.
 Runs with %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="44"/>
+        <location filename="../gui/AccessText.cpp" line="46"/>
         <source>Example shipped with Lua4RS, changed since, not approved.
 Runs with %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="56"/>
+        <location filename="../gui/AccessText.cpp" line="58"/>
         <source>Access: %1 — unchanged example, not approved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="40"/>
+        <location filename="../gui/AccessText.cpp" line="42"/>
         <source>Changed outside the editor since it was approved as %1 on %2.
 Runs with %3 until it is approved again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="48"/>
+        <location filename="../gui/AccessText.cpp" line="50"/>
         <source>Not approved.
 Runs with %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="55"/>
+        <location filename="../gui/AccessText.cpp" line="57"/>
         <source>Access: %1 (approved).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="57"/>
+        <location filename="../gui/AccessText.cpp" line="59"/>
         <source>Access: %1 — changed since approval.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="58"/>
+        <location filename="../gui/AccessText.cpp" line="60"/>
         <source>Access: %1 — changed example, not approved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AccessText.cpp" line="61"/>
+        <location filename="../gui/AccessText.cpp" line="63"/>
         <source>Access: %1 — not approved.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -812,132 +812,138 @@ Access: Trusted (new script).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="566"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="574"/>
         <source>Choose a script name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="568"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="566"/>
         <source>Use a unique filename, such as my-script.lua, without folders or special filename characters.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="575"/>
+        <source>%1 already exists. Names that differ only in upper and lower case count as the same name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/Lua4RSWidget.cpp" line="580"/>
         <source>Check the schedule</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="572"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="580"/>
         <source>Choose a future time for the one-time run.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="586"/>
         <source>Check the time window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="578"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="586"/>
         <source>Choose an end time after the start time. A one-time run must fall inside that window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="589"/>
         <source>Check the interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="581"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="589"/>
         <source>Choose a shorter repeat interval.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="633"/>
         <source>Could not save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="624"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="633"/>
         <source>The script could not be fully saved. Check write access to the scripts folder and try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="628"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="637"/>
         <source>Saved %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="674"/>
         <source>Delete script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="665"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="674"/>
         <source>Delete %1 from disk? This also discards any editor changes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="691"/>
         <source>Could not delete file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="676"/>
-        <source>The script was removed from this list, but its file could not be deleted. Check the scripts folder.</source>
+        <location filename="../gui/Lua4RSWidget.cpp" line="691"/>
+        <source>The file of %1 could not be deleted, so the script was kept. Is it open in another program?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="684"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="701"/>
         <source>Running…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="685"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="702"/>
         <source>Run: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="693"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="710"/>
         <source>Cannot run: Lua is busy or shutting down.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="704"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="721"/>
         <source>List friends through the JSON API</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="735"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="752"/>
         <source>Enter an HTTP(S) server address without a path, and a username without a colon.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="750"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="767"/>
         <source>Settings applied. Testing connection…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="754"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="771"/>
         <source>Connection timed out. Check that the JSON API is enabled and the address is correct.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="755"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="772"/>
         <source>Credentials rejected. Authorize this API user in RetroShare, then try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="756"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="773"/>
         <source>Could not connect: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="757"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="774"/>
         <source>Server replied, but the friend-list request failed (HTTP %1).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/Lua4RSWidget.cpp" line="758"/>
+        <location filename="../gui/Lua4RSWidget.cpp" line="775"/>
         <source>Connected. Choose New API example, then Run.</source>
         <translation type="unfinished"></translation>
     </message>
