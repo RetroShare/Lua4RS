@@ -1,0 +1,3 @@
+# The bundled scripts are compiled into the plugin and compared byte for byte
+# with installed copies and approvals: LF everywhere, also with core.autocrlf.
+* text=auto eol=lf

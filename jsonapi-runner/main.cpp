@@ -48,7 +48,8 @@ int main(int argc, char** argv)
     }
     if(argc <= first) { usage(); return 2; }
 
-    QFile file(QString::fromLocal8Bit(argv[first]));
+    // arguments(): on Windows from the wide command line, so any file name works.
+    QFile file(QCoreApplication::arguments().value(first));
     if(!file.open(QIODevice::ReadOnly))
     {
         std::fprintf(stderr, "cannot open %s\n", argv[first]);

@@ -225,7 +225,8 @@ def main():
         print("%s is up to date" % OUTPUT.relative_to(ROOT))
         return 0
     OUTPUT.parent.mkdir(exist_ok=True)
-    OUTPUT.write_text(content, encoding="utf-8")
+    with open(OUTPUT, "w", encoding="utf-8", newline="\n") as out:  # LF on Windows too
+        out.write(content)
     print("wrote %s (%d functions, %d events)" % (OUTPUT.relative_to(ROOT), len(bindings), len(events)))
     return 0
 

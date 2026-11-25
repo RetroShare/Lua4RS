@@ -82,6 +82,9 @@ QString McpServer::endpointUrl()
 {
     if(!rsJsonApi) return QString();
     QString host = QString::fromStdString(rsJsonApi->getBindingAddress());
+    // "Any address" works for listening, not for connecting (Windows refuses).
+    if(host == "0.0.0.0") host = "127.0.0.1";
+    else if(host == "::") host = "::1";
     if(host.contains(':')) host = "[" + host + "]";
     return QString("http://%1:%2%3").arg(host).arg(rsJsonApi->listeningPort()).arg(path());
 }

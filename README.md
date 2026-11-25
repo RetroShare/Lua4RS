@@ -34,9 +34,10 @@ Requirements
 * Lua 5.4 or 5.5
 * For the MCP endpoint: RetroShare built with the JSON API (`CONFIG+=rs_jsonapi`)
 
-### MSYS2:
+### MSYS2 (Windows):
 
-`pacman -S mingw-w64-x86_64-lua`
+`pacman -S mingw-w64-x86_64-lua` (MINGW64 shell) or
+`pacman -S mingw-w64-ucrt-x86_64-lua` (UCRT64), matching RetroShare's toolchain
 
 ### Ubuntu:
 `sudo apt install liblua5.4-dev` (or `liblua5.5-dev` where available)
@@ -57,6 +58,19 @@ options as RetroShare itself. Pass every option as its own argument:
 Then place `libLua4RS.so`/`Lua4RS.dll` in your extension folder
 (e.g. `~/.retroshare/extensions6/`).
 
+**Windows:** a plugin DLL links against `libretroshare` and `retroshare-gui`,
+which qmake looks for relative to the plugin's build folder. Build it inside
+RetroShare's build folder (with `build.bat` that is
+`<RsBuildPath>/plugins/Lua4RS`), from the MSYS2 shell of RetroShare's toolchain,
+after RetroShare itself:
+
+	mkdir -p <RsBuildPath>/plugins/Lua4RS && cd <RsBuildPath>/plugins/Lua4RS
+	qmake <RetroShare source>/plugins/Lua4RS/Lua4RS.pro -spec win32-g++ CONFIG+=release CONFIG+=rs_jsonapi
+	mingw32-make
+
+Copy `Lua4RS.dll` and Lua's DLL (`lua54.dll` from the MSYS2 `bin` folder) next
+to `retroshare.exe` or into the extension folder.
+
 Build options:
 
 | Option | Meaning |
@@ -64,7 +78,8 @@ Build options:
 | `LUA_VERSION=5.5` | Use Lua 5.5 instead of the default 5.4 (see `lua.pri`) |
 | `LUA_PKGCONFIG=lua5.4` | pkg-config name, if autodetection fails |
 | `CONFIG+=rs_jsonapi` | Build the MCP endpoint (needs restbed headers from the RetroShare build) |
-| `RESTBED_INCLUDE_PATH=...` | Where restbed's headers are, if not `<build>/supportlibs/restbed/include` |
+| `RESTBED_INCLUDE_PATH=...` | Where restbed's headers are, if not `<build>/supportlibs/restbed/include` or RetroShare's restbed sources |
+| `LUA_LIBS=... LUA_INCLUDEPATH=...` | Windows: Lua library and headers, if not `-llua` from the toolchain |
 
 qmake prints which Lua it uses and whether the MCP endpoint is built.
 
@@ -114,6 +129,30 @@ Sandboxed scripts get a fresh environment of safe functions (no `io`, `require`,
 `load`, `debug`, no bytecode, no `__gc`, only `os.time/date/clock/difftime`).
 Each script keeps its globals between runs; they are dropped when the script is
 renamed or deleted. Limits per run: 5 seconds and 32 MB of memory growth.
+
+### Windows and Linux
+
+Scripts are UTF-8 files and work on both. Some differences come from the C
+library underneath Lua:
+
+* `os.date`: Windows only knows the C89 conversions (`%a %A %b %B %c %d %H %I
+  %j %m %M %p %S %U %w %W %x %X %y %Y %z %Z %%`) and fails on others such as
+  `%e`, `%F` or `%T`; it also fails for times before 1970. Sandboxed scripts
+  get `%Z` (time zone name) as UTF-8 on Windows too.
+* `os.clock` measures CPU time on Linux, wall-clock time on Windows.
+* On Linux, numbers are converted to text with the decimal separator of the
+  system language (`tostring(2.5)` can be `"2,5"`); on Windows it is always a
+  dot (`string.format("%f")` too). For machine-readable text use integers or
+  `jsonapi.encode`, which always writes a dot.
+* `trusted` scripts: `io.open`, `os.rename` and friends take file names in the
+  Windows ANSI code page, so paths with characters outside it (for example a
+  user name in another script) do not work; `io.popen` opens a console window.
+* Script names are compared ignoring upper and lower case (on Windows and
+  macOS `foo.lua` and `Foo.lua` are the same file), and names Windows cannot
+  store (`con.lua`, `nul.lua`, `com1.lua`, names with `~`, ...) are refused.
+* Windows saves scripts with CRLF line endings, Linux exactly as they are.
+  Moving a script with CRLF line endings to Linux (or one with CR characters
+  to Windows) changes its code in memory, so it needs a new approval.
 
 ### The store
 

@@ -4,10 +4,8 @@ CONFIG += qt resources uic qrc
 CONFIG += c++17
 QT += network
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-	# Qt 5 and Qt 6
-	QT += widgets
-}
+# Qt 5.11 or later, Qt 6
+QT += widgets
 
 # Lua 5.4 or 5.5, see lua.pri (MSYS2: Lua comes from the toolchain dirs)
 include(lua.pri)
@@ -20,6 +18,7 @@ HEADERS +=  \
     mcp/McpSettings.h \
     gui/McpPanel.h \
     Lua/LuaExecutionGuard.h \
+    Lua/LuaFiles.h \
     Lua/LuaBindings.h \
     Lua/LuaRun.h \
     Lua/LuaSandbox.h \
@@ -73,12 +72,23 @@ SOURCES +=  \
     service/p3Lua4RS.cpp \
     helper.cpp
 
-# MCP endpoint, mounted into RetroShare's JSON API server (needs restbed headers
-# from the RetroShare build; override with RESTBED_INCLUDE_PATH=...).
+# MCP endpoint, mounted into RetroShare's JSON API server (needs restbed headers;
+# override with RESTBED_INCLUDE_PATH=...).
 rs_jsonapi {
     DEFINES += LUA4RS_MCP
-    isEmpty(RESTBED_INCLUDE_PATH): RESTBED_INCLUDE_PATH = $$clean_path($$OUT_PWD/../../supportlibs/restbed/include)
-    !exists($$RESTBED_INCLUDE_PATH/restbed): error("Lua4RS: restbed headers not found in $$RESTBED_INCLUDE_PATH (set RESTBED_INCLUDE_PATH)")
+    isEmpty(RESTBED_INCLUDE_PATH) {
+        # The RetroShare build generates <build>/supportlibs/restbed/include only
+        # at make time, so a first "qmake -r" does not see it yet: then the same
+        # headers from the restbed sources, else a system restbed.
+        RESTBED_INCLUDE_PATH = $$clean_path($$OUT_PWD/../../supportlibs/restbed/include)
+        !exists($$RESTBED_INCLUDE_PATH/restbed): RESTBED_INCLUDE_PATH = $$clean_path($$PWD/../../supportlibs/restbed/source)
+        !exists($$RESTBED_INCLUDE_PATH/restbed) {
+            warning("Lua4RS: restbed headers not found in the RetroShare tree, expecting a system restbed")
+            RESTBED_INCLUDE_PATH =
+        }
+    } else {
+        !exists($$RESTBED_INCLUDE_PATH/restbed): error("Lua4RS: restbed headers not found in $$RESTBED_INCLUDE_PATH")
+    }
     INCLUDEPATH += $$RESTBED_INCLUDE_PATH
     # Same as libretroshare/src/use_libretroshare.pri: without this, restbed's
     # inline "= default" members get __declspec(dllimport) and MinGW rejects them.
@@ -119,4 +129,3 @@ TRANSLATIONS += \
     lang/Lua4RS_en.ts \
     lang/Lua4RS_de.ts
 
-XUP.QT_VERSION = Qt System (4.8.1)

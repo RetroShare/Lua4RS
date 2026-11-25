@@ -37,6 +37,9 @@ void allScripts()
             CHECK_FOR(BundledScripts::read(name, code), name);
             CHECK_FOR(BundledScripts::resourcePath(name).contains(QLatin1String(group.folder)), name);
             CHECK_FOR(code.size() <= 64 * 1024, name); // same limit as for agent scripts
+            // LF only (.gitattributes): a CRLF checkout would make every
+            // installed example count as changed on Windows.
+            CHECK_FOR(!code.contains('\r'), name);
             CHECK_FOR(!BundledScripts::summary(code).isEmpty(), name); // menu tooltip
             lua_State* L = luaL_newstate();
             const QByteArray chunk = "=" + name.toUtf8();

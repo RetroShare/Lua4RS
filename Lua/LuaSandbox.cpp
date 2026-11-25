@@ -10,7 +10,17 @@ extern "C" {
 #include <lualib.h>
 }
 
+// Also here: the runner and tests use the sandbox without LuaCore.h. On
+// Windows the build cannot check the version (lua.pri).
+#if LUA_VERSION_NUM != 504 && LUA_VERSION_NUM != 505
+#error "Lua4RS requires Lua 5.4 or 5.5"
+#endif
+
 #include "LuaExecutionGuard.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace {
 
@@ -67,6 +77,36 @@ int rethrowIfExpired(lua_State* L)
     lua_callk(L, lua_gettop(L) - 1, LUA_MULTRET, 0, afterCatch);
     return afterCatch(L, LUA_OK, 0);
 }
+
+#ifdef _WIN32
+bool isUtf8(const char* s, size_t size)
+{
+    const int length = static_cast<int>(size);
+    return MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s, length, nullptr, 0) > 0 || size == 0;
+}
+
+// os.date: the Windows C runtime returns time zone names (%Z, %z) and other
+// text in the ANSI code page; Lua4RS strings are UTF-8 (output, store, JSON).
+int dateUtf8(lua_State* L)
+{
+    lua_pushvalue(L, lua_upvalueindex(1));
+    lua_insert(L, 1);
+    lua_call(L, lua_gettop(L) - 1, 1);
+    if(lua_type(L, -1) != LUA_TSTRING) return 1;
+    size_t size = 0;
+    const char* text = lua_tolstring(L, -1, &size);
+    if(isUtf8(text, size)) return 1;
+    const int length = static_cast<int>(size);
+    std::wstring wide(static_cast<size_t>(MultiByteToWideChar(CP_ACP, 0, text, length, nullptr, 0)), L'\0');
+    MultiByteToWideChar(CP_ACP, 0, text, length, &wide[0], static_cast<int>(wide.size()));
+    std::string utf8(static_cast<size_t>(WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()),
+                                                             nullptr, 0, nullptr, nullptr)), '\0');
+    WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()), &utf8[0],
+                        static_cast<int>(utf8.size()), nullptr, nullptr);
+    lua_pushlstring(L, utf8.data(), utf8.size());
+    return 1;
+}
+#endif
 
 // Finalizers run whenever the GC decides, possibly while a trusted script
 // runs or outside any guard (no time limit, wrong trust level): forbid them.
@@ -244,6 +284,9 @@ void snapshot(lua_State* L)
 
     wrapField(L, proto, "coroutine", "resume", rethrowIfExpired);
     wrapField(L, proto, "coroutine", "close", rethrowIfExpired);
+#ifdef _WIN32
+    wrapField(L, proto, "os", "date", dateUtf8);
+#endif
 
     lua_rawsetp(L, LUA_REGISTRYINDEX, &kProto);
 

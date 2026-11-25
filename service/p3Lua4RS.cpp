@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <rsitems/rsconfigitems.h>
+#include <util/rstime.h>
 
 #include "p3Lua4RS.h"
 #include "Lua/LuaCore.h"
@@ -187,7 +188,7 @@ void p3Lua4RS::threadTick()
     foundWork |= _luaCore->processEventQueue();
 
     if (!foundWork)
-        usleep(250 * 1000);
+        rstime::rs_usleep(250 * 1000);
 }
 
 LuaCore *p3Lua4RS::getCore()
