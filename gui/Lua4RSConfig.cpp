@@ -10,8 +10,8 @@ Lua4RSConfig::Lua4RSConfig(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->sb_starupEvent, SIGNAL(valueChanged(int)), this, SLOT(startUpChanged(int)));
-    connect(ui->sb_tickInterval, SIGNAL(valueChanged(int)), this, SLOT(tickIntervalChanged(int)));
+    connect(ui->sb_starupEvent, QOverload<int>::of(&QSpinBox::valueChanged), this, &Lua4RSConfig::startUpChanged);
+    connect(ui->sb_tickInterval, QOverload<int>::of(&QSpinBox::valueChanged), this, &Lua4RSConfig::tickIntervalChanged);
 }
 
 Lua4RSConfig::~Lua4RSConfig()

@@ -117,7 +117,7 @@ ApprovalDialog::ApprovalDialog(const QString& name, const QString& code, const L
     cancel->setDefault(true);
     connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(_levels, &QButtonGroup::buttonToggled, this, [this](QAbstractButton*, bool) { updateApproveButton(); });
+    connect(_levels, QOverload<QAbstractButton*, bool>::of(&QButtonGroup::buttonToggled), this, [this](QAbstractButton*, bool) { updateApproveButton(); });
     layout->addWidget(buttons);
     updateApproveButton();
 

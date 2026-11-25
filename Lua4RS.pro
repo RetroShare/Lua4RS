@@ -5,7 +5,7 @@ CONFIG += c++17
 QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-	# Qt 5
+	# Qt 5 and Qt 6
 	QT += widgets
 }
 
@@ -80,6 +80,11 @@ rs_jsonapi {
     isEmpty(RESTBED_INCLUDE_PATH): RESTBED_INCLUDE_PATH = $$clean_path($$OUT_PWD/../../supportlibs/restbed/include)
     !exists($$RESTBED_INCLUDE_PATH/restbed): error("Lua4RS: restbed headers not found in $$RESTBED_INCLUDE_PATH (set RESTBED_INCLUDE_PATH)")
     INCLUDEPATH += $$RESTBED_INCLUDE_PATH
+    # Same as libretroshare/src/use_libretroshare.pri: without this, restbed's
+    # inline "= default" members get __declspec(dllimport) and MinGW rejects them.
+    win32-g++|win32-clang-g++: DEFINES *= WIN_DLL_EXPORT
+    # restbed pulls in asio, which calls WSAStartup/WSACleanup (Winsock).
+    win32: LIBS *= -lws2_32
     HEADERS += mcp/McpServer.h
     SOURCES += mcp/McpServer.cpp
     message("Lua4RS: MCP endpoint enabled")

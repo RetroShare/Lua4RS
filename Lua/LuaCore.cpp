@@ -647,9 +647,9 @@ void LuaCore::setUi(Lua4RSWidget *ui)
     if(ui) _ready = true;
     if(!ui) return;
 
-    QObject::connect(this, SIGNAL(appendLog(QString)), _ui, SLOT(appendLog(QString)));
-    QObject::connect(this, SIGNAL(appendOutput(QString)), _ui, SLOT(appendOutput(QString)));
-    QObject::connect(this, SIGNAL(clearOutput()), _ui, SLOT(clearOutput()));
+    QObject::connect(this, &LuaCore::appendLog, _ui, QOverload<const QString&>::of(&Lua4RSWidget::appendLog));
+    QObject::connect(this, &LuaCore::appendOutput, _ui, QOverload<const QString&>::of(&Lua4RSWidget::appendOutput));
+    QObject::connect(this, &LuaCore::clearOutput, _ui, &Lua4RSWidget::clearOutput);
 }
 
 // emit
