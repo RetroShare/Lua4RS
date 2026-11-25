@@ -260,7 +260,7 @@ extern "C" {
             lua_newtable(L);
             int t2 = lua_gettop(L);
             int i = 1;
-            foreach (RsPgpId peerId, grpInfo.peerIds) {
+            for (const RsPgpId& peerId : grpInfo.peerIds) {
                 pushArray(L, t2, i, peerId.toStdString());
                 ++i;
             }
@@ -278,7 +278,7 @@ extern "C" {
         lua_newtable(L);
         int t1 = lua_gettop(L);
         uint i = 1;
-        foreach (RsGroupInfo grpInfo, groupInfoList) {
+        for (const RsGroupInfo& grpInfo : groupInfoList) {
             lua_pushinteger(L, i);
             {
                 lua_newtable(L);
@@ -293,7 +293,7 @@ extern "C" {
                     lua_newtable(L);
                     int t3 = lua_gettop(L);
                     int j = 1;
-                    foreach (RsPgpId peerId, grpInfo.peerIds) {
+                    for (const RsPgpId& peerId : grpInfo.peerIds) {
                         pushArray(L, t3, j, peerId.toStdString());
                         ++j;
                     }

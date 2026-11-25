@@ -2,6 +2,8 @@
 
 #include <QDateTime>
 
+#include "util/DateTime.h"
+
 using State = LuaTrustStore::State;
 
 QString AccessText::label(LuaTrust level)
@@ -28,7 +30,7 @@ QString AccessText::meaning(LuaTrust level)
 
 QString AccessText::details(const LuaTrustStore::Status& status)
 {
-    const QString when = status.approvedAt.toLocalTime().toString(Qt::TextDate);
+    const QString when = DateTime::formatDateTime(status.approvedAt.toLocalTime()); // RS "Date Format"
     switch(status.state)
     {
     case State::Approved:

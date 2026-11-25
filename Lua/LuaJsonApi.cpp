@@ -40,6 +40,14 @@ QByteArray stringAt(lua_State* L, int index)
     return value ? QByteArray(value, static_cast<int>(size)) : QByteArray();
 }
 
+// With the length: Qt 5 stops QString::fromUtf8(QByteArray) at the first NUL.
+QString textAt(lua_State* L, int index)
+{
+    size_t size = 0;
+    const char* value = lua_tolstring(L, index, &size);
+    return value ? QString::fromUtf8(value, static_cast<int>(size)) : QString();
+}
+
 bool toJson(lua_State* L, int index, QJsonValue& result, QString& error, int depth = 0)
 {
     if(!lua_checkstack(L, 8)) { error = "Lua stack exhausted"; return false; }
@@ -60,7 +68,7 @@ bool toJson(lua_State* L, int index, QJsonValue& result, QString& error, int dep
         result = value;
         return true;
     }
-    case LUA_TSTRING: result = QString::fromUtf8(stringAt(L, index)); return true;
+    case LUA_TSTRING: result = textAt(L, index); return true;
     case LUA_TTABLE:
     {
         bool array = false;
@@ -105,7 +113,7 @@ bool toJson(lua_State* L, int index, QJsonValue& result, QString& error, int dep
             {
                 QJsonValue value;
                 if(!toJson(L, -1, value, error, depth + 1)) { lua_pop(L, 2); return false; }
-                values.insert(QString::fromUtf8(stringAt(L, -2)), value);
+                values.insert(textAt(L, -2), value);
                 lua_pop(L, 1);
             }
             result = values;
@@ -285,8 +293,8 @@ int call(lua_State* L)
 {
     if(!lua_checkstack(L, 128)) return failure(L, "Lua stack exhausted");
     if(lua_type(L, 1) != LUA_TSTRING) return failure(L, "call expects an endpoint and an optional parameter table or JSON object string");
-    const QString path = QString::fromUtf8(stringAt(L, 1));
-    if(!path.startsWith('/') || path.startsWith("//") || path.contains('?') || path.contains('#') || path.contains("..") || path.contains('\\'))
+    const QString path = textAt(L, 1);
+    if(!path.startsWith('/') || path.startsWith("//") || path.contains('?') || path.contains('#') || path.contains("..") || path.contains('\\') || path.contains(QChar(0)))
         return failure(L, "Endpoint must be an absolute API path such as /rsPeers/getFriendList");
     if(path == "/rsEvents/registerEventsHandler")
         return failure(L, "This endpoint streams events; jsonapi.call supports finite JSON responses only");
@@ -404,7 +412,7 @@ int subscribe(lua_State* L)
                     fromJson(L, value);
                     if(lua_pcall(L, 1, 1, 0) != LUA_OK)
                     {
-                        error = "Event callback failed: " + QString::fromUtf8(stringAt(L, -1));
+                        error = "Event callback failed: " + textAt(L, -1);
                         lua_pop(L, 1);
                         reply->abort();
                         return;

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <QVariant>
 #include <QEvent>
 #include <QFontDatabase>
@@ -106,7 +108,7 @@ QLuaSyntaxHighlighter::QLuaSyntaxHighlighter(QTextDocument *document, const QPal
 					<< "\\bfunction\\b"	<< "\\bin\\b"		<< "\\blocal\\b"
 					<< "\\brepeat\\b"	<< "\\breturn\\b";
 
-	foreach (const QString &pattern, keywordPatterns) {
+	for (const QString &pattern : std::as_const(keywordPatterns)) {
 		rule.pattern = QRegularExpression(pattern);
 		rule.format = keywordFormat;
 		_highlightingRules.append(rule);
@@ -126,7 +128,7 @@ QLuaSyntaxHighlighter::QLuaSyntaxHighlighter(QTextDocument *document, const QPal
 					 << "\\^" << "\\.\\."
 					 << "\\#";
 
-	foreach (const QString &pattern, operatorPatterns) {
+	for (const QString &pattern : std::as_const(operatorPatterns)) {
 		rule.pattern = QRegularExpression(pattern);
 		rule.format = operatorFormat;
 		_highlightingRules.append(rule);
@@ -183,7 +185,7 @@ QLuaSyntaxHighlighter::QLuaSyntaxHighlighter(QTextDocument *document, const QPal
 
 void QLuaSyntaxHighlighter::highlightBlock(const QString &text)
 {
-	foreach (const HighlightingRule &rule, _highlightingRules) {
+	for (const HighlightingRule &rule : std::as_const(_highlightingRules)) {
 		auto matches = rule.pattern.globalMatch(text);
 		while (matches.hasNext()) {
 			const auto match = matches.next();
